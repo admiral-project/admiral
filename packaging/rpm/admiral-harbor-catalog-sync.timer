@@ -1,0 +1,16 @@
+# SPDX-FileCopyrightText: William Moreno Reyes <williamjmorenor@gmail.com>
+# SPDX-License-Identifier: Apache-2.0
+
+[Unit]
+Description=Admiral Harbor Catalog Synchronization Timer
+Documentation=https://github.com/admiral-project/admiral/docs
+Requires=admiral-harbor-catalog-sync.service
+
+[Timer]
+# Run 1 min after boot, then every 5 minutes
+OnBootSec=1min
+OnUnitActiveSec=5min
+AccuracySec=1s
+
+[Install]
+WantedBy=timers.target

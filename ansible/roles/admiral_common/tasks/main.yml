@@ -1,0 +1,418 @@
+---
+- name: Install dnf-plugins-core (for copr)
+  dnf:
+    name: dnf-plugins-core
+    state: present
+
+- name: Enable Caddy COPR repository
+  command:
+    cmd: dnf copr enable -y @caddy/caddy
+    creates: /etc/yum.repos.d/_copr:copr.fedorainfracloud.org:group_caddy:caddy.repo
+
+- name: Enable Admiral COPR repository
+  command:
+    cmd: dnf copr enable -y admiral-project/admiral
+    creates: /etc/yum.repos.d/_copr:copr.fedorainfracloud.org:admiral-project:admiral.repo
+
+- name: Install managed Caddyfile for Admiral
+  copy:
+    dest: /etc/caddy/Caddyfile
+    mode: "0644"
+    content: |
+      {
+        admin 127.0.0.1:2019
+      }
+
+- name: Install Admiral packages
+  dnf:
+    name:
+      - admiral-common
+      - admiralctl
+    state: present
+
+- name: Install PostgreSQL server utilities
+  dnf:
+    name: postgresql-server
+    state: present
+  when: admiral_install_mode in ['single-node', 'admin-node']
+
+- name: Ensure admiral system group exists
+  group:
+    name: admiral
+    system: true
+    state: present
+
+- name: Ensure admiral system user exists
+  user:
+    name: admiral
+    group: admiral
+    system: true
+    shell: /sbin/nologin
+    home: /var/lib/admiral
+    create_home: true
+    state: present
+
+- name: Create configuration directory
+  file:
+    path: /etc/admiral
+    state: directory
+    mode: "0750"
+    owner: root
+    group: admiral
+
+- name: Create data directory
+  file:
+    path: /var/lib/admiral
+    state: directory
+    mode: "0750"
+    owner: admiral
+    group: admiral
+
+- name: Create log directory
+  file:
+    path: /var/log/admiral
+    state: directory
+    mode: "0750"
+    owner: admiral
+    group: admiral
+
+- name: Create TLS directory
+  file:
+    path: /etc/admiral/tls
+    state: directory
+    mode: "0750"
+    owner: root
+    group: admiral
+
+- name: Check whether Admiral secret inventory already exists
+  stat:
+    path: /etc/admiral/secrets
+  register: admiral_secrets_file
+
+- name: Read existing Admiral secret inventory
+  slurp:
+    src: /etc/admiral/secrets
+  register: admiral_secrets_slurp
+  when: admiral_secrets_file.stat.exists
+  no_log: true
+
+- name: Decode existing Admiral secret inventory
+  set_fact:
+    admiral_secrets_text: "{{ admiral_secrets_slurp.content | b64decode }}"
+  when: admiral_secrets_file.stat.exists
+  no_log: true
+
+- name: Initialize empty Admiral secret inventory text
+  set_fact:
+    admiral_secrets_text: ""
+  when: not admiral_secrets_file.stat.exists
+  no_log: true
+
+- name: Extract existing Admiral secrets
+  set_fact:
+    admiral_existing_postgres_password: "{{ admiral_secrets_text | regex_findall('(?m)^ADMIRAL_POSTGRES_PASSWORD=(.*)$') | first | default('') }}"
+    admiral_existing_shared_token: "{{ admiral_secrets_text | regex_findall('(?m)^ADMIRAL_SHARED_TOKEN=(.*)$') | first | default('') }}"
+    admiral_existing_secrets_key: "{{ admiral_secrets_text | regex_findall('(?m)^ADMIRAL_SECRETS_KEY=(.*)$') | first | default('') }}"
+    admiral_existing_flagship_secret_key: "{{ admiral_secrets_text | regex_findall('(?m)^FLAGSHIP_SECRET_KEY=(.*)$') | first | default('') }}"
+    admiral_existing_flagship_bootstrap_user: "{{ admiral_secrets_text | regex_findall('(?m)^FLAGSHIP_BOOTSTRAP_USER=(.*)$') | first | default('') }}"
+    admiral_existing_flagship_bootstrap_password: "{{ admiral_secrets_text | regex_findall('(?m)^FLAGSHIP_BOOTSTRAP_PASSWORD=(.*)$') | first | default('') }}"
+    admiral_existing_harbor_secret_key: "{{ admiral_secrets_text | regex_findall('(?m)^HARBOR_SECRET_KEY=(.*)$') | first | default('') }}"
+    admiral_existing_harbor_encryption_key: "{{ admiral_secrets_text | regex_findall('(?m)^HARBOR_ENCRYPTION_KEY=(.*)$') | first | default('') }}"
+    admiral_existing_harbor_bootstrap_user: "{{ admiral_secrets_text | regex_findall('(?m)^HARBOR_BOOTSTRAP_USER=(.*)$') | first | default('') }}"
+    admiral_existing_harbor_bootstrap_password: "{{ admiral_secrets_text | regex_findall('(?m)^HARBOR_BOOTSTRAP_PASSWORD=(.*)$') | first | default('') }}"
+    admiral_existing_harbor_legacy_admin_password: "{{ admiral_secrets_text | regex_findall('(?m)^HARBOR_LEGACY_ADMIN_PASSWORD=(.*)$') | first | default('') }}"
+  no_log: true
+
+- name: Generate Admiral PostgreSQL password
+  shell:
+    cmd: openssl rand -base64 36 | tr '+/' '-_' | tr -d '='
+  register: admiral_postgres_password_generated
+  when: admiral_existing_postgres_password == ''
+  changed_when: true
+  no_log: true
+
+- name: Generate Admiral shared token
+  command:
+    cmd: openssl rand -hex 32
+  register: admiral_shared_token_generated
+  when: admiral_existing_shared_token == ''
+  changed_when: true
+  no_log: true
+
+- name: Generate Admiral secrets key
+  command:
+    cmd: openssl rand -hex 32
+  register: admiral_secrets_key_generated
+  when: admiral_existing_secrets_key == ''
+  changed_when: true
+  no_log: true
+
+- name: Generate Flagship secret key
+  command:
+    cmd: openssl rand -hex 32
+  register: admiral_flagship_secret_key_generated
+  when: admiral_existing_flagship_secret_key == ''
+  changed_when: true
+  no_log: true
+
+- name: Generate Flagship bootstrap username suffix
+  command:
+    cmd: openssl rand -hex 5
+  register: admiral_flagship_bootstrap_user_generated
+  when: admiral_existing_flagship_bootstrap_user == ''
+  changed_when: true
+  no_log: true
+
+- name: Generate Flagship bootstrap password
+  command:
+    cmd: openssl rand -base64 24
+  register: admiral_flagship_bootstrap_password_generated
+  when: admiral_existing_flagship_bootstrap_password == ''
+  changed_when: true
+  no_log: true
+
+- name: Generate Harbor secret key
+  command:
+    cmd: openssl rand -hex 32
+  register: admiral_harbor_secret_key_generated
+  when: admiral_existing_harbor_secret_key == ''
+  changed_when: true
+  no_log: true
+
+- name: Generate Harbor encryption key
+  command:
+    cmd: openssl rand -hex 32
+  register: admiral_harbor_encryption_key_generated
+  when: admiral_existing_harbor_encryption_key == ''
+  changed_when: true
+  no_log: true
+
+- name: Generate Harbor bootstrap username suffix
+  command:
+    cmd: openssl rand -hex 5
+  register: admiral_harbor_bootstrap_user_generated
+  when: admiral_existing_harbor_bootstrap_user == ''
+  changed_when: true
+  no_log: true
+
+- name: Generate Harbor bootstrap password
+  command:
+    cmd: openssl rand -base64 24
+  register: admiral_harbor_bootstrap_password_generated
+  when: admiral_existing_harbor_bootstrap_password == ''
+  changed_when: true
+  no_log: true
+
+- name: Generate Harbor legacy admin rotation password
+  command:
+    cmd: openssl rand -base64 24
+  register: admiral_harbor_legacy_admin_password_generated
+  when: admiral_existing_harbor_legacy_admin_password == ''
+  changed_when: true
+  no_log: true
+
+- name: Consolidate Admiral installation secrets
+  set_fact:
+    admiral_postgres_password: "{{ admiral_existing_postgres_password if admiral_existing_postgres_password != '' else (admiral_postgres_password_generated.stdout | default('')) }}"
+    admiral_shared_token_value: "{{ admiral_existing_shared_token if admiral_existing_shared_token != '' else (admiral_shared_token_generated.stdout | default('')) }}"
+    admiral_secrets_key_value: "{{ admiral_existing_secrets_key if admiral_existing_secrets_key != '' else (admiral_secrets_key_generated.stdout | default('')) }}"
+    admiral_flagship_secret_key_value: "{{ admiral_existing_flagship_secret_key if admiral_existing_flagship_secret_key != '' else (admiral_flagship_secret_key_generated.stdout | default('')) }}"
+    admiral_flagship_bootstrap_user: "{{ admiral_existing_flagship_bootstrap_user if admiral_existing_flagship_bootstrap_user != '' else ('opsf_' ~ (admiral_flagship_bootstrap_user_generated.stdout | default(''))) }}"
+    admiral_flagship_bootstrap_password: "{{ admiral_existing_flagship_bootstrap_password if admiral_existing_flagship_bootstrap_password != '' else (admiral_flagship_bootstrap_password_generated.stdout | default('')) }}"
+    admiral_harbor_secret_key_value: "{{ admiral_existing_harbor_secret_key if admiral_existing_harbor_secret_key != '' else (admiral_harbor_secret_key_generated.stdout | default('')) }}"
+    admiral_harbor_encryption_key_value: "{{ admiral_existing_harbor_encryption_key if admiral_existing_harbor_encryption_key != '' else (admiral_harbor_encryption_key_generated.stdout | default('')) }}"
+    admiral_harbor_bootstrap_user: "{{ admiral_existing_harbor_bootstrap_user if admiral_existing_harbor_bootstrap_user != '' else ('opsh_' ~ (admiral_harbor_bootstrap_user_generated.stdout | default(''))) }}"
+    admiral_harbor_bootstrap_password: "{{ admiral_existing_harbor_bootstrap_password if admiral_existing_harbor_bootstrap_password != '' else (admiral_harbor_bootstrap_password_generated.stdout | default('')) }}"
+    admiral_harbor_legacy_admin_password: "{{ admiral_existing_harbor_legacy_admin_password if admiral_existing_harbor_legacy_admin_password != '' else (admiral_harbor_legacy_admin_password_generated.stdout | default('')) }}"
+  no_log: true
+
+- name: Persist bootstrap secret inventory
+  copy:
+    dest: /etc/admiral/secrets
+    mode: "0600"
+    owner: root
+    group: root
+    content: |
+      # Admiral bootstrap secret inventory.
+      # Back up this file securely.
+      # CRITICAL: HARBOR_ENCRYPTION_KEY protects Harbor encrypted data stored in PostgreSQL.
+      # Losing it can make encrypted Harbor data unrecoverable and break related restore flows.
+      # CRITICAL: ADMIRAL_SECRETS_KEY protects admirald-encrypted secret material.
+      ADMIRAL_POSTGRES_USER=admiral
+      ADMIRAL_POSTGRES_PASSWORD={{ admiral_postgres_password }}
+      ADMIRAL_SHARED_TOKEN={{ admiral_shared_token_value }}
+      ADMIRAL_SECRETS_KEY={{ admiral_secrets_key_value }}
+      FLAGSHIP_SECRET_KEY={{ admiral_flagship_secret_key_value }}
+      FLAGSHIP_BOOTSTRAP_USER={{ admiral_flagship_bootstrap_user }}
+      FLAGSHIP_BOOTSTRAP_PASSWORD={{ admiral_flagship_bootstrap_password }}
+      HARBOR_SECRET_KEY={{ admiral_harbor_secret_key_value }}
+      HARBOR_ENCRYPTION_KEY={{ admiral_harbor_encryption_key_value }}
+      HARBOR_BOOTSTRAP_USER={{ admiral_harbor_bootstrap_user }}
+      HARBOR_BOOTSTRAP_PASSWORD={{ admiral_harbor_bootstrap_password }}
+      HARBOR_LEGACY_ADMIN_PASSWORD={{ admiral_harbor_legacy_admin_password }}
+  no_log: true
+
+- name: Generate self-signed CA certificate
+  command:
+    cmd: >
+      openssl req -x509 -nodes -days 3650 -newkey rsa:4096
+      -keyout /etc/admiral/tls/ca-key.pem
+      -out /etc/admiral/tls/ca.pem
+      -subj "/CN=Admiral CA"
+    creates: /etc/admiral/tls/ca.pem
+  when: admiral_install_mode in ['single-node', 'admin-node']
+
+- name: Generate admirald server key
+  command:
+    cmd: >
+      openssl genrsa -out /etc/admiral/tls/admirald-key.pem 2048
+    creates: /etc/admiral/tls/admirald-key.pem
+  when: admiral_install_mode in ['single-node', 'admin-node']
+
+- name: Generate admirald CSR
+  command:
+    cmd: >
+      openssl req -new -key /etc/admiral/tls/admirald-key.pem
+      -out /etc/admiral/tls/admirald.csr
+      -subj "/CN=localhost"
+      -addext "subjectAltName=DNS:localhost,IP:127.0.0.1"
+    creates: /etc/admiral/tls/admirald.csr
+  when: admiral_install_mode in ['single-node', 'admin-node']
+
+- name: Write openssl extensions file for SAN
+  copy:
+    dest: /etc/admiral/tls/admirald-ext.cnf
+    content: |
+      subjectAltName=DNS:localhost,IP:127.0.0.1
+    mode: "0640"
+    owner: admiral
+    group: admiral
+  when: admiral_install_mode in ['single-node', 'admin-node']
+
+- name: Sign admirald certificate with CA
+  command:
+    cmd: >
+      openssl x509 -req -days 3650
+      -in /etc/admiral/tls/admirald.csr
+      -CA /etc/admiral/tls/ca.pem
+      -CAkey /etc/admiral/tls/ca-key.pem
+      -CAcreateserial
+      -out /etc/admiral/tls/admirald.pem
+      -extfile /etc/admiral/tls/admirald-ext.cnf
+    creates: /etc/admiral/tls/admirald.pem
+  when: admiral_install_mode in ['single-node', 'admin-node']
+
+- name: Remove temporary openssl extensions file
+  file:
+    path: /etc/admiral/tls/admirald-ext.cnf
+    state: absent
+  when: admiral_install_mode in ['single-node', 'admin-node']
+
+- name: Remove CSR after signing
+  file:
+    path: /etc/admiral/tls/admirald.csr
+    state: absent
+  when: admiral_install_mode in ['single-node', 'admin-node']
+
+- name: Set TLS cert permissions
+  file:
+    path: "{{ item }}"
+    mode: "0640"
+    owner: root
+    group: admiral
+  loop:
+    - /etc/admiral/tls/admirald.pem
+    - /etc/admiral/tls/admirald-key.pem
+  when: admiral_install_mode in ['single-node', 'admin-node']
+
+- name: Set CA certificate permissions
+  file:
+    path: /etc/admiral/tls/ca.pem
+    mode: "0644"
+    owner: root
+    group: root
+  when: admiral_install_mode in ['single-node', 'admin-node']
+
+- name: Set CA private key permissions
+  file:
+    path: /etc/admiral/tls/ca-key.pem
+    mode: "0600"
+    owner: root
+    group: root
+  when: admiral_install_mode in ['single-node', 'admin-node']
+
+- name: Initialize PostgreSQL database cluster
+  command:
+    cmd: postgresql-setup --initdb
+    creates: /var/lib/pgsql/data/PG_VERSION
+  when: admiral_install_mode in ['single-node', 'admin-node']
+
+- name: Require password authentication for localhost PostgreSQL
+  lineinfile:
+    path: /var/lib/pgsql/data/pg_hba.conf
+    regexp: "^host\\s+all\\s+all\\s+127\\.0\\.0\\.1/32\\s+"
+    line: "host    all             all             127.0.0.1/32            scram-sha-256"
+  when: admiral_install_mode in ['single-node', 'admin-node']
+
+- name: Require password authentication for localhost PostgreSQL over IPv6
+  lineinfile:
+    path: /var/lib/pgsql/data/pg_hba.conf
+    regexp: "^host\\s+all\\s+all\\s+::1/128\\s+"
+    line: "host    all             all             ::1/128                 scram-sha-256"
+  when: admiral_install_mode in ['single-node', 'admin-node']
+
+- name: Ensure PostgreSQL is enabled and running
+  systemd:
+    name: postgresql
+    enabled: true
+    state: started
+  when: admiral_install_mode in ['single-node', 'admin-node']
+
+- name: Restart PostgreSQL after pg_hba updates
+  systemd:
+    name: postgresql
+    state: restarted
+  when: admiral_install_mode in ['single-node', 'admin-node']
+
+- name: Ensure Admiral PostgreSQL role exists with generated password
+  become_user: postgres
+  shell: |
+    psql -v ON_ERROR_STOP=1 <<'SQL'
+    DO $$
+    BEGIN
+      IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'admiral') THEN
+        CREATE ROLE admiral LOGIN PASSWORD '{{ admiral_postgres_password }}';
+      ELSE
+        ALTER ROLE admiral WITH LOGIN PASSWORD '{{ admiral_postgres_password }}';
+      END IF;
+    END
+    $$;
+    SQL
+  no_log: true
+  changed_when: false
+  when: admiral_install_mode in ['single-node', 'admin-node']
+
+- name: Ensure Admiral PostgreSQL databases exist
+  become_user: postgres
+  shell: |
+    psql -tAc "SELECT 1 FROM pg_database WHERE datname='{{ item }}'" | grep -q 1 || \
+    psql -v ON_ERROR_STOP=1 -c "CREATE DATABASE {{ item }} OWNER admiral"
+  loop:
+    - admiral
+    - admiral_queue
+  changed_when: false
+  when: admiral_install_mode in ['single-node', 'admin-node']
+
+- name: Ensure Harbor PostgreSQL database exists when Harbor is enabled
+  become_user: postgres
+  shell: |
+    psql -tAc "SELECT 1 FROM pg_database WHERE datname='admiral_harbor'" | grep -q 1 || \
+    psql -v ON_ERROR_STOP=1 -c "CREATE DATABASE admiral_harbor OWNER admiral"
+  when: admiral_install_mode in ['single-node', 'admin-node']
+  changed_when: false
+
+- name: Symlink ansible playbooks from package
+  file:
+    src: /usr/share/admiral/ansible
+    dest: /etc/admiral/ansible
+    state: link

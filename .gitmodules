@@ -1,0 +1,15 @@
+[submodule "admirald"]
+	path = admirald
+	url = https://github.com/admiral-project/admirald.git
+[submodule "admiral-fleet"]
+	path = admiral-fleet
+	url = https://github.com/admiral-project/admiral-fleet.git
+[submodule "admiralctl"]
+	path = admiralctl
+	url = https://github.com/admiral-project/admiralctl.git
+[submodule "admiral-flagship"]
+	path = admiral-flagship
+	url = https://github.com/admiral-project/admiral-flagship.git
+[submodule "admiral-harbor"]
+	path = admiral-harbor
+	url = https://github.com/admiral-project/admiral-harbor.git

@@ -1,0 +1,92 @@
+---
+- name: Ensure firewalld is installed
+  package:
+    name: firewalld
+    state: present
+
+- name: Ensure firewalld is enabled and running
+  service:
+    name: firewalld
+    state: started
+    enabled: true
+
+- name: Set default firewalld zone to public
+  command:
+    cmd: firewall-cmd --set-default-zone=public
+  register: firewall_default_zone
+  changed_when: "'success' in firewall_default_zone.stdout"
+
+- name: Ensure public zone target is default deny
+  command:
+    cmd: firewall-cmd --permanent --zone=public --set-target=default
+  register: firewall_public_target
+  changed_when: "'success' in firewall_public_target.stdout"
+
+- name: Remove broad public services from public zone
+  command:
+    cmd: firewall-cmd --permanent --zone=public --remove-service={{ item }}
+  register: firewall_removed_service
+  changed_when: "'success' in firewall_removed_service.stdout"
+  failed_when: false
+  loop:
+    - cockpit
+    - dhcpv6-client
+
+- name: Remove direct public Admiral ports from public zone
+  command:
+    cmd: firewall-cmd --permanent --zone=public --remove-port={{ item }}
+  register: firewall_removed_port
+  changed_when: "'success' in firewall_removed_port.stdout"
+  failed_when: false
+  loop:
+    - 8080/tcp
+    - 8443/tcp
+    - 9099/tcp
+    - 2019/tcp
+    - 5000/tcp
+    - 5001/tcp
+    - 5432/tcp
+    - 6379/tcp
+    - 5671/tcp
+    - 15672/tcp
+    - 50051/tcp
+    - 9000/tcp
+
+- name: Allow only required public services
+  command:
+    cmd: firewall-cmd --permanent --zone=public --add-service={{ item }}
+  register: firewall_allowed_service
+  changed_when: "'success' in firewall_allowed_service.stdout"
+  loop:
+    - ssh
+    - http
+    - https
+
+- name: Reload firewall to apply policy
+  command:
+    cmd: firewall-cmd --reload
+  changed_when: false
+
+- name: Verify effective public services
+  command:
+    cmd: firewall-cmd --zone=public --list-services
+  register: firewall_public_services
+  changed_when: false
+
+- name: Verify effective public ports
+  command:
+    cmd: firewall-cmd --zone=public --list-ports
+  register: firewall_public_ports
+  changed_when: false
+
+- name: Assert only expected public services remain exposed
+  assert:
+    that:
+      - (firewall_public_services.stdout.split() | difference(['ssh', 'http', 'https']) | length) == 0
+    fail_msg: "Unexpected public firewalld services remain enabled: {{ firewall_public_services.stdout }}"
+
+- name: Assert no direct public ports remain exposed
+  assert:
+    that:
+      - firewall_public_ports.stdout | trim == ''
+    fail_msg: "Unexpected direct public firewalld ports remain enabled: {{ firewall_public_ports.stdout }}"

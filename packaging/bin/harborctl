@@ -1,0 +1,32 @@
+#!/usr/bin/python3
+# SPDX-FileCopyrightText: William Moreno Reyes <williamjmorenor@gmail.com>
+# SPDX-License-Identifier: Apache-2.0
+
+import sys
+import os
+
+
+def _load_env_file(env_path):
+    if not os.path.isfile(env_path):
+        return
+    with open(env_path, encoding="utf-8") as fh:
+        for line in fh:
+            line = line.strip()
+            if not line or line.startswith("#"):
+                continue
+            if "=" not in line:
+                continue
+            key, _, val = line.partition("=")
+            key = key.strip()
+            val = val.strip()
+            os.environ.setdefault(key, val)
+
+
+_load_env_file("/etc/admiral/harbor.env")
+
+sys.path.insert(0, "/usr/lib/admiral/harbor")
+
+from app.cli import main
+
+if __name__ == "__main__":
+    main()

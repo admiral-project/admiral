@@ -1,0 +1,40 @@
+---
+- name: Install admiral-flagship
+  dnf:
+    name: admiral-flagship
+    state: present
+
+- name: Deploy admiral-flagship environment
+  copy:
+    dest: /etc/admiral/flagship.env
+    content: |
+      FLAGSHIP_SECRET_KEY={{ admiral_flagship_secret_key_value }}
+      ADMIRAL_API_URL=https://127.0.0.1:8080
+      ADMIRAL_SHARED_TOKEN={{ admiral_shared_token_value }}
+      ADMIRAL_CA_FILE=/etc/admiral/tls/ca.pem
+    mode: "0640"
+    owner: root
+    group: admiral
+  no_log: true
+
+- name: Ensure admiral-flagship systemd override directory exists
+  file:
+    path: /etc/systemd/system/admiral-flagship.service.d
+    state: directory
+    mode: "0755"
+
+- name: Bind admiral-flagship to loopback only
+  copy:
+    dest: /etc/systemd/system/admiral-flagship.service.d/override.conf
+    mode: "0644"
+    content: |
+      [Service]
+      ExecStart=
+      ExecStart=/usr/bin/gunicorn --workers 2 --bind 127.0.0.1:5000 --certfile /etc/admiral/tls/admirald.pem --keyfile /etc/admiral/tls/admirald-key.pem run:app
+
+- name: Enable and start admiral-flagship
+  systemd:
+    name: admiral-flagship
+    enabled: true
+    state: started
+    daemon_reload: true

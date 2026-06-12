@@ -1,0 +1,10 @@
+#!/bin/bash
+# SPDX-FileCopyrightText: William Moreno Reyes <williamjmorenor@gmail.com>
+# SPDX-License-Identifier: Apache-2.0
+#
+# Wrapper to add /usr/local site-packages to PYTHONPATH.
+# Required because gunicorn is invoked with python3 -sP which
+# excludes /usr/local/lib/python*/site-packages.
+
+export PYTHONPATH="${PYTHONPATH:+$PYTHONPATH:}/usr/local/lib64/python3.12/site-packages:/usr/local/lib/python3.12/site-packages"
+exec /usr/bin/gunicorn "$@"

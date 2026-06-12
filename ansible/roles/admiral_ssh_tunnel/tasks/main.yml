@@ -1,0 +1,45 @@
+---
+- name: Ensure SSH service key directory exists
+  file:
+    path: /etc/admiral/ssh
+    state: directory
+    mode: "0700"
+    owner: admiral
+    group: admiral
+
+- name: Generate SSH service key (if not present)
+  command:
+    cmd: >
+      ssh-keygen -t ed25519 -f /etc/admiral/ssh/id_ed25519
+      -C "admiral-tunnel@{{ ansible_fqdn }}"
+      -N ""
+    creates: /etc/admiral/ssh/id_ed25519
+
+- name: Install SSH tunnel systemd service
+  template:
+    src: admiral-tunnel@.service.j2
+    dest: /usr/lib/systemd/system/admiral-tunnel@.service
+    mode: "0644"
+  register: tunnel_unit
+
+- name: Reload systemd after tunnel unit change
+  systemd:
+    daemon_reload: true
+  when: tunnel_unit.changed
+
+- name: Configure SSH client for Admiral tunnel
+  copy:
+    dest: /etc/admiral/ssh/config
+    content: |
+      Host admiral-control-plane
+          HostName {{ admiral_control_plane_host | default('cmd.admiral.local') }}
+          Port {{ admiral_control_plane_port | default(22) }}
+          User admiral
+          IdentityFile /etc/admiral/ssh/id_ed25519
+          StrictHostKeyChecking accept-new
+          ExitOnForwardFailure yes
+          ServerAliveInterval 30
+          ServerAliveCountMax 3
+    mode: "0640"
+    owner: admiral
+    group: admiral

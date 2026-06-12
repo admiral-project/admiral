@@ -1,0 +1,25 @@
+[Unit]
+Description=Admiral Customer Portal
+Documentation=https://github.com/admiral-project/admiral
+After=network-online.target admirald.service
+Wants=network-online.target admirald.service
+
+[Service]
+Type=simple
+EnvironmentFile=/etc/admiral/harbor.env
+ExecStart=/usr/bin/harbor-gunicorn --workers 2 --bind 0.0.0.0:5001 --certfile /etc/admiral/tls/admirald.pem --keyfile /etc/admiral/tls/admirald-key.pem run:app
+WorkingDirectory=/usr/lib/admiral/harbor
+Restart=on-failure
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+
+# Hardening
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectHome=false
+ProtectSystem=full
+SystemCallArchitectures=native
+
+[Install]
+WantedBy=multi-user.target

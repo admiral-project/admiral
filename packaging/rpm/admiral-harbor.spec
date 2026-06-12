@@ -1,0 +1,109 @@
+%global debug_package %{nil}
+%global commit 9be715fa6ef70e608799d5df6ee4278cbd0cbcb0
+
+Name:    admiral-harbor
+Version: 0.0.1alpha2
+Release: 1%{?dist}
+Summary: Admiral Customer Portal - Web UI for end users
+
+License: Apache-2.0
+URL:     https://github.com/admiral-project/admiral-harbor
+Source0: https://github.com/admiral-project/admiral-harbor/archive/%{commit}/admiral-harbor-%{version}.tar.gz
+Source1: admiral-harbor.service
+Source2: admiral-harbor-worker.service
+Source3: admiral-harbor-worker.timer
+Source4: admiral-harbor-catalog-sync.service
+Source5: admiral-harbor-catalog-sync.timer
+Source6: harborctl
+Source7: harbor-gunicorn
+Source8: harbor.env
+
+BuildArch: noarch
+
+BuildRequires: python3
+BuildRequires: systemd
+
+Requires: admiral-common
+Requires: python3-flask
+Requires: python3-flask-login
+Requires: python3-flask-sqlalchemy
+Requires: python3-flask-alembic
+Requires: python3-gunicorn
+Requires: python3-requests
+Requires: python3-argon2-cffi
+Requires: python3-psycopg3
+Requires: python3-psycopg3_c
+Requires: systemd
+
+%description
+admiral-harbor is the customer-facing web portal for Admiral.
+End users interact with harbor to manage their applications, view
+usage, and perform self-service operations.
+
+%prep
+%setup -q -n %{name}-v%{version}
+
+%build
+
+%install
+# Install application files if they exist
+mkdir -p %{buildroot}%{_prefix}/lib/admiral/harbor
+echo "%%dir %{_prefix}/lib/admiral/harbor" > harbor.files
+if [ -d app ]; then
+    cp -r app run.py worker.py cli.py alembic.ini migrations %{buildroot}%{_prefix}/lib/admiral/harbor/
+    find %{buildroot}%{_prefix}/lib/admiral/harbor -type f | sed "s|%{buildroot}||" | sort >> harbor.files
+fi
+# Install harborctl entry point
+install -Dm0755 %{SOURCE6} %{buildroot}%{_bindir}/harborctl
+# Install gunicorn wrapper
+install -Dm0755 %{SOURCE7} %{buildroot}%{_bindir}/harbor-gunicorn
+if [ -f LICENSE ]; then
+    install -Dm0644 LICENSE %{buildroot}%{_licensedir}/admiral-harbor/LICENSE
+else
+    install -Dm0644 /dev/stdin %{buildroot}%{_licensedir}/admiral-harbor/LICENSE <<'EOF'
+Apache License 2.0
+See https://www.apache.org/licenses/LICENSE-2.0
+EOF
+fi
+install -Dm0644 %{SOURCE1} %{buildroot}%{_unitdir}/admiral-harbor.service
+install -Dm0644 %{SOURCE2} %{buildroot}%{_unitdir}/admiral-harbor-worker.service
+install -Dm0644 %{SOURCE3} %{buildroot}%{_unitdir}/admiral-harbor-worker.timer
+install -Dm0644 %{SOURCE4} %{buildroot}%{_unitdir}/admiral-harbor-catalog-sync.service
+install -Dm0644 %{SOURCE5} %{buildroot}%{_unitdir}/admiral-harbor-catalog-sync.timer
+install -Dm0644 %{SOURCE8} %{buildroot}%{_sysconfdir}/admiral/harbor.env
+mkdir -p %{buildroot}%{_localstatedir}/lib/admiral/harbor/uploads
+
+%files -f harbor.files
+%license %{_licensedir}/admiral-harbor/LICENSE
+%{_unitdir}/admiral-harbor.service
+%{_unitdir}/admiral-harbor-worker.service
+%{_unitdir}/admiral-harbor-worker.timer
+%{_unitdir}/admiral-harbor-catalog-sync.service
+%{_unitdir}/admiral-harbor-catalog-sync.timer
+%{_bindir}/harbor-gunicorn
+%{_bindir}/harborctl
+%config(noreplace) %{_sysconfdir}/admiral/harbor.env
+%dir %attr(0750, admiral, admiral) %{_localstatedir}/lib/admiral/harbor
+%dir %attr(0750, admiral, admiral) %{_localstatedir}/lib/admiral/harbor/uploads
+
+%post
+%systemd_post admiral-harbor.service
+%systemd_post admiral-harbor-worker.timer
+%systemd_post admiral-harbor-catalog-sync.timer
+restorecon -R %{_prefix}/lib/admiral/harbor 2>/dev/null || :
+chown -R admiral:admiral %{_localstatedir}/lib/admiral/harbor 2>/dev/null || :
+restorecon -R %{_localstatedir}/lib/admiral/harbor 2>/dev/null || :
+
+%preun
+%systemd_preun admiral-harbor.service
+%systemd_preun admiral-harbor-worker.timer
+%systemd_preun admiral-harbor-catalog-sync.timer
+
+%postun
+%systemd_postun_with_restart admiral-harbor.service
+%systemd_postun admiral-harbor-worker.timer
+%systemd_postun admiral-harbor-catalog-sync.timer
+
+%changelog
+* Wed Jun 03 2026 Admiral Project <dev@admiral-project.org> - 0.1.0-1
+- Initial Admiral packaging

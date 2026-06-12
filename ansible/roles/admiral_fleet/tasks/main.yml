@@ -1,0 +1,45 @@
+---
+- name: Install admiral-fleet
+  dnf:
+    name: admiral-fleet
+    state: present
+
+- name: Require remote control-plane settings for worker-node installs
+  assert:
+    that:
+      - fleet_api_url is defined
+      - fleet_queue_database_url is defined
+    fail_msg: "worker-node installs require fleet_api_url and fleet_queue_database_url to be provided explicitly."
+  when: admiral_install_mode == 'worker-node'
+
+- name: Deploy admiral-fleet configuration
+  copy:
+    dest: /etc/admiral/fleet.env
+    content: |
+      ADMIRAL_FLEET_NODE_ID={{ fleet_node_id | default(ansible_hostname) }}
+      ADMIRAL_SHARED_TOKEN={{ admirald_shared_token | default(admiral_shared_token_value) }}
+      ADMIRAL_API_URL={{ fleet_api_url | default('https://127.0.0.1:8080') }}
+      ADMIRAL_API_CA_FILE=/etc/admiral/tls/ca.pem
+      ADMIRAL_QUEUE_DATABASE_URL={{ fleet_queue_database_url | default('postgres://admiral:' ~ admiral_postgres_password ~ '@127.0.0.1:5432/admiral_queue?sslmode=disable') }}
+      ADMIRAL_FLEET_EXECUTOR={{ fleet_executor | default('systemd-podman') }}
+      ADMIRAL_FLEET_DATA_DIR=/var/lib/admiral
+      ADMIRAL_FLEET_CALLBACK_OUTBOX=/var/lib/admiral/outbox
+      ADMIRAL_FLEET_HTTP_ADDR={{ fleet_http_addr | default('127.0.0.1:9099') }}
+      ADMIRAL_FLEET_ROOTLESS_USER={{ fleet_rootless_user | default('admiral-apps') }}
+    mode: "0640"
+    owner: root
+    group: admiral
+  no_log: true
+
+- name: Create quadlet directory
+  file:
+    path: /etc/containers/systemd/admiral
+    state: directory
+    mode: "0755"
+
+- name: Enable and start admiral-fleet
+  systemd:
+    name: admiral-fleet
+    enabled: true
+    state: started
+    daemon_reload: true

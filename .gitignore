@@ -1,0 +1,17 @@
+*.tar.gz
+*.zip
+*.exe
+*.rpm
+__pycache__/
+*.pyc
+
+# RPM build artifacts
+/packaging/build/
+
+# Sensitive app definitions (DO NOT COMMIT)
+/examples/apps/cacao-conector.yaml
+
+# Go binaries
+/admirald/admirald
+/admiral-fleet/admiral-fleet
+/admiralctl/admiralctl

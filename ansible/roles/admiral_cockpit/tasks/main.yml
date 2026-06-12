@@ -1,0 +1,27 @@
+---
+- name: Install cockpit
+  dnf:
+    name: cockpit
+    state: present
+
+- name: Ensure cockpit.socket override directory exists
+  file:
+    path: /etc/systemd/system/cockpit.socket.d
+    state: directory
+    mode: "0755"
+
+- name: Bind cockpit.socket to loopback only
+  copy:
+    dest: /etc/systemd/system/cockpit.socket.d/override.conf
+    mode: "0644"
+    content: |
+      [Socket]
+      ListenStream=
+      ListenStream=127.0.0.1:9090
+
+- name: Enable and start cockpit.socket
+  systemd:
+    name: cockpit.socket
+    enabled: true
+    state: started
+    daemon_reload: true

@@ -1,0 +1,18 @@
+modules = ["nodejs-20", "python-3.11"]
+
+[[ports]]
+localPort = 5000
+externalPort = 80
+exposeLocalhost = true
+
+[[ports]]
+localPort = 5001
+externalPort = 3000
+exposeLocalhost = true
+
+
+[agent]
+expertMode = true
+
+[nix]
+packages = ["vim", "go", "bwrap"]

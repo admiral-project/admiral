@@ -1,0 +1,26 @@
+[Unit]
+Description=Admiral Administrative Web Console
+Documentation=https://github.com/admiral-project/admiral
+After=network-online.target admirald.service
+Wants=network-online.target admirald.service
+
+[Service]
+Type=simple
+EnvironmentFile=/etc/admiral/flagship.env
+ExecStart=/usr/bin/gunicorn --workers 2 --bind 0.0.0.0:5000 --certfile /etc/admiral/tls/admirald.pem --keyfile /etc/admiral/tls/admirald-key.pem run:app
+WorkingDirectory=/usr/lib/admiral/flagship
+Restart=on-failure
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+
+# Hardening
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectHome=read-only
+ProtectSystem=full
+CapabilityBoundingSet=
+SystemCallArchitectures=native
+
+[Install]
+WantedBy=multi-user.target

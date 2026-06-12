@@ -1,0 +1,33 @@
+name: uptime-kuma
+display_name: Uptime Kuma
+description: Lightweight uptime monitoring with SQLite persistence.
+
+services:
+  web:
+    image: docker.io/louislam/uptime-kuma:1
+    port: 3001
+    public: true
+    volume: kuma_data
+    backup:
+      type: volume
+    healthcheck:
+      type: http
+      path: /
+      expected_status: 200
+
+tiers:
+  small:
+    cpu: 1
+    memory: 256M
+    storage: 512M
+    price_monthly: 3
+    backups:
+      enabled: true
+      schedule: daily
+      time: "05:00"
+      timezone: UTC
+      retention:
+        count: 3
+        days: 14
+      backup_database: false
+      backup_volumes: true

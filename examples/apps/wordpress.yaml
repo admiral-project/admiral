@@ -1,0 +1,60 @@
+name: wp
+display_name: WordPress
+description: Minimal WordPress deployment for Admiral end-to-end validation.
+
+services:
+  web:
+    image: docker.io/library/wordpress:6
+    port: 80
+    public: true
+    volume: wp_content
+    backup:
+      type: volume
+    env:
+      WORDPRESS_DB_HOST: 127.0.0.1
+      WORDPRESS_DB_NAME: wordpress
+    secrets:
+      WORDPRESS_DB_USER:
+        generate: username
+        expose: true
+      WORDPRESS_DB_PASSWORD:
+        generate: password
+        expose: true
+
+  db:
+    image: docker.io/library/mariadb:10
+    volume: db_data
+    backup:
+      type: database
+      engine: mariadb
+      database_env: MARIADB_DATABASE
+      username_env: MARIADB_USER
+      password_env: MARIADB_PASSWORD
+    env:
+      MARIADB_DATABASE: wordpress
+    secrets:
+      MARIADB_ROOT_PASSWORD:
+        generate: password
+      MARIADB_USER:
+        generate: username
+        expose: true
+      MARIADB_PASSWORD:
+        generate: password
+        expose: true
+
+tiers:
+  small:
+    cpu: 1
+    memory: 512M
+    storage: 1G
+    price_monthly: 5
+    backups:
+      enabled: true
+      schedule: daily
+      time: "02:00"
+      timezone: UTC
+      retention:
+        count: 7
+        days: 30
+      backup_database: true
+      backup_volumes: true

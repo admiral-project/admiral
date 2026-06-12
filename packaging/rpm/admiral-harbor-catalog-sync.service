@@ -1,0 +1,24 @@
+# SPDX-FileCopyrightText: William Moreno Reyes <williamjmorenor@gmail.com>
+# SPDX-License-Identifier: Apache-2.0
+
+[Unit]
+Description=Admiral Harbor Catalog Synchronization Service
+After=network.target admiral-harbor.service
+Requires=admiral-harbor.service
+
+[Service]
+Type=oneshot
+User=admiral-harbor
+Group=admiral-harbor
+WorkingDirectory=/opt/admiral-harbor
+
+# Execute catalog sync CLI
+ExecStart=/usr/bin/python3 -m cli sync
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=admiral-harbor-catalog-sync
+
+[Install]
+WantedBy=multi-user.target

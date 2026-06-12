@@ -1,0 +1,26 @@
+[Unit]
+Description=Admiral SSH Tunnel to %i
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=admiral
+ExecStart=/usr/bin/ssh -N -T \
+    -F /etc/admiral/ssh/config \
+    -o ServerAliveInterval=30 \
+    -o ServerAliveCountMax=3 \
+    -o ExitOnForwardFailure=yes \
+    -L {{ tunnel_local_port | default(8080) }}:127.0.0.1:{{ tunnel_remote_port | default(8080) }} \
+    admiral-control-plane
+Restart=on-failure
+RestartSec=10
+
+# Hardening
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectHome=true
+ProtectSystem=full
+
+[Install]
+WantedBy=multi-user.target

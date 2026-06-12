@@ -1,0 +1,79 @@
+---
+- name: Check if SELinux is enabled
+  command: getenforce
+  register: selinux_status
+  changed_when: false
+  failed_when: false
+
+- name: Ensure SELinux is enforcing
+  command: setenforce 1
+  when: selinux_status.stdout == "Permissive"
+
+- name: Query available SELinux booleans
+  shell: getsebool -a | awk '{print $1}'
+  register: selinux_booleans
+  changed_when: false
+  failed_when: false
+  when: selinux_status.rc == 0
+
+- name: Probe SELinux boolean httpd_can_network_connect
+  shell: getsebool -a | grep -q '^httpd_can_network_connect[[:space:]]'
+  register: httpd_can_network_connect_probe
+  changed_when: false
+  failed_when: false
+  when: selinux_status.rc == 0
+
+- name: Enable SELinux boolean httpd_can_network_connect
+  command: setsebool -P httpd_can_network_connect on
+  when:
+    - selinux_status.rc == 0
+    - httpd_can_network_connect_probe.rc == 0
+  changed_when: false
+  failed_when: false
+
+- name: Probe SELinux boolean container_manage_cgroup
+  shell: getsebool -a | grep -q '^container_manage_cgroup[[:space:]]'
+  register: container_manage_cgroup_probe
+  changed_when: false
+  failed_when: false
+  when: selinux_status.rc == 0
+
+- name: Enable SELinux boolean container_manage_cgroup
+  command: setsebool -P container_manage_cgroup on
+  when:
+    - selinux_status.rc == 0
+    - container_manage_cgroup_probe.rc == 0
+  changed_when: false
+  failed_when: false
+
+- name: Set SELinux context for /var/lib/admiral
+  file:
+    path: /var/lib/admiral
+    setype: var_lib_t
+    state: directory
+    recurse: true
+  when: selinux_status.rc == 0
+
+- name: Set SELinux context for /etc/admiral
+  file:
+    path: /etc/admiral
+    setype: etc_t
+    state: directory
+    recurse: true
+  when: selinux_status.rc == 0
+
+- name: Add SELinux file context rule for admiral-apps
+  command:
+    cmd: >
+      semanage fcontext -a -t container_file_t
+      '/var/lib/admiral-apps/.local/share/containers/storage(/.*)?'
+  register: fcontext_result
+  failed_when: false
+  changed_when: fcontext_result.rc == 0
+  when: selinux_status.rc == 0
+
+- name: Apply SELinux file context to /var/lib/admiral-apps
+  command:
+    cmd: restorecon -R /var/lib/admiral-apps/
+  when: selinux_status.rc == 0
+  ignore_errors: true

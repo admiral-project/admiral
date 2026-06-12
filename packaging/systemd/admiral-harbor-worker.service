@@ -1,0 +1,23 @@
+[Unit]
+Description=Admiral Harbor reconciliation worker
+Documentation=https://github.com/admiral-project/admiral
+After=network-online.target admirald.service
+Wants=network-online.target admirald.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/python3 /usr/lib/admiral/harbor/worker.py
+WorkingDirectory=/usr/lib/admiral/harbor
+StandardOutput=journal
+StandardError=journal
+
+# Hardening
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectHome=true
+ProtectSystem=full
+CapabilityBoundingSet=
+SystemCallArchitectures=native
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,38 @@
+[Unit]
+Description=Admiral Control Plane
+Documentation=https://github.com/admiral-project/admiral
+After=network-online.target postgresql.service
+Wants=network-online.target postgresql.service
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/admirald
+Restart=on-failure
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+Environment=ADMIRAL_PORT=8080
+Environment=ADMIRAL_LISTEN_ADDRESS=127.0.0.1
+
+# Runtime directories
+ReadWritePaths=/var/lib/admiral /var/log/admiral
+
+# User
+User=admiral
+Group=admiral
+
+# Hardening
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectHome=true
+ProtectSystem=full
+CapabilityBoundingSet=
+SystemCallArchitectures=native
+PrivateDevices=true
+ProtectKernelModules=true
+ProtectKernelTunables=true
+ProtectControlGroups=true
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6 AF_NETLINK
+
+[Install]
+WantedBy=multi-user.target
