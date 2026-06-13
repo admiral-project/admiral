@@ -6,7 +6,7 @@
 
 Name:    admirald
 Version: 0.0.1alpha3
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: Admiral Control Plane - Core API and orchestration service
 
 License: Apache-2.0
@@ -63,6 +63,9 @@ restorecon -F %{_bindir}/admirald 2>/dev/null || :
 %systemd_postun_with_restart admirald.service
 
 %changelog
+* Sat Jun 13 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1alpha3-2
+- Add X-Forwarded-Proto header to reverse proxy routes for Cockpit compatibility
+
 * Sat Jun 13 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1alpha3-1
 - Bump admirald packaging to alpha3
 
