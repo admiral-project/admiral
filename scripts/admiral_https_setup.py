@@ -18,7 +18,9 @@ Usage:
 """
 
 import argparse
+import grp
 import os
+import pwd
 import re
 import shutil
 import socket
@@ -275,6 +277,47 @@ def _read_ini(key):
     return None
 
 
+def _ensure_caddy_can_read_letsencrypt_paths(cert_file, key_file):
+    caddy_user = pwd.getpwnam("caddy")
+    caddy_group = grp.getgrnam("caddy")
+    letsencrypt_root = "/etc/letsencrypt"
+
+    managed_dirs = set()
+    managed_files = set()
+
+    def collect_dirs(path):
+        current = os.path.dirname(path)
+        while current.startswith(letsencrypt_root) and current != letsencrypt_root:
+            managed_dirs.add(current)
+            current = os.path.dirname(current)
+
+    for path in (cert_file, key_file):
+        real_path = os.path.realpath(path)
+        managed_files.add(real_path)
+        collect_dirs(path)
+        collect_dirs(real_path)
+
+    for directory in sorted(managed_dirs):
+        st = os.stat(directory)
+        if st.st_uid == 0:
+            os.chown(directory, caddy_user.pw_uid, caddy_group.gr_gid)
+            info(f"Changed owner to caddy: {directory}")
+        current_mode = st.st_mode & 0o777
+        if current_mode != 0o750:
+            os.chmod(directory, 0o750)
+            info(f"Corrected permissions to 750: {directory}")
+
+    for path in sorted(managed_files):
+        st = os.stat(path)
+        if st.st_uid == 0:
+            os.chown(path, caddy_user.pw_uid, caddy_group.gr_gid)
+            info(f"Changed owner to caddy: {path}")
+        current_mode = st.st_mode & 0o777
+        if current_mode != 0o640:
+            os.chmod(path, 0o640)
+            info(f"Corrected permissions to 640: {path}")
+
+
 def configure_admirald(domain, apps_domain, cert_dir):
     cert_file = f"{cert_dir}/fullchain.pem"
     key_file = f"{cert_dir}/privkey.pem"
@@ -283,17 +326,10 @@ def configure_admirald(domain, apps_domain, cert_dir):
         if not os.path.isfile(f):
             fail(f"Missing: {f}")
 
-    # Set permissions so caddy can read the cert
-    # admirald runs as root, caddy runs as caddy user
-    caddy_group = subprocess.run(
-        ["getent", "group", "caddy"],
-        capture_output=True, text=True,
-    ).returncode == 0
-    if caddy_group:
-        subprocess.run(["chgrp", "caddy", cert_file, key_file], check=True)
-    subprocess.run(["chmod", "640", cert_file, key_file], check=True)
-
-    # Create systemd override for admirald
+    # Certbot often leaves live/archive entries owned by root or with modes that
+    # prevent Caddy from traversing the directory chain and reading the resolved
+    # certificate files.
+    _ensure_caddy_can_read_letsencrypt_paths(cert_file, key_file)
     override_dir = "/etc/systemd/system/admirald.service.d"
     os.makedirs(override_dir, exist_ok=True)
 
