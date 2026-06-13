@@ -38,6 +38,28 @@
     group: admiral
   no_log: true
 
+- name: Check if admiral-harbor SMTP environment exists
+  stat:
+    path: /etc/admiral/harbor.smtp.env
+  register: harbor_smtp_env
+
+- name: Deploy admiral-harbor SMTP environment
+  copy:
+    dest: /etc/admiral/harbor.smtp.env
+    content: |
+      HARBOR_SMTP_HOST=
+      HARBOR_SMTP_PORT=587
+      HARBOR_SMTP_USERNAME=
+      HARBOR_SMTP_PASSWORD=
+      HARBOR_SMTP_USE_TLS=1
+      HARBOR_SMTP_USE_SSL=0
+      HARBOR_EMAIL_CONFIRMATION_TTL_HOURS=72
+    mode: "0640"
+    owner: root
+    group: admiral
+  no_log: true
+  when: not harbor_smtp_env.stat.exists
+
 - name: Remove legacy admiral-harbor systemd override
   file:
     path: /etc/systemd/system/admiral-harbor.service.d
@@ -63,6 +85,13 @@
     enabled: true
     state: started
     daemon_reload: true
+
+- name: Remind operator to configure SMTP
+  debug:
+    msg: >-
+      Admiral Harbor SMTP is provisioned in /etc/admiral/harbor.smtp.env.
+      Update it with the real SMTP host, credentials, and transport settings
+      before relying on email confirmation in production.
 
 - name: Read Harbor user inventory
   command:
