@@ -6,7 +6,7 @@
 
 Name:    admirald
 Version: 0.0.1alpha2
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: Admiral Control Plane - Core API and orchestration service
 
 License: Apache-2.0
@@ -63,5 +63,9 @@ restorecon -F %{_bindir}/admirald 2>/dev/null || :
 %systemd_postun_with_restart admirald.service
 
 %changelog
+* Sat Jun 13 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1alpha2-2
+- Support TLS upstream transports for fixed public routes
+- Align packaged networking defaults with loopback TLS services
+
 * Wed Jun 03 2026 Admiral Project <dev@admiral-project.org> - 0.1.0-1
 - Initial Admiral packaging

@@ -6,7 +6,7 @@
 
 Name:    admiral-flagship
 Version: 0.0.1alpha2
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: Admiral Administrative Web Console
 
 License: Apache-2.0
@@ -72,5 +72,9 @@ restorecon -R %{_prefix}/lib/admiral/flagship 2>/dev/null || :
 %systemd_postun_with_restart admiral-flagship.service
 
 %changelog
+* Sat Jun 13 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1alpha2-2
+- Bind flagship to loopback in the packaged unit
+- Run flagship under the admiral service account
+
 * Wed Jun 03 2026 Admiral Project <dev@admiral-project.org> - 0.1.0-1
 - Initial Admiral packaging

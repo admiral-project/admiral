@@ -5,7 +5,7 @@
 
 Name:    admiral-common
 Version: 0.0.1alpha2
-Release: 2%{?dist}
+Release: 3%{?dist}
 Summary: Common files and utilities for Admiral PaaS
 
 License: Apache-2.0
@@ -137,6 +137,10 @@ if [ $1 -eq 0 ]; then
 fi
 
 %changelog
+* Sat Jun 13 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1alpha2-3
+- Align single-node playbooks with loopback TLS upstream defaults
+- Update HTTPS setup to reserve wildcard TLS for apps only
+
 * Sat Jun 13 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1alpha2-2
 - Refresh system packages after enabling repositories
 - Ensure PostgreSQL runtime directory exists before service startup
