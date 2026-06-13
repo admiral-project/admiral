@@ -7,6 +7,7 @@ admiral_https_setup - Post-install HTTPS for Admiral.
 
 Obtains a Let's Encrypt wildcard certificate via DNS-01 ACME challenge
 for *.apps.<DOMAIN>, then configures admirald to use it.
+The DNS TXT step is interactive and is intentionally not handled by Ansible.
 
 Admirald manages Caddy routes dynamically via its Admin API.
 This script only provisions the certificate and sets the env vars.

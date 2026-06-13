@@ -380,6 +380,7 @@ scp /etc/admiral/secrets user@backup-server:/backup/admiral/
 ### DNS and HTTPS (Production)
 
 HTTPS is intentionally not configured by the installer. A valid wildcard certificate for `*.apps.<YOUR_DOMAIN>` is required.
+The installer and Ansible do not manage DNS records for this step.
 
 Run the HTTPS setup script:
 
@@ -387,7 +388,7 @@ Run the HTTPS setup script:
 sudo admiral_https_setup --domain cloud.example.com
 ```
 
-This script uses certbot with a DNS-01 ACME challenge to obtain a Let's Encrypt wildcard certificate. **DNS-01 requires manual intervention** — you must add a TXT record to your DNS zone when prompted.
+This script uses certbot with a DNS-01 ACME challenge to obtain a Let's Encrypt wildcard certificate. **DNS-01 requires manual intervention** — you must add a TXT record to your DNS zone when prompted. That interactive DNS step is handled here, not by Ansible.
 
 Supported DNS providers (install the corresponding certbot plugin):
 

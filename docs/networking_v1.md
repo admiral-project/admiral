@@ -503,6 +503,15 @@ Antes de publicar una ruta se valida:
 - **Official mechanism for bootstrap:** Es la herramienta oficial para la preparación de nuevos nodos.
 - Tareas administrativas: Instalación de dependencias (`podman`, `wireguard-tools`), configuración de usuarios rootless, configuración de `wg0`, e instalación/actualización de `admiral-fleet`.
 - Delegación de tareas: Las tareas de mantenimiento del host se delegan a Ansible vía SSH, evitando sobrecargar los agentes con lógica de nivel de sistema operativo.
+- Ansible no crea ni valida los registros DNS del wildcard `*.apps.<domain>`.
+- La obtención del wildcard se hace con `scripts/admiral_https_setup.py`, porque el DNS-01 challenge requiere intervención manual del operador.
+
+### 11.3.1 `scripts/admiral_https_setup.py`
+
+- Ejecuta el flujo interactivo de DNS-01 para obtener el wildcard de Let's Encrypt.
+- Solicita al operador publicar el TXT record requerido por certbot.
+- Corrige permisos de `/etc/letsencrypt` para que Caddy pueda leer el wildcard.
+- Escribe el drop-in `10-https.conf` para `admirald` después de completar el challenge.
 
 ### 11.4 admiralctl
 

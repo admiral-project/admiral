@@ -268,6 +268,8 @@ EOF
 
 ### Modo Producción (DNS público, Let's Encrypt)
 
+Ansible no debe intervenir en la creación ni validación de los registros DNS del wildcard. Esa parte queda a cargo de `scripts/admiral_https_setup.py`, que guía el DNS-01 challenge de forma interactiva.
+
 ```bash
 # Obtener wildcard DNS-01
 dnf install -y certbot
