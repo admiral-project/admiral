@@ -347,7 +347,7 @@ def configure_admirald(domain, apps_domain, cert_dir):
     )
     cockpit_target = os.environ.get(
         "ADMIRAL_NETWORKING_COCKPIT_TARGET",
-        _read_ini("networking_cockpit_target") or "https://127.0.0.1:9090",
+        _read_ini("networking_cockpit_target") or "http://127.0.0.1:9090",
     )
 
     override_content = f"""[Service]
