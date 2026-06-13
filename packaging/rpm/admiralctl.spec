@@ -2,10 +2,10 @@
 # SPDX-License-Identifier: Apache-2.0
 
 %global debug_package %{nil}
-%global commit ecd8bcae804e6329314564f1e43c29d06c77266d
+%global commit 65721ccce087f400640e17a17d3d9a1b2bf8edae
 
 Name:    admiralctl
-Version: 0.0.1alpha2
+Version: 0.0.1alpha3
 Release: 1%{?dist}
 Summary: Admiral Command-Line Interface
 
@@ -30,7 +30,7 @@ management, backup operations, and troubleshooting.
 
 %build
 cd admiralctl
-go build -buildmode=pie -ldflags="-s -w" -o admiralctl ./cmd/admiralctl/
+go build -buildmode=pie -ldflags="-s -w -X main.Version=%{version}" -o admiralctl ./cmd/admiralctl/
 
 %install
 cd admiralctl
@@ -54,5 +54,8 @@ go test ./...
 restorecon -F %{_bindir}/admiralctl 2>/dev/null || :
 
 %changelog
+* Sat Jun 13 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1alpha3-1
+- Bump admiralctl packaging to alpha3
+
 * Wed Jun 03 2026 Admiral Project <dev@admiral-project.org> - 0.1.0-1
 - Initial Admiral packaging

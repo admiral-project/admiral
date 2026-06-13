@@ -1,11 +1,11 @@
 # SPDX-FileCopyrightText: William Moreno Reyes CP | MBA
 # SPDX-License-Identifier: Apache-2.0
 
-%global commit 1c0f4f0cf1b99a090353826b572fdf249e8548ee
+%global commit 65721ccce087f400640e17a17d3d9a1b2bf8edae
 
 Name:    admiral-common
-Version: 0.0.1alpha2
-Release: 3%{?dist}
+Version: 0.0.1alpha3
+Release: 1%{?dist}
 Summary: Common files and utilities for Admiral PaaS
 
 License: Apache-2.0
@@ -137,13 +137,8 @@ if [ $1 -eq 0 ]; then
 fi
 
 %changelog
-* Sat Jun 13 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1alpha2-3
-- Align single-node playbooks with loopback TLS upstream defaults
-- Update HTTPS setup to reserve wildcard TLS for apps only
-
-* Sat Jun 13 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1alpha2-2
-- Refresh system packages after enabling repositories
-- Ensure PostgreSQL runtime directory exists before service startup
+* Sat Jun 13 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1alpha3-1
+- Bump Admiral common packaging to alpha3
 
 * Wed Jun 03 2026 Admiral Project <dev@admiral-project.org> - 0.1.0-1
 - Initial Admiral packaging
