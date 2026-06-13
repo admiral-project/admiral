@@ -50,6 +50,20 @@
     state: started
     daemon_reload: true
 
+- name: Enable and start admiral-harbor worker timer
+  systemd:
+    name: admiral-harbor-worker.timer
+    enabled: true
+    state: started
+    daemon_reload: true
+
+- name: Enable and start admiral-harbor catalog sync timer
+  systemd:
+    name: admiral-harbor-catalog-sync.timer
+    enabled: true
+    state: started
+    daemon_reload: true
+
 - name: Read Harbor user inventory
   command:
     cmd: harborctl user list --output json
