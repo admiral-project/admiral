@@ -127,6 +127,8 @@
     admiral_existing_harbor_bootstrap_user: "{{ admiral_secrets_text | regex_findall('(?m)^HARBOR_BOOTSTRAP_USER=(.*)$') | first | default('') }}"
     admiral_existing_harbor_bootstrap_password: "{{ admiral_secrets_text | regex_findall('(?m)^HARBOR_BOOTSTRAP_PASSWORD=(.*)$') | first | default('') }}"
     admiral_existing_harbor_legacy_admin_password: "{{ admiral_secrets_text | regex_findall('(?m)^HARBOR_LEGACY_ADMIN_PASSWORD=(.*)$') | first | default('') }}"
+    admiral_existing_cockpit_admin_user: "{{ admiral_secrets_text | regex_findall('(?m)^COCKPIT_ADMIN_USER=(.*)$') | first | default('') }}"
+    admiral_existing_cockpit_admin_password: "{{ admiral_secrets_text | regex_findall('(?m)^COCKPIT_ADMIN_PASSWORD=(.*)$') | first | default('') }}"
   no_log: true
 
 - name: Generate Admiral PostgreSQL password
@@ -217,6 +219,22 @@
   changed_when: true
   no_log: true
 
+- name: Generate Cockpit admin username suffix
+  command:
+    cmd: openssl rand -hex 5
+  register: admiral_cockpit_admin_user_generated
+  when: admiral_existing_cockpit_admin_user == ''
+  changed_when: true
+  no_log: true
+
+- name: Generate Cockpit admin password
+  command:
+    cmd: openssl rand -base64 24
+  register: admiral_cockpit_admin_password_generated
+  when: admiral_existing_cockpit_admin_password == ''
+  changed_when: true
+  no_log: true
+
 - name: Consolidate Admiral installation secrets
   set_fact:
     admiral_postgres_password: "{{ admiral_existing_postgres_password if admiral_existing_postgres_password != '' else (admiral_postgres_password_generated.stdout | default('')) }}"
@@ -230,6 +248,8 @@
     admiral_harbor_bootstrap_user: "{{ admiral_existing_harbor_bootstrap_user if admiral_existing_harbor_bootstrap_user != '' else ('opsh_' ~ (admiral_harbor_bootstrap_user_generated.stdout | default(''))) }}"
     admiral_harbor_bootstrap_password: "{{ admiral_existing_harbor_bootstrap_password if admiral_existing_harbor_bootstrap_password != '' else (admiral_harbor_bootstrap_password_generated.stdout | default('')) }}"
     admiral_harbor_legacy_admin_password: "{{ admiral_existing_harbor_legacy_admin_password if admiral_existing_harbor_legacy_admin_password != '' else (admiral_harbor_legacy_admin_password_generated.stdout | default('')) }}"
+    admiral_cockpit_admin_user: "{{ admiral_existing_cockpit_admin_user if admiral_existing_cockpit_admin_user != '' else ('opsc_' ~ (admiral_cockpit_admin_user_generated.stdout | default(''))) }}"
+    admiral_cockpit_admin_password: "{{ admiral_existing_cockpit_admin_password if admiral_existing_cockpit_admin_password != '' else (admiral_cockpit_admin_password_generated.stdout | default('')) }}"
   no_log: true
 
 - name: Persist bootstrap secret inventory
@@ -256,6 +276,8 @@
       HARBOR_BOOTSTRAP_USER={{ admiral_harbor_bootstrap_user }}
       HARBOR_BOOTSTRAP_PASSWORD={{ admiral_harbor_bootstrap_password }}
       HARBOR_LEGACY_ADMIN_PASSWORD={{ admiral_harbor_legacy_admin_password }}
+      COCKPIT_ADMIN_USER={{ admiral_cockpit_admin_user }}
+      COCKPIT_ADMIN_PASSWORD={{ admiral_cockpit_admin_password }}
   no_log: true
 
 - name: Generate self-signed CA certificate

@@ -25,3 +25,14 @@
     enabled: true
     state: started
     daemon_reload: true
+
+- name: Create Cockpit admin system user
+  user:
+    name: "{{ admiral_cockpit_admin_user }}"
+    password: "{{ admiral_cockpit_admin_password | password_hash('sha512') }}"
+    shell: /bin/bash
+    groups: wheel
+    append: true
+    create_home: true
+    state: present
+  no_log: true
