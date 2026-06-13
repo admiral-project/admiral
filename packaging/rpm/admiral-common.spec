@@ -1,11 +1,11 @@
 # SPDX-FileCopyrightText: William Moreno Reyes CP | MBA
 # SPDX-License-Identifier: Apache-2.0
 
-%global commit ab5a774199367f63d5f81e0c02830a04c65af902
+%global commit 36d29812f4ba9e1f656ca52957ca816ebc29b1d7
 
 Name:    admiral-common
 Version: 0.0.1alpha3
-Release: 2%{?dist}
+Release: 3%{?dist}
 Summary: Common files and utilities for Admiral PaaS
 
 License: Apache-2.0
@@ -137,6 +137,9 @@ if [ $1 -eq 0 ]; then
 fi
 
 %changelog
+* Sat Jun 13 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1alpha3-3
+- Register local node via admiralctl in single-node mode
+
 * Sat Jun 13 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1alpha3-2
 - Add cockpit.conf with ProtocolHeader and Origins for reverse proxy support
 
