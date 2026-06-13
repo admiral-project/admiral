@@ -5,7 +5,7 @@
 
 Name:    admiral-common
 Version: 0.0.1alpha2
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: Common files and utilities for Admiral PaaS
 
 License: Apache-2.0
@@ -137,5 +137,9 @@ if [ $1 -eq 0 ]; then
 fi
 
 %changelog
+* Sat Jun 13 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1alpha2-2
+- Refresh system packages after enabling repositories
+- Ensure PostgreSQL runtime directory exists before service startup
+
 * Wed Jun 03 2026 Admiral Project <dev@admiral-project.org> - 0.1.0-1
 - Initial Admiral packaging

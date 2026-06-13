@@ -347,6 +347,15 @@
     group: root
   when: admiral_install_mode in ['single-node', 'admin-node']
 
+- name: Ensure PostgreSQL runtime directory exists
+  file:
+    path: /run/postgresql
+    state: directory
+    mode: "0755"
+    owner: postgres
+    group: postgres
+  when: admiral_install_mode in ['single-node', 'admin-node']
+
 - name: Initialize PostgreSQL database cluster
   command:
     cmd: postgresql-setup --initdb
