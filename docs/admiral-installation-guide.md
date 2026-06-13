@@ -29,8 +29,8 @@ Soporta dos modos de operación:
 |---|---|---|---|---|
 | `admirald` | 8080 | HTTPS | 127.0.0.1 | 127.0.0.1 |
 | `admiral-fleet` | 9099 | HTTP | 127.0.0.1 | 127.0.0.1 |
-| `admiral-flagship` | 5000 | HTTPS | **0.0.0.0** | **0.0.0.0** |
-| `admiral-harbor` | 5001 | HTTPS | **0.0.0.0** | **0.0.0.0** |
+| `admiral-flagship` | 5000 | HTTPS | 127.0.0.1 | 127.0.0.1 |
+| `admiral-harbor` | 5001 | HTTPS | 127.0.0.1 | 127.0.0.1 |
 | PostgreSQL | 5432 | TCP | 127.0.0.1 | 127.0.0.1 |
 | Caddy admin | 2019 | HTTP | 127.0.0.1 | 127.0.0.1 |
 | Apps | 40000-49999 | Variable | 0.0.0.0 | 0.0.0.0 |
@@ -298,9 +298,16 @@ networking_tls_provider=letsencrypt
 networking_tls_email=ops@<DOMAIN>
 networking_tls_cert_file=/etc/letsencrypt/live/apps.<DOMAIN>/fullchain.pem
 networking_tls_key_file=/etc/letsencrypt/live/apps.<DOMAIN>/privkey.pem
+networking_portal_target=https://127.0.0.1:5001
+networking_flagship_target=https://127.0.0.1:5000
+networking_cockpit_target=https://127.0.0.1:9090
 caddy_admin_url=http://127.0.0.1:2019
 EOF
 ```
+
+> El wildcard manual cubre `*.apps.<DOMAIN>` y `apps.<DOMAIN>`.
+> `portal.<DOMAIN>`, `flagship.<DOMAIN>` y `cockpit.<DOMAIN>` usan certificados
+> automáticos gestionados por Caddy.
 
 ## 10. Configurar fleet
 

@@ -7,7 +7,7 @@ Wants=network-online.target admirald.service
 [Service]
 Type=simple
 EnvironmentFile=/etc/admiral/harbor.env
-ExecStart=/usr/bin/harbor-gunicorn --workers 2 --bind 0.0.0.0:5001 --certfile /etc/admiral/tls/admirald.pem --keyfile /etc/admiral/tls/admirald-key.pem run:app
+ExecStart=/usr/bin/harbor-gunicorn --workers 2 --bind 127.0.0.1:5001 --certfile /etc/admiral/tls/admirald.pem --keyfile /etc/admiral/tls/admirald-key.pem run:app
 WorkingDirectory=/usr/lib/admiral/harbor
 Restart=on-failure
 RestartSec=10
@@ -17,9 +17,11 @@ StandardError=journal
 # Hardening
 NoNewPrivileges=true
 PrivateTmp=true
-ProtectHome=false
+ProtectHome=read-only
 ProtectSystem=full
 SystemCallArchitectures=native
+User=admiral
+Group=admiral
 
 [Install]
 WantedBy=multi-user.target

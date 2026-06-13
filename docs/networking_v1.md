@@ -169,7 +169,7 @@ Admiral detecta automáticamente la topología basándose en la configuración d
 
 Si `networking_admin_host`, `networking_portal_host`, `networking_apps_domain`, `networking_flagship_host` o `networking_cockpit_host` no están definidos, se derivan automáticamente desde `networking_base_domain`:
 
-- `admin.<base_domain>`
+- `admin.<base_domain>` (opcional; no se publica por defecto en single-node)
 - `portal.<base_domain>`
 - `apps.<base_domain>`
 - `flagship.<base_domain>`
@@ -178,9 +178,9 @@ Si `networking_admin_host`, `networking_portal_host`, `networking_apps_domain`, 
 ### 3.3 Target rules
 
 - `networking_admin_target`: si está vacío, Caddy responde con placeholder estático. Si se define, hace reverse proxy hacia esa URL.
-- `networking_portal_target`: default `http://127.0.0.1:5001` (admiral-harbor, ver `packaging/systemd/admiral-harbor.service`).
-- `networking_flagship_target`: default `http://127.0.0.1:5000` (admiral-flagship, ver `packaging/systemd/admiral-flagship.service`).
-- `networking_cockpit_target`: default `http://127.0.0.1:9090`.
+- `networking_portal_target`: default `https://127.0.0.1:5001` (admiral-harbor, ver `packaging/systemd/admiral-harbor.service`).
+- `networking_flagship_target`: default `https://127.0.0.1:5000` (admiral-flagship, ver `packaging/systemd/admiral-flagship.service`).
+- `networking_cockpit_target`: default `https://127.0.0.1:9090`.
 - `networking_apps_redirect`: define la URL destino del redirect 308 desde `apps.<domain>`.
 
 ### 3.4 TLS — Wildcard certificate (MANDATORIO)
@@ -207,6 +207,8 @@ obtenido vía **DNS-01 challenge**.
      ADMIRAL_NETWORKING_TLS_KEY_FILE=/etc/letsencrypt/live/apps.<DOMAIN>/privkey.pem
 6. Caddy carga el wildcard desde archivo; todas las rutas
    *.apps.<domain> usan ese mismo certificado
+7. Los hosts fijos `portal`, `flagship` y `cockpit` usan ACME automático
+   gestionado por Caddy y no requieren wildcard manual
 ```
 
 #### Reglas
@@ -214,7 +216,7 @@ obtenido vía **DNS-01 challenge**.
 - `networking_tls_provider`: default `letsencrypt`. Esquema para dev/QA. En producción el wildcard se carga desde archivo.
 - `networking_tls_cert_file` / `networking_tls_key_file`: **obligatorios en producción**. Apuntan al wildcard de Let's Encrypt.
 - `networking_tls_email`: requerido por ACME.
-- Caddy configura ACME automation como fallback para dev. En producción, si `cert_file` y `key_file` están definidos, Caddy los carga estáticamente y ACME no es necesario por ruta.
+- Caddy configura ACME automation como fallback para dev. En producción, si `cert_file` y `key_file` están definidos, Caddy los carga estáticamente para `*.apps.<domain>` y sigue usando ACME automático para hosts fijos como `portal`, `flagship` y `cockpit`.
 - `networking_tls_provider=internal` para QA interno con wildcard autofirmado (ver `docs/setup_guide_el10.md` sección 16.1).
 
 #### Renovación
@@ -514,15 +516,16 @@ Antes de publicar una ruta se valida:
 
 - Implementado como aplicación Python en `admiral-flagship/`.
 - Corre en puerto 5000 por defecto.
-- Rutas que lo sirven: `admin` y `flagship` (ambas con target `http://127.0.0.1:5000` por defecto).
-- Se configura via `networking_admin_target` y `networking_flagship_target`.
+- Ruta pública canónica: `flagship` con target `https://127.0.0.1:5000` por defecto.
+- `admin` es opcional y no se publica por defecto en single-node.
+- Se configura via `networking_flagship_target` y opcionalmente `networking_admin_target`.
 
 ### 11.6 admiral-harbor
 
 - Implementado y funcional desde alpha.
 - Portal comercial de clientes: catálogo de apps, autenticación, suscripciones, facturación, tickets de soporte, backups.
 - Corre en puerto 5001 con TLS.
-- Ruta `portal` servida por Caddy con target `http://127.0.0.1:5001` (configurable via `networking_portal_target`).
+- Ruta `portal` servida por Caddy con target `https://127.0.0.1:5001` (configurable via `networking_portal_target`).
 - Toda la configuración comercial se gestiona desde el admin UI en base de datos (sin shell).
 
 ---
@@ -530,7 +533,6 @@ Antes de publicar una ruta se valida:
 ## 12. Entry points
 
 ```
-admin.cloud.domain.com      -> admiral-flagship (Python, target default :5000)
 portal.cloud.domain.com     -> admiral-harbor (Python, puerto 5001, TLS)
 apps.cloud.domain.com       -> redirect configurable (default a portal)
 *.apps.cloud.domain.com     -> aplicaciones provisionadas

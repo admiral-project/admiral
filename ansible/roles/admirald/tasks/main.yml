@@ -30,9 +30,9 @@
       tls_cert_file = {{ admirald_tls_cert | default('/etc/admiral/tls/admirald.pem') }}
       tls_key_file = {{ admirald_tls_key | default('/etc/admiral/tls/admirald-key.pem') }}
       networking_admin_target = {{ admirald_networking_admin_target | default('') }}
-      networking_flagship_target = {{ admirald_networking_flagship_target | default('http://127.0.0.1:5000') }}
-      networking_portal_target = {{ admirald_networking_portal_target | default('http://127.0.0.1:5001') }}
-      networking_cockpit_target = {{ admirald_networking_cockpit_target | default('http://127.0.0.1:9090') }}
+      networking_flagship_target = {{ admirald_networking_flagship_target | default('https://127.0.0.1:5000') }}
+      networking_portal_target = {{ admirald_networking_portal_target | default('https://127.0.0.1:5001') }}
+      networking_cockpit_target = {{ admirald_networking_cockpit_target | default('https://127.0.0.1:9090') }}
       caddy_admin_url = {{ admirald_caddy_admin_url | default('http://127.0.0.1:2019') }}
     mode: "0640"
     owner: root

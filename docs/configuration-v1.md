@@ -60,9 +60,9 @@ Variables de entorno equivalentes:
 - `ADMIRAL_NETWORKING_TLS_CERT_FILE` — certificado wildcard publico (Let's Encrypt)
 - `ADMIRAL_NETWORKING_TLS_KEY_FILE` — clave privada del certificado wildcard
 - `ADMIRAL_NETWORKING_FLAGSHIP_HOST` — default `flagship.<base_domain>`
-- `ADMIRAL_NETWORKING_FLAGSHIP_TARGET` — default `http://127.0.0.1:5000`
+- `ADMIRAL_NETWORKING_FLAGSHIP_TARGET` — default `https://127.0.0.1:5000`
 - `ADMIRAL_NETWORKING_COCKPIT_HOST` — default `cockpit.<base_domain>`
-- `ADMIRAL_NETWORKING_COCKPIT_TARGET` — default `http://127.0.0.1:9090`
+- `ADMIRAL_NETWORKING_COCKPIT_TARGET` — default `https://127.0.0.1:9090`
 - `ADMIRAL_CADDY_ADMIN_URL`
 
 ### Reglas actuales
@@ -75,7 +75,9 @@ Variables de entorno equivalentes:
 - `database_url` y `queue_database_url` deben apuntar a bases logicas distintas
 - `caddy_admin_url` usa por defecto `http://127.0.0.1:2019`
 - `networking_admin_target` si se define, Caddy hará reverse proxy hacia esa URL en lugar de responder con placeholder estático. Vacío por defecto (solo placeholder).
-- `networking_flagship_target` default `http://127.0.0.1:5000` para admiral-flagship. `networking_admin_target` y `networking_flagship_target` son independientes: el primero controla la ruta admin, el segundo la ruta flagship.
+- `networking_portal_target` default `https://127.0.0.1:5001` para admiral-harbor
+- `networking_flagship_target` default `https://127.0.0.1:5000` para admiral-flagship. `networking_admin_target` y `networking_flagship_target` son independientes: el primero controla la ruta admin, el segundo la ruta flagship.
+- `networking_cockpit_target` default `https://127.0.0.1:9090` para Cockpit
 - la contraseña administrativa se guarda como hash Argon2id antes de persistirse en `admin_users`
 - si ya existe al menos un administrador, `flagship_admin_user` y `flagship_admin_pswd` se ignoran al arrancar
 - si no existe ningún administrador y faltan esas credenciales, el arranque falla con un error de bootstrap explícito

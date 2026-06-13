@@ -38,22 +38,10 @@
     group: admiral
   no_log: true
 
-- name: Ensure admiral-harbor systemd override directory exists
+- name: Remove legacy admiral-harbor systemd override
   file:
     path: /etc/systemd/system/admiral-harbor.service.d
-    state: directory
-    mode: "0755"
-
-- name: Bind admiral-harbor to loopback only
-  copy:
-    dest: /etc/systemd/system/admiral-harbor.service.d/override.conf
-    mode: "0644"
-    content: |
-      [Service]
-      User=admiral
-      Group=admiral
-      ExecStart=
-      ExecStart=/usr/bin/harbor-gunicorn --workers 2 --bind 127.0.0.1:5001 --certfile /etc/admiral/tls/admirald.pem --keyfile /etc/admiral/tls/admirald-key.pem run:app
+    state: absent
 
 - name: Enable and start admiral-harbor
   systemd:

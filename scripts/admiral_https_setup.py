@@ -333,14 +333,20 @@ def configure_admirald(domain, apps_domain, cert_dir):
     override_dir = "/etc/systemd/system/admirald.service.d"
     os.makedirs(override_dir, exist_ok=True)
 
-    # Preserve existing targets from env or INI, fall back to defaults
+    # Preserve existing targets from env or INI, fall back to single-node TLS
+    # upstream defaults. Fixed public hosts use Caddy-managed ACME certificates;
+    # only apps.<domain> uses the manually provisioned wildcard certificate.
     portal_target = os.environ.get(
         "ADMIRAL_NETWORKING_PORTAL_TARGET",
-        _read_ini("networking_portal_target") or "http://127.0.0.1:5001",
+        _read_ini("networking_portal_target") or "https://127.0.0.1:5001",
     )
     flagship_target = os.environ.get(
         "ADMIRAL_NETWORKING_FLAGSHIP_TARGET",
-        _read_ini("networking_flagship_target") or "http://127.0.0.1:5000",
+        _read_ini("networking_flagship_target") or "https://127.0.0.1:5000",
+    )
+    cockpit_target = os.environ.get(
+        "ADMIRAL_NETWORKING_COCKPIT_TARGET",
+        _read_ini("networking_cockpit_target") or "https://127.0.0.1:9090",
     )
 
     override_content = f"""[Service]
@@ -348,6 +354,7 @@ Environment=ADMIRAL_NETWORKING_BASE_DOMAIN={domain}
 Environment=ADMIRAL_NETWORKING_APPS_DOMAIN={apps_domain}
 Environment=ADMIRAL_NETWORKING_PORTAL_TARGET={portal_target}
 Environment=ADMIRAL_NETWORKING_FLAGSHIP_TARGET={flagship_target}
+Environment=ADMIRAL_NETWORKING_COCKPIT_TARGET={cockpit_target}
 Environment=ADMIRAL_NETWORKING_TLS_CERT_FILE={cert_file}
 Environment=ADMIRAL_NETWORKING_TLS_KEY_FILE={key_file}
 """
@@ -370,11 +377,14 @@ def print_summary(domain, apps_domain):
     print("=" * 60)
     print()
     print(f"  Wildcard certificate:  *.{apps_domain}")
-    print(f"  Admins:                https://admin.{domain}")
     print(f"  Portal:                https://portal.{domain}")
     print(f"  Flagship:              https://flagship.{domain}")
     print(f"  Cockpit:               https://cockpit.{domain}")
     print(f"  App instances:         https://<app><6digits>.{apps_domain}")
+    print()
+    print("Public TLS model:")
+    print(f"  - Caddy manages ACME for portal.{domain}, flagship.{domain}, cockpit.{domain}")
+    print(f"  - Wildcard certificate *.{apps_domain} is reserved for app instances")
     print()
     print("Renewal (manual):")
     print(f"  certbot renew --deploy-hook 'systemctl restart admirald'")
