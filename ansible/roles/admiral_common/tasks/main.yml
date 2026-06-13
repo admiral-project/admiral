@@ -14,6 +14,12 @@
     cmd: dnf copr enable -y admiral-project/admiral
     creates: /etc/yum.repos.d/_copr:copr.fedorainfracloud.org:admiral-project:admiral.repo
 
+- name: Refresh and update the system after enabling repositories
+  dnf:
+    name: "*"
+    state: latest
+    update_cache: true
+
 - name: Install managed Caddyfile for Admiral
   copy:
     dest: /etc/caddy/Caddyfile
