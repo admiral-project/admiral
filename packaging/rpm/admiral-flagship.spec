@@ -2,11 +2,11 @@
 # SPDX-License-Identifier: Apache-2.0
 
 %global debug_package %{nil}
-%global commit 4ce36394ab5bb2a3aa7f753b1d3d615317efecc7
+%global commit 24903e12fc987559feab575415eb99c700b04fd8
 
 Name:    admiral-flagship
-Version: 0.0.1alpha2
-Release: 2%{?dist}
+Version: 0.0.1alpha3
+Release: 1%{?dist}
 Summary: Admiral Administrative Web Console
 
 License: Apache-2.0
@@ -72,9 +72,8 @@ restorecon -R %{_prefix}/lib/admiral/flagship 2>/dev/null || :
 %systemd_postun_with_restart admiral-flagship.service
 
 %changelog
-* Sat Jun 13 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1alpha2-2
-- Bind flagship to loopback in the packaged unit
-- Run flagship under the admiral service account
+* Sat Jun 13 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1alpha3-1
+- Bump admiral-flagship packaging to alpha3
 
 * Wed Jun 03 2026 Admiral Project <dev@admiral-project.org> - 0.1.0-1
 - Initial Admiral packaging

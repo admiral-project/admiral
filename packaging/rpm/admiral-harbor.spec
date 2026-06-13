@@ -1,9 +1,9 @@
 %global debug_package %{nil}
-%global commit 9be715fa6ef70e608799d5df6ee4278cbd0cbcb0
+%global commit 1e17857408e10d5cc2f0f89e33ef35b6117b1393
 
 Name:    admiral-harbor
-Version: 0.0.1alpha2
-Release: 2%{?dist}
+Version: 0.0.1alpha3
+Release: 1%{?dist}
 Summary: Admiral Customer Portal - Web UI for end users
 
 License: Apache-2.0
@@ -105,9 +105,8 @@ restorecon -R %{_localstatedir}/lib/admiral/harbor 2>/dev/null || :
 %systemd_postun admiral-harbor-catalog-sync.timer
 
 %changelog
-* Sat Jun 13 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1alpha2-2
-- Bind harbor to loopback in the packaged unit
-- Run harbor under the admiral service account
+* Sat Jun 13 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1alpha3-1
+- Bump admiral-harbor packaging to alpha3
 
 * Wed Jun 03 2026 Admiral Project <dev@admiral-project.org> - 0.1.0-1
 - Initial Admiral packaging
