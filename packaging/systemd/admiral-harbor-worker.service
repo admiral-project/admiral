@@ -6,10 +6,13 @@ Wants=network-online.target admirald.service
 
 [Service]
 Type=oneshot
+EnvironmentFile=/etc/admiral/harbor.env
 ExecStart=/usr/bin/python3 /usr/lib/admiral/harbor/worker.py
 WorkingDirectory=/usr/lib/admiral/harbor
 StandardOutput=journal
 StandardError=journal
+User=admiral
+Group=admiral
 
 # Hardening
 NoNewPrivileges=true

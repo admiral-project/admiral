@@ -8,12 +8,13 @@ Requires=admiral-harbor.service
 
 [Service]
 Type=oneshot
-User=admiral-harbor
-Group=admiral-harbor
-WorkingDirectory=/opt/admiral-harbor
+EnvironmentFile=/etc/admiral/harbor.env
+User=admiral
+Group=admiral
+WorkingDirectory=/usr/lib/admiral/harbor
 
 # Execute catalog sync CLI
-ExecStart=/usr/bin/python3 -m cli sync
+ExecStart=/usr/bin/harborctl sync
 
 # Logging
 StandardOutput=journal
