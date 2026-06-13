@@ -14,7 +14,7 @@ Group=admiral
 WorkingDirectory=/usr/lib/admiral/harbor
 
 # Execute catalog sync CLI
-ExecStart=/usr/bin/harborctl sync
+ExecStart=/usr/bin/python3 /usr/lib/admiral/harbor/cli.py sync
 
 # Logging
 StandardOutput=journal
