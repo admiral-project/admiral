@@ -14,6 +14,7 @@ This script only provisions the certificate and sets the env vars.
 Usage:
     sudo admiral_https_setup
     sudo admiral_https_setup --domain cloud.example.com
+    sudo admiral_https_setup --domain testcloud.example.com
 """
 
 import argparse
@@ -24,6 +25,7 @@ import socket
 import subprocess
 import sys
 import time
+import urllib.parse
 
 
 def fail(msg):
@@ -104,12 +106,61 @@ def get_local_ips():
     return ips
 
 
-def validate_domain(domain):
-    if not domain:
-        fail("Domain cannot be empty.")
+def normalize_domain_input(value):
+    if not value:
+        fail("Base domain cannot be empty.")
 
-    if not re.match(r"^([a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?\.)+[a-zA-Z]{2,}$", domain):
-        fail(f"'{domain}' is not a valid domain name.")
+    raw_value = value.strip()
+    if not raw_value:
+        fail("Base domain cannot be empty.")
+
+    candidate = raw_value
+    if "://" in candidate:
+        parsed = urllib.parse.urlparse(candidate)
+        if not parsed.hostname:
+            fail(f"Could not extract a hostname from '{raw_value}'.")
+        if parsed.path not in ("", "/") or parsed.params or parsed.query or parsed.fragment:
+            fail(
+                "Pass only the base URL or hostname. Paths, query strings, and fragments are not allowed."
+            )
+        candidate = parsed.hostname
+
+    candidate = candidate.strip().rstrip(".").lower()
+
+    if candidate.startswith("*."):
+        fail(
+            f"'{raw_value}' looks like a wildcard record. Pass the base domain instead, "
+            "for example 'testcloud.example.com'."
+        )
+
+    for prefix in ("admin.", "portal.", "flagship.", "cockpit."):
+        if candidate.startswith(prefix):
+            fail(
+                f"'{raw_value}' points to a specific service host. Pass the shared base domain instead, "
+                "for example 'testcloud.example.com'."
+            )
+
+    if candidate.startswith("apps."):
+        fail(
+            f"'{raw_value}' points to the apps wildcard domain. Pass the parent base domain instead, "
+            "for example 'testcloud.example.com'."
+        )
+
+    if "." not in candidate:
+        fail(
+            f"'{raw_value}' is not a full public domain name. If your DNS provider shows relative record names "
+            "such as '*.apps.testcloud' and '*.testcloud', pass the full base domain for that zone, "
+            "for example 'testcloud.example.com'."
+        )
+
+    if not re.match(r"^([a-z0-9]([a-z0-9-]*[a-z0-9])?\.)+[a-z]{2,}$", candidate):
+        fail(f"'{raw_value}' is not a valid public domain name.")
+
+    return candidate
+
+
+def validate_domain(domain):
+    domain = normalize_domain_input(domain)
 
     apps_domain = f"apps.{domain}"
 
@@ -144,8 +195,26 @@ def run_certbot_wildcard(domain, apps_domain):
     info(f"Admiral needs a wildcard certificate for *.{apps_domain}")
     info("to avoid Let's Encrypt rate limit (50 certs/domain/week).")
     info("")
-    info("You will need access to your DNS management console to add")
-    info(f"a TXT record: _acme-challenge.{apps_domain}")
+    info("This flow is manual.")
+    info("certbot will pause and ask you to publish one or more DNS TXT records.")
+    info("Each time certbot prints a TXT challenge:")
+    info("  1. Create the TXT record in your DNS provider.")
+    info("  2. Wait for public DNS propagation.")
+    info("  3. Return here and continue.")
+    info("")
+    info("Important:")
+    info(f"  - TXT record name: _acme-challenge.{apps_domain}")
+    info("  - certbot may request more than one TXT value with the same name")
+    info("  - if that happens, keep the previous TXT values and add the new one too")
+    info("  - do not replace or delete earlier TXT values during the same certbot run")
+    info("  - failed validation does not permanently block the domain, but repeated failures")
+    info("    can trigger temporary Let's Encrypt rate limits")
+    info("  - do not retry until the required TXT records are publicly visible")
+    info("")
+    info("Before starting, make sure these public records already exist:")
+    info(f"  - {domain} -> A -> this server public IP")
+    info(f"  - *.{domain} -> A -> this server public IP")
+    info(f"  - *.{apps_domain} -> A -> this server public IP")
     info("")
     input("Press Enter to begin the certbot challenge...")
 
@@ -160,7 +229,6 @@ def run_certbot_wildcard(domain, apps_domain):
         "-d", f"*.{apps_domain}",
         "-d", apps_domain,
         "--agree-tos",
-        "--manual-public-ip-logging-ok",
     ]
     if email:
         cmd.extend(["--email", email])
@@ -170,12 +238,17 @@ def run_certbot_wildcard(domain, apps_domain):
     info("")
     info("certbot will show you the TXT record to add.")
     info("Add it to your DNS, wait for propagation, then confirm.")
+    info("If certbot asks for a second TXT with the same name, add it without removing the first one.")
     info("")
 
     result = subprocess.run(cmd)
     if result.returncode != 0:
         fail(
-            "certbot failed. Fix the issue and re-run:\n"
+            "certbot failed. Before retrying, verify that:\n"
+            f"  - {domain} resolves publicly to this VPS\n"
+            f"  - _acme-challenge.{apps_domain} publishes every TXT value requested in the same run\n"
+            "  - your DNS provider is not replacing the previous TXT when adding a new one\n"
+            "After that, re-run:\n"
             "  sudo admiral_https_setup"
         )
 
@@ -283,14 +356,26 @@ def main():
     )
     parser.add_argument(
         "--domain", "-d",
-        help="Base domain (e.g. cloud.example.com)",
+        dest="base_domain",
+        help=(
+            "Base domain or base URL. Pass the public base domain, for example "
+            "'testcloud.example.com' or 'https://testcloud.example.com'."
+        ),
+    )
+    parser.add_argument(
+        "--base-url",
+        dest="base_domain",
+        help="Alias for --domain. Accepts a base URL or hostname.",
     )
     args = parser.parse_args()
 
     check_root()
     check_requirements()
 
-    domain = args.domain or input("Base domain (e.g. cloud.example.com): ").strip()
+    domain = args.base_domain or input(
+        "Base domain or base URL "
+        "(e.g. testcloud.example.com or https://testcloud.example.com): "
+    ).strip()
     domain, apps_domain = validate_domain(domain)
 
     cert_dir = run_certbot_wildcard(domain, apps_domain)
