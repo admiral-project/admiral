@@ -1,9 +1,10 @@
 ---
-- name: Install Caddy
+- name: Install Caddy and admiralctl
   dnf:
     name:
       - caddy
       - admirald
+      - admiralctl
     state: present
 
 - name: Ensure Caddy is enabled and running
