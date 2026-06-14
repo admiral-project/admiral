@@ -3,7 +3,7 @@
 
 Name:    admiral-harbor
 Version: 0.0.1alpha4
-Release: 2%{?dist}
+Release: 3%{?dist}
 Summary: Admiral Customer Portal - Web UI for end users
 
 License: Apache-2.0
@@ -31,6 +31,7 @@ Requires: python3-flask-alembic
 Requires: python3-gunicorn
 Requires: python3-requests
 Requires: python3-argon2-cffi
+Requires: python3-psycopg2
 Requires: python3-psycopg3
 Requires: python3-psycopg3_c
 Requires: systemd
