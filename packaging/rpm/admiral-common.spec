@@ -77,7 +77,7 @@ getent passwd admiral-apps >/dev/null || \
 %dir %attr(0755, root, root) %{_sysconfdir}/admiral
 %dir %attr(0755, root, root) %{_sysconfdir}/containers/systemd/admiral
 %dir %attr(0750, admiral, admiral) %{_localstatedir}/log/admiral
-%dir %attr(0755, root, root) %{_localstatedir}/lib/admiral
+%dir %attr(0751, root, admiral) %{_localstatedir}/lib/admiral
 %dir %attr(0755, root, root) %{_localstatedir}/lib/admiral/outbox
 %dir %attr(0755, root, root) %{_localstatedir}/lib/admiral/backups
 %dir %attr(0755, root, root) %{_localstatedir}/lib/admiral/instances
@@ -90,8 +90,9 @@ getent passwd admiral-apps >/dev/null || \
 # Set ownership of log directory
 chown admiral:admiral %{_localstatedir}/log/admiral 2>/dev/null || :
 
-# Restore ownership of the shared Admiral data tree.
-chown root:root %{_localstatedir}/lib/admiral 2>/dev/null || :
+# Restore ownership and permissions of the shared Admiral data tree.
+chown root:admiral %{_localstatedir}/lib/admiral 2>/dev/null || :
+chmod 0751 %{_localstatedir}/lib/admiral 2>/dev/null || :
 chown root:root %{_localstatedir}/lib/admiral/outbox 2>/dev/null || :
 chown root:root %{_localstatedir}/lib/admiral/backups 2>/dev/null || :
 chown root:root %{_localstatedir}/lib/admiral/instances 2>/dev/null || :

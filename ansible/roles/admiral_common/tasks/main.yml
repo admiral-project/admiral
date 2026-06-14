@@ -70,8 +70,8 @@
   file:
     path: /var/lib/admiral
     state: directory
-    mode: "0750"
-    owner: admiral
+    mode: "0751"
+    owner: root
     group: admiral
 
 - name: Create log directory
