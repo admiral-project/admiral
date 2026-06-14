@@ -365,10 +365,12 @@ Environment=ADMIRAL_NETWORKING_TLS_KEY_FILE={key_file}
     ok(f"Wrote {override_path}")
 
     subprocess.run(["systemctl", "daemon-reload"], capture_output=True, check=True)
+    subprocess.run(["systemctl", "restart", "cockpit.socket"], capture_output=True, check=True)
+    subprocess.run(["systemctl", "restart", "caddy"], capture_output=True, check=True)
     subprocess.run(["systemctl", "restart", "admirald"], capture_output=True, check=True)
 
     # admirald will push the full config including TLS cert to Caddy Admin API
-    ok("admirald restarted — will sync routes and TLS to Caddy automatically")
+    ok("cockpit.socket, caddy, and admirald restarted — routes and TLS will resync automatically")
 
 
 def print_summary(domain, apps_domain):

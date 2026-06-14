@@ -48,7 +48,7 @@
   systemd:
     name: cockpit.socket
     enabled: true
-    state: started
+    state: restarted
     daemon_reload: true
 
 - name: Create Cockpit admin system user

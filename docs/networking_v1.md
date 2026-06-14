@@ -512,6 +512,7 @@ Antes de publicar una ruta se valida:
 - Solicita al operador publicar el TXT record requerido por certbot.
 - Corrige permisos de `/etc/letsencrypt` para que Caddy pueda leer el wildcard.
 - Escribe el drop-in `10-https.conf` para `admirald` después de completar el challenge.
+- Reinicia `cockpit.socket`, `caddy` y `admirald` para aplicar la nueva configuración.
 
 ### 11.4 admiralctl
 
@@ -637,7 +638,7 @@ Los certificados Let's Encrypt expiran a los 90 días. Admirald advierte en logs
 Renovación manual:
 
 ```bash
-certbot renew --deploy-hook 'systemctl restart admirald'
+certbot renew --deploy-hook 'systemctl restart cockpit.socket caddy admirald'
 ```
 
 Para renovación automática sin intervención: instalar plugin DNS del proveedor (e.g. `certbot-dns-cloudflare`, `certbot-dns-route53`).
