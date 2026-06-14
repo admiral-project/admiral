@@ -5,8 +5,8 @@
 %global commit b0d899ee0263e046080d3c29f4c9043fec7e3bed
 
 Name:    admiralctl
-Version: 0.0.1alpha4
-Release: 2%{?dist}
+Version: 0.0.1alpha5
+Release: 1%{?dist}
 Summary: Admiral Command-Line Interface
 
 License: Apache-2.0
@@ -54,6 +54,9 @@ go test ./...
 restorecon -F %{_bindir}/admiralctl 2>/dev/null || :
 
 %changelog
+* Sun Jun 14 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1alpha5-1
+- Bump to alpha5
+
 * Sat Jun 13 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1alpha4-1
 - Bump admiralctl packaging to alpha3
 

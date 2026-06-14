@@ -1,5 +1,5 @@
 SHELL := /bin/bash
-VERSION := 0.0.1alpha4
+VERSION := 0.0.1alpha5
 RPMDIR := $(CURDIR)/packaging/build
 RPMTOPDIR := $(RPMDIR)
 SPECSDIR := $(CURDIR)/packaging/rpm

@@ -5,8 +5,8 @@
 %global commit ecd6fd476c90d1e3243a69ba8dac9db6dc714785
 
 Name:    admiral-fleet
-Version: 0.0.1alpha4
-Release: 3%{?dist}
+Version: 0.0.1alpha5
+Release: 1%{?dist}
 Summary: Admiral Fleet Worker Agent
 
 License: Apache-2.0
@@ -65,6 +65,9 @@ restorecon -F %{_bindir}/admiral-fleet 2>/dev/null || :
 %systemd_postun_with_restart admiral-fleet.service
 
 %changelog
+* Sun Jun 14 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1alpha5-1
+- Bump to alpha5
+
 * Sun Jun 14 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1alpha4-3
 - Add CAP_FOWNER to systemd unit CapabilityBoundingSet
 

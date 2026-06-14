@@ -4,8 +4,8 @@
 %global commit ecd6fd476c90d1e3243a69ba8dac9db6dc714785
 
 Name:    admiral-common
-Version: 0.0.1alpha4
-Release: 4%{?dist}
+Version: 0.0.1alpha5
+Release: 1%{?dist}
 Summary: Common files and utilities for Admiral PaaS
 
 License: Apache-2.0
@@ -138,6 +138,9 @@ if [ $1 -eq 0 ]; then
 fi
 
 %changelog
+* Sun Jun 14 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1alpha5-1
+- Bump to alpha5
+
 * Sun Jun 14 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1alpha4-4
 - Set /var/lib/admiral to 0751 root:admiral for rootless traversal
 - Add chmod 0751 in %%post scriptlet

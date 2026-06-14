@@ -5,8 +5,8 @@
 %global commit 70f6603d5442f594e99aabe4377947dd6afa27e8
 
 Name:    admiral-flagship
-Version: 0.0.1alpha4
-Release: 2%{?dist}
+Version: 0.0.1alpha5
+Release: 1%{?dist}
 Summary: Admiral Administrative Web Console
 
 License: Apache-2.0
@@ -72,6 +72,9 @@ restorecon -R %{_prefix}/lib/admiral/flagship 2>/dev/null || :
 %systemd_postun_with_restart admiral-flagship.service
 
 %changelog
+* Sun Jun 14 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1alpha5-1
+- Bump to alpha5
+
 * Sat Jun 13 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1alpha4-1
 - Bump admiral-flagship packaging to alpha3
 
