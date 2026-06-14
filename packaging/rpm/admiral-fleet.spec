@@ -2,10 +2,10 @@
 # SPDX-License-Identifier: Apache-2.0
 
 %global debug_package %{nil}
-%global commit 65721ccce087f400640e17a17d3d9a1b2bf8edae
+%global commit 7971edea2073a88f5e639a67c3e00e528cc9ec78
 
 Name:    admiral-fleet
-Version: 0.0.1alpha3
+Version: 0.0.1alpha4
 Release: 1%{?dist}
 Summary: Admiral Fleet Worker Agent
 
@@ -65,7 +65,7 @@ restorecon -F %{_bindir}/admiral-fleet 2>/dev/null || :
 %systemd_postun_with_restart admiral-fleet.service
 
 %changelog
-* Sat Jun 13 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1alpha3-1
+* Sat Jun 13 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1alpha4-1
 - Bump admiral-fleet packaging to alpha3
 
 * Wed Jun 03 2026 Admiral Project <dev@admiral-project.org> - 0.1.0-1
