@@ -2,11 +2,11 @@
 # SPDX-License-Identifier: Apache-2.0
 
 %global debug_package %{nil}
-%global commit b0d899ee0263e046080d3c29f4c9043fec7e3bed
+%global commit 52fd348e455eb72de91c858a28ec67a12c4b9e8b
 
 Name:    admiralctl
 Version: 0.0.1alpha5
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: Admiral Command-Line Interface
 
 License: Apache-2.0
@@ -54,6 +54,9 @@ go test ./...
 restorecon -F %{_bindir}/admiralctl 2>/dev/null || :
 
 %changelog
+* Sun Jun 14 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1alpha5-2
+- Update source commit to latest alpha5
+
 * Sun Jun 14 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1alpha5-1
 - Bump to alpha5
 

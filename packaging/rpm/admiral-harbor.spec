@@ -1,9 +1,9 @@
 %global debug_package %{nil}
-%global commit 9b31c2a40f2fc37950eb5f55b7c4f21a11cec5c5
+%global commit a0474c48917aab87689e9b006296140d2504f3f7
 
 Name:    admiral-harbor
 Version: 0.0.1alpha5
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: Admiral Customer Portal - Web UI for end users
 
 License: Apache-2.0
@@ -106,6 +106,13 @@ restorecon -R %{_localstatedir}/lib/admiral/harbor 2>/dev/null || :
 %systemd_postun admiral-harbor-catalog-sync.timer
 
 %changelog
+* Sun Jun 14 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1alpha5-2
+- Update source commit to latest alpha5
+- Replace favicon.ico with generated ico from source PNG
+- Fix admin_layout.html to use static favicon.ico reference
+- Fix branding.py and routes.py fallback for favicon vs logo
+- Fix list_backups returning None items
+
 * Sun Jun 14 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1alpha5-1
 - Bump to alpha5
 
