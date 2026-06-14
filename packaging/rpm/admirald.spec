@@ -2,11 +2,11 @@
 # SPDX-License-Identifier: Apache-2.0
 
 %global debug_package %{nil}
-%global commit b0d899ee0263e046080d3c29f4c9043fec7e3bed
+%global commit ecd6fd476c90d1e3243a69ba8dac9db6dc714785
 
 Name:    admirald
 Version: 0.0.1alpha4
-Release: 2%{?dist}
+Release: 4%{?dist}
 Summary: Admiral Control Plane - Core API and orchestration service
 
 License: Apache-2.0
@@ -63,6 +63,15 @@ restorecon -F %{_bindir}/admirald 2>/dev/null || :
 %systemd_postun_with_restart admirald.service
 
 %changelog
+* Sun Jun 14 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1alpha4-4
+- Add generate type to credentials response for cleaner UI display
+
+* Sun Jun 14 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1alpha4-3
+- Add GET /api/v1/customer-apps/{id}/credentials endpoint for exposed secrets
+
+* Sat Jun 13 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1alpha4-2
+- Handle Caddy reverse proxy routes via admirald
+
 * Sat Jun 13 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1alpha4-1
 - Add X-Forwarded-Proto header to reverse proxy routes for Cockpit compatibility
 

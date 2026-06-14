@@ -1,9 +1,9 @@
 %global debug_package %{nil}
-%global commit fdbb0dd19af4a2365c71f4609ab178ec00420471
+%global commit 3bede7dc62411e6575132fa8a9ab0f51ef1fde33
 
 Name:    admiral-harbor
 Version: 0.0.1alpha4
-Release: 3%{?dist}
+Release: 5%{?dist}
 Summary: Admiral Customer Portal - Web UI for end users
 
 License: Apache-2.0
@@ -106,6 +106,24 @@ restorecon -R %{_localstatedir}/lib/admiral/harbor 2>/dev/null || :
 %systemd_postun admiral-harbor-catalog-sync.timer
 
 %changelog
+* Sun Jun 14 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1alpha4-5
+- Simplify credentials display: show usuario/contraseña instead of raw env vars
+- Always show app URL on provision confirmation page
+- Filter out db service credentials from user-facing display
+
+* Sun Jun 14 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1alpha4-4
+- Add provision confirmation page with credentials display
+- Add Show credentials button to instance detail
+- Fix admin templates: use technical_status instead of status
+- Fix dashboard CSS grid max-width
+- Add favicon to admin_layout.html
+
+* Sat Jun 13 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1alpha4-3
+- Bump admiral-harbor packaging
+
+* Sat Jun 13 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1alpha4-2
+- Add HARBOR_DATABASE_URL env var and python3-psycopg2 dependency
+
 * Sat Jun 13 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1alpha4-1
 - Bump admiral-harbor packaging to alpha3
 

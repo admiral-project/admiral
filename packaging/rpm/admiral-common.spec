@@ -1,11 +1,11 @@
 # SPDX-FileCopyrightText: William Moreno Reyes CP | MBA
 # SPDX-License-Identifier: Apache-2.0
 
-%global commit b0d899ee0263e046080d3c29f4c9043fec7e3bed
+%global commit ecd6fd476c90d1e3243a69ba8dac9db6dc714785
 
 Name:    admiral-common
 Version: 0.0.1alpha4
-Release: 3%{?dist}
+Release: 4%{?dist}
 Summary: Common files and utilities for Admiral PaaS
 
 License: Apache-2.0
@@ -138,6 +138,17 @@ if [ $1 -eq 0 ]; then
 fi
 
 %changelog
+* Sun Jun 14 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1alpha4-4
+- Set /var/lib/admiral to 0751 root:admiral for rootless traversal
+- Add chmod 0751 in %%post scriptlet
+
+* Sat Jun 13 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1alpha4-3
+- Add HARBOR_DATABASE_URL to ansible playbook
+- Add python3-psycopg2 dependency
+
+* Sat Jun 13 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1alpha4-2
+- Fix ansible common role permissions
+
 * Sat Jun 13 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1alpha4-1
 - Register local node via admiralctl in single-node mode
 
