@@ -1,9 +1,9 @@
 %global debug_package %{nil}
-%global commit a0474c48917aab87689e9b006296140d2504f3f7
+%global commit 05bfdc1206a4114c0d8a1e12e351a5585b60190e
 
 Name:    admiral-harbor
 Version: 0.0.1alpha5
-Release: 2%{?dist}
+Release: 3%{?dist}
 Summary: Admiral Customer Portal - Web UI for end users
 
 License: Apache-2.0
@@ -131,6 +131,9 @@ restorecon -R %{_localstatedir}/lib/admiral/harbor 2>/dev/null || :
 - Fix admin templates: use technical_status instead of status
 - Fix dashboard CSS grid max-width
 - Add favicon to admin_layout.html
+
+* Sun Jun 14 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1alpha5-3
+- Rework instance detail page layout and styling
 
 * Sat Jun 13 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1alpha4-3
 - Bump admiral-harbor packaging
