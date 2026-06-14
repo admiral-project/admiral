@@ -1,9 +1,9 @@
 %global debug_package %{nil}
-%global commit 3bede7dc62411e6575132fa8a9ab0f51ef1fde33
+%global commit 9b31c2a40f2fc37950eb5f55b7c4f21a11cec5c5
 
 Name:    admiral-harbor
 Version: 0.0.1alpha4
-Release: 5%{?dist}
+Release: 6%{?dist}
 Summary: Admiral Customer Portal - Web UI for end users
 
 License: Apache-2.0
@@ -106,6 +106,10 @@ restorecon -R %{_localstatedir}/lib/admiral/harbor 2>/dev/null || :
 %systemd_postun admiral-harbor-catalog-sync.timer
 
 %changelog
+* Sun Jun 14 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1alpha4-6
+- Use real hostname from provision response instead of instance_id for app URL
+- Fix list_backups to never return None
+
 * Sun Jun 14 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1alpha4-5
 - Simplify credentials display: show usuario/contraseña instead of raw env vars
 - Always show app URL on provision confirmation page

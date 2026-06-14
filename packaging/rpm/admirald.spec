@@ -6,7 +6,7 @@
 
 Name:    admirald
 Version: 0.0.1alpha4
-Release: 4%{?dist}
+Release: 5%{?dist}
 Summary: Admiral Control Plane - Core API and orchestration service
 
 License: Apache-2.0
@@ -63,6 +63,9 @@ restorecon -F %{_bindir}/admirald 2>/dev/null || :
 %systemd_postun_with_restart admirald.service
 
 %changelog
+* Sun Jun 14 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1alpha4-5
+- Include hostname in provision response for real app URL
+
 * Sun Jun 14 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1alpha4-4
 - Add generate type to credentials response for cleaner UI display
 
