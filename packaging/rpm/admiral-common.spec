@@ -5,7 +5,7 @@
 
 Name:    admiral-common
 Version: 0.0.1alpha6
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: Common files and utilities for Admiral PaaS
 
 License: Apache-2.0
@@ -144,6 +144,9 @@ if [ $1 -eq 0 ]; then
 fi
 
 %changelog
+* Mon Jun 15 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1alpha6-2
+- Update installer packaging for single-node loopback default
+
 * Mon Jun 15 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1alpha6-1
 - Bump to alpha6
 
