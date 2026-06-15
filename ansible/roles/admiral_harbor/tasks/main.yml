@@ -1,7 +1,7 @@
 ---
 - name: Set harbor API URL for portal-node
   set_fact:
-    admiral_api_url_for_harbor: "https://{{ admiral_admin_wireguard_ip | default('10.99.0.1') }}:8080"
+    admiral_api_url_for_harbor: "https://{{ admiral_admin_wireguard_ip | default(admiral_admin_endpoint | default('10.99.0.1')) }}:8080"
   when: admiral_install_mode == 'portal-node'
 
 - name: Install admiral-harbor
