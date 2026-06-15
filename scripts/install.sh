@@ -23,6 +23,7 @@ Options:
   --portal-node       Install portal components only.
   --node-id           Set a custom node ID (default: hostname).
   --public-ip         Set the public IP address for remote connectivity.
+  --wireguard-ip      Set the private WireGuard overlay IP for this node.
   --admin-endpoint    Admin node WireGuard endpoint (required for worker/portal).
   --admin-secrets-file  Path to the admin /etc/admiral/secrets inventory.
   --admin-ca-file       Path to the admin CA certificate PEM.
@@ -33,6 +34,7 @@ EOF
 INSTALL_MODE=""
 INSTALL_NODE_ID=""
 INSTALL_PUBLIC_IP=""
+INSTALL_WIREGUARD_IP=""
 INSTALL_ADMIN_ENDPOINT=""
 INSTALL_ADMIN_SECRETS_FILE=""
 INSTALL_ADMIN_CA_FILE=""
@@ -62,6 +64,10 @@ while [[ $# -gt 0 ]]; do
         --public-ip)
             shift
             INSTALL_PUBLIC_IP="$1"
+            ;;
+        --wireguard-ip)
+            shift
+            INSTALL_WIREGUARD_IP="$1"
             ;;
         --admin-endpoint)
             shift
@@ -176,6 +182,9 @@ if [[ -n "$INSTALL_NODE_ID" ]]; then
 fi
 if [[ -n "$INSTALL_PUBLIC_IP" ]]; then
     EXTRA_VARS="$EXTRA_VARS fleet_public_ip=$INSTALL_PUBLIC_IP"
+fi
+if [[ -n "$INSTALL_WIREGUARD_IP" ]]; then
+    EXTRA_VARS="$EXTRA_VARS admiral_wireguard_ip=$INSTALL_WIREGUARD_IP"
 fi
 if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]]; then
     EXTRA_VARS="$EXTRA_VARS fleet_node_role=$( [[ "$INSTALL_MODE" == "portal-node" ]] && echo 'portal' || echo 'worker' )"

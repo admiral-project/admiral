@@ -46,9 +46,31 @@
   set_fact:
     admiral_wireguard_port: "{{ admiral_wireguard_port | default('51820') }}"
 
+- name: Derive WireGuard node index from node id
+  set_fact:
+    admiral_wireguard_node_index: "{{ fleet_node_id | default(ansible_hostname) | regex_findall('([0-9]+)$') | first | default('') }}"
+  when: admiral_wireguard_ip is not defined
+
+- name: Require explicit or derivable WireGuard IP for spoke nodes
+  assert:
+    that:
+      - admiral_wireguard_role == 'hub' or (admiral_wireguard_node_index | default('')) != '' or admiral_install_mode == 'portal-node'
+    fail_msg: "Spoke nodes require --wireguard-ip or a node id / hostname ending in digits to derive a stable overlay IP."
+  when: admiral_wireguard_ip is not defined
+
 - name: Determine WireGuard IP address for this node
   set_fact:
-    admiral_wireguard_ip: "{{ admiral_wireguard_ip | default(ansible_default_ipv4.address) }}"
+    admiral_wireguard_ip: >-
+      {{
+        admiral_wireguard_ip
+        | default(
+            '10.99.0.1' if admiral_wireguard_role == 'hub'
+            else (
+              '10.99.0.100' if admiral_install_mode == 'portal-node'
+              else '10.99.0.' ~ ((admiral_wireguard_node_index | int) + 1)
+            )
+          )
+      }}
 
 - name: Enable IP forwarding on hub nodes
   sysctl:
