@@ -41,6 +41,9 @@ agencies to sell and operate SaaS applications on Enterprise Linux.
 mkdir -p %{buildroot}%{_datadir}/admiral/ansible
 cp -r ansible/* %{buildroot}%{_datadir}/admiral/ansible/
 
+# Installer command
+install -Dm0755 scripts/install.sh %{buildroot}%{_bindir}/admiral_install
+
 # HTTPS setup script
 install -Dm0755 scripts/admiral_https_setup.py %{buildroot}%{_bindir}/admiral_https_setup
 
@@ -84,6 +87,7 @@ getent passwd admiral-apps >/dev/null || \
 %dir %attr(0755, admiral-apps, admiral-apps) %{_localstatedir}/lib/admiral-apps
 
 %{_bindir}/admiral_https_setup
+%{_bindir}/admiral_install
 %{_datadir}/admiral/ansible/
 
 %post
@@ -124,6 +128,7 @@ restorecon -R %{_sysconfdir}/admiral 2>/dev/null || :
 restorecon -R %{_sysconfdir}/containers 2>/dev/null || :
 restorecon -R %{_localstatedir}/lib/admiral-apps 2>/dev/null || :
 restorecon -F %{_bindir}/admiral_https_setup 2>/dev/null || :
+restorecon -F %{_bindir}/admiral_install 2>/dev/null || :
 
 # Set default SELinux context for rootless container storage
 # Files under admiral-apps' podman storage inherit var_lib_t from /var/lib,
@@ -138,6 +143,9 @@ if [ $1 -eq 0 ]; then
 fi
 
 %changelog
+* Mon Jun 15 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1alpha5-3
+- Install admiral_install command from admiral-common
+
 * Sun Jun 14 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1alpha5-2
 - Update source commit to latest alpha5
 

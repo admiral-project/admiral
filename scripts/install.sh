@@ -11,10 +11,10 @@ warn() { echo "[WARN] $*"; }
 usage() {
     cat <<'EOF'
 Usage:
-  install.sh --single-node
-  install.sh --admin-node
-  install.sh --worker-node
-  install.sh --portal-node
+  admiral_install --single-node --public-ip <public-ip>
+  admiral_install --admin-node --public-ip <public-ip>
+  admiral_install --worker-node --public-ip <public-ip> --admin-endpoint <admin-endpoint>
+  admiral_install --portal-node --public-ip <public-ip> --admin-endpoint <admin-endpoint>
 
 Options:
   --single-node       Install all single-node components on one host.
@@ -23,10 +23,12 @@ Options:
   --portal-node       Install portal components only.
   --node-id           Set a custom node ID (default: hostname).
   --public-ip         Set the public IP address for remote connectivity.
-  --wireguard-ip      Set the private WireGuard overlay IP for this node.
   --admin-endpoint    Admin node WireGuard endpoint (required for worker/portal).
+  --admin-ssh-user      SSH user for fetching admin bootstrap files (default: root).
+  --admin-ssh-key       SSH private key for fetching admin bootstrap files.
   --admin-secrets-file  Path to the admin /etc/admiral/secrets inventory.
   --admin-ca-file       Path to the admin CA certificate PEM.
+  --admin-known-hosts-file  Path to the admin /etc/admiral/know_host.yaml inventory.
   -h, --help          Show this help message.
 EOF
 }
@@ -34,10 +36,12 @@ EOF
 INSTALL_MODE=""
 INSTALL_NODE_ID=""
 INSTALL_PUBLIC_IP=""
-INSTALL_WIREGUARD_IP=""
 INSTALL_ADMIN_ENDPOINT=""
+INSTALL_ADMIN_SSH_USER="root"
+INSTALL_ADMIN_SSH_KEY=""
 INSTALL_ADMIN_SECRETS_FILE=""
 INSTALL_ADMIN_CA_FILE=""
+INSTALL_ADMIN_KNOWN_HOSTS_FILE=""
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
@@ -65,13 +69,17 @@ while [[ $# -gt 0 ]]; do
             shift
             INSTALL_PUBLIC_IP="$1"
             ;;
-        --wireguard-ip)
-            shift
-            INSTALL_WIREGUARD_IP="$1"
-            ;;
         --admin-endpoint)
             shift
             INSTALL_ADMIN_ENDPOINT="$1"
+            ;;
+        --admin-ssh-user)
+            shift
+            INSTALL_ADMIN_SSH_USER="$1"
+            ;;
+        --admin-ssh-key)
+            shift
+            INSTALL_ADMIN_SSH_KEY="$1"
             ;;
         --admin-secrets-file)
             shift
@@ -80,6 +88,10 @@ while [[ $# -gt 0 ]]; do
         --admin-ca-file)
             shift
             INSTALL_ADMIN_CA_FILE="$1"
+            ;;
+        --admin-known-hosts-file)
+            shift
+            INSTALL_ADMIN_KNOWN_HOSTS_FILE="$1"
             ;;
         -h|--help)
             usage
@@ -93,16 +105,24 @@ while [[ $# -gt 0 ]]; do
 done
 
 [[ -n "$INSTALL_MODE" ]] || die "An installation mode is required. Use --single-node, --admin-node, --worker-node or --portal-node."
+[[ -n "$INSTALL_PUBLIC_IP" ]] || die "All installation modes require --public-ip."
 
 if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]]; then
+    if [[ -z "$INSTALL_ADMIN_KNOWN_HOSTS_FILE" && -n "$INSTALL_ADMIN_SECRETS_FILE" ]]; then
+        INSTALL_ADMIN_KNOWN_HOSTS_FILE="$(dirname "$INSTALL_ADMIN_SECRETS_FILE")/know_host.yaml"
+    fi
     if [[ -z "$INSTALL_ADMIN_ENDPOINT" ]]; then
         die "Worker and portal nodes require --admin-endpoint (public IP or hostname of the admin node)."
     fi
-    if [[ -z "$INSTALL_ADMIN_SECRETS_FILE" ]]; then
-        die "Worker and portal nodes require --admin-secrets-file copied from the admin node."
+    if [[ -z "$INSTALL_ADMIN_SSH_KEY" ]]; then
+        if [[ -f /root/.ssh/id_ed25519 ]]; then
+            INSTALL_ADMIN_SSH_KEY="/root/.ssh/id_ed25519"
+        elif [[ -f /root/.ssh/id_rsa ]]; then
+            INSTALL_ADMIN_SSH_KEY="/root/.ssh/id_rsa"
+        fi
     fi
-    if [[ -z "$INSTALL_ADMIN_CA_FILE" ]]; then
-        die "Worker and portal nodes require --admin-ca-file copied from the admin node."
+    if [[ -z "$INSTALL_ADMIN_SECRETS_FILE" || -z "$INSTALL_ADMIN_CA_FILE" || -z "$INSTALL_ADMIN_KNOWN_HOSTS_FILE" ]]; then
+        [[ -n "$INSTALL_ADMIN_SSH_KEY" ]] || die "Worker and portal nodes require --admin-ssh-key or pre-copied admin bootstrap files."
     fi
 fi
 
@@ -167,12 +187,26 @@ fi
 
 # --- 8. import admin bootstrap materials for spoke installs ---
 if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]]; then
+    if [[ -z "$INSTALL_ADMIN_SECRETS_FILE" || -z "$INSTALL_ADMIN_CA_FILE" || -z "$INSTALL_ADMIN_KNOWN_HOSTS_FILE" ]]; then
+        TMP_BOOTSTRAP_DIR="$(mktemp -d)"
+        SSH_OPTS=(-i "$INSTALL_ADMIN_SSH_KEY" -o BatchMode=yes -o StrictHostKeyChecking=accept-new)
+        info "Fetching Admirald-managed bootstrap files from ${INSTALL_ADMIN_SSH_USER}@${INSTALL_ADMIN_ENDPOINT} using SSH key..."
+        scp "${SSH_OPTS[@]}" "${INSTALL_ADMIN_SSH_USER}@${INSTALL_ADMIN_ENDPOINT}:/etc/admiral/secrets" "$TMP_BOOTSTRAP_DIR/secrets"
+        scp "${SSH_OPTS[@]}" "${INSTALL_ADMIN_SSH_USER}@${INSTALL_ADMIN_ENDPOINT}:/etc/admiral/tls/ca.pem" "$TMP_BOOTSTRAP_DIR/ca.pem"
+        scp "${SSH_OPTS[@]}" "${INSTALL_ADMIN_SSH_USER}@${INSTALL_ADMIN_ENDPOINT}:/etc/admiral/know_host.yaml" "$TMP_BOOTSTRAP_DIR/know_host.yaml"
+        INSTALL_ADMIN_SECRETS_FILE="$TMP_BOOTSTRAP_DIR/secrets"
+        INSTALL_ADMIN_CA_FILE="$TMP_BOOTSTRAP_DIR/ca.pem"
+        INSTALL_ADMIN_KNOWN_HOSTS_FILE="$TMP_BOOTSTRAP_DIR/know_host.yaml"
+    fi
+
     [[ -f "$INSTALL_ADMIN_SECRETS_FILE" ]] || die "Admin secrets file not found: $INSTALL_ADMIN_SECRETS_FILE"
     [[ -f "$INSTALL_ADMIN_CA_FILE" ]] || die "Admin CA file not found: $INSTALL_ADMIN_CA_FILE"
+    [[ -f "$INSTALL_ADMIN_KNOWN_HOSTS_FILE" ]] || die "Admin known hosts file not found: $INSTALL_ADMIN_KNOWN_HOSTS_FILE"
 
     install -d -m 0750 /etc/admiral /etc/admiral/tls
     install -m 0600 "$INSTALL_ADMIN_SECRETS_FILE" /etc/admiral/secrets
     install -m 0644 "$INSTALL_ADMIN_CA_FILE" /etc/admiral/tls/ca.pem
+    install -m 0644 "$INSTALL_ADMIN_KNOWN_HOSTS_FILE" /etc/admiral/know_host.yaml
 fi
 
 # --- 9. build extra-vars ---
@@ -182,9 +216,6 @@ if [[ -n "$INSTALL_NODE_ID" ]]; then
 fi
 if [[ -n "$INSTALL_PUBLIC_IP" ]]; then
     EXTRA_VARS="$EXTRA_VARS fleet_public_ip=$INSTALL_PUBLIC_IP"
-fi
-if [[ -n "$INSTALL_WIREGUARD_IP" ]]; then
-    EXTRA_VARS="$EXTRA_VARS admiral_wireguard_ip=$INSTALL_WIREGUARD_IP"
 fi
 if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]]; then
     EXTRA_VARS="$EXTRA_VARS fleet_node_role=$( [[ "$INSTALL_MODE" == "portal-node" ]] && echo 'portal' || echo 'worker' )"
