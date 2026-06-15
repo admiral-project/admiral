@@ -119,22 +119,23 @@ Internet
 cloud.domain.com
     |
 +------------------------------------+
-| control plane                      |
+| control plane (admin-node)         |
 | admirald                           |
-| flagship                           |
-| harbor                             |
 | caddy                              |
+| cockpit                            |
+| PostgreSQL                         |
 | wg0 = 10.99.0.1                    |
 +------------------------------------+
           |
-    -----------------
-    |               |
-+----------------+  +----------------+
-| worker node1   |  | worker node2   |
-| fleet          |  | fleet          |
-| podman         |  | podman         |
-| wg0 10.99.0.2  |  | wg0 10.99.0.3  |
-+----------------+  +----------------+
+    ---------------------------
+    |             |           |
++----------------+  +----------------+  +----------------+
+| worker node1   |  | worker node2   |  | portal node    |
+| fleet          |  | fleet          |  | admiral-harbor |
+| podman         |  | podman         |  | PostgreSQL     |
+| cockpit-bridge |  | cockpit-bridge |  | cockpit-bridge |
+| wg0 10.99.0.2  |  | wg0 10.99.0.3  |  | wg0 10.99.0.100|
++----------------+  +----------------+  +----------------+
 
 Only these communication paths are required:
 
