@@ -46,17 +46,54 @@
   set_fact:
     admiral_wireguard_port: "{{ admiral_wireguard_port | default('51820') }}"
 
-- name: Derive WireGuard node index from node id
-  set_fact:
-    admiral_wireguard_node_index: "{{ fleet_node_id | default(ansible_hostname) | regex_findall('([0-9]+)$') | first | default('') }}"
-  when: admiral_wireguard_ip is not defined
+- name: Check for Admirald-managed known host inventory
+  stat:
+    path: /etc/admiral/know_host.yaml
+  register: admiral_known_hosts_file
 
-- name: Require explicit or derivable WireGuard IP for spoke nodes
+- name: Read Admirald-managed known host inventory
+  slurp:
+    src: /etc/admiral/know_host.yaml
+  register: admiral_known_hosts_slurp
+  when: admiral_known_hosts_file.stat.exists
+
+- name: Decode Admirald-managed known host inventory
+  set_fact:
+    admiral_known_hosts_inventory: "{{ admiral_known_hosts_slurp.content | b64decode | from_yaml }}"
+  when: admiral_known_hosts_file.stat.exists
+
+- name: Determine known host inventory lookup key
+  set_fact:
+    admiral_known_host_lookup_key: "{{ fleet_node_id | default(fleet_node_id_effective | default(ansible_hostname)) }}"
+  when: admiral_known_hosts_file.stat.exists
+
+- name: Resolve current node entry from Admirald-managed inventory
+  set_fact:
+    admiral_known_host_entry: >-
+      {{
+        (
+          (admiral_known_hosts_inventory.nodes | default({})).get(admiral_known_host_lookup_key, {})
+        )
+      }}
+  when: admiral_known_hosts_file.stat.exists
+
+- name: Resolve next bootstrap assignment from known host inventory
+  set_fact:
+    admiral_known_host_next_assignment: >-
+      {{
+        admiral_known_hosts_inventory.next.portal
+        if admiral_install_mode == 'portal-node'
+        else admiral_known_hosts_inventory.next.worker
+      }}
+  when: admiral_known_hosts_file.stat.exists
+
+- name: Require explicit or inventory-derived WireGuard IP for spoke nodes
   assert:
     that:
-      - admiral_wireguard_role == 'hub' or (admiral_wireguard_node_index | default('')) != '' or admiral_install_mode == 'portal-node'
-    fail_msg: "Spoke nodes require --wireguard-ip or a node id / hostname ending in digits to derive a stable overlay IP."
-  when: admiral_wireguard_ip is not defined
+      - admiral_wireguard_role == 'hub' or (admiral_known_host_entry.wireguard_ip | default('')) != '' or (admiral_known_host_next_assignment.wireguard_ip | default('')) != ''
+    fail_msg: "Spoke nodes require a wireguard_ip entry or next assignment in /etc/admiral/know_host.yaml."
+  when:
+    - admiral_wireguard_ip is not defined
 
 - name: Determine WireGuard IP address for this node
   set_fact:
@@ -66,8 +103,8 @@
         | default(
             '10.99.0.1' if admiral_wireguard_role == 'hub'
             else (
-              '10.99.0.100' if admiral_install_mode == 'portal-node'
-              else '10.99.0.' ~ ((admiral_wireguard_node_index | int) + 1)
+              (admiral_known_host_entry.wireguard_ip | default('')) if (admiral_known_host_entry.wireguard_ip | default('')) != ''
+              else (admiral_known_host_next_assignment.wireguard_ip | default(''))
             )
           )
       }}

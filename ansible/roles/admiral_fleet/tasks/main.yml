@@ -4,6 +4,34 @@
     name: admiral-fleet
     state: present
 
+- name: Check for Admirald-managed known host inventory
+  stat:
+    path: /etc/admiral/know_host.yaml
+  register: admiral_known_hosts_file
+
+- name: Read Admirald-managed known host inventory
+  slurp:
+    src: /etc/admiral/know_host.yaml
+  register: admiral_known_hosts_slurp
+  when: admiral_known_hosts_file.stat.exists
+
+- name: Decode Admirald-managed known host inventory
+  set_fact:
+    admiral_known_hosts_inventory: "{{ admiral_known_hosts_slurp.content | b64decode | from_yaml }}"
+  when: admiral_known_hosts_file.stat.exists
+
+- name: Resolve worker node id from known host inventory
+  set_fact:
+    fleet_node_id_effective: "{{ fleet_node_id | default((admiral_known_hosts_inventory.next.worker.node_id | default('')), true) }}"
+  when: admiral_install_mode == 'worker-node'
+
+- name: Fall back to hostname for worker node id when inventory has no assignment
+  set_fact:
+    fleet_node_id_effective: "{{ fleet_node_id | default(ansible_hostname) }}"
+  when:
+    - admiral_install_mode == 'worker-node'
+    - (fleet_node_id_effective | default('')) == ''
+
 - name: Require remote control-plane settings for worker-node installs
   assert:
     that:
@@ -22,7 +50,7 @@
   copy:
     dest: /etc/admiral/fleet.env
     content: |
-      ADMIRAL_FLEET_NODE_ID={{ fleet_node_id | default(ansible_hostname) }}
+      ADMIRAL_FLEET_NODE_ID={{ fleet_node_id_effective | default(fleet_node_id | default(ansible_hostname)) }}
       ADMIRAL_SHARED_TOKEN={{ admirald_shared_token | default(admiral_shared_token_value) }}
       ADMIRAL_API_URL={{ admiral_fleet_api_url | default('https://127.0.0.1:8080') }}
       ADMIRAL_API_CA_FILE=/etc/admiral/tls/ca.pem
@@ -68,7 +96,7 @@
 - name: Register local node with admirald
   command: >
     /usr/bin/admiralctl nodes register
-    --id "{{ fleet_node_id | default(ansible_hostname) }}"
+    --id "{{ fleet_node_id_effective | default(fleet_node_id | default(ansible_hostname)) }}"
     --hostname "{{ ansible_fqdn }}"
     --ip "{{ ansible_default_ipv4.address }}"
     --role "{{ fleet_node_role | default('worker') }}"

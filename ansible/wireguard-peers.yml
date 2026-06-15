@@ -27,19 +27,34 @@
       set_fact:
         node_wg_public_key: "{{ wg_pub_slurp.content | b64decode | trim }}"
 
+- name: Read Admirald-managed know_host inventory on hub
+  hosts: admin
+  gather_facts: false
+  become: true
+  tasks:
+    - name: Read know_host inventory
+      slurp:
+        src: /etc/admiral/know_host.yaml
+      register: know_host_slurp
+
+    - name: Decode know_host inventory
+      set_fact:
+        admiral_known_hosts_inventory: "{{ know_host_slurp.content | b64decode | from_yaml }}"
+
 - name: Register each spoke's public key on the hub
   hosts: workers:portal
   gather_facts: false
   become: true
   vars:
     hub_host: "{{ groups['admin'][0] }}"
+    node_lookup_key: "{{ hostvars[inventory_hostname].fleet_node_id | default(hostvars[inventory_hostname].admiral_node_name | default(inventory_hostname)) }}"
   tasks:
     - name: Write spoke peer config to hub
       copy:
         content: |
           [Peer]
           PublicKey = {{ hostvars[inventory_hostname].node_wg_public_key }}
-          AllowedIPs = {{ ansible_default_ipv4.address }}/32
+          AllowedIPs = {{ hostvars[hub_host].admiral_known_hosts_inventory.nodes[node_lookup_key].wireguard_ip }}/32
         dest: "/etc/wireguard/peers.d/{{ inventory_hostname }}.conf"
         mode: "0644"
       delegate_to: "{{ hub_host }}"
@@ -75,7 +90,7 @@
         mode: "0600"
       vars:
         admiral_wireguard_role: hub
-        admiral_wireguard_ip: "{{ ansible_default_ipv4.address }}"
+        admiral_wireguard_ip: 10.99.0.1
         admiral_wg_private_key:
           stdout: "{{ lookup('file', '/etc/wireguard/admiral.key') }}"
         admiral_wireguard_port: "51820"
@@ -95,6 +110,7 @@
   become: true
   vars:
     hub_host: "{{ groups['admin'][0] }}"
+    node_lookup_key: "{{ hostvars[inventory_hostname].fleet_node_id | default(hostvars[inventory_hostname].admiral_node_name | default(inventory_hostname)) }}"
   tasks:
     - name: Deploy spoke WireGuard configuration
       template:
@@ -105,7 +121,7 @@
         admiral_wireguard_role: spoke
         admiral_wireguard_hub_public_key: "{{ hostvars[hub_host].node_wg_public_key }}"
         admiral_wireguard_hub_endpoint: "{{ hostvars[hub_host].ansible_default_ipv4.address }}"
-        admiral_wireguard_ip: "{{ ansible_default_ipv4.address }}"
+        admiral_wireguard_ip: "{{ hostvars[hub_host].admiral_known_hosts_inventory.nodes[node_lookup_key].wireguard_ip }}"
         admiral_wg_private_key:
           stdout: "{{ lookup('file', '/etc/wireguard/admiral.key') }}"
         admiral_wireguard_port: "51820"
