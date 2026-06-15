@@ -1,0 +1,119 @@
+---
+# WireGuard peer exchange playbook.
+#
+# Run this AFTER all nodes have been installed with install.sh.
+# It collects public keys from all nodes and updates the hub
+# and spoke WireGuard configurations.
+#
+# Usage:
+#   ansible-playbook -i hosts.ini wireguard-peers.yml
+#
+# Inventory groups:
+#   [admin]   - one admin node (VPN hub)
+#   [workers] - zero or more worker nodes
+#   [portal]  - zero or one portal node
+
+- name: Collect WireGuard public keys from all nodes
+  hosts: all
+  gather_facts: true
+  become: true
+  tasks:
+    - name: Read WireGuard public key
+      slurp:
+        src: /etc/wireguard/admiral.pub
+      register: wg_pub_slurp
+
+    - name: Store public key as fact
+      set_fact:
+        node_wg_public_key: "{{ wg_pub_slurp.content | b64decode | trim }}"
+
+- name: Register each spoke's public key on the hub
+  hosts: workers:portal
+  gather_facts: false
+  become: true
+  vars:
+    hub_host: "{{ groups['admin'][0] }}"
+  tasks:
+    - name: Write spoke peer config to hub
+      copy:
+        content: |
+          [Peer]
+          PublicKey = {{ hostvars[inventory_hostname].node_wg_public_key }}
+          AllowedIPs = {{ ansible_default_ipv4.address }}/32
+        dest: "/etc/wireguard/peers.d/{{ inventory_hostname }}.conf"
+        mode: "0644"
+      delegate_to: "{{ hub_host }}"
+
+- name: Build and deploy hub WireGuard configuration
+  hosts: admin
+  gather_facts: false
+  become: true
+  tasks:
+    - name: Read all peer config files
+      slurp:
+        src: "{{ item }}"
+      loop: "{{ query('fileglob', '/etc/wireguard/peers.d/*.conf') }}"
+      register: peer_files
+
+    - name: Build peer list for template
+      set_fact:
+        admiral_wireguard_peers: >-
+          [
+          {% for p in peer_files.results %}
+          {{ p.content | b64decode | from_yaml | combine({'allowed_ips': p.content | b64decode | regex_replace('.*AllowedIPs = ', '') | regex_replace('\n.*', '')}) | to_json }}
+          {% endfor %}
+          ]
+
+    - name: Debug peer list
+      debug:
+        var: admiral_wireguard_peers
+
+    - name: Deploy hub WireGuard configuration
+      template:
+        src: roles/admiral_wireguard/templates/wg-admiral.conf.j2
+        dest: /etc/wireguard/wg-admiral.conf
+        mode: "0600"
+      vars:
+        admiral_wireguard_role: hub
+        admiral_wireguard_ip: "{{ ansible_default_ipv4.address }}"
+        admiral_wg_private_key:
+          stdout: "{{ lookup('file', '/etc/wireguard/admiral.key') }}"
+        admiral_wireguard_port: "51820"
+        admiral_wireguard_peers: "{{ admiral_wireguard_peers }}"
+      notify: restart wireguard
+
+  handlers:
+    - name: restart wireguard
+      systemd:
+        name: wg-quick@wg-admiral
+        state: restarted
+        daemon_reload: true
+
+- name: Update spoke WireGuard configurations with hub public key
+  hosts: workers:portal
+  gather_facts: false
+  become: true
+  vars:
+    hub_host: "{{ groups['admin'][0] }}"
+  tasks:
+    - name: Deploy spoke WireGuard configuration
+      template:
+        src: roles/admiral_wireguard/templates/wg-admiral.conf.j2
+        dest: /etc/wireguard/wg-admiral.conf
+        mode: "0600"
+      vars:
+        admiral_wireguard_role: spoke
+        admiral_wireguard_hub_public_key: "{{ hostvars[hub_host].node_wg_public_key }}"
+        admiral_wireguard_hub_endpoint: "{{ hostvars[hub_host].ansible_default_ipv4.address }}"
+        admiral_wireguard_ip: "{{ ansible_default_ipv4.address }}"
+        admiral_wg_private_key:
+          stdout: "{{ lookup('file', '/etc/wireguard/admiral.key') }}"
+        admiral_wireguard_port: "51820"
+      notify: restart wireguard
+
+  handlers:
+    - name: restart wireguard
+      systemd:
+        name: wg-quick@wg-admiral
+        state: restarted
+        daemon_reload: true
