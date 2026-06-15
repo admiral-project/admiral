@@ -34,6 +34,28 @@ Single-node mode combines admin + worker + portal on one host for development an
 
 Since Cockpit on the admin node connects to remote hosts over **SSH**, and WireGuard provides a private network between nodes, you can monitor workers and portal by adding them in the Cockpit web UI using their **WireGuard private IP** (e.g. `10.99.0.2`). The SSH connection travels encrypted over the VPN — no need to expose port 9090 on workers. The `cockpit-bridge` package on worker/portal enables full system monitoring (processes, services, logs, storage) via that SSH tunnel.
 
+### Secrets distribution
+
+`/etc/admiral/secrets` on the admin node is the single source of truth for bootstrap secrets. It must be backed up securely.
+
+Secrets from this file are propagated to service-specific env files on each node as needed:
+
+| Secret | Stored in admin | Exposed to worker | Exposed to portal |
+|--------|:--------------:|:-----------------:|:-----------------:|
+| `ADMIRAL_POSTGRES_PASSWORD` | `/etc/admiral/secrets` | via queue DB URL in `fleet.env` | — |
+| `ADMIRAL_SHARED_TOKEN` | `/etc/admiral/secrets` | `fleet.env` | `harbor.env` |
+| `ADMIRAL_SECRETS_KEY` | `/etc/admiral/secrets` | — | — |
+| `FLAGSHIP_SECRET_KEY` | `/etc/admiral/secrets` | — | — |
+| `FLAGSHIP_BOOTSTRAP_USER` / `FLAGSHIP_BOOTSTRAP_PASSWORD` | `/etc/admiral/secrets` | — | — |
+| `HARBOR_SECRET_KEY` | `/etc/admiral/secrets` | — | `harbor.env` |
+| `HARBOR_ENCRYPTION_KEY` | `/etc/admiral/secrets` | — | `harbor.env` |
+| `HARBOR_BOOTSTRAP_USER` / `HARBOR_BOOTSTRAP_PASSWORD` | `/etc/admiral/secrets` | — | — |
+| `COCKPIT_ADMIN_USER` / `COCKPIT_ADMIN_PASSWORD` | `/etc/admiral/secrets` | — | — |
+
+Workers receive only the shared token and the queue database URL (which contains the PG password embedded). Portal receives only the shared token and harbor encryption secrets.
+
+**What is NOT propagated**: `ADMIRAL_SECRETS_KEY`, `FLAGSHIP_*`, bootstrap admin credentials, cockpit admin credentials. These remain exclusively on the admin node.
+
 ### Adding a worker node
 
 From the admin node, use Ansible to bootstrap a remote worker:
