@@ -35,6 +35,8 @@ Requires: python3-psycopg2
 Requires: python3-psycopg3
 Requires: python3-psycopg3_c
 Requires: systemd
+Requires: cockpit-bridge
+Requires: wireguard-tools
 
 %description
 admiral-harbor is the customer-facing web portal for Admiral.
@@ -106,6 +108,9 @@ restorecon -R %{_localstatedir}/lib/admiral/harbor 2>/dev/null || :
 %systemd_postun admiral-harbor-catalog-sync.timer
 
 %changelog
+* Mon Jun 15 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1alpha5-3
+- Add Requires: cockpit-bridge and Requires: wireguard-tools
+
 * Sun Jun 14 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1alpha5-2
 - Update source commit to latest alpha5
 - Replace favicon.ico with generated ico from source PNG
