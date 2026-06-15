@@ -29,6 +29,19 @@
   changed_when: false
   no_log: true
 
+- name: Store WireGuard public key for peer exchange
+  copy:
+    content: "{{ admiral_wg_public_key.stdout }}\n"
+    dest: /etc/wireguard/admiral.pub
+    mode: "0644"
+
+- name: Create peers directory on hub
+  file:
+    path: /etc/wireguard/peers.d
+    state: directory
+    mode: "0755"
+  when: admiral_wireguard_role == 'hub'
+
 - name: Set WireGuard listen port
   set_fact:
     admiral_wireguard_port: "{{ admiral_wireguard_port | default('51820') }}"

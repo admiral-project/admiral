@@ -3,8 +3,8 @@ Address = {{ admiral_wireguard_ip }}/24
 PrivateKey = {{ admiral_wg_private_key.stdout }}
 ListenPort = {{ admiral_wireguard_port }}
 
-{% if admiral_wireguard_role == 'hub' and admiral_wireguard_peers is defined %}
-{% for peer in admiral_wireguard_peers %}
+{% if admiral_wireguard_role == 'hub' %}
+{% for peer in admiral_wireguard_peers | default([]) %}
 [Peer]
 PublicKey = {{ peer.public_key }}
 AllowedIPs = {{ peer.allowed_ips }}
