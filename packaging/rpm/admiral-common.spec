@@ -17,6 +17,7 @@ BuildArch: noarch
 Requires: python3
 Requires: caddy
 Requires: ansible-core
+Requires: ansible-collection-ansible-posix
 Requires: openssh-clients
 Requires: openssh-server
 Requires: shadow-utils
