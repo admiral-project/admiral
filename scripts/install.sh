@@ -13,8 +13,8 @@ usage() {
 Usage:
   admiral_install --single-node --public-ip <public-ip>
   admiral_install --admin-node --public-ip <public-ip>
-  admiral_install --worker-node --public-ip <public-ip> --admin-endpoint <admin-endpoint>
-  admiral_install --portal-node --public-ip <public-ip> --admin-endpoint <admin-endpoint>
+  admiral_install --worker-node --public-ip <public-ip>
+  admiral_install --portal-node --public-ip <public-ip>
 
 Options:
   --single-node       Install all single-node components on one host.
@@ -22,13 +22,10 @@ Options:
   --worker-node       Install worker components only.
   --portal-node       Install portal components only.
   --node-id           Set a custom node ID (default: hostname).
-  --public-ip         Set the public IP address for remote connectivity.
-  --admin-endpoint    Admin node WireGuard endpoint (required for worker/portal).
-  --admin-ssh-user      SSH user for fetching admin bootstrap files (default: root).
-  --admin-ssh-key       SSH private key for fetching admin bootstrap files.
-  --admin-secrets-file  Path to the admin /etc/admiral/secrets inventory.
-  --admin-ca-file       Path to the admin CA certificate PEM.
-  --admin-known-hosts-file  Path to the admin /etc/admiral/know_host.yaml inventory.
+  --public-ip         Set the public IP address of the node being configured.
+  --admin-endpoint    Override the admin endpoint for spoke installs.
+  --ssh-user          SSH user for remote spoke configuration (default: root).
+  --ssh-key           SSH private key for remote spoke configuration.
   -h, --help          Show this help message.
 EOF
 }
@@ -37,11 +34,8 @@ INSTALL_MODE=""
 INSTALL_NODE_ID=""
 INSTALL_PUBLIC_IP=""
 INSTALL_ADMIN_ENDPOINT=""
-INSTALL_ADMIN_SSH_USER="root"
-INSTALL_ADMIN_SSH_KEY=""
-INSTALL_ADMIN_SECRETS_FILE=""
-INSTALL_ADMIN_CA_FILE=""
-INSTALL_ADMIN_KNOWN_HOSTS_FILE=""
+INSTALL_TARGET_SSH_USER="root"
+INSTALL_TARGET_SSH_KEY=""
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
@@ -73,25 +67,13 @@ while [[ $# -gt 0 ]]; do
             shift
             INSTALL_ADMIN_ENDPOINT="$1"
             ;;
-        --admin-ssh-user)
+        --ssh-user|--admin-ssh-user)
             shift
-            INSTALL_ADMIN_SSH_USER="$1"
+            INSTALL_TARGET_SSH_USER="$1"
             ;;
-        --admin-ssh-key)
+        --ssh-key|--admin-ssh-key)
             shift
-            INSTALL_ADMIN_SSH_KEY="$1"
-            ;;
-        --admin-secrets-file)
-            shift
-            INSTALL_ADMIN_SECRETS_FILE="$1"
-            ;;
-        --admin-ca-file)
-            shift
-            INSTALL_ADMIN_CA_FILE="$1"
-            ;;
-        --admin-known-hosts-file)
-            shift
-            INSTALL_ADMIN_KNOWN_HOSTS_FILE="$1"
+            INSTALL_TARGET_SSH_KEY="$1"
             ;;
         -h|--help)
             usage
@@ -108,22 +90,23 @@ done
 [[ -n "$INSTALL_PUBLIC_IP" ]] || die "All installation modes require --public-ip."
 
 if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]]; then
-    if [[ -z "$INSTALL_ADMIN_KNOWN_HOSTS_FILE" && -n "$INSTALL_ADMIN_SECRETS_FILE" ]]; then
-        INSTALL_ADMIN_KNOWN_HOSTS_FILE="$(dirname "$INSTALL_ADMIN_SECRETS_FILE")/know_host.yaml"
-    fi
-    if [[ -z "$INSTALL_ADMIN_ENDPOINT" ]]; then
-        die "Worker and portal nodes require --admin-endpoint (public IP or hostname of the admin node)."
-    fi
-    if [[ -z "$INSTALL_ADMIN_SSH_KEY" ]]; then
+    if [[ -z "$INSTALL_TARGET_SSH_KEY" ]]; then
         if [[ -f /root/.ssh/id_ed25519 ]]; then
-            INSTALL_ADMIN_SSH_KEY="/root/.ssh/id_ed25519"
+            INSTALL_TARGET_SSH_KEY="/root/.ssh/id_ed25519"
         elif [[ -f /root/.ssh/id_rsa ]]; then
-            INSTALL_ADMIN_SSH_KEY="/root/.ssh/id_rsa"
+            INSTALL_TARGET_SSH_KEY="/root/.ssh/id_rsa"
         fi
     fi
-    if [[ -z "$INSTALL_ADMIN_SECRETS_FILE" || -z "$INSTALL_ADMIN_CA_FILE" || -z "$INSTALL_ADMIN_KNOWN_HOSTS_FILE" ]]; then
-        [[ -n "$INSTALL_ADMIN_SSH_KEY" ]] || die "Worker and portal nodes require --admin-ssh-key or pre-copied admin bootstrap files."
+    if [[ -z "$INSTALL_ADMIN_ENDPOINT" && -f /etc/admiral/install.env ]]; then
+        # shellcheck disable=SC1091
+        source /etc/admiral/install.env
+        INSTALL_ADMIN_ENDPOINT="${ADMIRAL_PUBLIC_IP:-}"
     fi
+    [[ -n "$INSTALL_ADMIN_ENDPOINT" ]] || die "Worker and portal nodes require an admin endpoint from /etc/admiral/install.env or --admin-endpoint."
+    [[ -f /etc/admiral/secrets ]] || die "Spoke installs must run from an admin host with /etc/admiral/secrets available."
+    [[ -f /etc/admiral/tls/ca.pem ]] || die "Spoke installs must run from an admin host with /etc/admiral/tls/ca.pem available."
+    [[ -f /etc/admiral/know_host.yaml ]] || die "Spoke installs must run from an admin host with /etc/admiral/know_host.yaml available."
+    [[ -n "$INSTALL_TARGET_SSH_KEY" ]] || die "Spoke installs require an SSH key. Use --ssh-key or install a default root key."
 fi
 
 # --- 1. root check ---
@@ -185,31 +168,7 @@ if ! rpm -q admiral-common >/dev/null 2>&1; then
     dnf install -y admiral-common
 fi
 
-# --- 8. import admin bootstrap materials for spoke installs ---
-if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]]; then
-    if [[ -z "$INSTALL_ADMIN_SECRETS_FILE" || -z "$INSTALL_ADMIN_CA_FILE" || -z "$INSTALL_ADMIN_KNOWN_HOSTS_FILE" ]]; then
-        TMP_BOOTSTRAP_DIR="$(mktemp -d)"
-        SSH_OPTS=(-i "$INSTALL_ADMIN_SSH_KEY" -o BatchMode=yes -o StrictHostKeyChecking=accept-new)
-        info "Fetching Admirald-managed bootstrap files from ${INSTALL_ADMIN_SSH_USER}@${INSTALL_ADMIN_ENDPOINT} using SSH key..."
-        scp "${SSH_OPTS[@]}" "${INSTALL_ADMIN_SSH_USER}@${INSTALL_ADMIN_ENDPOINT}:/etc/admiral/secrets" "$TMP_BOOTSTRAP_DIR/secrets"
-        scp "${SSH_OPTS[@]}" "${INSTALL_ADMIN_SSH_USER}@${INSTALL_ADMIN_ENDPOINT}:/etc/admiral/tls/ca.pem" "$TMP_BOOTSTRAP_DIR/ca.pem"
-        scp "${SSH_OPTS[@]}" "${INSTALL_ADMIN_SSH_USER}@${INSTALL_ADMIN_ENDPOINT}:/etc/admiral/know_host.yaml" "$TMP_BOOTSTRAP_DIR/know_host.yaml"
-        INSTALL_ADMIN_SECRETS_FILE="$TMP_BOOTSTRAP_DIR/secrets"
-        INSTALL_ADMIN_CA_FILE="$TMP_BOOTSTRAP_DIR/ca.pem"
-        INSTALL_ADMIN_KNOWN_HOSTS_FILE="$TMP_BOOTSTRAP_DIR/know_host.yaml"
-    fi
-
-    [[ -f "$INSTALL_ADMIN_SECRETS_FILE" ]] || die "Admin secrets file not found: $INSTALL_ADMIN_SECRETS_FILE"
-    [[ -f "$INSTALL_ADMIN_CA_FILE" ]] || die "Admin CA file not found: $INSTALL_ADMIN_CA_FILE"
-    [[ -f "$INSTALL_ADMIN_KNOWN_HOSTS_FILE" ]] || die "Admin known hosts file not found: $INSTALL_ADMIN_KNOWN_HOSTS_FILE"
-
-    install -d -m 0750 /etc/admiral /etc/admiral/tls
-    install -m 0600 "$INSTALL_ADMIN_SECRETS_FILE" /etc/admiral/secrets
-    install -m 0644 "$INSTALL_ADMIN_CA_FILE" /etc/admiral/tls/ca.pem
-    install -m 0644 "$INSTALL_ADMIN_KNOWN_HOSTS_FILE" /etc/admiral/know_host.yaml
-fi
-
-# --- 9. build extra-vars ---
+# --- 8. build extra-vars ---
 EXTRA_VARS="admiral_install_mode=$INSTALL_MODE"
 if [[ -n "$INSTALL_NODE_ID" ]]; then
     EXTRA_VARS="$EXTRA_VARS fleet_node_id=$INSTALL_NODE_ID"
@@ -221,30 +180,71 @@ if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]]; t
     EXTRA_VARS="$EXTRA_VARS fleet_node_role=$( [[ "$INSTALL_MODE" == "portal-node" ]] && echo 'portal' || echo 'worker' )"
     EXTRA_VARS="$EXTRA_VARS admiral_admin_endpoint=$INSTALL_ADMIN_ENDPOINT"
     EXTRA_VARS="$EXTRA_VARS admiral_wireguard_hub_endpoint=$INSTALL_ADMIN_ENDPOINT"
+    EXTRA_VARS="$EXTRA_VARS admiral_bootstrap_from_controller=true"
 fi
 
-# --- 10. run official playbook ---
+# --- 9. run official playbook ---
 # The playbook handles the rest: packages, configuration, services
 info "Running Admiral configuration playbook for mode: $INSTALL_MODE"
 ANSIBLE_DIR="/usr/share/admiral/ansible"
 if [[ -d "$ANSIBLE_DIR" ]]; then
-    ANSIBLE_LOCAL_TEMP=/tmp/ansible-local \
-    ANSIBLE_REMOTE_TEMP=/tmp/ansible-remote \
-    ANSIBLE_GALAXY_CACHE_DIR=/tmp/ansible-galaxy-cache \
-    ansible-playbook \
-        "$ANSIBLE_DIR/site.yml" \
-        -i "$ANSIBLE_DIR/inventory/localhost.yml" \
-        --extra-vars "$EXTRA_VARS"
+    ANSIBLE_LOCAL_TEMP=/tmp/ansible-local
+    ANSIBLE_REMOTE_TEMP=/tmp/ansible-remote
+    ANSIBLE_GALAXY_CACHE_DIR=/tmp/ansible-galaxy-cache
+    if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]]; then
+        TMP_INVENTORY="$(mktemp)"
+        cat > "$TMP_INVENTORY" <<EOF
+all:
+  hosts:
+    target:
+      ansible_host: ${INSTALL_PUBLIC_IP}
+      ansible_user: ${INSTALL_TARGET_SSH_USER}
+      ansible_ssh_private_key_file: ${INSTALL_TARGET_SSH_KEY}
+      ansible_python_interpreter: /usr/bin/python3
+      ansible_ssh_common_args: -o StrictHostKeyChecking=accept-new
+EOF
+        ANSIBLE_LOCAL_TEMP="$ANSIBLE_LOCAL_TEMP" \
+        ANSIBLE_REMOTE_TEMP="$ANSIBLE_REMOTE_TEMP" \
+        ANSIBLE_GALAXY_CACHE_DIR="$ANSIBLE_GALAXY_CACHE_DIR" \
+        ansible-playbook \
+            "$ANSIBLE_DIR/site.yml" \
+            -i "$TMP_INVENTORY" \
+            --limit target \
+            --extra-vars "$EXTRA_VARS"
+    else
+        ANSIBLE_LOCAL_TEMP="$ANSIBLE_LOCAL_TEMP" \
+        ANSIBLE_REMOTE_TEMP="$ANSIBLE_REMOTE_TEMP" \
+        ANSIBLE_GALAXY_CACHE_DIR="$ANSIBLE_GALAXY_CACHE_DIR" \
+        ansible-playbook \
+            "$ANSIBLE_DIR/site.yml" \
+            -i "$ANSIBLE_DIR/inventory/localhost.yml" \
+            --extra-vars "$EXTRA_VARS"
+    fi
 else
     die "Ansible playbook directory not found at $ANSIBLE_DIR"
 fi
 
+# --- 10. persist local installer state for future spoke bootstraps ---
+if [[ "$INSTALL_MODE" == "single-node" || "$INSTALL_MODE" == "admin-node" ]]; then
+    install -d -m 0750 /etc/admiral
+    cat > /etc/admiral/install.env <<EOF
+ADMIRAL_PUBLIC_IP=${INSTALL_PUBLIC_IP}
+EOF
+    chmod 0640 /etc/admiral/install.env
+fi
+
 # --- 11. verify core runtime ---
-command -v podman >/dev/null 2>&1 || die "Podman was not installed by RPM dependencies."
-PODMAN_VER=$(podman version --format '{{.Version}}' 2>/dev/null || echo "0")
-info "Podman version: $PODMAN_VER"
-if [[ "$(printf '%s\n' "5.0" "$PODMAN_VER" | sort -V | head -1)" != "5.0" ]]; then
-    die "Podman >= 5.0 required. Found: $PODMAN_VER"
+if [[ "$INSTALL_MODE" == "single-node" || "$INSTALL_MODE" == "worker-node" ]]; then
+    if [[ "$INSTALL_MODE" == "worker-node" ]]; then
+        PODMAN_VER=$(ssh -i "$INSTALL_TARGET_SSH_KEY" -o BatchMode=yes -o StrictHostKeyChecking=accept-new "${INSTALL_TARGET_SSH_USER}@${INSTALL_PUBLIC_IP}" "podman version --format '{{.Version}}'" 2>/dev/null || echo "0")
+    else
+        command -v podman >/dev/null 2>&1 || die "Podman was not installed by RPM dependencies."
+        PODMAN_VER=$(podman version --format '{{.Version}}' 2>/dev/null || echo "0")
+    fi
+    info "Podman version: $PODMAN_VER"
+    if [[ "$(printf '%s\n' "5.0" "$PODMAN_VER" | sort -V | head -1)" != "5.0" ]]; then
+        die "Podman >= 5.0 required. Found: $PODMAN_VER"
+    fi
 fi
 
 case "$INSTALL_MODE" in
@@ -263,7 +263,11 @@ case "$INSTALL_MODE" in
 esac
 
 for service in "${REQUIRED_SERVICES[@]}"; do
-    systemctl is-active --quiet "$service" || die "Service $service is not active after setup."
+    if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]]; then
+        ssh -i "$INSTALL_TARGET_SSH_KEY" -o BatchMode=yes -o StrictHostKeyChecking=accept-new "${INSTALL_TARGET_SSH_USER}@${INSTALL_PUBLIC_IP}" "systemctl is-active --quiet '$service'" || die "Service $service is not active after remote setup."
+    else
+        systemctl is-active --quiet "$service" || die "Service $service is not active after setup."
+    fi
 done
 
 # --- 12. final message ---

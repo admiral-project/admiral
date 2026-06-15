@@ -58,22 +58,13 @@ Workers receive only the shared token and the queue database URL (which contains
 
 ### Adding a worker node
 
-From the admin node, run the installer on the target worker:
+From the admin node, run the installed bootstrap command and pass only the worker public IP:
 
 ```bash
-ssh root@<worker-ip> 'bash -s' -- < /usr/share/admiral/install.sh \
-  --worker-node \
-  --node-id worker1 \
-  --admin-endpoint <admin-public-ip>
+admiral_install --worker-node --public-ip <worker-public-ip>
 ```
 
-Or use Ansible directly:
-
-```bash
-ansible-playbook /usr/share/admiral/ansible/site.yml \
-  -i /path/to/inventory.yml \
-  --extra-vars "admiral_install_mode=worker-node fleet_node_id=worker1 admiral_wireguard_hub_endpoint=<admin-public-ip>"
-```
+`admiral_install` connects to the target over SSH using the local root key, copies `/etc/admiral/secrets`, `/etc/admiral/tls/ca.pem`, and `/etc/admiral/know_host.yaml`, then runs the installed Ansible playbook against that public IP.
 
 The playbook will:
 
