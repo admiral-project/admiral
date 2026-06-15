@@ -120,7 +120,7 @@
       vars:
         admiral_wireguard_role: spoke
         admiral_wireguard_hub_public_key: "{{ hostvars[hub_host].node_wg_public_key }}"
-        admiral_wireguard_hub_endpoint: "{{ hostvars[hub_host].ansible_default_ipv4.address }}"
+        admiral_wireguard_hub_endpoint: "{{ hostvars[hub_host].ansible_host | default(hostvars[hub_host].fleet_public_ip | default(hostvars[hub_host].ansible_default_ipv4.address)) }}"
         admiral_wireguard_ip: "{{ hostvars[hub_host].admiral_known_hosts_inventory.nodes[node_lookup_key].wireguard_ip }}"
         admiral_wg_private_key:
           stdout: "{{ lookup('file', '/etc/wireguard/admiral.key') }}"
