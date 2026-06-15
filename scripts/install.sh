@@ -170,13 +170,13 @@ case "$INSTALL_MODE" in
         REQUIRED_SERVICES=(postgresql caddy admirald admiral-fleet admiral-flagship admiral-harbor cockpit.socket)
         ;;
     admin-node)
-        REQUIRED_SERVICES=(postgresql caddy admirald admiral-flagship admiral-harbor cockpit.socket)
+        REQUIRED_SERVICES=(postgresql caddy admirald cockpit.socket)
         ;;
     worker-node)
         REQUIRED_SERVICES=(admiral-fleet)
         ;;
     portal-node)
-        REQUIRED_SERVICES=(admiral-fleet)
+        REQUIRED_SERVICES=(postgresql admiral-harbor)
         ;;
 esac
 
