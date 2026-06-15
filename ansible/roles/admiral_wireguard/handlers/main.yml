@@ -1,0 +1,6 @@
+---
+- name: restart wireguard
+  systemd:
+    name: wg-quick@wg-admiral
+    state: restarted
+    daemon_reload: true
