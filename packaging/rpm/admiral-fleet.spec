@@ -25,6 +25,7 @@ Requires: shadow-utils
 Requires: systemd
 Requires: wireguard-tools
 Requires: cockpit-bridge
+Requires: admiralctl
 
 %description
 admiral-fleet is the worker agent component of Admiral. It runs on
@@ -66,6 +67,9 @@ restorecon -F %{_bindir}/admiral-fleet 2>/dev/null || :
 %systemd_postun_with_restart admiral-fleet.service
 
 %changelog
+* Mon Jun 15 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1alpha5-4
+- Add Requires: admiralctl for worker bootstrap and node registration
+
 * Mon Jun 15 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1alpha5-3
 - Add Requires: cockpit-bridge for remote monitoring via Cockpit
 
