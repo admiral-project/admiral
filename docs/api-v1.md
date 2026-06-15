@@ -548,6 +548,36 @@ Reglas actuales:
 - la app debe tener bloque `backup` declarado
 - `target_node_id` debe coincidir con el nodo actual de la instancia si se especifica
 
+#### `POST /api/admin/instances/{instance_id}/migrate`
+
+Inicia una migracion offline de una instancia hacia otro worker.
+
+Request:
+
+```json
+{
+  "target_node_id": "node_002"
+}
+```
+
+Respuesta:
+
+```json
+{
+  "operation_id": "op_123",
+  "instance_id": "inst_123",
+  "logical_instance_id": "li_123",
+  "status": "running"
+}
+```
+
+Garantias actuales:
+
+- preserva `logical_instance_id`
+- mantiene `node_id` en origen hasta el cutover
+- intenta rollback pre-cutover si falla provision, restore, start o validation
+- conserva rutas publicas durante cutover exitoso
+
 ### Settings de backup storage
 
 #### `GET /api/admin/settings/backup-storage`
