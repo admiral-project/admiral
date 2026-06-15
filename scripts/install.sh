@@ -24,6 +24,8 @@ Options:
   --node-id           Set a custom node ID (default: hostname).
   --public-ip         Set the public IP address for remote connectivity.
   --admin-endpoint    Admin node WireGuard endpoint (required for worker/portal).
+  --admin-secrets-file  Path to the admin /etc/admiral/secrets inventory.
+  --admin-ca-file       Path to the admin CA certificate PEM.
   -h, --help          Show this help message.
 EOF
 }
@@ -32,6 +34,8 @@ INSTALL_MODE=""
 INSTALL_NODE_ID=""
 INSTALL_PUBLIC_IP=""
 INSTALL_ADMIN_ENDPOINT=""
+INSTALL_ADMIN_SECRETS_FILE=""
+INSTALL_ADMIN_CA_FILE=""
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
@@ -63,6 +67,14 @@ while [[ $# -gt 0 ]]; do
             shift
             INSTALL_ADMIN_ENDPOINT="$1"
             ;;
+        --admin-secrets-file)
+            shift
+            INSTALL_ADMIN_SECRETS_FILE="$1"
+            ;;
+        --admin-ca-file)
+            shift
+            INSTALL_ADMIN_CA_FILE="$1"
+            ;;
         -h|--help)
             usage
             exit 0
@@ -79,6 +91,12 @@ done
 if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]]; then
     if [[ -z "$INSTALL_ADMIN_ENDPOINT" ]]; then
         die "Worker and portal nodes require --admin-endpoint (public IP or hostname of the admin node)."
+    fi
+    if [[ -z "$INSTALL_ADMIN_SECRETS_FILE" ]]; then
+        die "Worker and portal nodes require --admin-secrets-file copied from the admin node."
+    fi
+    if [[ -z "$INSTALL_ADMIN_CA_FILE" ]]; then
+        die "Worker and portal nodes require --admin-ca-file copied from the admin node."
     fi
 fi
 
@@ -141,7 +159,17 @@ if ! rpm -q admiral-common >/dev/null 2>&1; then
     dnf install -y admiral-common
 fi
 
-# --- 8. build extra-vars ---
+# --- 8. import admin bootstrap materials for spoke installs ---
+if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]]; then
+    [[ -f "$INSTALL_ADMIN_SECRETS_FILE" ]] || die "Admin secrets file not found: $INSTALL_ADMIN_SECRETS_FILE"
+    [[ -f "$INSTALL_ADMIN_CA_FILE" ]] || die "Admin CA file not found: $INSTALL_ADMIN_CA_FILE"
+
+    install -d -m 0750 /etc/admiral /etc/admiral/tls
+    install -m 0600 "$INSTALL_ADMIN_SECRETS_FILE" /etc/admiral/secrets
+    install -m 0644 "$INSTALL_ADMIN_CA_FILE" /etc/admiral/tls/ca.pem
+fi
+
+# --- 9. build extra-vars ---
 EXTRA_VARS="admiral_install_mode=$INSTALL_MODE"
 if [[ -n "$INSTALL_NODE_ID" ]]; then
     EXTRA_VARS="$EXTRA_VARS fleet_node_id=$INSTALL_NODE_ID"
@@ -154,7 +182,7 @@ if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]]; t
     EXTRA_VARS="$EXTRA_VARS admiral_wireguard_hub_endpoint=$INSTALL_ADMIN_ENDPOINT"
 fi
 
-# --- 9. run official playbook ---
+# --- 10. run official playbook ---
 # The playbook handles the rest: packages, configuration, services
 info "Running Admiral configuration playbook for mode: $INSTALL_MODE"
 ANSIBLE_DIR="/usr/share/admiral/ansible"
@@ -170,7 +198,7 @@ else
     die "Ansible playbook directory not found at $ANSIBLE_DIR"
 fi
 
-# --- 10. verify core runtime ---
+# --- 11. verify core runtime ---
 command -v podman >/dev/null 2>&1 || die "Podman was not installed by RPM dependencies."
 PODMAN_VER=$(podman version --format '{{.Version}}' 2>/dev/null || echo "0")
 info "Podman version: $PODMAN_VER"
@@ -197,7 +225,7 @@ for service in "${REQUIRED_SERVICES[@]}"; do
     systemctl is-active --quiet "$service" || die "Service $service is not active after setup."
 done
 
-# --- 11. final message ---
+# --- 12. final message ---
 cat <<EOF
 
 Admiral installation completed.
