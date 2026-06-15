@@ -31,6 +31,22 @@
     group: admiral
   no_log: true
 
+- name: Add S3 credentials to fleet environment
+  lineinfile:
+    path: /etc/admiral/fleet.env
+    line: "{{ item }}"
+    create: true
+    mode: "0640"
+    owner: root
+    group: admiral
+  loop:
+    - "ADMIRAL_AWS_ACCESS_KEY_ID={{ s3_access_key }}"
+    - "ADMIRAL_AWS_SECRET_ACCESS_KEY={{ s3_secret_key }}"
+  when:
+    - s3_access_key is defined and s3_access_key | length > 0
+    - s3_secret_key is defined and s3_secret_key | length > 0
+    - admiral_install_mode in ['single-node', 'worker-node']
+
 - name: Create quadlet directory
   file:
     path: /etc/containers/systemd/admiral
