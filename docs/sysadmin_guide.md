@@ -98,18 +98,22 @@ Each node has a `node_role` field (admin, worker, or portal). The scheduler only
 
 ### Backup storage (S3)
 
-All workers share a single S3-compatible bucket for backup storage. Configure it after installation via the API:
+All workers share a single S3-compatible bucket for backup storage. Configure it after installation:
 
 1. Store the S3 endpoint, region, and bucket in admirald's `backup_storage_configs` table.
 2. Write `ADMIRAL_AWS_ACCESS_KEY_ID` and `ADMIRAL_AWS_SECRET_ACCESS_KEY` to `/etc/admiral/fleet.env` on each worker node (or single-node host).
 
+Using the CLI:
+
 ```bash
-curl -X PUT https://admin.example.com/api/admin/settings/backup-storage \
-  -H "Authorization: Bearer $TOKEN" \
-  -d '{"backend":"s3","endpoint":"https://s3.example.com","bucket":"admiral-backups","region":"us-east-1","access_key_env":"ADMIRAL_AWS_ACCESS_KEY_ID","secret_key_env":"ADMIRAL_AWS_SECRET_ACCESS_KEY","enabled":true}'
+admiralctl backups storage set \
+  --backend s3 \
+  --endpoint https://s3.us-east-1.amazonaws.com \
+  --bucket admiral-backups \
+  --region us-east-1
 ```
 
-Then, on each worker node (or single-node host), write the credentials to `/etc/admiral/fleet.env` and restart the agent:
+Then, on each worker node, write the credentials to `/etc/admiral/fleet.env` and restart the agent:
 
 ```bash
 echo 'ADMIRAL_AWS_ACCESS_KEY_ID=AKIDEXAMPLE' >> /etc/admiral/fleet.env
@@ -122,9 +126,52 @@ Supported backends: `s3` and `local` (default). S3-compatible services include M
 Test the storage configuration:
 
 ```bash
-curl -X POST https://admin.example.com/api/admin/settings/backup-storage/test \
-  -H "Authorization: Bearer $TOKEN"
+admiralctl backups storage test
 ```
+
+View the current configuration:
+
+```bash
+admiralctl backups storage get
+```
+
+Delete a backup (with confirmation):
+
+```bash
+admiralctl backups delete <backup-id>
+```
+
+Prune old succeeded backups (with confirmation):
+
+```bash
+admiralctl backups prune
+```
+
+---
+
+### Instance migration (offline)
+
+Migrate an instance from one worker node to another. The source node and target node do not need to be online simultaneously — data is transferred via S3 backup.
+
+```bash
+admiralctl instances migrate <instance-id> --target-node <new-node-id> --wait
+```
+
+The CLI triggers a background operation in admirald that:
+
+1. Backs up database and volumes on the source node to S3.
+2. Deprovisions the instance on the source node.
+3. Re-provisions the instance on the target node, preserving `logical_instance_id`.
+4. Restores database and volumes from S3 on the target node.
+5. Starts the instance.
+
+Monitor progress:
+
+```bash
+admiralctl operation show <operation-id>
+```
+
+The migration is idempotent — if it fails mid-way, the instance state is predictable. A failed migration leaves the instance in its last known state (deprovisioned on source if deprovision completed, or provisioned on target if provision completed).
 
 ---
 
