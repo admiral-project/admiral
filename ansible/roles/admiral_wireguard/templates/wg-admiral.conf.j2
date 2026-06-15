@@ -1,0 +1,14 @@
+[Interface]
+Address = {{ admiral_wireguard_ip }}/24
+PrivateKey = {{ admiral_wg_private_key.stdout }}
+ListenPort = {{ admiral_wireguard_port }}
+
+{% if admiral_wireguard_peers is defined %}
+{% for peer in admiral_wireguard_peers %}
+[Peer]
+PublicKey = {{ peer.public_key }}
+Endpoint = {{ peer.endpoint }}:{{ peer.port | default(admiral_wireguard_port) }}
+AllowedIPs = {{ peer.allowed_ips }}
+PersistentKeepalive = {{ peer.persistent_keepalive | default(25) }}
+{% endfor %}
+{% endif %}

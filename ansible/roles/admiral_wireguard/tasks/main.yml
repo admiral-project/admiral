@@ -1,0 +1,52 @@
+---
+- name: Install wireguard-tools
+  dnf:
+    name: wireguard-tools
+    state: present
+
+- name: Create WireGuard configuration directory
+  file:
+    path: /etc/wireguard
+    state: directory
+    mode: "0700"
+
+- name: Generate WireGuard private key
+  shell:
+    cmd: |
+      if [ ! -f /etc/wireguard/admiral.key ]; then
+        wg genkey > /etc/wireguard/admiral.key
+        chmod 0400 /etc/wireguard/admiral.key
+      fi
+      cat /etc/wireguard/admiral.key
+  register: admiral_wg_private_key
+  changed_when: false
+  no_log: true
+
+- name: Derive WireGuard public key
+  shell:
+    cmd: cat /etc/wireguard/admiral.key | wg pubkey
+  register: admiral_wg_public_key
+  changed_when: false
+  no_log: true
+
+- name: Set WireGuard listen port
+  set_fact:
+    admiral_wireguard_port: "{{ admiral_wireguard_port | default('51820') }}"
+
+- name: Determine WireGuard IP address for this node
+  set_fact:
+    admiral_wireguard_ip: "{{ admiral_wireguard_ip | default(ansible_default_ipv4.address) }}"
+
+- name: Deploy WireGuard configuration
+  template:
+    src: wg-admiral.conf.j2
+    dest: /etc/wireguard/wg-admiral.conf
+    mode: "0600"
+  notify: restart wireguard
+
+- name: Enable and start WireGuard
+  systemd:
+    name: wg-quick@wg-admiral
+    enabled: true
+    state: started
+    daemon_reload: true

@@ -14,16 +14,22 @@ Usage:
   install.sh --single-node
   install.sh --admin-node
   install.sh --worker-node
+  install.sh --portal-node
 
 Options:
-  --single-node   Install all single-node components on one host.
-  --admin-node    Install control plane components only.
-  --worker-node   Install worker components only.
-  -h, --help      Show this help message.
+  --single-node       Install all single-node components on one host.
+  --admin-node        Install control plane components only.
+  --worker-node       Install worker components only.
+  --portal-node       Install portal components only.
+  --node-id           Set a custom node ID (default: hostname).
+  --public-ip         Set the public IP address for remote connectivity.
+  -h, --help          Show this help message.
 EOF
 }
 
 INSTALL_MODE=""
+INSTALL_NODE_ID=""
+INSTALL_PUBLIC_IP=""
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
@@ -39,6 +45,18 @@ while [[ $# -gt 0 ]]; do
             [[ -z "$INSTALL_MODE" ]] || die "Only one installation mode may be selected."
             INSTALL_MODE="worker-node"
             ;;
+        --portal-node)
+            [[ -z "$INSTALL_MODE" ]] || die "Only one installation mode may be selected."
+            INSTALL_MODE="portal-node"
+            ;;
+        --node-id)
+            shift
+            INSTALL_NODE_ID="$1"
+            ;;
+        --public-ip)
+            shift
+            INSTALL_PUBLIC_IP="$1"
+            ;;
         -h|--help)
             usage
             exit 0
@@ -50,7 +68,7 @@ while [[ $# -gt 0 ]]; do
     shift
 done
 
-[[ -n "$INSTALL_MODE" ]] || die "An installation mode is required. Use --single-node, --admin-node or --worker-node."
+[[ -n "$INSTALL_MODE" ]] || die "An installation mode is required. Use --single-node, --admin-node, --worker-node or --portal-node."
 
 # --- 1. root check ---
 [[ $EUID -eq 0 ]] || die "This script must be run as root."
@@ -111,7 +129,19 @@ if ! rpm -q admiral-common >/dev/null 2>&1; then
     dnf install -y admiral-common
 fi
 
-# --- 8. run official playbook ---
+# --- 8. build extra-vars ---
+EXTRA_VARS="admiral_install_mode=$INSTALL_MODE"
+if [[ -n "$INSTALL_NODE_ID" ]]; then
+    EXTRA_VARS="$EXTRA_VARS fleet_node_id=$INSTALL_NODE_ID"
+fi
+if [[ -n "$INSTALL_PUBLIC_IP" ]]; then
+    EXTRA_VARS="$EXTRA_VARS fleet_public_ip=$INSTALL_PUBLIC_IP"
+fi
+if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]]; then
+    EXTRA_VARS="$EXTRA_VARS fleet_node_role=$( [[ "$INSTALL_MODE" == "portal-node" ]] && echo 'portal' || echo 'worker' )"
+fi
+
+# --- 9. run official playbook ---
 # The playbook handles the rest: packages, configuration, services
 info "Running Admiral configuration playbook for mode: $INSTALL_MODE"
 ANSIBLE_DIR="/usr/share/admiral/ansible"
@@ -122,12 +152,12 @@ if [[ -d "$ANSIBLE_DIR" ]]; then
     ansible-playbook \
         "$ANSIBLE_DIR/site.yml" \
         -i "$ANSIBLE_DIR/inventory/localhost.yml" \
-        --extra-vars "admiral_install_mode=$INSTALL_MODE"
+        --extra-vars "$EXTRA_VARS"
 else
     die "Ansible playbook directory not found at $ANSIBLE_DIR"
 fi
 
-# --- 9. verify core runtime ---
+# --- 10. verify core runtime ---
 command -v podman >/dev/null 2>&1 || die "Podman was not installed by RPM dependencies."
 PODMAN_VER=$(podman version --format '{{.Version}}' 2>/dev/null || echo "0")
 info "Podman version: $PODMAN_VER"
@@ -145,13 +175,16 @@ case "$INSTALL_MODE" in
     worker-node)
         REQUIRED_SERVICES=(admiral-fleet)
         ;;
+    portal-node)
+        REQUIRED_SERVICES=(admiral-fleet)
+        ;;
 esac
 
 for service in "${REQUIRED_SERVICES[@]}"; do
     systemctl is-active --quiet "$service" || die "Service $service is not active after setup."
 done
 
-# --- 10. final message ---
+# --- 11. final message ---
 cat <<EOF
 
 Admiral installation completed.

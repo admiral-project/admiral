@@ -44,14 +44,14 @@
     state: started
     daemon_reload: true
 
-- name: Wait for admirald to be ready (single-node only)
+- name: Wait for admirald to be ready
   command: admiralctl status
   register: admirald_ready
   until: admirald_ready.rc == 0
   retries: 12
   delay: 5
   changed_when: false
-  when: admiral_install_mode == 'single-node'
+  when: admiral_install_mode in ['single-node', 'worker-node', 'portal-node']
 
 - name: Register local node with admirald
   command: >
@@ -59,10 +59,12 @@
     --id "{{ fleet_node_id | default(ansible_hostname) }}"
     --hostname "{{ ansible_fqdn }}"
     --ip "{{ ansible_default_ipv4.address }}"
+    --role "{{ fleet_node_role | default('worker') }}"
+    --wireguard-ip "{{ admiral_wireguard_ip | default('') }}"
+    --public-ip "{{ fleet_public_ip | default('') }}"
     --os "{{ ansible_distribution ~ ' ' ~ ansible_distribution_version }}"
   register: node_register
   changed_when: node_register.rc == 0
   when:
-    - admiral_install_mode == 'single-node'
     - admirald_ready.rc is defined
     - admirald_ready.rc == 0
