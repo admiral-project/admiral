@@ -1,9 +1,9 @@
 %global debug_package %{nil}
-%global commit 6560f4d4a1a3c0c27de37ad14327f09c92016d97
+%global commit 22460b81a5d01e9383dcc27140a9ed2324454f33
 
 Name:    admiral-harbor
-Version: 0.0.1alpha5
-Release: 4%{?dist}
+Version: 0.0.1alpha6
+Release: 1%{?dist}
 Summary: Admiral Customer Portal - Web UI for end users
 
 License: Apache-2.0
@@ -108,6 +108,9 @@ restorecon -R %{_localstatedir}/lib/admiral/harbor 2>/dev/null || :
 %systemd_postun admiral-harbor-catalog-sync.timer
 
 %changelog
+* Mon Jun 15 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1alpha6-1
+- Bump to alpha6
+
 * Mon Jun 15 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1alpha5-3
 - Add Requires: cockpit-bridge and Requires: wireguard-tools
 

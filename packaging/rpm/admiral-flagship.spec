@@ -2,11 +2,11 @@
 # SPDX-License-Identifier: Apache-2.0
 
 %global debug_package %{nil}
-%global commit 0e1a4f897251d5fb64da14121e4797c9346229f9
+%global commit 1ce5ccf94867ca5ce83a17556cd6b8924ddc0476
 
 Name:    admiral-flagship
-Version: 0.0.1alpha5
-Release: 2%{?dist}
+Version: 0.0.1alpha6
+Release: 1%{?dist}
 Summary: Admiral Administrative Web Console
 
 License: Apache-2.0
@@ -72,6 +72,9 @@ restorecon -R %{_prefix}/lib/admiral/flagship 2>/dev/null || :
 %systemd_postun_with_restart admiral-flagship.service
 
 %changelog
+* Mon Jun 15 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1alpha6-1
+- Bump to alpha6
+
 * Sun Jun 14 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1alpha5-2
 - Update source commit to latest alpha5
 - Replace favicon.ico with generated ico from source PNG

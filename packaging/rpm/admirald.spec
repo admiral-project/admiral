@@ -2,11 +2,11 @@
 # SPDX-License-Identifier: Apache-2.0
 
 %global debug_package %{nil}
-%global commit 52fd348e455eb72de91c858a28ec67a12c4b9e8b
+%global commit e90f95112e8f9f36877c403a9b06324f2277b70d
 
 Name:    admirald
-Version: 0.0.1alpha5
-Release: 2%{?dist}
+Version: 0.0.1alpha6
+Release: 1%{?dist}
 Summary: Admiral Control Plane - Core API and orchestration service
 
 License: Apache-2.0
@@ -63,6 +63,9 @@ restorecon -F %{_bindir}/admirald 2>/dev/null || :
 %systemd_postun_with_restart admirald.service
 
 %changelog
+* Mon Jun 15 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1alpha6-1
+- Bump to alpha6
+
 * Sun Jun 14 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1alpha5-2
 - Update source commit to latest alpha5
 
