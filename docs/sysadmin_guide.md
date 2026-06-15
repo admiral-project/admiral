@@ -2,7 +2,7 @@
 
 ## Multi-node deployment
 
-The full networking architecture is defined in `multi_node_setup_v1.md`.
+The full networking architecture is defined in `multi_node_networking_v1.md`.
 
 ### Role and dependency table
 
@@ -58,12 +58,21 @@ Workers receive only the shared token and the queue database URL (which contains
 
 ### Adding a worker node
 
-From the admin node, use Ansible to bootstrap a remote worker:
+From the admin node, run the installer on the target worker:
+
+```bash
+ssh root@<worker-ip> 'bash -s' -- < /usr/share/admiral/install.sh \
+  --worker-node \
+  --node-id worker1 \
+  --admin-endpoint <admin-public-ip>
+```
+
+Or use Ansible directly:
 
 ```bash
 ansible-playbook /usr/share/admiral/ansible/site.yml \
   -i /path/to/inventory.yml \
-  --extra-vars "admiral_install_mode=worker-node fleet_node_id=worker1 fleet_api_url=https://10.99.0.1:8080 fleet_queue_database_url=postgres://admiral:PASSWORD@10.99.0.1:5432/admiral_queue?sslmode=disable"
+  --extra-vars "admiral_install_mode=worker-node fleet_node_id=worker1 admiral_wireguard_hub_endpoint=<admin-public-ip>"
 ```
 
 The playbook will:
@@ -71,6 +80,12 @@ The playbook will:
 1. Install and configure WireGuard VPN
 2. Install admiral-fleet
 3. Register the node with admirald via `admiralctl nodes register`
+
+After installation, run the peer exchange playbook from the admin node to register the new worker's WireGuard public key on the hub:
+
+```bash
+ansible-playbook /usr/share/admiral/ansible/wireguard-peers.yml -i /path/to/inventory.yml
+```
 
 ### Node registration
 
@@ -93,8 +108,36 @@ Each node has a `node_role` field (admin, worker, or portal). The scheduler only
 - WireGuard is configured automatically by the `admiral_wireguard` Ansible role.
 - Default port: 51820/udp
 - Private network: 10.99.0.0/24
+- Admin/hub IP: 10.99.0.1
 - Worker IP pool: 10.99.0.2–10.99.0.99
 - Portal IP pool: 10.99.0.100–10.99.0.199
+- All nodes generate a key pair during installation. The public key is stored at `/etc/wireguard/admiral.pub`.
+
+After all nodes are installed, run the peer exchange playbook from the admin node to register each spoke's public key on the hub and deploy the full WireGuard configuration:
+
+```bash
+ansible-playbook /usr/share/admiral/ansible/wireguard-peers.yml -i /path/to/inventory.yml
+```
+
+The playbook must be run whenever a new node is added. It collects public keys from all nodes, writes peer configs on the hub, and restarts the WireGuard service on every node.
+
+### Node health states
+
+Each node has two status fields:
+
+| Field | Values | Description |
+|-------|--------|-------------|
+| `status` | `active`, `offline`, `disabled` | Node reachability. `active` means the node is sending heartbeats; `offline` means no heartbeat was received within the timeout window (2 minutes); `disabled` means an operator manually disabled the node. |
+| `health_status` | `healthy`, `degraded`, `unhealthy` | Node health. `degraded` is set automatically when the node misses its heartbeat deadline; `healthy` is restored on the next successful heartbeat. |
+
+When a node is marked `offline` with `health_status=degraded`:
+
+- The admirald health monitor logs a warning with the affected node IDs.
+- admiral-flagship shows a warning alert on the dashboard and a callout on the node detail page.
+- The node is marked unavailable for provisioning.
+- Instances running on the node continue to operate until the node is restored or recovered.
+
+A node recovers automatically when its fleet agent sends the next successful heartbeat — `status` returns to `active`, `health_status` returns to `healthy`, and it becomes available for provisioning again.
 
 ### Backup storage (S3)
 
@@ -149,6 +192,31 @@ admiralctl backups prune
 
 ---
 
+### Provisioning instances
+
+```bash
+admiralctl instances provision \
+  --app my-app \
+  --tier starter \
+  --customer customer1 \
+  --node worker1
+```
+
+To preserve a logical instance identity across reprovisioning (e.g. during disaster recovery):
+
+```bash
+admiralctl instances provision \
+  --app my-app \
+  --tier starter \
+  --customer customer1 \
+  --node worker2 \
+  --logical-instance-id <uuid>
+```
+
+The `logical_instance_id` is a permanent identifier used for billing, backup ownership, and audit records. It never changes, even if the runtime instance (`instance_id`) changes due to migration or recovery.
+
+---
+
 ### Instance migration (offline)
 
 Migrate an instance from one worker node to another. The source node and target node do not need to be online simultaneously — data is transferred via S3 backup.
@@ -160,10 +228,14 @@ admiralctl instances migrate <instance-id> --target-node <new-node-id> --wait
 The CLI triggers a background operation in admirald that:
 
 1. Backs up database and volumes on the source node to S3.
-2. Deprovisions the instance on the source node.
-3. Re-provisions the instance on the target node, preserving `logical_instance_id`.
-4. Restores database and volumes from S3 on the target node.
-5. Starts the instance.
+2. Saves the existing public route for the instance (hostname is preserved).
+3. Updates the instance node assignment to the target.
+4. Deprovisions the instance on the source node (removes containers, releases capacity).
+5. Re-provisions the instance on the target node, preserving `logical_instance_id`.
+6. Restores database and volumes from S3 on the target node.
+7. Starts the instance.
+8. Recreates the public route on the target node with the original hostname.
+9. Syncs the route to Caddy so the public URL remains unchanged.
 
 Monitor progress:
 
@@ -171,7 +243,7 @@ Monitor progress:
 admiralctl operation show <operation-id>
 ```
 
-The migration is idempotent — if it fails mid-way, the instance state is predictable. A failed migration leaves the instance in its last known state (deprovisioned on source if deprovision completed, or provisioned on target if provision completed).
+The migration is idempotent — if it fails mid-way, the instance state is predictable. A failed migration leaves the instance in its last known state (deprovisioned on source if deprovision completed, or provisioned on target if provision completed). If the migration succeeds, the public URL (`https://<app>.apps.<domain>`) continues to work without any DNS changes.
 
 ---
 
