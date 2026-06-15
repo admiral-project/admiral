@@ -23,12 +23,6 @@ Options:
   --portal-node       Install portal components only.
   --node-id           Set a custom node ID (default: hostname).
   --public-ip         Set the public IP address for remote connectivity.
-  --s3-endpoint       S3-compatible storage endpoint URL.
-  --s3-region         S3 region (default: us-east-1).
-  --s3-bucket         S3 bucket name for backups.
-  --s3-prefix         Optional S3 key prefix for backups.
-  --s3-access-key     S3 access key ID.
-  --s3-secret-key     S3 secret access key.
   -h, --help          Show this help message.
 EOF
 }
@@ -36,12 +30,6 @@ EOF
 INSTALL_MODE=""
 INSTALL_NODE_ID=""
 INSTALL_PUBLIC_IP=""
-S3_ENDPOINT=""
-S3_REGION=""
-S3_BUCKET=""
-S3_PREFIX=""
-S3_ACCESS_KEY=""
-S3_SECRET_KEY=""
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
@@ -68,30 +56,6 @@ while [[ $# -gt 0 ]]; do
         --public-ip)
             shift
             INSTALL_PUBLIC_IP="$1"
-            ;;
-        --s3-endpoint)
-            shift
-            S3_ENDPOINT="$1"
-            ;;
-        --s3-region)
-            shift
-            S3_REGION="$1"
-            ;;
-        --s3-bucket)
-            shift
-            S3_BUCKET="$1"
-            ;;
-        --s3-prefix)
-            shift
-            S3_PREFIX="$1"
-            ;;
-        --s3-access-key)
-            shift
-            S3_ACCESS_KEY="$1"
-            ;;
-        --s3-secret-key)
-            shift
-            S3_SECRET_KEY="$1"
             ;;
         -h|--help)
             usage
@@ -175,15 +139,6 @@ if [[ -n "$INSTALL_PUBLIC_IP" ]]; then
 fi
 if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]]; then
     EXTRA_VARS="$EXTRA_VARS fleet_node_role=$( [[ "$INSTALL_MODE" == "portal-node" ]] && echo 'portal' || echo 'worker' )"
-fi
-
-# S3 backup storage configuration (shared bucket across all workers)
-if [[ -n "$S3_ENDPOINT" && -n "$S3_BUCKET" ]]; then
-    EXTRA_VARS="$EXTRA_VARS s3_endpoint=$S3_ENDPOINT s3_bucket=$S3_BUCKET"
-    EXTRA_VARS="$EXTRA_VARS s3_region=${S3_REGION:-us-east-1}"
-    [[ -n "$S3_PREFIX" ]] && EXTRA_VARS="$EXTRA_VARS s3_prefix=$S3_PREFIX"
-    [[ -n "$S3_ACCESS_KEY" ]] && EXTRA_VARS="$EXTRA_VARS s3_access_key=$S3_ACCESS_KEY"
-    [[ -n "$S3_SECRET_KEY" ]] && EXTRA_VARS="$EXTRA_VARS s3_secret_key=$S3_SECRET_KEY"
 fi
 
 # --- 9. run official playbook ---

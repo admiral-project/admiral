@@ -98,30 +98,23 @@ Each node has a `node_role` field (admin, worker, or portal). The scheduler only
 
 ### Backup storage (S3)
 
-All workers share a single S3-compatible bucket for backup storage. Configure it during installation:
-
-```bash
-install.sh --admin-node \
-  --s3-endpoint https://s3.us-east-1.amazonaws.com \
-  --s3-region us-east-1 \
-  --s3-bucket admiral-backups \
-  --s3-prefix production \
-  --s3-access-key AKIDEXAMPLE \
-  --s3-secret-key wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
-```
-
-The installer will:
+All workers share a single S3-compatible bucket for backup storage. Configure it after installation via the API:
 
 1. Store the S3 endpoint, region, and bucket in admirald's `backup_storage_configs` table.
-2. Write `ADMIRAL_AWS_ACCESS_KEY_ID` and `ADMIRAL_AWS_SECRET_ACCESS_KEY` to `/etc/admiral/fleet.env` on worker and single-node hosts.
-3. All backup and restore operations will use this shared bucket.
-
-You can also configure or update storage settings post-install via the API:
+2. Write `ADMIRAL_AWS_ACCESS_KEY_ID` and `ADMIRAL_AWS_SECRET_ACCESS_KEY` to `/etc/admiral/fleet.env` on each worker node (or single-node host).
 
 ```bash
 curl -X PUT https://admin.example.com/api/admin/settings/backup-storage \
   -H "Authorization: Bearer $TOKEN" \
   -d '{"backend":"s3","endpoint":"https://s3.example.com","bucket":"admiral-backups","region":"us-east-1","access_key_env":"ADMIRAL_AWS_ACCESS_KEY_ID","secret_key_env":"ADMIRAL_AWS_SECRET_ACCESS_KEY","enabled":true}'
+```
+
+Then, on each worker node (or single-node host), write the credentials to `/etc/admiral/fleet.env` and restart the agent:
+
+```bash
+echo 'ADMIRAL_AWS_ACCESS_KEY_ID=AKIDEXAMPLE' >> /etc/admiral/fleet.env
+echo 'ADMIRAL_AWS_SECRET_ACCESS_KEY=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY' >> /etc/admiral/fleet.env
+systemctl restart admiral-fleet
 ```
 
 Supported backends: `s3` and `local` (default). S3-compatible services include MinIO, Wasabi, Backblaze B2, and Cloudflare R2.

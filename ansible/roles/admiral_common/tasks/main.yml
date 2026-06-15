@@ -453,26 +453,3 @@
     src: /usr/share/admiral/ansible
     dest: /etc/admiral/ansible
     state: link
-
-- name: Initialize S3 backup storage config in admirald database
-  become_user: postgres
-  shell: |
-    psql -d admiral -v ON_ERROR_STOP=1 <<'SQL'
-    INSERT INTO backup_storage_configs (id, backend, enabled, endpoint, region, bucket, prefix, force_path_style, access_key_env, secret_key_env)
-    VALUES ('global', 's3', TRUE, '{{ s3_endpoint }}', '{{ s3_region | default("us-east-1") }}', '{{ s3_bucket }}', '{{ s3_prefix | default("") }}', FALSE, 'ADMIRAL_AWS_ACCESS_KEY_ID', 'ADMIRAL_AWS_SECRET_ACCESS_KEY')
-    ON CONFLICT (id) DO UPDATE SET
-      backend = 's3',
-      enabled = TRUE,
-      endpoint = '{{ s3_endpoint }}',
-      region = '{{ s3_region | default("us-east-1") }}',
-      bucket = '{{ s3_bucket }}',
-      prefix = '{{ s3_prefix | default("") }}',
-      access_key_env = 'ADMIRAL_AWS_ACCESS_KEY_ID',
-      secret_key_env = 'ADMIRAL_AWS_SECRET_ACCESS_KEY',
-      updated_at = CURRENT_TIMESTAMP;
-    SQL
-  when:
-    - admiral_install_mode in ['single-node', 'admin-node']
-    - s3_endpoint is defined and s3_endpoint | length > 0
-    - s3_bucket is defined and s3_bucket | length > 0
-  changed_when: false
