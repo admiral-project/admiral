@@ -40,7 +40,7 @@
   dnf:
     name: postgresql-server
     state: present
-  when: admiral_install_mode in ['single-node', 'admin-node']
+  when: admiral_install_mode in ['single-node', 'admin-node', 'portal-node']
 
 - name: Ensure admiral system group exists
   group:
@@ -376,40 +376,40 @@
     mode: "0755"
     owner: postgres
     group: postgres
-  when: admiral_install_mode in ['single-node', 'admin-node']
+  when: admiral_install_mode in ['single-node', 'admin-node', 'portal-node']
 
 - name: Initialize PostgreSQL database cluster
   command:
     cmd: postgresql-setup --initdb
     creates: /var/lib/pgsql/data/PG_VERSION
-  when: admiral_install_mode in ['single-node', 'admin-node']
+  when: admiral_install_mode in ['single-node', 'admin-node', 'portal-node']
 
 - name: Require password authentication for localhost PostgreSQL
   lineinfile:
     path: /var/lib/pgsql/data/pg_hba.conf
     regexp: "^host\\s+all\\s+all\\s+127\\.0\\.0\\.1/32\\s+"
     line: "host    all             all             127.0.0.1/32            scram-sha-256"
-  when: admiral_install_mode in ['single-node', 'admin-node']
+  when: admiral_install_mode in ['single-node', 'admin-node', 'portal-node']
 
 - name: Require password authentication for localhost PostgreSQL over IPv6
   lineinfile:
     path: /var/lib/pgsql/data/pg_hba.conf
     regexp: "^host\\s+all\\s+all\\s+::1/128\\s+"
     line: "host    all             all             ::1/128                 scram-sha-256"
-  when: admiral_install_mode in ['single-node', 'admin-node']
+  when: admiral_install_mode in ['single-node', 'admin-node', 'portal-node']
 
 - name: Ensure PostgreSQL is enabled and running
   systemd:
     name: postgresql
     enabled: true
     state: started
-  when: admiral_install_mode in ['single-node', 'admin-node']
+  when: admiral_install_mode in ['single-node', 'admin-node', 'portal-node']
 
 - name: Restart PostgreSQL after pg_hba updates
   systemd:
     name: postgresql
     state: restarted
-  when: admiral_install_mode in ['single-node', 'admin-node']
+  when: admiral_install_mode in ['single-node', 'admin-node', 'portal-node']
 
 - name: Ensure Admiral PostgreSQL role exists with generated password
   become_user: postgres
@@ -427,9 +427,9 @@
     SQL
   no_log: true
   changed_when: false
-  when: admiral_install_mode in ['single-node', 'admin-node']
+  when: admiral_install_mode in ['single-node', 'admin-node', 'portal-node']
 
-- name: Ensure Admiral PostgreSQL databases exist
+- name: Ensure Admiral PostgreSQL databases exist (admin/single only)
   become_user: postgres
   shell: |
     psql -tAc "SELECT 1 FROM pg_database WHERE datname='{{ item }}'" | grep -q 1 || \
@@ -445,7 +445,7 @@
   shell: |
     psql -tAc "SELECT 1 FROM pg_database WHERE datname='admiral_harbor'" | grep -q 1 || \
     psql -v ON_ERROR_STOP=1 -c "CREATE DATABASE admiral_harbor OWNER admiral"
-  when: admiral_install_mode in ['single-node', 'admin-node']
+  when: admiral_install_mode in ['single-node', 'admin-node', 'portal-node']
   changed_when: false
 
 - name: Symlink ansible playbooks from package
