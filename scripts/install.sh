@@ -11,7 +11,7 @@ warn() { echo "[WARN] $*"; }
 usage() {
     cat <<'EOF'
 Usage:
-  admiral_install --single-node --public-ip <public-ip>
+  admiral_install --single-node [--public-ip <public-ip>]
   admiral_install --admin-node --public-ip <public-ip>
   admiral_install --worker-node --public-ip <public-ip>
   admiral_install --portal-node --public-ip <public-ip>
@@ -87,7 +87,12 @@ while [[ $# -gt 0 ]]; do
 done
 
 [[ -n "$INSTALL_MODE" ]] || die "An installation mode is required. Use --single-node, --admin-node, --worker-node or --portal-node."
-[[ -n "$INSTALL_PUBLIC_IP" ]] || die "All installation modes require --public-ip."
+if [[ "$INSTALL_MODE" == "single-node" && -z "$INSTALL_PUBLIC_IP" ]]; then
+    INSTALL_PUBLIC_IP="127.0.0.1"
+fi
+if [[ "$INSTALL_MODE" != "single-node" ]]; then
+    [[ -n "$INSTALL_PUBLIC_IP" ]] || die "Admin, worker and portal modes require --public-ip."
+fi
 
 if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]]; then
     if [[ -z "$INSTALL_TARGET_SSH_KEY" ]]; then
