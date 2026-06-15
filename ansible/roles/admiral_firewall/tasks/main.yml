@@ -52,15 +52,27 @@
     - 50051/tcp
     - 9000/tcp
 
-- name: Allow only required public services
+- name: Allow public services for all modes
+  command:
+    cmd: firewall-cmd --permanent --zone=public --add-service=ssh
+  register: firewall_ssh
+  changed_when: "'success' in firewall_ssh.stdout"
+
+- name: Allow HTTP/HTTPS on admin and single nodes
   command:
     cmd: firewall-cmd --permanent --zone=public --add-service={{ item }}
-  register: firewall_allowed_service
-  changed_when: "'success' in firewall_allowed_service.stdout"
+  register: firewall_web
+  changed_when: "'success' in firewall_web.stdout"
   loop:
-    - ssh
     - http
     - https
+  when: admiral_install_mode in ['single-node', 'admin-node']
+
+- name: Allow WireGuard UDP port on all modes
+  command:
+    cmd: firewall-cmd --permanent --zone=public --add-port=51820/udp
+  register: firewall_wg
+  changed_when: "'success' in firewall_wg.stdout"
 
 - name: Reload firewall to apply policy
   command:
@@ -79,14 +91,22 @@
   register: firewall_public_ports
   changed_when: false
 
-- name: Assert only expected public services remain exposed
+- name: Assert only expected public services remain exposed (admin/single)
   assert:
     that:
       - (firewall_public_services.stdout.split() | difference(['ssh', 'http', 'https']) | length) == 0
     fail_msg: "Unexpected public firewalld services remain enabled: {{ firewall_public_services.stdout }}"
+  when: admiral_install_mode in ['single-node', 'admin-node']
 
-- name: Assert no direct public ports remain exposed
+- name: Assert only ssh remains exposed (worker/portal)
   assert:
     that:
-      - firewall_public_ports.stdout | trim == ''
+      - (firewall_public_services.stdout.split() | difference(['ssh']) | length) == 0
+    fail_msg: "Unexpected public firewalld services remain enabled: {{ firewall_public_services.stdout }}"
+  when: admiral_install_mode in ['worker-node', 'portal-node']
+
+- name: Assert only WireGuard port remains exposed
+  assert:
+    that:
+      - firewall_public_ports.stdout | trim == '51820/udp' or firewall_public_ports.stdout | trim == ''
     fail_msg: "Unexpected direct public firewalld ports remain enabled: {{ firewall_public_ports.stdout }}"
