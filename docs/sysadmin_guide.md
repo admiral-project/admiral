@@ -1,6 +1,6 @@
 # Admiral System Administrator Guide
 
-This guide provides a comprehensive overview of the operation, configuration, and maintenance of an Admiral platform in single-node mode.
+This guide provides a comprehensive overview of the operation, configuration, and maintenance of an Admiral platform in single-node and multi-node deployments.
 
 ## 1. Admiral Components
 
@@ -142,3 +142,69 @@ To keep Admiral up to date:
    ```bash
    systemctl restart admirald admiral-fleet admiral-flagship admiral-harbor
    ```
+
+## 7. Multi-Node Deployment
+
+The full networking architecture is defined in `multi_node_setup_v1.md`.
+
+Admiral supports three node roles:
+
+- **admin** — control plane (admirald, flagship, harbor, caddy, PostgreSQL)
+- **worker** — runs workloads (admiral-fleet, podman)
+- **portal** — customer portal node (admiral-fleet, future portal services)
+
+### Node Registration
+
+Nodes are registered with admirald using `admiralctl`. The registration command accepts role, WireGuard IP, and public IP:
+
+```bash
+admiralctl nodes register \
+  --id "node1" \
+  --hostname "node1.example.com" \
+  --ip "10.0.0.10" \
+  --role "worker" \
+  --wireguard-ip "10.99.0.2" \
+  --public-ip "203.0.113.10"
+```
+
+The scheduler only provisions workloads on nodes with role `worker`. Nodes with role `admin` or `portal` are excluded from workload scheduling.
+
+### Adding a Worker Node via Ansible
+
+From the admin node, use Ansible to bootstrap a remote worker:
+
+```bash
+ansible-playbook /usr/share/admiral/ansible/site.yml \
+  -i workers.yml \
+  --extra-vars "admiral_install_mode=worker-node fleet_node_id=worker1 fleet_api_url=https://10.99.0.1:8080 fleet_queue_database_url=postgres://admiral:PASSWORD@10.99.0.1:5432/admiral_queue?sslmode=disable"
+```
+
+The playbook will:
+
+1. Install and configure WireGuard VPN
+2. Install admiral-fleet
+3. Register the node with admirald
+
+### WireGuard VPN
+
+- WireGuard is configured automatically by the `admiral_wireguard` Ansible role.
+- Default port: 51820/udp
+- Private network: 10.99.0.0/24
+- Worker IP pool: 10.99.0.2–10.99.0.99
+- Portal IP pool: 10.99.0.100–10.99.0.199
+
+### Install Modes
+
+The installer supports four deployment modes:
+
+| Mode | Components | Use Case |
+|---|---|---|
+| `--single-node` | All components on one host | Development, small deployments |
+| `--admin-node` | Control plane only (admirald, flagship, harbor, caddy, PostgreSQL) | Admin/control node |
+| `--worker-node` | Worker agent only (admiral-fleet, podman) | Workload execution node |
+| `--portal-node` | Portal agent only (admiral-fleet) | Customer portal node |
+
+Additional flags:
+
+- `--node-id` — custom node identifier (default: hostname)
+- `--public-ip` — public IP for remote SSH connectivity
