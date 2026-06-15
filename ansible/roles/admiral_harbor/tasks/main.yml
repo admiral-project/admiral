@@ -1,4 +1,9 @@
 ---
+- name: Set harbor API URL for portal-node
+  set_fact:
+    admiral_api_url_for_harbor: "https://{{ admiral_admin_wireguard_ip | default('10.99.0.1') }}:8080"
+  when: admiral_install_mode == 'portal-node'
+
 - name: Install admiral-harbor
   dnf:
     name: admiral-harbor
@@ -16,6 +21,7 @@
       HARBOR_MAX_BACKUP_UPLOAD_BYTES=536870912
       HARBOR_ENCRYPTION_KEY={{ admiral_harbor_encryption_key_value }}
       HARBOR_DATABASE_URL=postgresql://admiral:{{ admiral_postgres_password }}@127.0.0.1:5432/admiral_harbor?sslmode=disable
+      ADMIRAL_API_URL={{ admiral_api_url_for_harbor | default('https://127.0.0.1:8080') }}
       HARBOR_PAYPAL_CLIENT_ID=
       HARBOR_PAYPAL_CLIENT_SECRET=
       HARBOR_PAYPAL_WEBHOOK_ID=
@@ -29,7 +35,6 @@
       HARBOR_OVERDUE_SUSPEND_AFTER_DAYS=5
       HARBOR_OVERDUE_DEPROVISION_AFTER_DAYS=10
       HARBOR_OVERDUE_LAST_BACKUP_RETENTION_DAYS=15
-      ADMIRAL_API_URL=https://127.0.0.1:8080
       ADMIRAL_SHARED_TOKEN={{ admiral_shared_token_value }}
       ADMIRAL_CA_FILE=/etc/admiral/tls/ca.pem
       ADMIRAL_INSECURE_SKIP_VERIFY=0
