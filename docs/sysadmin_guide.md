@@ -4,11 +4,35 @@
 
 The full networking architecture is defined in `multi_node_setup_v1.md`.
 
+### Role and dependency table
+
+| Component | Function | Installed on | Depends on |
+|-----------|----------|-------------|------------|
+| `admiral-common` | Creates `admiral` user, directories, permissions, SELinux contexts | all nodes | `systemd`, `shadow-utils`, `wireguard-tools`, `openssh-clients`, `ansible-core`, `caddy` (files) |
+| `postgresql-server` | Platform database (admirald state, queue, harbor) | admin, portal, single | — |
+| `caddy` | Public reverse proxy, TLS termination, routing to workloads | admin, single | `admiral-common` (config) |
+| `admirald` | Control plane API, operations, task dispatch, scheduling | admin, single | `admiral-common`, `postgresql-server`, `caddy`, `podman` |
+| `admiral-fleet` | Worker agent, task execution, Podman rootless containers | worker, single | `admiral-common`, `podman`, `cockpit-bridge` |
+| `admiral-flagship` | Admin web console (app/node management) | single | `admiral-common`, `admirald` |
+| `admiral-harbor` | Customer portal (signup, app management) | portal, single | `admiral-common`, `postgresql-server`, `cockpit-bridge`, `wireguard-tools` |
+| `admiralctl` | CLI for operators | admin (control host) | `admiral-common` |
+| `cockpit.socket` | Web-based node monitoring via Cockpit | admin, single | `cockpit-bridge` on worker/portal |
+| `wg-quick@wg-admiral` | WireGuard VPN (hub on admin/single, spoke on worker/portal) | all nodes | `wireguard-tools`, `admiral-common` |
+| `firewalld` | Per-mode firewall rules (admin: 22/80/443/51820; worker/portal: 22/51820) | all nodes | — |
+
+### Node roles
+
 Admiral supports three node roles:
 
-- **admin** — control plane (admirald, flagship, harbor, caddy, PostgreSQL)
-- **worker** — runs workloads (admiral-fleet, podman)
-- **portal** — customer portal node (admiral-fleet, future portal services)
+- **admin** — control plane. Runs admirald, caddy, PostgreSQL, cockpit, WireGuard VPN hub. Does NOT run workloads, flagship, or harbor.
+- **worker** — workload execution. Runs admiral-fleet, Podman, cockpit-bridge, WireGuard VPN spoke. No PostgreSQL, no admirald.
+- **portal** — customer-facing services. Runs admiral-harbor, PostgreSQL, cockpit-bridge, WireGuard VPN spoke. Does NOT run admirald or admiral-fleet.
+
+Single-node mode combines admin + worker + portal on one host for development and small deployments.
+
+### Monitoring workers via Cockpit
+
+Since Cockpit on the admin node connects to remote hosts over **SSH**, and WireGuard provides a private network between nodes, you can monitor workers and portal by adding them in the Cockpit web UI using their **WireGuard private IP** (e.g. `10.99.0.2`). The SSH connection travels encrypted over the VPN — no need to expose port 9090 on workers. The `cockpit-bridge` package on worker/portal enables full system monitoring (processes, services, logs, storage) via that SSH tunnel.
 
 ### Adding a worker node
 
