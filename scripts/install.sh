@@ -23,6 +23,7 @@ Options:
   --portal-node       Install portal components only.
   --node-id           Set a custom node ID (default: hostname).
   --public-ip         Set the public IP address for remote connectivity.
+  --admin-endpoint    Admin node WireGuard endpoint (required for worker/portal).
   -h, --help          Show this help message.
 EOF
 }
@@ -30,6 +31,7 @@ EOF
 INSTALL_MODE=""
 INSTALL_NODE_ID=""
 INSTALL_PUBLIC_IP=""
+INSTALL_ADMIN_ENDPOINT=""
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
@@ -57,6 +59,10 @@ while [[ $# -gt 0 ]]; do
             shift
             INSTALL_PUBLIC_IP="$1"
             ;;
+        --admin-endpoint)
+            shift
+            INSTALL_ADMIN_ENDPOINT="$1"
+            ;;
         -h|--help)
             usage
             exit 0
@@ -69,6 +75,12 @@ while [[ $# -gt 0 ]]; do
 done
 
 [[ -n "$INSTALL_MODE" ]] || die "An installation mode is required. Use --single-node, --admin-node, --worker-node or --portal-node."
+
+if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]]; then
+    if [[ -z "$INSTALL_ADMIN_ENDPOINT" ]]; then
+        die "Worker and portal nodes require --admin-endpoint (public IP or hostname of the admin node)."
+    fi
+fi
 
 # --- 1. root check ---
 [[ $EUID -eq 0 ]] || die "This script must be run as root."
@@ -139,6 +151,7 @@ if [[ -n "$INSTALL_PUBLIC_IP" ]]; then
 fi
 if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]]; then
     EXTRA_VARS="$EXTRA_VARS fleet_node_role=$( [[ "$INSTALL_MODE" == "portal-node" ]] && echo 'portal' || echo 'worker' )"
+    EXTRA_VARS="$EXTRA_VARS admiral_wireguard_hub_endpoint=$INSTALL_ADMIN_ENDPOINT"
 fi
 
 # --- 9. run official playbook ---
