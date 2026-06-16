@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 %global debug_package %{nil}
-%global commit 3aa7be4a5034533bff2b9ad8b67cb16bee4a2f97
+%global commit 070d777797daa58befab4aa40c2dee2e74b0e9f2
 
 Name:    admiralctl
 Version: 0.0.1alpha7
