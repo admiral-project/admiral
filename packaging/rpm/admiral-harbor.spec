@@ -1,8 +1,8 @@
 %global debug_package %{nil}
-%global commit 22460b81a5d01e9383dcc27140a9ed2324454f33
+%global commit a22f1aae4ec88e0c2fd4d39ae9d4e9313f119bcf
 
 Name:    admiral-harbor
-Version: 0.0.1alpha6
+Version: 0.0.1alpha7
 Release: 1%{?dist}
 Summary: Admiral Customer Portal - Web UI for end users
 
@@ -108,6 +108,9 @@ restorecon -R %{_localstatedir}/lib/admiral/harbor 2>/dev/null || :
 %systemd_postun admiral-harbor-catalog-sync.timer
 
 %changelog
+* Tue Jun 16 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1alpha7-1
+- Bump to alpha7, update spec commit ref
+
 * Mon Jun 15 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1alpha6-1
 - Bump to alpha6
 

@@ -6,7 +6,7 @@
 
 Name:    python3-flask-login
 Version: 0.6.3
-Release: 2%{?dist}
+Release: 3%{?dist}
 Summary: User session management for Flask
 
 License: MIT
@@ -47,5 +47,8 @@ PY
 %{python3_sitelib}/Flask_Login-%{version}.dist-info/
 
 %changelog
+* Tue Jun 16 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.6.3-3
+- Rebuild for admiral 0.0.1alpha7
+
 * Tue Jun 09 2026 Admiral Project <dev@admiral-project.org> - 0.6.3-1
 - Initial packaging for Admiral

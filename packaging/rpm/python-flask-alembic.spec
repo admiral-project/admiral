@@ -6,7 +6,7 @@
 
 Name:    python3-flask-alembic
 Version: 3.1.1
-Release: 2%{?dist}
+Release: 3%{?dist}
 Summary: Integrate Alembic with Flask
 
 License: MIT
@@ -51,5 +51,8 @@ PY
 %{python3_sitelib}/flask_alembic-3.1.1.dist-info/
 
 %changelog
+* Tue Jun 16 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 3.1.1-3
+- Rebuild for admiral 0.0.1alpha7
+
 * Sun Jun 07 2026 Admiral Project <dev@admiral-project.org> - 3.1.1-1
 - Initial packaging for Admiral

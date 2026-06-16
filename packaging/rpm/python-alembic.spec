@@ -6,7 +6,7 @@
 
 Name:    python3-alembic
 Version: 1.18.4
-Release: 2%{?dist}
+Release: 3%{?dist}
 Summary: A database migration tool for SQLAlchemy
 
 License: MIT
@@ -50,5 +50,8 @@ PY
 %{python3_sitelib}/alembic-1.18.4.dist-info/
 
 %changelog
+* Tue Jun 16 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 1.18.4-3
+- Rebuild for admiral 0.0.1alpha7
+
 * Tue Jun 09 2026 Admiral Project <dev@admiral-project.org> - 1.18.4-1
 - Updated for compatibility with flask-alembic 3.1.1+

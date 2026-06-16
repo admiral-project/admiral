@@ -6,7 +6,7 @@
 
 Name:    python3-typing-extensions
 Version: 4.15.0
-Release: 2%{?dist}
+Release: 3%{?dist}
 Summary: Backported and Experimental Type Hints for Python
 
 License: PSF-2.0
@@ -51,5 +51,8 @@ PY
 %{python3_sitelib}/typing_extensions-4.15.0.dist-info/
 
 %changelog
+* Tue Jun 16 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 4.15.0-3
+- Rebuild for admiral 0.0.1alpha7
+
 * Fri Jun 12 2026 Admiral Project <dev@admiral-project.org> - 4.15.0-1
 - Initial packaging for Admiral
