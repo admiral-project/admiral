@@ -125,12 +125,10 @@ fi
 case "$ID" in
     rhel|centos|rocky|almalinux)
         MAJOR="${VERSION_ID%%.*}"
-        [[ "$MAJOR" -ge 9 ]] || die "Enterprise Linux >= 9 required (got $ID $VERSION_ID)"
-        ;;
-    fedora)
+        [[ "$MAJOR" -ge 10 ]] || die "Enterprise Linux 10 required (got $ID $VERSION_ID)"
         ;;
     *)
-        die "Unsupported OS: $ID. Supported: RHEL, CentOS Stream, Rocky Linux, AlmaLinux >= 9, Fedora."
+        die "Unsupported OS: $ID. Supported: RHEL, CentOS Stream, Rocky Linux, AlmaLinux 10."
         ;;
 esac
 
