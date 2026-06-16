@@ -9,6 +9,7 @@ Requires=admiral-harbor.service
 [Service]
 Type=oneshot
 EnvironmentFile=/etc/admiral/harbor.env
+Environment=ENV=production
 User=admiral
 Group=admiral
 WorkingDirectory=/usr/lib/admiral/harbor
@@ -20,6 +21,19 @@ ExecStart=/usr/bin/python3 /usr/lib/admiral/harbor/cli.py sync
 StandardOutput=journal
 StandardError=journal
 SyslogIdentifier=admiral-harbor-catalog-sync
+
+# Hardening
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectHome=true
+ProtectSystem=full
+CapabilityBoundingSet=
+SystemCallArchitectures=native
+PrivateDevices=true
+ProtectKernelModules=true
+ProtectKernelTunables=true
+ProtectControlGroups=true
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
 
 [Install]
 WantedBy=multi-user.target
