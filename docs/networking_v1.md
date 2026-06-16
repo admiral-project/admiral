@@ -8,7 +8,7 @@ Contract version: `networking_v1`
 
 ## 1. Architecture overview
 
-Admiral soporta tanto configuraciones de nodo único (single-node) como multinodo (multi-node). La arquitectura multinodo utiliza una red privada WireGuard para toda la comunicación entre componentes y tráfico de workloads, reservando SSH únicamente para tareas administrativas y bootstrap.
+Admiral soporta tanto configuraciones de nodo único (single-node) como multinodo (multi-node). La arquitectura multinodo utiliza WireGuard como red privada para toda la comunicación entre nodos y tráfico interno. Los puertos de servicios internos no se exponen a Internet.
 
 ### 1.1 Diagrama de Red (Multinodo)
 
@@ -44,7 +44,7 @@ Canal A: SSH + Ansible (Solo Administración / Bootstrap)
 Componentes:
 
 - `admirald` es la fuente de verdad. Posee la persistencia (`PublicRoute` en DB) y orquesta la configuración de Caddy vía su Admin API. En multinodo, se comunica con los agentes `admiral-fleet` a través de sus IPs de WireGuard.
-- `Caddy` es el plano de ejecución del reverse proxy. Sirve HTTPS público con certificado wildcard de Let's Encrypt (DNS-01), routing por hostname y redirect HTTP→HTTPS.
+- `Caddy` es el plano de ejecución del reverse proxy. Sirve el tráfico público y termina TLS en la entrada expuesta; los servicios internos siguen accesibles solo por la red privada.
 - `admiral-fleet` reporta los endpoints internos (host_port) donde cada servicio publicado escucha.
 - `admiralctl` permite inspeccionar y operar rutas desde CLI.
 
@@ -65,9 +65,9 @@ Admiral utiliza una arquitectura de red de dos canales para separar las operacio
 ### Canal B: Red de Workloads
 
 - **Transporte:** WireGuard VPN
-- **Propósito:** Tráfico del reverse proxy Caddy, llamadas a la API de `admirald` hacia `fleet`, heartbeats, comunicación del runtime, y transferencia de backups.
+- **Propósito:** Tráfico del reverse proxy Caddy hacia los servicios internos, llamadas a la API de `admirald` hacia `fleet`, heartbeats, comunicación del runtime, y transferencia de backups.
 - **Topología:** Star (estrella), donde el Control Plane es el hub central.
-- **Privacidad:** Esta red es privada. Toda la comunicación entre componentes debe preferir las IPs de la VPN (ej. `10.99.0.x`).
+- **Privacidad:** Esta red es privada. Toda la comunicación entre componentes debe preferir las IPs de la VPN (ej. `10.99.0.x`). Los puertos de `admirald`, `admiral-fleet`, `admiral-flagship`, `admiral-harbor` y PostgreSQL no deben exponerse al público.
 
 ---
 
@@ -178,9 +178,9 @@ Si `networking_admin_host`, `networking_portal_host`, `networking_apps_domain`, 
 ### 3.3 Target rules
 
 - `networking_admin_target`: si está vacío, Caddy responde con placeholder estático. Si se define, hace reverse proxy hacia esa URL.
-- `networking_portal_target`: default `https://127.0.0.1:5001` (admiral-harbor, ver `packaging/systemd/admiral-harbor.service`).
-- `networking_flagship_target`: default `https://127.0.0.1:5000` (admiral-flagship, ver `packaging/systemd/admiral-flagship.service`).
-- `networking_cockpit_target`: default `https://127.0.0.1:9090`.
+- `networking_portal_target`: default `https://127.0.0.1:5001` (admiral-harbor, ver `packaging/systemd/admiral-harbor.service`). Ese puerto es interno; no se publica directamente a Internet.
+- `networking_flagship_target`: default `https://127.0.0.1:5000` (admiral-flagship, ver `packaging/systemd/admiral-flagship.service`). Ese puerto es interno; no se publica directamente a Internet.
+- `networking_cockpit_target`: default `https://127.0.0.1:9090`. Ese puerto es interno; no se publica directamente a Internet.
 - `networking_apps_redirect`: define la URL destino del redirect 308 desde `apps.<domain>`.
 
 ### 3.4 TLS — Wildcard certificate (MANDATORIO)
@@ -217,7 +217,7 @@ obtenido vía **DNS-01 challenge**.
 - `networking_tls_cert_file` / `networking_tls_key_file`: **obligatorios en producción**. Apuntan al wildcard de Let's Encrypt.
 - `networking_tls_email`: requerido por ACME.
 - Caddy configura ACME automation como fallback para dev. En producción, si `cert_file` y `key_file` están definidos, Caddy los carga estáticamente para `*.apps.<domain>` y sigue usando ACME automático para hosts fijos como `portal`, `flagship` y `cockpit`.
-- `networking_tls_provider=internal` para QA interno con wildcard autofirmado (ver `docs/setup_guide_el10.md` sección 16.1).
+- `networking_tls_provider=internal` para QA interno con wildcard autofirmado (ver `docs/admiral-installation-guide.md`).
 
 #### Renovación
 
@@ -647,5 +647,5 @@ Para renovación automática sin intervención: instalar plugin DNS del proveedo
 
 - `docs/development/fase4.md` — especificación original de la fase 4
 - `docs/configuration-v1.md` — configuración completa de admirald
-- `docs/setup_guide_el10.md` — guía de instalación completa (sección 7: wildcard, sección 16.1: QA interno)
+- `docs/admiral-installation-guide.md` — guía de instalación completa
 - `scripts/admiral_https_setup.py` — script automatizado de post-instalación
