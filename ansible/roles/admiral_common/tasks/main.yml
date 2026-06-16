@@ -406,6 +406,9 @@
   when: admiral_install_mode in ['single-node', 'admin-node', 'portal-node']
 
 - name: Ensure Admiral PostgreSQL role exists with generated password
+  # Using shell/psql rather than community.postgresql modules to avoid
+  # requiring the collection on the control node. EPEL9 ships psql but
+  # not the Ansible collection by default.
   become_user: postgres
   shell: |
     psql -v ON_ERROR_STOP=1 <<'SQL'
@@ -424,6 +427,8 @@
   when: admiral_install_mode in ['single-node', 'admin-node', 'portal-node']
 
 - name: Ensure Admiral PostgreSQL databases exist (admin/single only)
+  # Using shell/psql rather than community.postgresql modules to avoid
+  # requiring the collection on the control node.
   become_user: postgres
   shell: |
     psql -tAc "SELECT 1 FROM pg_database WHERE datname='{{ item }}'" | grep -q 1 || \
@@ -435,6 +440,8 @@
   when: admiral_install_mode in ['single-node', 'admin-node']
 
 - name: Ensure Harbor PostgreSQL database exists when Harbor is enabled
+  # Using shell/psql rather than community.postgresql modules to avoid
+  # requiring the collection on the control node.
   become_user: postgres
   shell: |
     psql -tAc "SELECT 1 FROM pg_database WHERE datname='admiral_harbor'" | grep -q 1 || \
