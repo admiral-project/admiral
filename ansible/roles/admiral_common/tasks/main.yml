@@ -262,7 +262,9 @@
       # Admiral bootstrap secret inventory.
       # Back up this file securely.
       # CRITICAL: HARBOR_ENCRYPTION_KEY protects Harbor encrypted data stored in PostgreSQL.
-      # Losing it can make encrypted Harbor data unrecoverable and break related restore flows.
+      # This includes PayPal client_secret and LMS API keys.
+      # Losing this key invalidates stored PayPal credentials — you will need to
+      # re-enter them through the Harbor admin UI.
       # CRITICAL: ADMIRAL_SECRETS_KEY protects admirald-encrypted secret material.
       ADMIRAL_POSTGRES_USER=admiral
       ADMIRAL_POSTGRES_PASSWORD={{ admiral_postgres_password }}

@@ -249,6 +249,23 @@ This section describes the operational behavior of Harbor after installation on 
 - `/etc/admiral/secrets`
 - `/etc/admiral/tls/`
 
+### HARBOR_ENCRYPTION_KEY — critical warning
+
+`HARBOR_ENCRYPTION_KEY` is used to encrypt sensitive credentials in the Harbor
+database, including the **PayPal client_secret** and the **LMS API key**.
+
+The key is generated during installation and stored in `/etc/admiral/secrets`.
+
+If this key is lost:
+
+1. Encrypted PayPal and LMS credentials in the database become permanently
+   unrecoverable.
+2. You must re-enter the PayPal client_secret and LMS API key through the
+   Harbor admin UI at `/admin/paypal/config` and `/admin/lms`.
+
+Back up `/etc/admiral/secrets` securely and treat it as critical
+infrastructure material. Do not store it in version control.
+
 ### Customer signup
 
 - Public signup is exposed in the UI at `/auth/register`.
