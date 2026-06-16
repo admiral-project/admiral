@@ -6,7 +6,7 @@
 
 Name:    admiral-fleet
 Version: 0.0.1alpha7
-Release: 2%{?dist}
+Release: 4%{?dist}
 Summary: Admiral Fleet Worker Agent
 
 License: Apache-2.0
@@ -67,6 +67,9 @@ restorecon -F %{_bindir}/admiral-fleet 2>/dev/null || :
 %systemd_postun_with_restart admiral-fleet.service
 
 %changelog
+* Tue Jun 16 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1alpha7-4
+- Ensure rootless user manager is ready before Quadlet reload and start
+
 * Tue Jun 16 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1alpha7-2
 - Update spec commit ref to latest monorepo HEAD
 
