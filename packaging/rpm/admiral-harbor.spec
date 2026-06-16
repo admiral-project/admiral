@@ -32,6 +32,7 @@ Requires: python3-gunicorn
 Requires: python3-requests
 Requires: python3-argon2-cffi
 Requires: python3-cryptography
+Requires: python3-mistune
 Requires: python3-psycopg2
 Requires: python3-psycopg3
 Requires: python3-psycopg3_c

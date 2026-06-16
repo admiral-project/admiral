@@ -15,6 +15,7 @@ TYPING_EXTENSIONS_VERSION := 4.15.0
 FLASK_SQLALCHEMY_VERSION := 3.1.1
 FLASK_ALEMBIC_VERSION := 3.1.1
 FLASK_LOGIN_VERSION := 0.6.3
+MISTUNE_VERSION := 3.2.1
 
 .PHONY: all clean rpm rpmlint all-sources \
 	srpm srpms \
@@ -22,7 +23,8 @@ FLASK_LOGIN_VERSION := 0.6.3
 	rpm-admiralctl rpm-admiral-flagship rpm-admiral-harbor \
 	srpm-admiral-common srpm-admirald srpm-admiral-fleet \
 	srpm-admiralctl srpm-admiral-flagship srpm-admiral-harbor \
-	rpm-python-flask-sqlalchemy rpm-python-flask-alembic rpm-python-flask-login
+	rpm-python-flask-sqlalchemy rpm-python-flask-alembic rpm-python-flask-login \
+	rpm-python-mistune srpm-python-mistune
 
 all: rpm
 
@@ -92,11 +94,15 @@ source-python-flask-login: | $(SOURCEDIR)
 	python3 -m pip download --only-binary=:all: --no-deps \
 		-d $(SOURCEDIR) Flask-Login==$(FLASK_LOGIN_VERSION)
 
+source-python-mistune: | $(SOURCEDIR)
+	python3 -m pip download --only-binary=:all: --no-deps \
+		-d $(SOURCEDIR) mistune==$(MISTUNE_VERSION)
+
 all-sources: source-superproject \
 	source-admiral-flagship source-admiral-harbor \
 	source-python-alembic source-python-typing-extensions \
 	source-python-flask-sqlalchemy source-python-flask-alembic \
-	source-python-flask-login
+	source-python-flask-login source-python-mistune
 
 # -- Copy packaging support files to SOURCES -----------------------------
 
@@ -173,6 +179,10 @@ rpm-python-flask-login: source-python-flask-login
 	cp $(SPECSDIR)/$(@:rpm-%=%).spec $(RPMTOPDIR)/SPECS/
 	rpmbuild -ba $(RPMFLAGS) $(RPMTOPDIR)/SPECS/python-flask-login.spec
 
+rpm-python-mistune: source-python-mistune
+	cp $(SPECSDIR)/python-mistune.spec $(RPMTOPDIR)/SPECS/
+	rpmbuild -ba $(RPMFLAGS) $(RPMTOPDIR)/SPECS/python-mistune.spec
+
 # -- SRPM targets --------------------------------------------------------
 
 srpm-admiral-common: source-superproject source-support-files
@@ -219,6 +229,10 @@ srpm-python-flask-login: source-python-flask-login
 	cp $(SPECSDIR)/$(@:srpm-%=%).spec $(RPMTOPDIR)/SPECS/
 	rpmbuild -bs $(RPMFLAGS) $(RPMTOPDIR)/SPECS/python-flask-login.spec
 
+srpm-python-mistune: source-python-mistune
+	cp $(SPECSDIR)/python-mistune.spec $(RPMTOPDIR)/SPECS/
+	rpmbuild -bs $(RPMFLAGS) $(RPMTOPDIR)/SPECS/python-mistune.spec
+
 # -- Build all RPMs in dependency order ----------------------------------
 
 rpm: all-sources source-support-files
@@ -242,6 +256,8 @@ rpm: all-sources source-support-files
 	$(MAKE) rpm-python-flask-alembic
 	@echo "=== Building python-flask-login ==="
 	$(MAKE) rpm-python-flask-login
+	@echo "=== Building python-mistune ==="
+	$(MAKE) rpm-python-mistune
 	@echo "=== Building admiral-harbor ==="
 	$(MAKE) rpm-admiral-harbor
 	@echo "=== All RPMs built ==="
@@ -266,6 +282,8 @@ srpms: all-sources source-support-files
 	$(MAKE) srpm-python-flask-alembic
 	@echo "=== Building python-flask-login SRPM ==="
 	$(MAKE) srpm-python-flask-login
+	@echo "=== Building python-mistune SRPM ==="
+	$(MAKE) srpm-python-mistune
 	@echo "=== Building admiral-harbor SRPM ==="
 	$(MAKE) srpm-admiral-harbor
 	@echo "=== All SRPMs built ==="
