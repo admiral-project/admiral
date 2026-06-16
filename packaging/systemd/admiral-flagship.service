@@ -22,6 +22,11 @@ ProtectHome=read-only
 ProtectSystem=full
 CapabilityBoundingSet=
 SystemCallArchitectures=native
+PrivateDevices=true
+ProtectKernelModules=true
+ProtectKernelTunables=true
+ProtectControlGroups=true
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
 User=admiral
 Group=admiral
 
