@@ -1,9 +1,9 @@
 %global debug_package %{nil}
-%global commit a22f1aae4ec88e0c2fd4d39ae9d4e9313f119bcf
+%global commit 92265170c219cbfff839352f077f60704731cda3
 
 Name:    admiral-harbor
 Version: 0.0.1alpha7
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: Admiral Customer Portal - Web UI for end users
 
 License: Apache-2.0
@@ -109,6 +109,10 @@ restorecon -R %{_localstatedir}/lib/admiral/harbor 2>/dev/null || :
 %systemd_postun admiral-harbor-catalog-sync.timer
 
 %changelog
+* Tue Jun 16 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1alpha7-2
+- Update spec commit ref to latest admiral-harbor HEAD
+- Add PayPal encryption support (AES-256-GCM via cryptography.fernet)
+
 * Tue Jun 16 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1alpha7-1
 - Bump to alpha7, update spec commit ref
 

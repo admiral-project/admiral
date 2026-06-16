@@ -2,11 +2,11 @@
 # SPDX-License-Identifier: Apache-2.0
 
 %global debug_package %{nil}
-%global commit f549c376e445804a5b6bf2ba8d3a2fd300a016d5
+%global commit 3aa7be4a5034533bff2b9ad8b67cb16bee4a2f97
 
 Name:    admiral-fleet
 Version: 0.0.1alpha7
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: Admiral Fleet Worker Agent
 
 License: Apache-2.0
@@ -67,6 +67,9 @@ restorecon -F %{_bindir}/admiral-fleet 2>/dev/null || :
 %systemd_postun_with_restart admiral-fleet.service
 
 %changelog
+* Tue Jun 16 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1alpha7-2
+- Update spec commit ref to latest monorepo HEAD
+
 * Tue Jun 16 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1alpha7-1
 - Bump to alpha7, update spec commit ref
 
