@@ -3,5 +3,5 @@
 # Users may override via ~/.config/admiralctl/config.yaml
 
 server_url: https://127.0.0.1:8080
-token: changeme-shared-token
+token: __REQUIRED__
 ca_cert_file: /etc/admiral/tls/ca.pem
