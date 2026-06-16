@@ -33,6 +33,14 @@ Single-node combines the admin, worker, and portal roles on one host.
 
 The Harbor package also ships `admiral-harbor-worker.service`, `admiral-harbor-worker.timer`, `admiral-harbor-catalog-sync.service`, and `admiral-harbor-catalog-sync.timer`.
 
+## Node Authentication and VPN Security
+
+In multinode deployments (`--worker-node`), the use of a WireGuard VPN is **mandatory** for secure node authentication.
+
+- **WireGuard IP Verification**: `admirald` strictly validates that any incoming worker requests (such as heartbeats, task callbacks, health reports, and storage reports) originate from the registered WireGuard IP of the claiming node.
+- **Node Scoping & Isolation**: Even though a shared token is used for protocol authentication, `admirald` enforces node scoping. A node cannot query, update, or report status for instances or resources belonging to another node. Attempts to do so, or requests coming from mismatching VPN IPs, will be rejected with a `403 Forbidden` error.
+- **Single-Node Mode Exception**: In single-node deployments (`--single-node`), since all components run locally on `127.0.0.1` and no WireGuard IP is registered, this IP matching verification is bypassed automatically.
+
 ## Systemd and Config
 
 | Component | Unit | Config file |
