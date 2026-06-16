@@ -5,6 +5,11 @@
   changed_when: false
   failed_when: false
 
+- name: Fail when SELinux is disabled
+  fail:
+    msg: "SELinux is disabled. Admiral requires SELinux in enforcing or permissive mode. Enable SELinux in /etc/selinux/config and reboot, or set selinux=1 on the kernel cmdline."
+  when: selinux_status.stdout == "Disabled"
+
 - name: Ensure SELinux is enforcing
   command: setenforce 1
   when: selinux_status.stdout == "Permissive"

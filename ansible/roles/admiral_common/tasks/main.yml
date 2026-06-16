@@ -398,16 +398,10 @@
     line: "host    all             all             ::1/128                 scram-sha-256"
   when: admiral_install_mode in ['single-node', 'admin-node', 'portal-node']
 
-- name: Ensure PostgreSQL is enabled and running
+- name: Ensure PostgreSQL is enabled and restarted (applies pg_hba changes)
   systemd:
     name: postgresql
     enabled: true
-    state: started
-  when: admiral_install_mode in ['single-node', 'admin-node', 'portal-node']
-
-- name: Restart PostgreSQL after pg_hba updates
-  systemd:
-    name: postgresql
     state: restarted
   when: admiral_install_mode in ['single-node', 'admin-node', 'portal-node']
 
