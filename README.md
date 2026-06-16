@@ -11,7 +11,7 @@ Current integration status in this repository:
 * `admirald`, `admiral-fleet`, and `admiralctl` are the active backend E2E focus.
 * `admiral-flagship` is functional, with working dashboard and instance management views.
 * `admiral-flagship` is part of the normal single-node installation flow.
-* `admiral-harbor` remains pre-alpha and is planned for a later phase.
+* `admiral-harbor` is in active development and is also part of the normal single-node installation flow, but it is not production ready.
 
 ---
 
@@ -198,7 +198,7 @@ Responsibilities:
 
 ## admiral-harbor
 
-Customer portal.
+Customer portal and commercial workflow frontend.
 
 Responsibilities:
 
@@ -210,6 +210,7 @@ Responsibilities:
 * Backup access
 * Pause and resume applications
 * Resource upgrades and downgrades
+* Admin workspace for operators
 
 ## admiral-flagship
 
@@ -236,6 +237,16 @@ Responsibilities:
 * Debugging
 * Maintenance operations
 
+## Entry Points
+
+The RPMs install the operational entry points used by the umbrella installer:
+
+* `admiral_install` - packaged installer wrapper around `scripts/install.sh`
+* `admiral_https_setup` - DNS-01 wildcard certificate helper
+* `admirald`, `admiral-fleet`, and `admiralctl` - core backend binaries
+* `admiral-flagship` - administrative web console service
+* `harborctl` and `harbor-gunicorn` - Harbor CLI and web entry points
+
 ---
 
 # Deployment Modes
@@ -257,9 +268,9 @@ Recommended for:
 Typical deployment:
 
 * admirald
-* admiral-harbor
-* admiral-flagship
 * admiral-fleet
+* admiral-flagship
+* admiral-harbor
 * PostgreSQL
 * Redis
 
@@ -322,7 +333,7 @@ The goal is practical security without unnecessary complexity.
 ## Single Node Installation
 
 Requirements:
-* Fedora or Enterprise Linux >= 9 (RHEL, Rocky Linux, AlmaLinux, CentOS Stream)
+* Enterprise Linux 10 (RHEL, Rocky Linux, AlmaLinux, CentOS Stream, and compatible clones)
 * Fresh server with root or sudo access
 * Python 3
 * For production: a public domain with DNS management access
@@ -340,7 +351,7 @@ Or clone the repository and run:
 ```bash
 git clone https://github.com/admiral-project/admiral.git
 cd admiral
-sudo bash scripts/install.sh --single-node
+sudo admiral_install --single-node
 ```
 
 The installer will:
@@ -348,7 +359,7 @@ The installer will:
 2. Install all Admiral RPM packages via DNF
 3. Run the Ansible configuration playbook
 4. Generate secure credentials and self-signed TLS certificates
-5. Start all services: `postgresql`, `caddy`, `admirald`, `admiral-fleet`, `admiral-flagship`, `admiral-harbor`, `cockpit.socket`
+5. Start all services: `postgresql`, `caddy`, `admirald`, `admiral-fleet`, `admiral-flagship`, `admiral-harbor`, `admiral-harbor-worker`, `admiral-harbor-catalog-sync`, `cockpit.socket`
 
 On success, all services will be active and the API health endpoint will respond:
 
@@ -382,11 +393,13 @@ scp /etc/admiral/secrets user@backup-server:/backup/admiral/
 HTTPS is intentionally not configured by the installer. A valid wildcard certificate for `*.apps.<YOUR_DOMAIN>` is required.
 The installer and Ansible do not manage DNS records for this step.
 
-Run the HTTPS setup script:
+Run the packaged HTTPS setup helper:
 
 ```bash
 sudo admiral_https_setup --domain cloud.example.com
 ```
+
+From the source tree, the same helper is available as `scripts/admiral_https_setup.py`.
 
 This script uses certbot with a DNS-01 ACME challenge to obtain a Let's Encrypt wildcard certificate. **DNS-01 requires manual intervention** — you must add a TXT record to your DNS zone when prompted. That interactive DNS step is handled here, not by Ansible.
 
