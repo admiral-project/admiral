@@ -27,10 +27,10 @@
       HARBOR_PAYPAL_WEBHOOK_ID=
       HARBOR_PAYPAL_BASE_URL=https://api-m.sandbox.paypal.com
       HARBOR_PAYPAL_MODE=mock
-      HARBOR_PAYPAL_RETURN_URL=https://portal.localhost.invalid/billing/return
-      HARBOR_PAYPAL_CANCEL_URL=https://portal.localhost.invalid/billing/cancel
+      HARBOR_PAYPAL_RETURN_URL=https://{{ admiral_harbor_external_host | default('portal.localhost.invalid') }}/billing/return
+      HARBOR_PAYPAL_CANCEL_URL=https://{{ admiral_harbor_external_host | default('portal.localhost.invalid') }}/billing/cancel
       HARBOR_SMTP_FROM=noreply@example.com
-      HARBOR_EXTERNAL_URL=https://portal.localhost.invalid
+      HARBOR_EXTERNAL_URL=https://{{ admiral_harbor_external_host | default('portal.localhost.invalid') }}
       HARBOR_OVERDUE_POLICY_VERSION=overdue-policy-v1
       HARBOR_OVERDUE_SUSPEND_AFTER_DAYS=5
       HARBOR_OVERDUE_DEPROVISION_AFTER_DAYS=10
