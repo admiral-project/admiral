@@ -67,6 +67,10 @@ restorecon -F %{_bindir}/admiral-fleet 2>/dev/null || :
 %systemd_postun_with_restart admiral-fleet.service
 
 %changelog
+* Wed Jun 17 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta2-1
+- Bump to 0.0.1beta2, update spec commit ref
+- Rename SharedToken to FleetToken for per-node auth
+
 * Tue Jun 16 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1alpha7-5
 - Make rootless Quadlet directory traversable for the user manager
 

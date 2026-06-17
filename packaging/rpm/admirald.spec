@@ -63,6 +63,11 @@ restorecon -F %{_bindir}/admirald 2>/dev/null || :
 %systemd_postun_with_restart admirald.service
 
 %changelog
+* Wed Jun 17 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta2-1
+- Bump to 0.0.1beta2, update spec commit ref
+- Add per-node token authentication replacing shared token
+- Replace gofmt and black formatting fixes
+
 * Tue Jun 16 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1alpha7-2
 - Update spec commit ref to latest monorepo HEAD
 - Add RateLimiter middleware for fleet endpoints

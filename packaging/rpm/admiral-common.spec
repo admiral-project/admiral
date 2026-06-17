@@ -144,6 +144,9 @@ if [ $1 -eq 0 ]; then
 fi
 
 %changelog
+* Wed Jun 17 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta2-1
+- Bump to 0.0.1beta2, update spec commit ref
+
 * Tue Jun 16 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1alpha7-1
 - Bump to alpha7, update spec commit ref
 

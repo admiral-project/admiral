@@ -72,6 +72,10 @@ restorecon -R %{_prefix}/lib/admiral/flagship 2>/dev/null || :
 %systemd_postun_with_restart admiral-flagship.service
 
 %changelog
+* Wed Jun 17 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta2-1
+- Bump to 0.0.1beta2, update spec commit ref
+- Rename ADMIRAL_SHARED_TOKEN to ADMIRAL_ADMIN_TOKEN
+
 * Tue Jun 16 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1alpha7-2
 - Bump release to match coordinated packaging update
 

@@ -54,6 +54,10 @@ go test ./...
 restorecon -F %{_bindir}/admiralctl 2>/dev/null || :
 
 %changelog
+* Wed Jun 17 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta2-1
+- Bump to 0.0.1beta2, update spec commit ref
+- Rename ADMIRAL_SHARED_TOKEN to ADMIRAL_ADMIN_TOKEN
+
 * Tue Jun 16 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1alpha7-2
 - Update spec commit ref to latest monorepo HEAD
 
