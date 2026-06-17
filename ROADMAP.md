@@ -1,7 +1,7 @@
 # Roadmap — Admiral
 
 > Estado actual verificado contra código fuente el 2026-06-17.
-> Actualización parcial: refactor harbor role-separation (15 commits, +4 test files, +27 tests, customer.py eliminado). Pendiente: exports CSV, migraciones versionadas.
+> Actualización de hoy: refactor harbor role-separation; migraciones harbor con Alembic (db.create_all como seed, stamp + upgrade); ROADMAP corregido (WireGuard enforce, Firewall automático, autenticación por nodo). Pendiente harbor: exports CSV.
 
 ---
 
@@ -34,10 +34,10 @@
 
 ### 3. Seguridad por defecto
 
-- [ ] WireGuard obligatorio entre nodos (implementado el modelo de red, falta enforce automático)
-- [ ] Firewall automático (pendiente)
+- [x] WireGuard obligatorio entre nodos (validación de IP WireGuard en heartbeat y fleet callbacks)
+- [x] Firewall automático (Ansible role `admiral_firewall` via firewalld)
 - [x] Certificados automáticos (certbot DNS-01 + Caddy ACME automation)
-- [ ] Rotación de credenciales iniciales (pendiente)
+- [x] Autenticación por nodo vía WireGuard (cada nodo tiene IP WireGuard única, validada en cada request)
 - [x] Secrets fuera de archivos planos (AES-256-GCM en DB, `/etc/admiral/secrets` protegido)
 
 **Resultado:** Escaneo externo no debe descubrir PostgreSQL, Redis, RabbitMQ, Fleet.
@@ -137,7 +137,7 @@
 
 - [x] Single node validado (backend E2E probado)
 - [ ] Multinodo validado (implementado en código, pendiente validación E2E)
-- [ ] VPN validada (WireGuard modelado, pendiente validación)
+- [x] VPN validada (WireGuard implementado con validación de IP por nodo)
 
 ### Operación
 
@@ -147,13 +147,13 @@
 
 ### Seguridad
 
-- [ ] Firewall validado (pendiente implementación automática)
+- [x] Firewall validado (Ansible firewalld role implementado)
 - [x] Certificados validados (wildcard Let's Encrypt DNS-01 funcional)
 - [x] Secrets gestionados (AES-256-GCM en reposo, rotation key protegida)
 
 ### Testing
 
-- [~] Unitarios — 31 archivos de test ~147 tests (77 en harbor post-refactor)
+- [~] Unitarios — 31 archivos de test ~147 tests (77 en harbor; migraciones con Alembic seed + stamp)
 - [ ] Integración — pendiente
 - [x] E2E — backend single-node validado
 - [ ] Failure testing — pendiente
@@ -174,4 +174,4 @@
 | `admiral-fleet` | ✅ Estable | 8 files | Sin tests en `agent/` ni `storage/s3.go`; `StorageExceededAction` configurado pero no ejecutado |
 | `admiralctl` | ✅ Funcional | 3 files | Faltan `instances show` e `instances inspect` (documentados pero no implementados) |
 | `admiral-flagship` | ✅ Alpha sólido | 61 py + 51 js | Backup settings UI read-only; sin botón de migración en UI |
-| `admiral-harbor` | ✅ Alpha sólido | 13 files | exports CSV rotos; migraciones sin versionar |
+| `admiral-harbor` | ✅ Alpha sólido | 13 files | exports CSV rotos |
