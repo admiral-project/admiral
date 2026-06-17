@@ -2,13 +2,13 @@
 
 Admiral es una PaaS simple para agencias que quieren operar SaaS sobre Linux con Podman, systemd y PostgreSQL.
 
-## Estado del producto
+## Estado del producto — Beta (2026-06-17)
 
-- `admirald`: control plane y fuente de verdad.
-- `admiral-fleet`: ejecución local en nodos workloads.
-- `admiralctl`: operación técnica por terminal.
-- `admiral-flagship`: consola administrativa web, funcional e incluida en el flujo normal de instalación single-node.
-- `admiral-harbor`: portal de cliente, en pre-alpha.
+- `admirald`: control plane y fuente de verdad — estable.
+- `admiral-fleet`: ejecución local en nodos workloads — estable.
+- `admiralctl`: operación técnica por terminal — funcional, `instances show`/`inspect` implementados.
+- `admiral-flagship`: consola administrativa web — beta, migration modal implementado.
+- `admiral-harbor`: portal de cliente — beta, storage notification + pod-status endpoint.
 
 ## Decisiones de arquitectura vigentes
 

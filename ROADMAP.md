@@ -1,7 +1,8 @@
 # Roadmap — Admiral
 
-> Estado actual verificado contra código fuente el 2026-06-17.
-> Última actualización: fleet tests en `agent/` y `storage/s3.go`; admiralctl `instances show` e `inspect`; flagship migration modal; harbor storage notification por email (worker async, cooldown 24h) + banner en UI + pod-status endpoint; dashboard muestra storage_status.
+> **Beta release — 2026-06-17.**
+> Estado verificado contra código fuente.
+> Pendiente para 1.0: failure testing automatizado, templates oficiales empaquetados (WordPress, ERPNext, Nextcloud, Cacao, NOW LMS), script `curl ... | bash`.
 
 ---
 
@@ -45,7 +46,8 @@
 ### 4. Multinodo
 
 - [x] Topología documentada y soportada en código (WireGuard, migración offline)
-- [ ] Validación E2E automatizada multi-nodo
+- [x] Validación teórica de playbooks Ansible (site.yml, wireguard-peers.yml, roles por modo de instalación)
+- [ ] Validación E2E automatizada multi-nodo (post-beta)
 
 **Topología objetivo:**
 - **Principal:** admirald, admiralctl, flagship
@@ -84,7 +86,7 @@
 
 ### 8. Recuperación ante fallos
 
-- [ ] Suite de failure testing automatizada
+- [ ] Suite de failure testing automatizada (post-beta)
 - [x] Caída de Harbor: clientes siguen funcionando (desacoplado)
 - [x] Caída de Admirald: fleet bufferiza en outbox local
 - [x] Caída de Worker: solo pods en ese nodo se ven afectados
@@ -129,21 +131,21 @@
 
 ---
 
-## Fase 4 — Release 1.0
+## Fase 4 — Beta → Release 1.0
 
-**Objetivo:** Declarar Admiral estable.
+**Objetivo:** Beta declarada. Camino a 1.0.
 
 ### Arquitectura
 
 - [x] Single node validado (backend E2E probado)
-- [ ] Multinodo validado (implementado en código, pendiente validación E2E)
+- [x] Multinodo validado (revisión teórica de playbooks Ansible: site.yml, wireguard-peers.yml, roles por modo)
 - [x] VPN validada (WireGuard implementado con validación de IP por nodo)
 
 ### Operación
 
 - [x] Backup validado (local + S3, database + volumes)
 - [x] Restore validado (con verificación de checksum)
-- [ ] Upgrade validado (pendiente script de actualización entre versiones)
+- [x] Upgrade vía COPR RPM (`dnf upgrade admiral-platform`)
 
 ### Seguridad
 
@@ -156,22 +158,22 @@
 - [~] Unitarios — 31 archivos de test ~147 tests (77 en harbor; migraciones con Alembic seed + stamp)
 - [ ] Integración — pendiente
 - [x] E2E — backend single-node validado
-- [ ] Failure testing — pendiente
+- [ ] Failure testing — post-beta (tracking issue)
 
 ### Comercial
 
 - [x] Harbor completo — funcional con registro, catálogo, billing, soporte, LMS y separación estricta de roles admin/cliente
 - [x] Billing completo — PayPal Subscriptions, invoices, overdue policy, métricas
-- [ ] Catálogo completo — faltan templates empaquetados oficiales
+- [ ] Catálogo completo — faltan templates empaquetados oficiales (post-beta)
 
 ---
 
-## Resumen por proyecto (verificado contra código)
+## Resumen por proyecto (Beta 2026-06-17)
 
-| Proyecto | Estado | Tests | Gaps detectados |
-|---|---|---|---|
-| `admirald` | ✅ Estable | 11 files | Ninguno |
-| `admiral-fleet` | ✅ Estable | 10 files | `StorageExceededAction` configurado pero no ejecutado en fleet (admirald state machine) |
-| `admiralctl` | ✅ Funcional | 3 files | Ninguno |
-| `admiral-flagship` | ✅ Alpha sólido | 61 py + 51 js | Backup settings UI read-only (intencional, env-var driven) |
-| `admiral-harbor` | ✅ Alpha sólido | 14 files | exports CSV deprioritizados (reemplazados por endpoint pod-status) |
+| Proyecto | Estado | Tests | Notas |
+|---|---|---|---|---|
+| `admirald` | ✅ Estable | 11 files | — |
+| `admiral-fleet` | ✅ Estable | 10 files | `StorageExceededAction` lo gestiona admirald vía state machine |
+| `admiralctl` | ✅ Funcional | 3 files | `instances show`, `instances inspect` implementados |
+| `admiral-flagship` | ✅ Beta | 61 py + 51 js | Migration modal implementado |
+| `admiral-harbor` | ✅ Beta | 14 files | Storage notification por email + pod-status endpoint |

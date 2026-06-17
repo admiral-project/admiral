@@ -16,12 +16,13 @@ Considera el archivo PROYECTO.md como parte del el contexto para el desarrollo.
 
 La etapa actual del proyecto es:
 
-- End to end testing del backend con admirald, admiralctl y admiral-fleet.
-- admiral-flagship funcional y parte del flujo normal de instalación en modo single-node.
+- **Beta** (2026-06-17). Todos los componentes funcionales.
+- Single-node E2E validado. Multinodo validado teóricamente (playbooks Ansible).
+- Upgrade vía COPR RPM.
+- Storage quota notification por email (harbor worker async).
+- Pendiente para 1.0: failure testing, templates oficiales, E2E multi-nodo.
 
 Cada proyecto tiene su archivo AGENTS.md
-
-El proyecto admiral-harbor quedan para fase posterior.
 
 ## Project Context
 
