@@ -3,7 +3,7 @@
 
 Name:    admiral-harbor
 Version: 0.0.1beta1
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: Admiral Customer Portal - Web UI for end users
 
 License: Apache-2.0
@@ -110,6 +110,9 @@ restorecon -R %{_localstatedir}/lib/admiral/harbor 2>/dev/null || :
 %systemd_postun admiral-harbor-catalog-sync.timer
 
 %changelog
+* Wed Jun 17 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta1-2
+- Rebuild RPM with CSP-safe harbor admin shell and packaging updates
+
 * Wed Jun 17 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta1-1
 - Bump to 0.0.1beta1, include app/migrations symlink in %%files
 
