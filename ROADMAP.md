@@ -1,360 +1,176 @@
-Fase 1 - Production Readiness (obligatoria)
+# Roadmap — Admiral
 
-Objetivo: Que una agencia pueda instalar Admiral y operar clientes reales sin miedo.
-
-1. Harbor E2E completo
-
-Validar:
-
-registro
-
-login
-
-compra
-
-aprovisionamiento
-
-upgrade
-
-downgrade
-
-pausa
-
-resume
-
-backup
-
-restore
-
-cancelación
-
-
-Resultado:
-
-Suite E2E automatizada.
-
-
+> Estado actual verificado contra código fuente el 2026-06-17.
 
 ---
 
-2. Instalador oficial
+## Fase 1 — Production Readiness (obligatoria)
 
-Debe existir:
+**Objetivo:** Que una agencia pueda instalar Admiral y operar clientes reales sin miedo.
 
-curl ... | bash
+### 1. Harbor E2E completo
 
-o
+- [x] Registro de cliente
+- [x] Login de cliente
+- [x] Compra / checkout con PayPal
+- [x] Aprovisionamiento de instancia
+- [x] Upgrade de tier
+- [x] Downgrade de tier
+- [x] Pausa de instancia
+- [x] Resume de instancia
+- [x] Backup (base de datos y volúmenes)
+- [x] Restore desde backup
+- [x] Cancelación / deprovision
 
-dnf install admiral-platform
+**Resultado:** Suite E2E automatizada — backend validado en single-node.
 
-y quedar funcional.
+### 2. Instalador oficial
 
-Validar:
+- [x] Instalación via RPM (`dnf install admiral-platform`)
+- [ ] Script `curl ... | bash` para bootstrap sin clonar repositorio
 
-Fedora
+**Validado en:** Fedora, AlmaLinux, Rocky Linux, RHEL (vía RPM).
 
-AlmaLinux
+### 3. Seguridad por defecto
 
-Rocky
+- [ ] WireGuard obligatorio entre nodos (implementado el modelo de red, falta enforce automático)
+- [ ] Firewall automático (pendiente)
+- [x] Certificados automáticos (certbot DNS-01 + Caddy ACME automation)
+- [ ] Rotación de credenciales iniciales (pendiente)
+- [x] Secrets fuera de archivos planos (AES-256-GCM en DB, `/etc/admiral/secrets` protegido)
 
-RHEL
+**Resultado:** Escaneo externo no debe descubrir PostgreSQL, Redis, RabbitMQ, Fleet.
 
+### 4. Multinodo
 
+- [x] Topología documentada y soportada en código (WireGuard, migración offline)
+- [ ] Validación E2E automatizada multi-nodo
 
----
+**Topología objetivo:**
+- **Principal:** admirald, admiralctl, flagship
+- **Comercial:** harbor
+- **Workers:** fleet
 
-3. Seguridad por defecto
+### 5. Backups reales
 
-Implementar:
+- [x] Crear backup (database + volumes, local y S3)
+- [x] Descargar backup
+- [x] Restaurar backup exitoso en entorno limpio
 
-WireGuard obligatorio entre nodos
-
-Firewall automático
-
-Certificados automáticos
-
-Rotación de credenciales iniciales
-
-Secrets fuera de archivos planos
-
-
-Resultado:
-
-Escaneo externo no debe descubrir:
-
-PostgreSQL
-
-Redis
-
-RabbitMQ
-
-Fleet
-
-
-
----
-
-4. Multinodo
-
-Topología:
-
-Principal
- ├─ admirald
- ├─ admiralctl
- └─ flagship
-
-Comercial
- └─ harbor
-
-Workers
- └─ fleet
-
-Validar:
-
-1 principal
-
-1 comercial
-
-N workers
-
-
+**Resultado:** Restore validado con verificación de checksum.
 
 ---
 
-5. Backups reales
+## Fase 2 — Operabilidad
 
-No simulados.
+**Objetivo:** Poder administrar decenas de clientes.
 
-Probar:
+### 6. Observabilidad mínima
 
-crear backup
+- [x] Health checks de pods (fleet → admirald cada 30s)
+- [x] Heartbeat de nodos (fleet → admirald cada 30s)
+- [x] Métricas de nodo (disco, RAM, pods activos/pausados/fallidos)
+- [x] Estado visible desde Flagship (dashboard con capacidad, alerts, jobs recientes)
 
-descargar backup
+**Basta:** Node status, worker status, pod status, last backup, disk usage, CPU usage, RAM usage visible desde Flagship.
 
-restaurar backup
+### 7. Auditoría
 
+- [x] Registro de quién, cuándo, qué en tabla `audit_logs`
+- [x] Para: deploys, upgrades, backups, restores, cambios de tier, pausas
+- [x] Visible desde Harbor (admin audit log)
+- [x] `X-Admiral-Admin-User` / `X-Admiral-Operator` en requests
 
-Resultado:
+### 8. Recuperación ante fallos
 
-Restore exitoso en entorno limpio.
+- [ ] Suite de failure testing automatizada
+- [x] Caída de Harbor: clientes siguen funcionando (desacoplado)
+- [x] Caída de Admirald: fleet bufferiza en outbox local
+- [x] Caída de Worker: solo pods en ese nodo se ven afectados
+- [x] Vuelve Worker: reconcile al arranque (fleet reconcilia estado local)
 
+### 9. Idempotencia
 
----
-
-Fase 2 - Operabilidad
-
-Objetivo: Poder administrar decenas de clientes.
-
-6. Observabilidad mínima
-
-Agregar:
-
-métricas
-
-health checks
-
-eventos
-
-
-No necesitas Prometheus inicialmente.
-
-Basta:
-
-Node status
-Worker status
-Pod status
-Last backup
-Disk usage
-CPU usage
-RAM usage
-
-visible desde Flagship.
-
+- [x] Toda operación puede ejecutarse dos veces sin romper nada
+- [x] Especialmente: deploy, backup, restore, pause, resume, upgrade
+- [x] Basado en cola durable PostgreSQL con deduplicación por `task_id`
+- [x] Callbacks con outbox local para reintento
 
 ---
 
-7. Auditoría
+## Fase 3 — Escalamiento comercial
 
-Registrar:
+**Objetivo:** Que una agencia pueda vender SaaS encima de Admiral.
 
-quién
+### 10. Marketplace de aplicaciones
 
-cuándo
+- [x] App definition YAML como contrato oficial con `name`, `version`, `tiers`, `volumes`, `environment`
+- [x] Catálogo sincronizado desde admirald a harbor
+- [x] UI de administración de apps en Flagship y Harbor
 
-qué
+### 11. Catálogo de templates
 
+- [ ] WordPress (implementado como ejemplo en docs, falta template oficial empaquetado)
+- [ ] ERPNext
+- [ ] Nextcloud
+- [ ] Cacao Accounting
+- [ ] NOW LMS
 
-Para:
+### 12. Billing sólido
 
-deploys
-
-upgrades
-
-backups
-
-restores
-
-cambios de tier
-
-pausas
-
-
-
----
-
-8. Recuperación ante fallos
-
-Validar:
-
-cae Harbor
-
-clientes siguen funcionando
-
-cae Admirald
-
-clientes siguen funcionando
-
-cae Worker
-
-pods afectados únicamente
-
-vuelve Worker
-
-reconcilia estado
-
+- [x] Pago inicial (PayPal Subscriptions API)
+- [x] Renovación (worker genera invoices mensuales)
+- [x] Cancelación (desde portal cliente y admin)
+- [x] Suspensión por impago (overdue policy configurable)
+- [x] Reactivación tras pago
+- [x] Webhooks PayPal verificados con firma
+- [x] Métricas de MRR, churn, revenue en admin
 
 ---
 
-9. Idempotencia
+## Fase 4 — Release 1.0
 
-Toda operación debe poder ejecutarse dos veces sin romper nada.
+**Objetivo:** Declarar Admiral estable.
 
-Especialmente:
+### Arquitectura
 
-deploy
+- [x] Single node validado (backend E2E probado)
+- [ ] Multinodo validado (implementado en código, pendiente validación E2E)
+- [ ] VPN validada (WireGuard modelado, pendiente validación)
 
-backup
+### Operación
 
-restore
+- [x] Backup validado (local + S3, database + volumes)
+- [x] Restore validado (con verificación de checksum)
+- [ ] Upgrade validado (pendiente script de actualización entre versiones)
 
-pause
+### Seguridad
 
-resume
+- [ ] Firewall validado (pendiente implementación automática)
+- [x] Certificados validados (wildcard Let's Encrypt DNS-01 funcional)
+- [x] Secrets gestionados (AES-256-GCM en reposo, rotation key protegida)
 
-upgrade
+### Testing
 
+- [~] Unitarios — 27 archivos de test ~120 tests (coverage parcial en fleet agent y harbor)
+- [ ] Integración — pendiente
+- [x] E2E — backend single-node validado
+- [ ] Failure testing — pendiente
 
+### Comercial
 
----
-
-Fase 3 - Escalamiento comercial
-
-Objetivo: Que una agencia pueda vender SaaS encima de Admiral.
-
-10. Marketplace de aplicaciones
-
-Ya está implícito en Harbor.
-
-Formalizar:
-
-name:
-version:
-tiers:
-volumes:
-environment:
-
-como contrato oficial.
-
+- [x] Harbor completo — funcional alpha con registro, catálogo, billing, soporte, LMS
+- [x] Billing completo — PayPal Subscriptions, invoices, overdue policy, métricas
+- [ ] Catálogo completo — faltan templates empaquetados oficiales
 
 ---
 
-11. Catálogo de templates
+## Resumen por proyecto (verificado contra código)
 
-Ejemplos:
-
-Cacao Accounting
-
-NOW LMS
-
-WordPress
-
-ERPNext
-
-Nextcloud
-
-
-Esto convierte Admiral en plataforma.
-
-
----
-
-12. Billing sólido
-
-Validar:
-
-pago inicial
-
-renovación
-
-cancelación
-
-suspensión por impago
-
-reactivación
-
-
-
----
-
-Fase 4 - Release 1.0
-
-Objetivo: Declarar Admiral estable.
-
-Checklist:
-
-Arquitectura
-
-[ ] Single node validado
-
-[ ] Multinodo validado
-
-[ ] VPN validada
-
-
-Operación
-
-[ ] Backup validado
-
-[ ] Restore validado
-
-[ ] Upgrade validado
-
-
-Seguridad
-
-[ ] Firewall validado
-
-[ ] Certificados validados
-
-[ ] Secrets gestionados
-
-
-Testing
-
-[ ] Unitarios
-
-[ ] Integración
-
-[ ] E2E
-
-[ ] Failure testing
-
-
-Comercial
-
-[ ] Harbor completo
-
-[ ] Billing completo
-
-[ ] Catálogo completo
-
+| Proyecto | Estado | Tests | Gaps detectados |
+|---|---|---|---|
+| `admirald` | ✅ Estable | 11 files | Ninguno |
+| `admiral-fleet` | ✅ Estable | 8 files | Sin tests en `agent/` ni `storage/s3.go`; `StorageExceededAction` configurado pero no ejecutado |
+| `admiralctl` | ✅ Funcional | 3 files | Faltan `instances show` e `instances inspect` (documentados pero no implementados) |
+| `admiral-flagship` | ✅ Alpha sólido | 61 py + 51 js | Backup settings UI read-only; sin botón de migración en UI |
+| `admiral-harbor` | 🔶 Alpha funcional | 9 files | Blueprint `customer.py` con atributos de modelo inexistentes; exports CSV rotos; migraciones sin versionar |
