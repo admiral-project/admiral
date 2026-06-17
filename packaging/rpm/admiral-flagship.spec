@@ -5,7 +5,7 @@
 %global commit 2c6f37cf9d81b7498149b1645b5f82dd24db2901
 
 Name:    admiral-flagship
-Version: 0.0.1beta1
+Version: 0.0.1beta2
 Release: 1%{?dist}
 Summary: Admiral Administrative Web Console
 

@@ -4,7 +4,7 @@
 %global commit 3485eb8a37e66b9ca38542167337a9850ebe1b94
 
 Name:    admiral-common
-Version: 0.0.1beta1
+Version: 0.0.1beta2
 Release: 1%{?dist}
 Summary: Common files and utilities for Admiral PaaS
 

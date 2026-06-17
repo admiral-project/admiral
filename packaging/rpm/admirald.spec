@@ -5,7 +5,7 @@
 %global commit 3485eb8a37e66b9ca38542167337a9850ebe1b94
 
 Name:    admirald
-Version: 0.0.1beta1
+Version: 0.0.1beta2
 Release: 1%{?dist}
 Summary: Admiral Control Plane - Core API and orchestration service
 
