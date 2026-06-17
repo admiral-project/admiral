@@ -15,3 +15,6 @@ __pycache__/
 /admirald/admirald
 /admiral-fleet/admiral-fleet
 /admiralctl/admiralctl
+
+# Security issues tracking (not committed, local reference only)
+/ISSUES.md

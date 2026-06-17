@@ -25,7 +25,6 @@ Requires: shadow-utils
 Requires: systemd
 Requires: wireguard-tools
 Requires: cockpit-bridge
-Requires: admiralctl
 
 %description
 admiral-fleet is the worker agent component of Admiral. It runs on
