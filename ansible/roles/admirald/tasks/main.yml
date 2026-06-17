@@ -24,7 +24,8 @@
       listen_address = {{ admirald_listen_address | default('127.0.0.1') }}
       database_url = {{ admirald_database_url | default('postgres://admiral:' ~ admiral_postgres_password ~ '@127.0.0.1:5432/admiral?sslmode=disable') }}
       queue_database_url = {{ admirald_queue_database_url | default('postgres://admiral:' ~ admiral_postgres_password ~ '@127.0.0.1:5432/admiral_queue?sslmode=disable') }}
-      shared_token = {{ admirald_shared_token | default(admiral_shared_token_value) }}
+      admin_token = {{ admirald_admin_token | default(admiral_admin_token_value) }}
+      token_pepper = {{ admirald_token_pepper | default(admiral_token_pepper_value) }}
       secrets_key = {{ admirald_secrets_key | default(admiral_secrets_key_value) }}
       flagship_admin_user = {{ admirald_flagship_admin_user | default(admiral_flagship_bootstrap_user) }}
       flagship_admin_pswd = {{ admirald_flagship_admin_pswd | default(admiral_flagship_bootstrap_password) }}
@@ -59,6 +60,6 @@
     mode: "0600"
     content: |
       server_url: {{ admiralctl_server_url | default('https://127.0.0.1:8080') }}
-      token: {{ admirald_shared_token | default(admiral_shared_token_value) }}
+      token: {{ admirald_admin_token | default(admiral_admin_token_value) }}
       ca_cert_file: {{ admiralctl_ca_cert_file | default('/etc/admiral/tls/ca.pem') }}
   no_log: true

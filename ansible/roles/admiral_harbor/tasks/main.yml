@@ -35,7 +35,7 @@
       HARBOR_OVERDUE_SUSPEND_AFTER_DAYS=5
       HARBOR_OVERDUE_DEPROVISION_AFTER_DAYS=10
       HARBOR_OVERDUE_LAST_BACKUP_RETENTION_DAYS=15
-      ADMIRAL_SHARED_TOKEN={{ admiral_shared_token_value }}
+      ADMIRAL_ADMIN_TOKEN={{ admiral_admin_token_value }}
       ADMIRAL_CA_FILE=/etc/admiral/tls/ca.pem
       ADMIRAL_INSECURE_SKIP_VERIFY=0
     mode: "0640"

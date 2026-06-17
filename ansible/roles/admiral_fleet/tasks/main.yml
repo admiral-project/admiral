@@ -51,7 +51,7 @@
     dest: /etc/admiral/fleet.env
     content: |
       ADMIRAL_FLEET_NODE_ID={{ fleet_node_id_effective | default(fleet_node_id | default(ansible_hostname)) }}
-      ADMIRAL_SHARED_TOKEN={{ admirald_shared_token | default(admiral_shared_token_value) }}
+      ADMIRAL_FLEET_TOKEN={{ admirald_fleet_token | default(admiral_fleet_token_value) }}
       ADMIRAL_API_URL={{ admiral_fleet_api_url | default('https://127.0.0.1:8080') }}
       ADMIRAL_API_CA_FILE=/etc/admiral/tls/ca.pem
       ADMIRAL_QUEUE_DATABASE_URL={{ admiral_fleet_queue_database_url | default('postgresql://admiral:' ~ admiral_postgres_password ~ '@127.0.0.1:5432/admiral_queue?sslmode=disable') }}
@@ -91,7 +91,7 @@
   when: admiral_install_mode in ['single-node', 'worker-node']
   environment:
     ADMIRAL_SERVER_URL: "{{ admiral_fleet_api_url | default('https://127.0.0.1:8080') }}"
-    ADMIRAL_SHARED_TOKEN: "{{ admirald_shared_token | default(admiral_shared_token_value) }}"
+    ADMIRAL_ADMIN_TOKEN: "{{ admirald_admin_token | default(admiral_admin_token_value) }}"
     ADMIRAL_TLS_CA_FILE: /etc/admiral/tls/ca.pem
 
 - name: Register local node with admirald
@@ -111,5 +111,6 @@
     - admirald_ready.rc == 0
   environment:
     ADMIRAL_SERVER_URL: "{{ admiral_fleet_api_url | default('https://127.0.0.1:8080') }}"
-    ADMIRAL_SHARED_TOKEN: "{{ admirald_shared_token | default(admiral_shared_token_value) }}"
+    ADMIRAL_ADMIN_TOKEN: "{{ admirald_admin_token | default(admiral_admin_token_value) }}"
     ADMIRAL_TLS_CA_FILE: /etc/admiral/tls/ca.pem
+    

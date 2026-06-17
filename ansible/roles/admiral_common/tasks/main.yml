@@ -117,7 +117,8 @@
 - name: Extract existing Admiral secrets
   set_fact:
     admiral_existing_postgres_password: "{{ admiral_secrets_text | regex_findall('(?m)^ADMIRAL_POSTGRES_PASSWORD=(.*)$') | first | default('') }}"
-    admiral_existing_shared_token: "{{ admiral_secrets_text | regex_findall('(?m)^ADMIRAL_SHARED_TOKEN=(.*)$') | first | default('') }}"
+    admiral_existing_admin_token: "{{ admiral_secrets_text | regex_findall('(?m)^ADMIRAL_ADMIN_TOKEN=(.*)$') | first | default('') }}"
+    admiral_existing_token_pepper: "{{ admiral_secrets_text | regex_findall('(?m)^ADMIRAL_TOKEN_PEPPER=(.*)$') | first | default('') }}"
     admiral_existing_secrets_key: "{{ admiral_secrets_text | regex_findall('(?m)^ADMIRAL_SECRETS_KEY=(.*)$') | first | default('') }}"
     admiral_existing_flagship_secret_key: "{{ admiral_secrets_text | regex_findall('(?m)^FLAGSHIP_SECRET_KEY=(.*)$') | first | default('') }}"
     admiral_existing_flagship_bootstrap_user: "{{ admiral_secrets_text | regex_findall('(?m)^FLAGSHIP_BOOTSTRAP_USER=(.*)$') | first | default('') }}"
@@ -139,11 +140,19 @@
   changed_when: true
   no_log: true
 
-- name: Generate Admiral shared token
+- name: Generate Admiral admin token
   command:
     cmd: openssl rand -hex 32
-  register: admiral_shared_token_generated
-  when: admiral_existing_shared_token == ''
+  register: admiral_admin_token_generated
+  when: admiral_existing_admin_token == ''
+  changed_when: true
+  no_log: true
+
+- name: Generate Admiral token pepper
+  command:
+    cmd: openssl rand -hex 32
+  register: admiral_token_pepper_generated
+  when: admiral_existing_token_pepper == ''
   changed_when: true
   no_log: true
 
@@ -238,7 +247,8 @@
 - name: Consolidate Admiral installation secrets
   set_fact:
     admiral_postgres_password: "{{ admiral_existing_postgres_password if admiral_existing_postgres_password != '' else (admiral_postgres_password_generated.stdout | default('')) }}"
-    admiral_shared_token_value: "{{ admiral_existing_shared_token if admiral_existing_shared_token != '' else (admiral_shared_token_generated.stdout | default('')) }}"
+    admiral_admin_token_value: "{{ admiral_existing_admin_token if admiral_existing_admin_token != '' else (admiral_admin_token_generated.stdout | default('')) }}"
+    admiral_token_pepper_value: "{{ admiral_existing_token_pepper if admiral_existing_token_pepper != '' else (admiral_token_pepper_generated.stdout | default('')) }}"
     admiral_secrets_key_value: "{{ admiral_existing_secrets_key if admiral_existing_secrets_key != '' else (admiral_secrets_key_generated.stdout | default('')) }}"
     admiral_flagship_secret_key_value: "{{ admiral_existing_flagship_secret_key if admiral_existing_flagship_secret_key != '' else (admiral_flagship_secret_key_generated.stdout | default('')) }}"
     admiral_flagship_bootstrap_user: "{{ admiral_existing_flagship_bootstrap_user if admiral_existing_flagship_bootstrap_user != '' else ('opsf_' ~ (admiral_flagship_bootstrap_user_generated.stdout | default(''))) }}"
@@ -268,7 +278,8 @@
       # CRITICAL: ADMIRAL_SECRETS_KEY protects admirald-encrypted secret material.
       ADMIRAL_POSTGRES_USER=admiral
       ADMIRAL_POSTGRES_PASSWORD={{ admiral_postgres_password }}
-      ADMIRAL_SHARED_TOKEN={{ admiral_shared_token_value }}
+      ADMIRAL_ADMIN_TOKEN={{ admiral_admin_token_value }}
+      ADMIRAL_TOKEN_PEPPER={{ admiral_token_pepper_value }}
       ADMIRAL_SECRETS_KEY={{ admiral_secrets_key_value }}
       FLAGSHIP_SECRET_KEY={{ admiral_flagship_secret_key_value }}
       FLAGSHIP_BOOTSTRAP_USER={{ admiral_flagship_bootstrap_user }}

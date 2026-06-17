@@ -439,7 +439,7 @@ Por cada health check se actualizan:
 
 ### 9.2 Endpoints
 
-Rutas de administración (protegidas por `shared_token`):
+Rutas de administración (protegidas por `admin_token`):
 
 | Método | Path | Handler | Descripción |
 |---|---|---|---|

@@ -21,7 +21,7 @@ Configuración mínima:
 - `ADMIRAL_FLEET_QUADLET_DIR`
 - `ADMIRAL_FLEET_DATA_DIR`
 - `ADMIRAL_API_URL`
-- `ADMIRAL_SHARED_TOKEN`
+- `ADMIRAL_ADMIN_TOKEN`
 
 Regla importante:
 

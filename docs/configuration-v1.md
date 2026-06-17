@@ -18,7 +18,8 @@ Archivo `/etc/admirald.ini`:
 port=8080
 database_url=postgres://admiral_core_user:postgres@localhost:5432/admiral_core?sslmode=disable
 queue_database_url=postgres://admiral_queue_user:postgres@localhost:5432/admiral_queue?sslmode=disable
-shared_token=replace-with-internal-token
+admin_token=replace-with-internal-token
+token_pepper=replace-with-long-random-pepper
 secrets_key=replace-with-long-random-production-secret
 flagship_admin_user=admin
 flagship_admin_pswd=replace-with-long-random-admin-password
@@ -42,7 +43,8 @@ Variables de entorno equivalentes:
 - `ADMIRAL_ENV` — define entorno (`development` o produccion)
 - `ADMIRAL_DATABASE_URL`
 - `ADMIRAL_QUEUE_DATABASE_URL`
-- `ADMIRAL_SHARED_TOKEN`
+- `ADMIRAL_ADMIN_TOKEN`
+- `ADMIRAL_TOKEN_PEPPER`
 - `ADMIRAL_SECRETS_KEY`
 - `ADMIRAL_FLAGSHIP_ADMIN_USER`
 - `ADMIRAL_FLAGSHIP_ADMIN_PSWD`
@@ -67,7 +69,7 @@ Variables de entorno equivalentes:
 
 ### Reglas actuales
 
-- `shared_token` es obligatorio
+- `admin_token` y `token_pepper` son obligatorios
 - `queue_database_url` es obligatorio
 - `flagship_admin_user` y `flagship_admin_pswd` se usan solo para bootstrap inicial
 - `tls_cert_file` es obligatorio
@@ -107,7 +109,7 @@ Comportamiento actual:
 - En **desarrollo** (`ADMIRAL_ENV=development`): si no se define, se usa una
   clave efimera `dev-ephemeral-key-change-me`.
 
-No hay fallback a `shared_token`. Producion debe siempre definir
+No hay fallback a `admin_token`. Producion debe siempre definir
 `ADMIRAL_SECRETS_KEY` explicita y estable.
 
 ## `admiral-fleet`
@@ -118,7 +120,7 @@ Variables soportadas:
 - `ADMIRAL_QUEUE_DATABASE_URL`
 - `ADMIRAL_API_URL`
 - `ADMIRAL_API_CA_FILE`
-- `ADMIRAL_SHARED_TOKEN`
+- `ADMIRAL_ADMIN_TOKEN`
 - `ADMIRAL_FLEET_EXECUTOR`
 - `ADMIRAL_FLEET_QUADLET_DIR`
 - `ADMIRAL_FLEET_DATA_DIR`
@@ -145,7 +147,7 @@ Defaults actuales:
 Reglas:
 
 - `ADMIRAL_FLEET_NODE_ID` es obligatorio
-- `ADMIRAL_SHARED_TOKEN` es obligatorio
+- `ADMIRAL_ADMIN_TOKEN` es obligatorio
 - `ADMIRAL_QUEUE_DATABASE_URL` es obligatorio
 - `ADMIRAL_API_URL` debe usar `https://`
 - executors validos:
@@ -176,13 +178,13 @@ ca_cert_file: /etc/admiral/tls/ca.pem
 Overrides por entorno:
 
 - `ADMIRAL_SERVER_URL`
-- `ADMIRAL_SHARED_TOKEN`
+- `ADMIRAL_ADMIN_TOKEN`
 - `ADMIRAL_TLS_CA_FILE`
 
 Reglas:
 
 - `ADMIRAL_SERVER_URL` debe usar `https://`
-- la CLI publica usa `shared_token`
+- la CLI publica usa `admin_token`
 - la CLI todavia no tiene configuracion separada para sesion admin
 
 ## Seguridad operativa

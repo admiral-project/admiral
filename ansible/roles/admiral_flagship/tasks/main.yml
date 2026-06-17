@@ -10,7 +10,7 @@
     content: |
       FLAGSHIP_SECRET_KEY={{ admiral_flagship_secret_key_value }}
       ADMIRAL_API_URL=https://127.0.0.1:8080
-      ADMIRAL_SHARED_TOKEN={{ admiral_shared_token_value }}
+      ADMIRAL_ADMIN_TOKEN={{ admiral_admin_token_value }}
       ADMIRAL_CA_FILE=/etc/admiral/tls/ca.pem
     mode: "0640"
     owner: root

@@ -375,7 +375,7 @@ During installation, all platform secrets are generated and stored at `/etc/admi
 | Secret | Purpose |
 |---|---|
 | `ADMIRAL_POSTGRES_PASSWORD` | PostgreSQL authentication |
-| `ADMIRAL_SHARED_TOKEN` | Internal component authentication |
+| `ADMIRAL_ADMIN_TOKEN` | Internal component authentication |
 | `ADMIRAL_SECRETS_KEY` | Encryption key for stored secrets |
 | `FLAGSHIP_BOOTSTRAP_USER` | Admin console initial user |
 | `FLAGSHIP_BOOTSTRAP_PASSWORD` | Admin console initial password |
