@@ -1,7 +1,7 @@
 # Roadmap — Admiral
 
 > Estado actual verificado contra código fuente el 2026-06-17.
-> Actualización de hoy: refactor harbor role-separation; migraciones harbor con Alembic (db.create_all como seed, stamp + upgrade); ROADMAP corregido (WireGuard enforce, Firewall automático, autenticación por nodo). Pendiente harbor: exports CSV.
+> Última actualización: fleet tests en `agent/` y `storage/s3.go`; admiralctl `instances show` e `inspect`; flagship migration modal; harbor storage notification por email (worker async, cooldown 24h) + banner en UI + pod-status endpoint; dashboard muestra storage_status.
 
 ---
 
@@ -171,7 +171,7 @@
 | Proyecto | Estado | Tests | Gaps detectados |
 |---|---|---|---|
 | `admirald` | ✅ Estable | 11 files | Ninguno |
-| `admiral-fleet` | ✅ Estable | 8 files | Sin tests en `agent/` ni `storage/s3.go`; `StorageExceededAction` configurado pero no ejecutado |
-| `admiralctl` | ✅ Funcional | 3 files | Faltan `instances show` e `instances inspect` (documentados pero no implementados) |
-| `admiral-flagship` | ✅ Alpha sólido | 61 py + 51 js | Backup settings UI read-only; sin botón de migración en UI |
-| `admiral-harbor` | ✅ Alpha sólido | 13 files | exports CSV rotos |
+| `admiral-fleet` | ✅ Estable | 10 files | `StorageExceededAction` configurado pero no ejecutado en fleet (admirald state machine) |
+| `admiralctl` | ✅ Funcional | 3 files | Ninguno |
+| `admiral-flagship` | ✅ Alpha sólido | 61 py + 51 js | Backup settings UI read-only (intencional, env-var driven) |
+| `admiral-harbor` | ✅ Alpha sólido | 14 files | exports CSV deprioritizados (reemplazados por endpoint pod-status) |
