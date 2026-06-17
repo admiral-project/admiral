@@ -1,6 +1,7 @@
 # Roadmap — Admiral
 
 > Estado actual verificado contra código fuente el 2026-06-17.
+> Actualización parcial: refactor harbor role-separation (15 commits, +4 test files, +27 tests, customer.py eliminado). Pendiente: exports CSV, migraciones versionadas.
 
 ---
 
@@ -152,14 +153,14 @@
 
 ### Testing
 
-- [~] Unitarios — 27 archivos de test ~120 tests (coverage parcial en fleet agent y harbor)
+- [~] Unitarios — 31 archivos de test ~147 tests (77 en harbor post-refactor)
 - [ ] Integración — pendiente
 - [x] E2E — backend single-node validado
 - [ ] Failure testing — pendiente
 
 ### Comercial
 
-- [x] Harbor completo — funcional alpha con registro, catálogo, billing, soporte, LMS
+- [x] Harbor completo — funcional con registro, catálogo, billing, soporte, LMS y separación estricta de roles admin/cliente
 - [x] Billing completo — PayPal Subscriptions, invoices, overdue policy, métricas
 - [ ] Catálogo completo — faltan templates empaquetados oficiales
 
@@ -173,4 +174,4 @@
 | `admiral-fleet` | ✅ Estable | 8 files | Sin tests en `agent/` ni `storage/s3.go`; `StorageExceededAction` configurado pero no ejecutado |
 | `admiralctl` | ✅ Funcional | 3 files | Faltan `instances show` e `instances inspect` (documentados pero no implementados) |
 | `admiral-flagship` | ✅ Alpha sólido | 61 py + 51 js | Backup settings UI read-only; sin botón de migración en UI |
-| `admiral-harbor` | 🔶 Alpha funcional | 9 files | Blueprint `customer.py` con atributos de modelo inexistentes; exports CSV rotos; migraciones sin versionar |
+| `admiral-harbor` | ✅ Alpha sólido | 13 files | exports CSV rotos; migraciones sin versionar |
