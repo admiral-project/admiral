@@ -104,6 +104,7 @@
     --wireguard-ip "{{ admiral_wireguard_ip | default('') }}"
     --public-ip "{{ fleet_public_ip | default('') }}"
     --os "{{ ansible_distribution ~ ' ' ~ ansible_distribution_version }}"
+    --token "{{ admiral_fleet_token_value }}"
   register: node_register
   changed_when: node_register.rc == 0
   when:
