@@ -56,7 +56,7 @@ mkdir -p %{buildroot}%{_prefix}/lib/admiral/harbor
 echo "%%dir %{_prefix}/lib/admiral/harbor" > harbor.files
 if [ -d app ]; then
     cp -r app run.py worker.py cli.py alembic.ini migrations %{buildroot}%{_prefix}/lib/admiral/harbor/
-    find %{buildroot}%{_prefix}/lib/admiral/harbor -type f | sed "s|%{buildroot}||" | sort >> harbor.files
+    find %{buildroot}%{_prefix}/lib/admiral/harbor -type f -o -type l | sed "s|%{buildroot}||" | sort >> harbor.files
 fi
 # Install harborctl entry point
 install -Dm0755 %{SOURCE6} %{buildroot}%{_bindir}/harborctl
@@ -110,6 +110,9 @@ restorecon -R %{_localstatedir}/lib/admiral/harbor 2>/dev/null || :
 %systemd_postun admiral-harbor-catalog-sync.timer
 
 %changelog
+* Wed Jun 17 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta1-1
+- Bump to 0.0.1beta1, include app/migrations symlink in %%files
+
 * Tue Jun 16 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1alpha7-2
 - Update spec commit ref to latest admiral-harbor HEAD
 - Add PayPal encryption support (AES-256-GCM via cryptography.fernet)
