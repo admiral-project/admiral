@@ -1,9 +1,9 @@
 %global debug_package %{nil}
-%global commit 1612332da1ea3d355a4f6e900de30bf77f0e3fd2
+%global commit 494bbaf3fdc3bfdf7fca7a8b493fd2d8d0b2c8d3
 
 Name:    admiral-harbor
 Version: 0.0.1beta1
-Release: 2%{?dist}
+Release: 3%{?dist}
 Summary: Admiral Customer Portal - Web UI for end users
 
 License: Apache-2.0
@@ -110,6 +110,9 @@ restorecon -R %{_localstatedir}/lib/admiral/harbor 2>/dev/null || :
 %systemd_postun admiral-harbor-catalog-sync.timer
 
 %changelog
+* Wed Jun 17 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta1-3
+- Rebuild RPM after extracting CSRF helper into a dedicated JavaScript asset
+
 * Wed Jun 17 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta1-2
 - Rebuild RPM with CSP-safe harbor admin shell and packaging updates
 

@@ -1,5 +1,6 @@
 SHELL := /bin/bash
 VERSION := 0.0.1beta1
+HARBOR_COMMIT := 494bbaf3fdc3bfdf7fca7a8b493fd2d8d0b2c8d3
 RPMDIR := $(CURDIR)/packaging/build
 RPMTOPDIR := $(RPMDIR)
 SPECSDIR := $(CURDIR)/packaging/rpm
@@ -72,7 +73,7 @@ source-admiral-flagship: | $(SOURCEDIR)
 source-admiral-harbor: | $(SOURCEDIR)
 	cd admiral-harbor && git archive --format=tar.gz \
 		--prefix=admiral-harbor-v$(VERSION)/ \
-		-o $(SOURCEDIR)/admiral-harbor-$(VERSION).tar.gz HEAD
+		-o $(SOURCEDIR)/admiral-harbor-$(VERSION).tar.gz $(HARBOR_COMMIT)
 
 source-python-flask-sqlalchemy: | $(SOURCEDIR)
 	python3 -m pip download --only-binary=:all: --no-deps \
