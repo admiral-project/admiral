@@ -27,6 +27,7 @@
       admin_token = {{ admirald_admin_token | default(admiral_admin_token_value) }}
       token_pepper = {{ admirald_token_pepper | default(admiral_token_pepper_value) }}
       secrets_key = {{ admirald_secrets_key | default(admiral_secrets_key_value) }}
+      signing_key = {{ admirald_signing_key | default(admiral_ed25519_private_key_value) }}
       flagship_admin_user = {{ admirald_flagship_admin_user | default(admiral_flagship_bootstrap_user) }}
       flagship_admin_pswd = {{ admirald_flagship_admin_pswd | default(admiral_flagship_bootstrap_password) }}
       tls_cert_file = {{ admirald_tls_cert | default('/etc/admiral/tls/admirald.pem') }}

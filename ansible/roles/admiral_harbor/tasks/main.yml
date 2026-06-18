@@ -154,3 +154,18 @@
        | list
        | length) > 0
   no_log: true
+
+- name: Register portal node with admirald (admin-to-node)
+  command: >
+    /usr/bin/admiralctl nodes register
+    --id "{{ fleet_node_id | default(inventory_hostname) }}"
+    --hostname "{{ ansible_fqdn }}"
+    --ip "{{ ansible_default_ipv4.address }}"
+    --role portal
+    --os "{{ ansible_distribution ~ ' ' ~ ansible_distribution_version }}"
+    --token "{{ admiral_fleet_token_value }}"
+  delegate_to: localhost
+  environment:
+    ADMIRAL_ADMIN_TOKEN: "{{ admiral_admin_token_value }}"
+    ADMIRAL_SERVER_URL: "https://127.0.0.1:8080"
+    ADMIRAL_TLS_CA_FILE: /etc/admiral/tls/ca.pem

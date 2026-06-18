@@ -131,6 +131,8 @@
     admiral_existing_cockpit_admin_user: "{{ admiral_secrets_text | regex_findall('(?m)^COCKPIT_ADMIN_USER=(.*)$') | first | default('') }}"
     admiral_existing_cockpit_admin_password: "{{ admiral_secrets_text | regex_findall('(?m)^COCKPIT_ADMIN_PASSWORD=(.*)$') | first | default('') }}"
     admiral_existing_fleet_token: "{{ admiral_secrets_text | regex_findall('(?m)^ADMIRAL_FLEET_TOKEN=(.*)$') | first | default('') }}"
+    admiral_existing_ed25519_private_key: "{{ admiral_secrets_text | regex_findall('(?m)^ADMIRAL_ED25519_PRIVATE_KEY=(.*)$') | first | default('') }}"
+    admiral_existing_task_public_key: "{{ admiral_secrets_text | regex_findall('(?m)^ADMIRAL_TASK_PUBLIC_KEY=(.*)$') | first | default('') }}"
   no_log: true
 
 - name: Generate Admiral PostgreSQL password
@@ -253,6 +255,23 @@
   changed_when: true
   no_log: true
 
+- name: Generate Ed25519 signing key pair (admin only)
+  command:
+    cmd: /usr/bin/admiralctl init --generate-signing-key
+  register: admiral_ed25519_key_generated
+  when:
+    - admiral_install_mode in ['single-node', 'admin-node']
+    - admiral_existing_ed25519_private_key == ''
+  changed_when: true
+  no_log: true
+
+- name: Parse generated Ed25519 keys
+  set_fact:
+    admiral_ed25519_private_key_generated: "{{ admiral_ed25519_key_generated.stdout | regex_search('private_key:([a-f0-9]+)', '\\1') | first | default('') }}"
+    admiral_task_public_key_generated: "{{ admiral_ed25519_key_generated.stdout | regex_search('public_key:([a-f0-9]+)', '\\1') | first | default('') }}"
+  when: admiral_ed25519_key_generated.changed | default(false)
+  no_log: true
+
 - name: Consolidate Admiral installation secrets
   set_fact:
     admiral_postgres_password: "{{ admiral_existing_postgres_password if admiral_existing_postgres_password != '' else (admiral_postgres_password_generated.stdout | default('')) }}"
@@ -270,6 +289,8 @@
     admiral_cockpit_admin_user: "{{ admiral_existing_cockpit_admin_user if admiral_existing_cockpit_admin_user != '' else ('opsc_' ~ (admiral_cockpit_admin_user_generated.stdout | default(''))) }}"
     admiral_cockpit_admin_password: "{{ admiral_existing_cockpit_admin_password if admiral_existing_cockpit_admin_password != '' else (admiral_cockpit_admin_password_generated.stdout | default('')) }}"
     admiral_fleet_token_value: "{{ admiral_existing_fleet_token if admiral_existing_fleet_token != '' else (admiral_fleet_token_generated.stdout | default('')) }}"
+    admiral_ed25519_private_key_value: "{{ admiral_existing_ed25519_private_key if admiral_existing_ed25519_private_key != '' else (admiral_ed25519_private_key_generated | default('')) }}"
+    admiral_task_public_key_value: "{{ admiral_existing_task_public_key if admiral_existing_task_public_key != '' else (admiral_task_public_key_generated | default('')) }}"
   no_log: true
 
 - name: Persist bootstrap secret inventory
@@ -302,6 +323,8 @@
       COCKPIT_ADMIN_USER={{ admiral_cockpit_admin_user }}
       COCKPIT_ADMIN_PASSWORD={{ admiral_cockpit_admin_password }}
       ADMIRAL_FLEET_TOKEN={{ admiral_fleet_token_value }}
+      ADMIRAL_ED25519_PRIVATE_KEY={{ admiral_ed25519_private_key_value }}
+      ADMIRAL_TASK_PUBLIC_KEY={{ admiral_task_public_key_value }}
   no_log: true
 
 - name: Generate self-signed CA certificate

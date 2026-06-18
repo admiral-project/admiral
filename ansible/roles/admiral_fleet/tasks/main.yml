@@ -60,6 +60,7 @@
       ADMIRAL_FLEET_CALLBACK_OUTBOX=/var/lib/admiral/outbox
       ADMIRAL_FLEET_HTTP_ADDR={{ fleet_http_addr | default('127.0.0.1:9099') }}
       ADMIRAL_FLEET_ROOTLESS_USER={{ fleet_rootless_user | default('admiral-apps') }}
+      ADMIRAL_TASK_PUBLIC_KEY={{ admiral_task_public_key_value }}
     mode: "0640"
     owner: root
     group: admiral
@@ -79,22 +80,7 @@
     state: started
     daemon_reload: true
 
-- name: Wait for admirald to be ready
-  command:
-    cmd: /usr/bin/admiralctl status
-  register: admirald_ready
-  until: admirald_ready.rc == 0
-  retries: 12
-  delay: 5
-  changed_when: false
-  ignore_errors: true
-  when: admiral_install_mode in ['single-node', 'worker-node']
-  environment:
-    ADMIRAL_SERVER_URL: "{{ admiral_fleet_api_url | default('https://127.0.0.1:8080') }}"
-    ADMIRAL_ADMIN_TOKEN: "{{ admirald_admin_token | default(admiral_admin_token_value) }}"
-    ADMIRAL_TLS_CA_FILE: /etc/admiral/tls/ca.pem
-
-- name: Register local node with admirald
+- name: Register node with admirald (admin-to-node)
   command: >
     /usr/bin/admiralctl nodes register
     --id "{{ fleet_node_id_effective | default(fleet_node_id | default(ansible_hostname)) }}"
@@ -105,13 +91,9 @@
     --public-ip "{{ fleet_public_ip | default('') }}"
     --os "{{ ansible_distribution ~ ' ' ~ ansible_distribution_version }}"
     --token "{{ admiral_fleet_token_value }}"
-  register: node_register
-  changed_when: node_register.rc == 0
-  when:
-    - admirald_ready.rc is defined
-    - admirald_ready.rc == 0
+  delegate_to: localhost
   environment:
-    ADMIRAL_SERVER_URL: "{{ admiral_fleet_api_url | default('https://127.0.0.1:8080') }}"
-    ADMIRAL_ADMIN_TOKEN: "{{ admirald_admin_token | default(admiral_admin_token_value) }}"
+    ADMIRAL_ADMIN_TOKEN: "{{ admiral_admin_token_value }}"
+    ADMIRAL_SERVER_URL: "https://127.0.0.1:8080"
     ADMIRAL_TLS_CA_FILE: /etc/admiral/tls/ca.pem
     
