@@ -223,3 +223,61 @@ Al finalizar esta fase, Admiral tendrá un modelo multinodo simple y validable:
 «Control plane central + Caddy central + workers remotos conectados por WireGuard + setup automatizado por Ansible.»
 
 Esta fase habilita el primer claim distribuido real de Admiral sin abandonar la filosofía del proyecto: simple, seguro, barato, rootless y operable.
+
+---
+
+## Anexo: WireGuard Key Rotation y Deprovisioning
+
+### Rotación de claves WireGuard
+
+1. Generar nuevo par de claves en el nodo de control:
+   ```bash
+   wg genkey | tee /etc/wireguard/control_private.key | wg pubkey > /etc/wireguard/control_public.key
+   ```
+
+2. Actualizar `[Peer]` en cada worker reemplazando `PublicKey` por la nueva clave pública del control.
+
+3. Aplicar configuración sin interrupción de sesiones activas (WireGuard maneja rotación sin reinicio):
+   ```bash
+   wg set wg0 peer <WORKER_PUBKEY> endpoint <WORKER_ENDPOINT>
+   ```
+
+4. Verificar handshake en control:
+   ```bash
+   wg show wg0
+   ```
+
+### Rotación de clave de un worker específico
+
+1. Generar nuevo par en el worker:
+   ```bash
+   wg genkey | tee /etc/wireguard/worker_private.key | wg pubkey > /etc/wireguard/worker_public.key
+   ```
+
+2. Actualizar `[Peer]` en el control con la nueva `PublicKey` del worker.
+
+3. Verificar handshake:
+   ```bash
+   wg show wg0
+   ```
+
+### Deprovisioning de un nodo worker (WireGuard)
+
+Al remover un worker del cluster:
+
+1. Eliminar su bloque `[Peer]` de la configuración WireGuard del control:
+   ```bash
+   wg set wg0 peer <WORKER_PUBKEY> remove
+   ```
+
+2. (Opcional) Detener WireGuard en el worker si será reutilizado:
+   ```bash
+   systemctl disable --now wg-quick@wg0
+   ```
+
+3. Verificar que el peer fue removido:
+   ```bash
+   wg show wg0
+   ```
+
+4. Actualizar inventario Ansible para excluir el nodo en futuros playbooks.
