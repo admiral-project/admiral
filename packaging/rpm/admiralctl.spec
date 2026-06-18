@@ -2,10 +2,10 @@
 # SPDX-License-Identifier: Apache-2.0
 
 %global debug_package %{nil}
-%global commit 899ec4fdf3c1a55f611e8ffc9744f6856d21c243
+%global commit 646e612f349b4973d074b4f0c7f9a56e1bee4e00
 
 Name:    admiralctl
-Version: 0.0.1beta2
+Version: 0.0.1beta3
 Release: 1%{?dist}
 Summary: Admiral Command-Line Interface
 
@@ -54,6 +54,9 @@ go test ./...
 restorecon -F %{_bindir}/admiralctl 2>/dev/null || :
 
 %changelog
+* Thu Jun 18 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta3-1
+- Bump to 0.0.1beta3, update spec commit ref
+
 * Wed Jun 17 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta2-1
 - Bump to 0.0.1beta2, update spec commit ref
 - Rename ADMIRAL_SHARED_TOKEN to ADMIRAL_ADMIN_TOKEN

@@ -1,8 +1,8 @@
 %global debug_package %{nil}
-%global commit 28306afec2525dbea86f1a570d35136d356a5ffd
+%global commit 8ea850db9631b67119fa758a60b63a2c8936dece
 
 Name:    admiral-harbor
-Version: 0.0.1beta2
+Version: 0.0.1beta3
 Release: 1%{?dist}
 Summary: Admiral Customer Portal - Web UI for end users
 
@@ -111,6 +111,13 @@ restorecon -R %{_localstatedir}/lib/admiral/harbor 2>/dev/null || :
 %{python3} -m pytest tests/ -x --tb=short 2>/dev/null || echo "WARNING: tests skipped (pytest not available)"
 
 %changelog
+* Thu Jun 18 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta3-1
+- Bump to 0.0.1beta3, update spec commit ref
+- Fix psycopg dependencies (remove psycopg2, correct psycopg3 name)
+- Add BuildRequires: python3-rpm-macros
+- Add %%check section
+- Remove redundant chown in %%post
+
 * Wed Jun 17 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta2-1
 - Bump to 0.0.1beta2, update spec commit ref
 - Rename ADMIRAL_SHARED_TOKEN to ADMIRAL_ADMIN_TOKEN

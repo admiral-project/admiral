@@ -2,10 +2,10 @@
 # SPDX-License-Identifier: Apache-2.0
 
 %global debug_package %{nil}
-%global commit 899ec4fdf3c1a55f611e8ffc9744f6856d21c243
+%global commit 646e612f349b4973d074b4f0c7f9a56e1bee4e00
 
 Name:    admirald
-Version: 0.0.1beta2
+Version: 0.0.1beta3
 Release: 1%{?dist}
 Summary: Admiral Control Plane - Core API and orchestration service
 
@@ -63,6 +63,11 @@ restorecon -F %{_bindir}/admirald 2>/dev/null || :
 %systemd_postun_with_restart admirald.service
 
 %changelog
+* Thu Jun 18 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta3-1
+- Bump to 0.0.1beta3, update spec commit ref
+- Demote cockpit-bridge to Recommends
+- Remove redundant chown in %%post
+
 * Wed Jun 17 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta2-1
 - Bump to 0.0.1beta2, update spec commit ref
 - Add per-node token authentication replacing shared token

@@ -1,11 +1,11 @@
 # SPDX-FileCopyrightText: William Moreno Reyes CP | MBA
 # SPDX-License-Identifier: Apache-2.0
 
-%global commit 899ec4fdf3c1a55f611e8ffc9744f6856d21c243
+%global commit 646e612f349b4973d074b4f0c7f9a56e1bee4e00
 
 Name:    admiral-common
-Version: 0.0.1beta2
-Release: 2%{?dist}
+Version: 0.0.1beta3
+Release: 1%{?dist}
 Summary: Common files and utilities for Admiral PaaS
 
 License: Apache-2.0
@@ -149,6 +149,11 @@ if [ $1 -eq 0 ]; then
 fi
 
 %changelog
+* Thu Jun 18 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta3-1
+- Bump to 0.0.1beta3, update spec commit ref
+- Own /etc/admiral/tls directory
+- Apply restorecon recursively on /var/lib/admiral
+
 * Thu Jun 18 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta2-2
 - Require systemd >= 250 for systemd-creds encrypted secrets
 
