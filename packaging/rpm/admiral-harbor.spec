@@ -21,7 +21,6 @@ Source8: harbor.env
 BuildArch: noarch
 
 BuildRequires: python3
-BuildRequires: python3-rpm-macros
 BuildRequires: systemd
 
 Requires: admiral-common
