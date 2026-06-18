@@ -35,7 +35,7 @@ Requires: python3-cryptography
 Requires: python3-mistune
 Requires: python3-psycopg >= 3.1
 Requires: systemd
-Requires: cockpit-bridge
+Recommends: cockpit-bridge
 Requires: wireguard-tools
 
 %description

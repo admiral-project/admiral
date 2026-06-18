@@ -24,7 +24,7 @@ Requires: openssh-clients
 Requires: shadow-utils
 Requires: systemd >= 250
 Requires: wireguard-tools
-Requires: cockpit-bridge
+Recommends: cockpit-bridge
 
 %description
 admiral-fleet is the worker agent component of Admiral. It runs on
