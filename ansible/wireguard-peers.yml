@@ -34,17 +34,17 @@
   tasks:
     - name: Stat know_host inventory before reading
       stat:
-        path: /etc/admiral/know_host.yaml
+        path: /var/lib/admiral/know_host.yaml
       register: know_host_stat
 
     - name: Fail if know_host inventory is missing
       fail:
-        msg: "know_host.yaml not found on admin node. Run admirald bootstrap and verify /etc/admiral/know_host.yaml exists before exchanging WireGuard peers."
+        msg: "know_host.yaml not found on admin node. Run admirald bootstrap and verify /var/lib/admiral/know_host.yaml exists before exchanging WireGuard peers."
       when: not know_host_stat.stat.exists
 
     - name: Read know_host inventory
       slurp:
-        src: /etc/admiral/know_host.yaml
+        src: /var/lib/admiral/know_host.yaml
       register: know_host_slurp
 
     - name: Decode know_host inventory

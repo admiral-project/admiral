@@ -48,12 +48,12 @@
 
 - name: Check for Admirald-managed known host inventory
   stat:
-    path: /etc/admiral/know_host.yaml
+    path: /var/lib/admiral/know_host.yaml
   register: admiral_known_hosts_file
 
 - name: Read Admirald-managed known host inventory
   slurp:
-    src: /etc/admiral/know_host.yaml
+    src: /var/lib/admiral/know_host.yaml
   register: admiral_known_hosts_slurp
   when: admiral_known_hosts_file.stat.exists
 
@@ -91,7 +91,7 @@
   assert:
     that:
       - admiral_wireguard_role == 'hub' or (admiral_known_host_entry.wireguard_ip | default('')) != '' or (admiral_known_host_next_assignment.wireguard_ip | default('')) != ''
-    fail_msg: "Spoke nodes require a wireguard_ip entry or next assignment in /etc/admiral/know_host.yaml."
+    fail_msg: "Spoke nodes require a wireguard_ip entry or next assignment in /var/lib/admiral/know_host.yaml."
   when:
     - admiral_wireguard_ip is not defined
 

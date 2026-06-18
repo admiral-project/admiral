@@ -29,7 +29,7 @@
       loop:
         - { src: "/etc/admiral/secrets", dest: "/etc/admiral/secrets", mode: "0600" }
         - { src: "/etc/admiral/tls/ca.pem", dest: "/etc/admiral/tls/ca.pem", mode: "0644" }
-        - { src: "/etc/admiral/know_host.yaml", dest: "/etc/admiral/know_host.yaml", mode: "0644" }
+        - { src: "/var/lib/admiral/know_host.yaml", dest: "/var/lib/admiral/know_host.yaml", mode: "0644" }
       when:
         - admiral_install_mode in ['worker-node', 'portal-node']
         - admiral_bootstrap_from_controller | default(false) | bool

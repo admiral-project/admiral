@@ -6,12 +6,12 @@
 
 - name: Check for Admirald-managed known host inventory
   stat:
-    path: /etc/admiral/know_host.yaml
+    path: /var/lib/admiral/know_host.yaml
   register: admiral_known_hosts_file
 
 - name: Read Admirald-managed known host inventory
   slurp:
-    src: /etc/admiral/know_host.yaml
+    src: /var/lib/admiral/know_host.yaml
   register: admiral_known_hosts_slurp
   when: admiral_known_hosts_file.stat.exists
 
