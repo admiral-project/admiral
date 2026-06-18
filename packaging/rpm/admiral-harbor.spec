@@ -33,7 +33,7 @@ Requires: python3-requests
 Requires: python3-argon2-cffi
 Requires: python3-cryptography
 Requires: python3-mistune
-Requires: python3-psycopg >= 3.1
+Requires: python3-psycopg3 >= 3.1
 Requires: systemd
 Recommends: cockpit-bridge
 Requires: wireguard-tools
