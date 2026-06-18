@@ -1,11 +1,11 @@
 # SPDX-FileCopyrightText: William Moreno Reyes CP | MBA
 # SPDX-License-Identifier: Apache-2.0
 
-%global commit 646e612f349b4973d074b4f0c7f9a56e1bee4e00
+%global commit e40f7761d080de05f38228799821d0feb48c5e17
 
 Name:    admiral-common
 Version: 0.0.1beta3
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: Common files and utilities for Admiral PaaS
 
 License: Apache-2.0
@@ -50,6 +50,7 @@ install -Dm0755 scripts/admiral_https_setup.py %{buildroot}%{_bindir}/admiral_ht
 
 # Configuration directory (owned by root, 755)
 mkdir -p %{buildroot}%{_sysconfdir}/admiral
+mkdir -p %{buildroot}%{_sysconfdir}/admiral/tls
 
 # Log directory (admiral user needs write)
 mkdir -p %{buildroot}%{_localstatedir}/log/admiral
@@ -149,6 +150,9 @@ if [ $1 -eq 0 ]; then
 fi
 
 %changelog
+* Thu Jun 18 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta3-2
+- Rebuild against current superproject HEAD
+
 * Thu Jun 18 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta3-1
 - Bump to 0.0.1beta3, update spec commit ref
 - Own /etc/admiral/tls directory
