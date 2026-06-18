@@ -80,6 +80,7 @@ getent passwd admiral-apps >/dev/null || \
 
 %dir %attr(0755, root, root) %{_sysconfdir}/admiral
 %dir %attr(0755, root, root) %{_sysconfdir}/containers/systemd/admiral
+%dir %attr(0750, root, admiral) %{_sysconfdir}/admiral/tls
 %dir %attr(0750, admiral, admiral) %{_localstatedir}/log/admiral
 %dir %attr(0751, root, admiral) %{_localstatedir}/lib/admiral
 %dir %attr(0755, root, root) %{_localstatedir}/lib/admiral/outbox
@@ -127,6 +128,10 @@ fi
 # SELinux contexts
 restorecon -R %{_sysconfdir}/admiral 2>/dev/null || :
 restorecon -R %{_sysconfdir}/containers 2>/dev/null || :
+restorecon -R %{_localstatedir}/lib/admiral 2>/dev/null || :
+restorecon -R %{_localstatedir}/lib/admiral/outbox 2>/dev/null || :
+restorecon -R %{_localstatedir}/lib/admiral/backups 2>/dev/null || :
+restorecon -R %{_localstatedir}/lib/admiral/instances 2>/dev/null || :
 restorecon -R %{_localstatedir}/lib/admiral-apps 2>/dev/null || :
 restorecon -F %{_bindir}/admiral_https_setup 2>/dev/null || :
 restorecon -F %{_bindir}/admiral_install 2>/dev/null || :
