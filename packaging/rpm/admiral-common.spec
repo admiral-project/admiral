@@ -5,7 +5,7 @@
 
 Name:    admiral-common
 Version: 0.0.1beta2
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: Common files and utilities for Admiral PaaS
 
 License: Apache-2.0
@@ -21,7 +21,7 @@ Requires: ansible-collection-ansible-posix
 Requires: openssh-clients
 Requires: openssh-server
 Requires: shadow-utils
-Requires: systemd
+Requires: systemd >= 250
 Requires: wireguard-tools
 Requires: policycoreutils-python-utils
 Requires: certbot
@@ -144,6 +144,9 @@ if [ $1 -eq 0 ]; then
 fi
 
 %changelog
+* Thu Jun 18 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta2-2
+- Require systemd >= 250 for systemd-creds encrypted secrets
+
 * Wed Jun 17 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta2-1
 - Bump to 0.0.1beta2, update spec commit ref
 

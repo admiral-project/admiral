@@ -6,7 +6,7 @@
 
 Name:    admiral-fleet
 Version: 0.0.1beta2
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: Admiral Fleet Worker Agent
 
 License: Apache-2.0
@@ -16,13 +16,13 @@ Source1: admiral-fleet.service
 Source2: fleet.env
 
 BuildRequires: golang >= 1.22
-BuildRequires: systemd
+BuildRequires: systemd >= 250
 
 Requires: admiral-common
 Requires: podman >= 5
 Requires: openssh-clients
 Requires: shadow-utils
-Requires: systemd
+Requires: systemd >= 250
 Requires: wireguard-tools
 Requires: cockpit-bridge
 
@@ -66,6 +66,10 @@ restorecon -F %{_bindir}/admiral-fleet 2>/dev/null || :
 %systemd_postun_with_restart admiral-fleet.service
 
 %changelog
+* Thu Jun 18 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta2-2
+- Require systemd >= 250 for systemd-creds encrypted secrets
+- Bump to 0.0.1beta2, update spec commit ref
+
 * Wed Jun 17 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta2-1
 - Bump to 0.0.1beta2, update spec commit ref
 - Rename SharedToken to FleetToken for per-node auth
