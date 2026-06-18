@@ -67,12 +67,6 @@
   no_log: true
 
 
-- name: Create quadlet directory
-  file:
-    path: /etc/containers/systemd/admiral
-    state: directory
-    mode: "0755"
-
 - name: Enable and start admiral-fleet
   systemd:
     name: admiral-fleet
