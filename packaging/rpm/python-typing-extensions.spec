@@ -44,11 +44,11 @@ with ZipFile(wheel) as zf:
 PY
 
 %files
-%license %{python3_sitelib}/typing_extensions-4.15.0.dist-info/licenses/LICENSE
-%exclude %{python3_sitelib}/typing_extensions-4.15.0.dist-info/licenses/LICENSE
+%license %{python3_sitelib}/typing_extensions-%{version}.dist-info/licenses/LICENSE
+%exclude %{python3_sitelib}/typing_extensions-%{version}.dist-info/licenses/LICENSE
 %{python3_sitelib}/typing_extensions.py
-%{python3_sitelib}/__pycache__/typing_extensions.cpython-312*
-%{python3_sitelib}/typing_extensions-4.15.0.dist-info/
+%{python3_sitelib}/__pycache__/typing_extensions.cpython-3*
+%{python3_sitelib}/typing_extensions-%{version}.dist-info/
 
 %changelog
 * Tue Jun 16 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 4.15.0-3

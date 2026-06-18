@@ -44,10 +44,10 @@ with ZipFile(wheel) as zf:
 PY
 
 %files
-%license %{python3_sitelib}/alembic-1.18.4.dist-info/licenses/LICENSE
-%exclude %{python3_sitelib}/alembic-1.18.4.dist-info/licenses/LICENSE
+%license %{python3_sitelib}/alembic-%{version}.dist-info/licenses/LICENSE
+%exclude %{python3_sitelib}/alembic-%{version}.dist-info/licenses/LICENSE
 %{python3_sitelib}/alembic/
-%{python3_sitelib}/alembic-1.18.4.dist-info/
+%{python3_sitelib}/alembic-%{version}.dist-info/
 
 %changelog
 * Tue Jun 16 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 1.18.4-3
