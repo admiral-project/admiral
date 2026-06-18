@@ -42,54 +42,6 @@
     state: present
   when: admiral_install_mode in ['single-node', 'admin-node', 'portal-node']
 
-- name: Ensure admiral system group exists
-  group:
-    name: admiral
-    system: true
-    state: present
-
-- name: Ensure admiral system user exists
-  user:
-    name: admiral
-    group: admiral
-    system: true
-    shell: /sbin/nologin
-    home: /var/lib/admiral
-    create_home: true
-    state: present
-
-- name: Create configuration directory
-  file:
-    path: /etc/admiral
-    state: directory
-    mode: "0750"
-    owner: root
-    group: admiral
-
-- name: Create data directory
-  file:
-    path: /var/lib/admiral
-    state: directory
-    mode: "0751"
-    owner: root
-    group: admiral
-
-- name: Create log directory
-  file:
-    path: /var/log/admiral
-    state: directory
-    mode: "0750"
-    owner: admiral
-    group: admiral
-
-- name: Create TLS directory
-  file:
-    path: /etc/admiral/tls
-    state: directory
-    mode: "0750"
-    owner: root
-    group: admiral
-
 - name: Check whether Admiral secret inventory already exists
   stat:
     path: /etc/admiral/secrets
@@ -506,9 +458,3 @@
     psql -v ON_ERROR_STOP=1 -c "CREATE DATABASE admiral_harbor OWNER admiral"
   when: admiral_install_mode in ['single-node', 'admin-node', 'portal-node']
   changed_when: false
-
-- name: Symlink ansible playbooks from package
-  file:
-    src: /usr/share/admiral/ansible
-    dest: /etc/admiral/ansible
-    state: link
