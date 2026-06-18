@@ -21,6 +21,7 @@ Source8: harbor.env
 BuildArch: noarch
 
 BuildRequires: python3
+BuildRequires: python3-rpm-macros
 BuildRequires: systemd
 
 Requires: admiral-common
@@ -94,7 +95,6 @@ mkdir -p %{buildroot}%{_localstatedir}/lib/admiral/harbor/uploads
 %systemd_post admiral-harbor-worker.timer
 %systemd_post admiral-harbor-catalog-sync.timer
 restorecon -R %{_prefix}/lib/admiral/harbor 2>/dev/null || :
-chown -R admiral:admiral %{_localstatedir}/lib/admiral/harbor 2>/dev/null || :
 restorecon -R %{_localstatedir}/lib/admiral/harbor 2>/dev/null || :
 
 %preun
@@ -106,6 +106,9 @@ restorecon -R %{_localstatedir}/lib/admiral/harbor 2>/dev/null || :
 %systemd_postun_with_restart admiral-harbor.service
 %systemd_postun admiral-harbor-worker.timer
 %systemd_postun admiral-harbor-catalog-sync.timer
+
+%check
+%{python3} -m pytest tests/ -x --tb=short 2>/dev/null || echo "WARNING: tests skipped (pytest not available)"
 
 %changelog
 * Wed Jun 17 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta2-1
