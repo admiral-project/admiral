@@ -301,6 +301,11 @@
       ADMIRAL_TASK_ENCRYPTION_KEY={{ admiral_task_encryption_key_value }}
   no_log: true
 
+- name: Determine TLS SAN string including public IP and WireGuard IP
+  set_fact:
+    admiral_tls_san: "{{ ('DNS:localhost,IP:127.0.0.1,IP:' ~ fleet_public_ip ~ ',IP:10.99.0.1') if (fleet_public_ip is defined and fleet_public_ip != '' and fleet_public_ip != '127.0.0.1') else 'DNS:localhost,IP:127.0.0.1' }}"
+  when: admiral_install_mode in ['single-node', 'admin-node']
+
 - name: Generate self-signed CA certificate
   command:
     cmd: >
@@ -315,24 +320,22 @@
   command:
     cmd: >
       openssl genrsa -out /etc/admiral/tls/admirald-key.pem 2048
-    creates: /etc/admiral/tls/admirald-key.pem
   when: admiral_install_mode in ['single-node', 'admin-node']
 
-- name: Generate admirald CSR
+- name: Generate admirald CSR with dynamic SAN
   command:
     cmd: >
       openssl req -new -key /etc/admiral/tls/admirald-key.pem
       -out /etc/admiral/tls/admirald.csr
       -subj "/CN=localhost"
-      -addext "subjectAltName=DNS:localhost,IP:127.0.0.1"
-    creates: /etc/admiral/tls/admirald.csr
+      -addext "subjectAltName={{ admiral_tls_san }}"
   when: admiral_install_mode in ['single-node', 'admin-node']
 
 - name: Write openssl extensions file for SAN
   copy:
     dest: /etc/admiral/tls/admirald-ext.cnf
     content: |
-      subjectAltName=DNS:localhost,IP:127.0.0.1
+      subjectAltName={{ admiral_tls_san }}
     mode: "0640"
     owner: admiral
     group: admiral
@@ -348,7 +351,6 @@
       -CAcreateserial
       -out /etc/admiral/tls/admirald.pem
       -extfile /etc/admiral/tls/admirald-ext.cnf
-    creates: /etc/admiral/tls/admirald.pem
   when: admiral_install_mode in ['single-node', 'admin-node']
 
 - name: Remove temporary openssl extensions file
@@ -404,6 +406,26 @@
     cmd: postgresql-setup --initdb
     creates: /var/lib/pgsql/data/PG_VERSION
   when: admiral_install_mode in ['single-node', 'admin-node', 'portal-node']
+
+- name: Include WireGuard subnet in PostgreSQL listen_addresses for multi-node
+  set_fact:
+    admiral_pg_listen_addresses: "{{ '127.0.0.1,10.99.0.1' if (fleet_public_ip is defined and fleet_public_ip != '' and fleet_public_ip != '127.0.0.1') else '127.0.0.1' }}"
+  when: admiral_install_mode in ['single-node', 'admin-node']
+
+- name: Update PostgreSQL listen_addresses
+  lineinfile:
+    path: /var/lib/pgsql/data/postgresql.conf
+    regexp: "^#?listen_addresses\\s*="
+    line: "listen_addresses = '{{ admiral_pg_listen_addresses | default('127.0.0.1') }}'"
+  when: admiral_install_mode in ['single-node', 'admin-node']
+
+- name: Allow WireGuard subnet in PostgreSQL client auth
+  lineinfile:
+    path: /var/lib/pgsql/data/pg_hba.conf
+    line: "host    all             admiral             10.99.0.0/24            scram-sha-256"
+  when:
+    - admiral_install_mode in ['single-node', 'admin-node']
+    - fleet_public_ip is defined and fleet_public_ip != '' and fleet_public_ip != '127.0.0.1'
 
 - name: Require password authentication for localhost PostgreSQL
   lineinfile:
