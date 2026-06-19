@@ -379,11 +379,13 @@
     state: absent
   when: admiral_install_mode in ['single-node', 'admin-node', 'portal-node']
 
-- name: Remove CA private key from portal nodes after cert generation
+- name: Remove CA private key from spoke nodes after cert generation
   file:
     path: /etc/admiral/tls/ca-key.pem
     state: absent
-  when: admiral_install_mode == 'portal-node'
+  when:
+    - admiral_install_mode in ['worker-node', 'portal-node']
+    - admiral_wireguard_role == 'spoke'
 
 - name: Set TLS cert permissions
   file:
@@ -410,7 +412,9 @@
     mode: "0600"
     owner: root
     group: root
-  when: admiral_install_mode in ['single-node', 'admin-node', 'portal-node']
+  when:
+    - admiral_install_mode in ['single-node', 'admin-node', 'portal-node']
+    - admiral_wireguard_role == 'hub'
 
 - name: Ensure PostgreSQL runtime directory exists
   file:
