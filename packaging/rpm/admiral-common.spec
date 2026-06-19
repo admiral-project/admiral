@@ -83,10 +83,10 @@ getent passwd admiral-apps >/dev/null || \
 %dir %attr(0755, root, root) %{_sysconfdir}/containers/systemd/admiral
 %dir %attr(0750, root, admiral) %{_sysconfdir}/admiral/tls
 %dir %attr(0750, admiral, admiral) %{_localstatedir}/log/admiral
-%dir %attr(0771, root, admiral) %{_localstatedir}/lib/admiral
-%dir %attr(0755, root, root) %{_localstatedir}/lib/admiral/outbox
-%dir %attr(0755, root, root) %{_localstatedir}/lib/admiral/backups
-%dir %attr(0755, root, root) %{_localstatedir}/lib/admiral/instances
+%dir %attr(0751, admiral, admiral) %{_localstatedir}/lib/admiral
+%dir %attr(0755, admiral, admiral) %{_localstatedir}/lib/admiral/outbox
+%dir %attr(0755, admiral, admiral) %{_localstatedir}/lib/admiral/backups
+%dir %attr(0755, admiral, admiral) %{_localstatedir}/lib/admiral/instances
 %dir %attr(0755, admiral-apps, admiral-apps) %{_localstatedir}/lib/admiral-apps
 
 %{_bindir}/admiral_https_setup
@@ -98,11 +98,9 @@ getent passwd admiral-apps >/dev/null || \
 chown admiral:admiral %{_localstatedir}/log/admiral 2>/dev/null || :
 
 # Restore ownership and permissions of the shared Admiral data tree.
-chown root:admiral %{_localstatedir}/lib/admiral 2>/dev/null || :
-chmod 0771 %{_localstatedir}/lib/admiral 2>/dev/null || :
-chown root:root %{_localstatedir}/lib/admiral/outbox 2>/dev/null || :
-chown root:root %{_localstatedir}/lib/admiral/backups 2>/dev/null || :
-chown root:root %{_localstatedir}/lib/admiral/instances 2>/dev/null || :
+# admirald runs as root but writes as the admiral user via su.
+chown -R admiral:admiral %{_localstatedir}/lib/admiral 2>/dev/null || :
+chmod 0751 %{_localstatedir}/lib/admiral 2>/dev/null || :
 
 # Ensure rootless runtime directories exist before admiral-fleet first start
 mkdir -p %{_sysconfdir}/containers/systemd/admiral
