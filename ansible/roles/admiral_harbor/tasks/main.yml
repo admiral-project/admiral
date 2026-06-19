@@ -164,9 +164,10 @@
     --id "{{ fleet_node_id | default(inventory_hostname) }}"
     --hostname "{{ ansible_fqdn }}"
     --ip "{{ ansible_default_ipv4.address }}"
+    --wireguard-ip "{{ admiral_wireguard_ip | default('') }}"
+    --public-ip "{{ fleet_public_ip | default('') }}"
     --role portal
     --os "{{ ansible_distribution ~ ' ' ~ ansible_distribution_version }}"
-    --token "{{ admiral_fleet_token_value }}"
   delegate_to: localhost
   environment:
     ADMIRAL_ADMIN_TOKEN: "{{ admiral_admin_token_value }}"
