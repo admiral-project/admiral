@@ -49,12 +49,16 @@
     admiral_fleet_queue_database_url: "{{ fleet_queue_database_url | default('postgresql://admiral:' ~ admiral_postgres_password ~ '@' ~ (admiral_admin_wireguard_ip | default(admiral_admin_endpoint)) ~ ':5432/admiral_queue?sslmode=disable') }}"
   when: admiral_install_mode == 'worker-node'
 
+- name: Generate random fleet node token
+  set_fact:
+    fleet_node_token_value: "{{ lookup('ansible.builtin.pipe', 'openssl rand -hex 32') }}"
+
 - name: Deploy admiral-fleet configuration
   copy:
     dest: /etc/admiral/fleet.env
     content: |
       ADMIRAL_FLEET_NODE_ID={{ ansible_hostname if admiral_install_mode == 'single-node' else fleet_node_id_effective | default(fleet_node_id | default(ansible_hostname)) }}
-      ADMIRAL_FLEET_TOKEN={{ admirald_fleet_token | default(admiral_fleet_token_value) }}
+      ADMIRAL_FLEET_TOKEN={{ fleet_node_token_value }}
       ADMIRAL_API_URL={{ admiral_fleet_api_url | default('https://127.0.0.1:8080') }}
       ADMIRAL_API_CA_FILE=/etc/admiral/tls/ca.pem
       ADMIRAL_QUEUE_DATABASE_URL={{ admiral_fleet_queue_database_url | default('postgresql://admiral:' ~ admiral_postgres_password ~ '@127.0.0.1:5432/admiral_queue?sslmode=disable') }}
@@ -92,7 +96,7 @@
     --wireguard-ip "{{ admiral_wireguard_ip | default('') }}"
     --public-ip "{{ fleet_public_ip | default('') }}"
     --os "{{ ansible_distribution ~ ' ' ~ ansible_distribution_version }}"
-    --token "{{ admiral_fleet_token_value }}"
+    --token "{{ fleet_node_token_value }}"
   delegate_to: localhost
   environment:
     ADMIRAL_ADMIN_TOKEN: "{{ admiral_admin_token_value }}"

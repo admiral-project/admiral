@@ -158,6 +158,10 @@
        | length) > 0
   no_log: true
 
+- name: Generate random harbor node token
+  set_fact:
+    harbor_node_token_value: "{{ lookup('ansible.builtin.pipe', 'openssl rand -hex 32') }}"
+
 - name: Register portal node with admirald (admin-to-node)
   command: >
     /usr/bin/admiralctl nodes register
@@ -167,7 +171,7 @@
     --wireguard-ip "{{ admiral_wireguard_ip | default('') }}"
     --public-ip "{{ fleet_public_ip | default('') }}"
     --role portal
-    --token "{{ admiral_fleet_token_value }}"
+    --token "{{ harbor_node_token_value }}"
     --os "{{ ansible_distribution ~ ' ' ~ ansible_distribution_version }}"
   delegate_to: localhost
   environment:
