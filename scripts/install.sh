@@ -120,6 +120,14 @@ if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]]; t
     [[ -n "$INSTALL_TARGET_SSH_KEY" ]] || die "Spoke installs require an SSH key. Use --ssh-key or install a default root key."
 fi
 
+# --- 0c. auto-generate node-id for spoke nodes if not provided ---
+if [[ "$INSTALL_MODE" == "worker-node" && -z "$INSTALL_NODE_ID" ]]; then
+    INSTALL_NODE_ID="worker-001"
+fi
+if [[ "$INSTALL_MODE" == "portal-node" && -z "$INSTALL_NODE_ID" ]]; then
+    INSTALL_NODE_ID="portal-001"
+fi
+
 # --- 0b. worker and portal roles are mutually exclusive per host ---
 # A single host cannot run both admiral-fleet (worker) and admiral-harbor (portal).
 # Each role requires its own WireGuard IP, dedicated system resources, and
