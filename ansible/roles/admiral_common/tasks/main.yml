@@ -307,8 +307,16 @@
 
 - name: Determine TLS SAN string including public IP and WireGuard IP
   set_fact:
-    admiral_tls_san: "{{ ('DNS:localhost,IP:127.0.0.1,IP:' ~ fleet_public_ip ~ ',IP:10.99.0.1') if (fleet_public_ip is defined and fleet_public_ip != '' and fleet_public_ip != '127.0.0.1') else 'DNS:localhost,IP:127.0.0.1' }}"
-  when: admiral_install_mode in ['single-node', 'admin-node']
+    admiral_tls_san: >-
+      {%- set san = 'DNS:localhost,IP:127.0.0.1' -%}
+      {%- if fleet_public_ip is defined and fleet_public_ip != '' and fleet_public_ip != '127.0.0.1' -%}
+      {%-   set san = san ~ ',IP:' ~ fleet_public_ip -%}
+      {%- endif -%}
+      {%- if admiral_wireguard_ip is defined and admiral_wireguard_ip != '' -%}
+      {%-   set san = san ~ ',IP:' ~ admiral_wireguard_ip -%}
+      {%- endif -%}
+      {{ san }}
+  when: admiral_install_mode in ['single-node', 'admin-node', 'portal-node']
 
 - name: Generate self-signed CA certificate
   command:
@@ -318,13 +326,14 @@
       -out /etc/admiral/tls/ca.pem
       -subj "/CN=Admiral CA"
     creates: /etc/admiral/tls/ca.pem
-  when: admiral_install_mode in ['single-node', 'admin-node']
+  when: admiral_install_mode in ['single-node', 'admin-node', 'portal-node']
 
 - name: Generate admirald server key
   command:
     cmd: >
       openssl genrsa -out /etc/admiral/tls/admirald-key.pem 2048
-  when: admiral_install_mode in ['single-node', 'admin-node']
+    creates: /etc/admiral/tls/admirald-key.pem
+  when: admiral_install_mode in ['single-node', 'admin-node', 'portal-node']
 
 - name: Generate admirald CSR with dynamic SAN
   command:
@@ -333,7 +342,8 @@
       -out /etc/admiral/tls/admirald.csr
       -subj "/CN=localhost"
       -addext "subjectAltName={{ admiral_tls_san }}"
-  when: admiral_install_mode in ['single-node', 'admin-node']
+    creates: /etc/admiral/tls/admirald.csr
+  when: admiral_install_mode in ['single-node', 'admin-node', 'portal-node']
 
 - name: Write openssl extensions file for SAN
   copy:
@@ -343,7 +353,7 @@
     mode: "0640"
     owner: admiral
     group: admiral
-  when: admiral_install_mode in ['single-node', 'admin-node']
+  when: admiral_install_mode in ['single-node', 'admin-node', 'portal-node']
 
 - name: Sign admirald certificate with CA
   command:
@@ -355,19 +365,25 @@
       -CAcreateserial
       -out /etc/admiral/tls/admirald.pem
       -extfile /etc/admiral/tls/admirald-ext.cnf
-  when: admiral_install_mode in ['single-node', 'admin-node']
+  when: admiral_install_mode in ['single-node', 'admin-node', 'portal-node']
 
 - name: Remove temporary openssl extensions file
   file:
     path: /etc/admiral/tls/admirald-ext.cnf
     state: absent
-  when: admiral_install_mode in ['single-node', 'admin-node']
+  when: admiral_install_mode in ['single-node', 'admin-node', 'portal-node']
 
 - name: Remove CSR after signing
   file:
     path: /etc/admiral/tls/admirald.csr
     state: absent
-  when: admiral_install_mode in ['single-node', 'admin-node']
+  when: admiral_install_mode in ['single-node', 'admin-node', 'portal-node']
+
+- name: Remove CA private key from portal nodes after cert generation
+  file:
+    path: /etc/admiral/tls/ca-key.pem
+    state: absent
+  when: admiral_install_mode == 'portal-node'
 
 - name: Set TLS cert permissions
   file:
@@ -378,7 +394,7 @@
   loop:
     - /etc/admiral/tls/admirald.pem
     - /etc/admiral/tls/admirald-key.pem
-  when: admiral_install_mode in ['single-node', 'admin-node']
+  when: admiral_install_mode in ['single-node', 'admin-node', 'portal-node']
 
 - name: Set CA certificate permissions
   file:
@@ -386,7 +402,7 @@
     mode: "0644"
     owner: root
     group: root
-  when: admiral_install_mode in ['single-node', 'admin-node']
+  when: admiral_install_mode in ['single-node', 'admin-node', 'portal-node']
 
 - name: Set CA private key permissions
   file:
@@ -394,7 +410,7 @@
     mode: "0600"
     owner: root
     group: root
-  when: admiral_install_mode in ['single-node', 'admin-node']
+  when: admiral_install_mode in ['single-node', 'admin-node', 'portal-node']
 
 - name: Ensure PostgreSQL runtime directory exists
   file:
