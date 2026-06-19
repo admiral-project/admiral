@@ -2,10 +2,10 @@
 # SPDX-License-Identifier: Apache-2.0
 
 %global debug_package %{nil}
-%global commit e40f7761d080de05f38228799821d0feb48c5e17
+%global commit a4680eeba170aee6f8bf509d865dc41934791f3d
 
 Name:    admirald
-Version: 0.0.1beta3
+Version: 0.0.1beta4
 Release: 2%{?dist}
 Summary: Admiral Control Plane - Core API and orchestration service
 
@@ -67,6 +67,15 @@ restorecon -F %{_bindir}/admirald 2>/dev/null || :
 %systemd_postun_with_restart admirald.service
 
 %changelog
+* Fri Jun 19 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta4-2
+- Rebuild with fixed systemd unit (remove hardcoded ADMIRAL_LISTEN_ADDRESS)
+* Fri Jun 19 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta4-1
+- Bump to 0.0.1beta4, update spec commit ref
+- Derive node token type from NodeRole instead of hardcoded worker
+- Add generateUUID helper for UUID v4 claim IDs
+- Add RemoveNode database operation with transaction support
+- Add DELETE /api/v1/nodes/{id} endpoint
+
 * Thu Jun 18 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta3-2
 - Rebuild against current superproject HEAD
 
