@@ -121,6 +121,23 @@
     - net.ipv6.conf.all.forwarding
   when: admiral_wireguard_role == 'hub'
 
+- name: Read hub WireGuard public key from file for spoke nodes
+  slurp:
+    src: /etc/wireguard/admiral.pub
+  register: admiral_wireguard_hub_pub_slurp
+  when:
+    - admiral_wireguard_role == 'spoke'
+    - admiral_wireguard_hub_public_key is not defined
+
+- name: Set hub public key fact for spoke
+  set_fact:
+    admiral_wireguard_hub_public_key: "{{ admiral_wireguard_hub_pub_slurp.content | b64decode | trim }}"
+  when:
+    - admiral_wireguard_role == 'spoke'
+    - admiral_wireguard_hub_public_key is not defined
+    - admiral_wireguard_hub_pub_slurp is defined
+    - admiral_wireguard_hub_pub_slurp.content is defined
+
 - name: Deploy WireGuard configuration
   template:
     src: wg-admiral.conf.j2

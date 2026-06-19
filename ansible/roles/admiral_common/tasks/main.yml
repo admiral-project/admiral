@@ -4,6 +4,11 @@
     name: dnf-plugins-core
     state: present
 
+- name: Enable EPEL repository
+  dnf:
+    name: epel-release
+    state: present
+
 - name: Enable Caddy COPR repository
   command:
     cmd: dnf copr enable -y @caddy/caddy
@@ -19,6 +24,12 @@
     name: "*"
     state: latest
     update_cache: true
+
+- name: Ensure /etc/caddy directory exists
+  file:
+    path: /etc/caddy
+    state: directory
+    mode: "0755"
 
 - name: Install managed Caddyfile for Admiral
   copy:
