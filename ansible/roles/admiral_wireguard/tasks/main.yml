@@ -29,11 +29,12 @@
   changed_when: false
   no_log: true
 
-- name: Store WireGuard public key for peer exchange
+- name: Store WireGuard public key for peer exchange (hub only)
   copy:
     content: "{{ admiral_wg_public_key.stdout }}\n"
     dest: /etc/wireguard/admiral.pub
     mode: "0644"
+  when: admiral_wireguard_role == 'hub'
 
 - name: Create peers directory on hub
   file:
@@ -151,3 +152,17 @@
     enabled: true
     state: started
     daemon_reload: true
+
+- name: Assign WireGuard interface to trusted zone (hub only)
+  command:
+    cmd: firewall-cmd --permanent --zone=trusted --change-interface=wg-admiral
+  register: firewall_wg_trusted
+  changed_when: "'success' in firewall_wg_trusted.stdout"
+  when: admiral_wireguard_role == 'hub'
+
+- name: Reload firewall to apply zone changes
+  command:
+    cmd: firewall-cmd --reload
+  when:
+    - admiral_wireguard_role == 'hub'
+    - firewall_wg_trusted.changed
