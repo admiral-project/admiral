@@ -2,7 +2,7 @@
 
 Scope validado hoy:
 
-- single-node (E2E backend probado).
+- single-node (E2E completo en droplet limpio CentOS Stream 10 — 67.205.167.193).
 - multi-node (admin + worker + portal — worker-node y portal-node validados E2E).
 - Podman rootless (validado: ejecución remota en worker-node).
 - systemd/Quadlet.
@@ -20,6 +20,7 @@ Lo que sí está validado:
 - rootless Podman execution remota en worker-node.
 - portal-node reachable y registrado con admirald (fleet_offline es esperado para portal).
 - pipeline completo provision → running verificado (instancia inst_a0d9fe7e113fc431 en worker-001).
+- single-node installation completa en droplet limpio con todos los roles (worker + portal coexisten).
 
 Límites conocidos (post-beta, tracking issues):
 

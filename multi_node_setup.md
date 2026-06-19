@@ -10,9 +10,14 @@ Instalación y configuración de Admiral en modo multi-nodo con 3 VPS:
 ## Commits realizados
 
 ```
+65891a1 fix(ansible): reload systemd daemon after installing firewalld package
+deca742 fix: use ansible_hostname for harbor node_id and set /var/lib/admiral ownership to admiral
+d31205f build: update submodule commit macros in SPEC files to match HEAD
 4c774a7 fix(db): filter cancelled instances when counting active instances per node
-6168d99 docs: update known limitations with rootless remote validation
-1ec3f9c docs: update session log and known limitations
+eb2fdb9 docs: update known limitations with multi-node validation scope
+54d2020 docs: update multi-node session log with portal installation and instance validation
+28844d1 fix(ansible): skip WireGuard config deploy if already exists
+a09831b docs: rename alpha_known_limitations to beta_known_limitations
 067b517 fix(install): auto-generate node-id for worker and portal spoke nodes
 f2330d2 fix(install): read node ID from harbor.env for portal nodes
 9c5f85c build(makefile): bump VERSION to 0.0.1beta4
@@ -55,8 +60,9 @@ a4680ee fix(ansible): use sudo -u postgres for all psql tasks
 
 #### 3. Persistencia de peers WireGuard
 - El playbook sobreescribe `wg-admiral.conf` al re-ejecutar install.sh
-- Peers previos se pierden
-- **Pendiente**: salvar peers antes de re-ejecutar o usar `wg-quick save`
+- Peers previos se perdían
+- **Fix**: task ahora es conditional — solo deploya si el archivo no existe
+- **Verificado**: WireGuard peers persisten al re-ejecutar install.sh
 
 #### 4. Portal: node ID en harbor.env
 - install.sh buscaba `ADMIRAL_FLEET_NODE_ID` en `fleet.env`
@@ -69,12 +75,47 @@ a4680ee fix(ansible): use sudo -u postgres for all psql tasks
 - **Fix**: auto-genera `portal-001` / `worker-001` si no se especifica
 - **Verificado**: portal-001 y worker-001 generados y usados correctamente
 
+#### 6. Firewalld daemon reload en fresh installs
+- En droplets frescos de DigitalOcean, firewalld no viene instalado
+- Cuando package lo instala, systemd no había recargado sus unidades
+- `firewall-cmd --set-default-zone=public` fallaba con "FirewallD is not running"
+- **Fix**: `daemon_reload: true` en la task de servicio de firewalld
+- **Verificado**: install.sh --single-node completa sin errores
+
+#### 7. /var/lib/admiral permissions
+- El directorio era owned por root:admiral con permisos 0751
+- admirald necesita escribir `know_host.yaml` — fallaba con "permission denied"
+- **Fix**: SPEC ahora declara `/var/lib/admiral` como `admiral:admiral 0751`
+- **Verificado**: RPM rebuild e instalado, admirald escribe sin errores
+
+#### 8. Harbor node_id usaba inventory_hostname
+- En single-node (delegate_to: localhost), inventory_hostname = "localhost"
+- Fleet usa `ansible_hostname` — daba hostname real
+- Resultado: doble registro con node_ids distintos
+- **Fix**: harbor ahora usa `ansible_hostname` como fallback (igual que fleet)
+- **Nota**: doble registro en single-node (worker + portal) es comportamiento correcto
+
 ### Limpieza y rebuild de specs
 
 Todos los specs actualizados a 0.0.1beta4, Release 2.
 
 RPMs construidos (0.0.1beta4-2):
 - admiral-common, admirald, admiral-fleet, admiralctl, admiral-flagship, admiral-harbor
+
+## Validación Single-Node (67.205.167.193)
+
+**Test**: `install.sh --single-node` en droplet limpio CentOS Stream 10
+**Swap**: 8GB swap creado para evitar OOM
+**Resultado**: ✓ ÉXITO — instalación completa
+
+- Todos los servicios activos: admirald, admiral-fleet, admiral-flagship, admiral-harbor, caddy, postgresql
+- WireGuard hub corriendo en puerto 51820
+- Nodo worker y portal registrados (comportamiento correcto en single-node)
+- Permisos de /var/lib/admiral corregidos
+
+**Issues encontrados y resueltos durante instalación**:
+- firewalld no estaba corriendo — fix en Ansible
+- permisos de /var/lib/admiral — fix en SPEC
 
 ## Validación Rootless Remote
 
@@ -95,23 +136,28 @@ a964b66df312  docker.io/traefik/whoami  Up 1 min    0.0.0.0:40000->80/tcp
 
 ## Estado actual
 
-### Admin VPS
-- admirald — active (v0.0.1beta4-2, systemd unit corregido)
-- WireGuard hub — corriendo con peer del worker
+### Admin VPS (165.22.178.97)
+- admirald — active (v0.0.1beta4-3)
+- WireGuard hub — corriendo con peers de worker y portal
 - worker-001 — active/healthy/available
 
-### Worker VPS
+### Worker VPS (142.93.251.187)
 - admiral-fleet — active/running (v0.0.1beta4-2)
-- e2e-whoami instance `inst_a0d9fe7e113fc431` — running rootless (provisoned via admirald → fleet agent)
+- e2e-whoami instance `inst_a0d9fe7e113fc431` — running rootless
 
-### Portal VPS
+### Portal VPS (134.122.17.193)
 - admiral-harbor — active/running (v0.0.1beta4-2)
 - Nodo registrado como `portal-001` — reachable
 - Health status: `unhealthy` con razón `fleet_offline` (esperado — portal no corre fleet agent)
-- WireGuard peer 10.99.0.100 agregado y funcional
+
+### Single-Node VPS (67.205.167.193)
+- admirald, admiral-fleet, admiral-flagship, admiral-harbor — todos active
+- WireGuard hub — active
+- Nodo worker y portal registrados (correcto en single-node)
+- Permisos de /var/lib/admiral — corregidos
 
 ## Pendientes
-- [ ] Persistencia de peers WireGuard en hub (wg-admiral.conf se sobreescribe al re-ejecutar install.sh)
-- [ ] Regression test `--single-node`
-- [ ] Validar acceso a Harbor UI desde browser
+- [ ] Validar acceso a Harbor UI desde browser (single-node y portal)
 - [ ] Deploy WordPress u otra app oficial
+- [ ] Failure testing automatizado
+- [ ] Validación multi-node E2E automatizada
