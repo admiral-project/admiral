@@ -9,6 +9,7 @@
     name: firewalld
     state: started
     enabled: true
+    daemon_reload: true
 
 - name: Set default firewalld zone to public
   command:
