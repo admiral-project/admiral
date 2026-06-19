@@ -78,6 +78,8 @@
       }}
   when: admiral_known_hosts_file.stat.exists
 
+# Worker and portal nodes use separate IP pools from the known host inventory.
+# This enforces the design constraint that the two roles cannot share a host.
 - name: Resolve next bootstrap assignment from known host inventory
   set_fact:
     admiral_known_host_next_assignment: >-

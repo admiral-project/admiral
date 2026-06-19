@@ -137,6 +137,10 @@ cloud.domain.com
 | wg0 10.99.0.2  |  | wg0 10.99.0.3  |  | wg0 10.99.0.100|
 +----------------+  +----------------+  +----------------+
 
+Note: Worker and portal roles are mutually exclusive by design.
+A single host cannot run both admiral-fleet and admiral-harbor.
+Each role is deployed on its own node with dedicated resources.
+
 Only these communication paths are required:
 
 - control plane → worker

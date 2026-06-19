@@ -13,6 +13,10 @@ Este documento cubre el flujo oficial de instalación:
 
 No cubre despliegues multi-node. Para eso, ver `docs/sysadmin_guide.md`.
 
+**Nota sobre modos multi-node**: `--worker-node` y `--portal-node` son mutuamente
+excluyentes por diseño. Un mismo servidor no puede ejecutar ambos roles.
+Si necesita worker y portal, despliegue nodos separados.
+
 ## Plataforma soportada
 
 - Enterprise Linux 10

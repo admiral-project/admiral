@@ -1,4 +1,7 @@
 ---
+# Fleet is the worker agent. It runs on --single-node and --worker-node hosts.
+# Fleet and harbor are mutually exclusive per host by design.
+
 - name: Install admiral-fleet
   dnf:
     name: admiral-fleet
@@ -74,6 +77,9 @@
     state: started
     daemon_reload: true
 
+# The role registered here ('worker' or 'portal') determines the node's
+# WireGuard IP pool, systemd services, and API behavior.
+# Roles are mutually exclusive per host by design.
 - name: Register node with admirald (admin-to-node)
   command: >
     /usr/bin/admiralctl nodes register

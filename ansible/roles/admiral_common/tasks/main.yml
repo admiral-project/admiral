@@ -1,4 +1,8 @@
 ---
+# Node roles are mutually exclusive per host. A worker node (admiral-fleet)
+# and a portal node (admiral-harbor) cannot coexist on the same server.
+# --single-node is the only mode that combines all roles on one host.
+
 - name: Install dnf-plugins-core (for copr)
   dnf:
     name: dnf-plugins-core

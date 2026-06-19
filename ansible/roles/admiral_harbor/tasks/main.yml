@@ -1,4 +1,7 @@
 ---
+# Harbor is the portal service. It runs on --single-node and --portal-node hosts.
+# Harbor and fleet are mutually exclusive per host by design.
+
 - name: Set harbor API URL for portal-node
   set_fact:
     admiral_api_url_for_harbor: "https://{{ admiral_admin_wireguard_ip | default(admiral_admin_endpoint | default('10.99.0.1')) }}:8080"

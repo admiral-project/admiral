@@ -22,6 +22,13 @@ Harbor is part of the current product and is in active development.
 
 Single-node combines the admin, worker, and portal roles on one host.
 
+**Important**: `--worker-node` and `--portal-node` are mutually exclusive by design
+and cannot be installed on the same host. A worker node runs `admiral-fleet`
+for workload execution; a portal node runs `admiral-harbor` for customer
+self-service and its own PostgreSQL database. Each role requires its own
+WireGuard IP and dedicated system resources. If your deployment needs both
+worker and portal capabilities, deploy separate physical or virtual nodes.
+
 ### Service Map
 
 | Mode | Services started by the installer |

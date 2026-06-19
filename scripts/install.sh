@@ -27,6 +27,10 @@ Options:
   --ssh-user          SSH user for remote spoke configuration (default: root).
   --ssh-key           SSH private key for remote spoke configuration.
   -h, --help          Show this help message.
+
+Note: --worker-node and --portal-node are mutually exclusive by design.
+      A single host cannot run both roles. Deploy separate nodes if both
+      worker and portal capabilities are required.
 EOF
 }
 
@@ -116,6 +120,29 @@ if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]]; t
     [[ -n "$INSTALL_TARGET_SSH_KEY" ]] || die "Spoke installs require an SSH key. Use --ssh-key or install a default root key."
 fi
 
+# --- 0b. worker and portal roles are mutually exclusive per host ---
+# A single host cannot run both admiral-fleet (worker) and admiral-harbor (portal).
+# Each role requires its own WireGuard IP, dedicated system resources, and
+# a distinct service footprint. Deploy separate nodes if both are needed.
+if [[ "$INSTALL_MODE" == "single-node" || "$INSTALL_MODE" == "admin-node" ]]; then
+    if systemctl is-active --quiet admiral-harbor 2>/dev/null && [[ "$INSTALL_MODE" == "admin-node" ]]; then
+        die "Host already has admiral-harbor (portal role) running. --admin-node and --portal-node are mutually exclusive per host."
+    fi
+    if systemctl is-active --quiet admiral-fleet 2>/dev/null && [[ "$INSTALL_MODE" == "admin-node" ]]; then
+        die "Host already has admiral-fleet (worker role) running. --admin-node and --worker-node are mutually exclusive per host."
+    fi
+elif [[ "$INSTALL_MODE" == "worker-node" ]]; then
+    ssh -i "$INSTALL_TARGET_SSH_KEY" -o BatchMode=yes -o StrictHostKeyChecking=accept-new \
+        "${INSTALL_TARGET_SSH_USER}@${INSTALL_PUBLIC_IP}" \
+        "systemctl is-active --quiet admiral-harbor" 2>/dev/null && \
+        die "Target host already runs admiral-harbor (portal role). --worker-node and --portal-node are mutually exclusive per host."
+elif [[ "$INSTALL_MODE" == "portal-node" ]]; then
+    ssh -i "$INSTALL_TARGET_SSH_KEY" -o BatchMode=yes -o StrictHostKeyChecking=accept-new \
+        "${INSTALL_TARGET_SSH_USER}@${INSTALL_PUBLIC_IP}" \
+        "systemctl is-active --quiet admiral-fleet" 2>/dev/null && \
+        die "Target host already runs admiral-fleet (worker role). --worker-node and --portal-node are mutually exclusive per host."
+fi
+
 # --- 1. root check ---
 [[ $EUID -eq 0 ]] || die "This script must be run as root."
 
@@ -181,6 +208,7 @@ fi
 if [[ -n "$INSTALL_PUBLIC_IP" ]]; then
     EXTRA_VARS="$EXTRA_VARS fleet_public_ip=$INSTALL_PUBLIC_IP"
 fi
+# fleet and harbor are mutually exclusive per host: fleet_node_role is either 'worker' or 'portal'.
 if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]]; then
     EXTRA_VARS="$EXTRA_VARS fleet_node_role=$( [[ "$INSTALL_MODE" == "portal-node" ]] && echo 'portal' || echo 'worker' )"
     EXTRA_VARS="$EXTRA_VARS admiral_admin_endpoint=$INSTALL_ADMIN_ENDPOINT"
