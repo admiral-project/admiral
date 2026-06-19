@@ -167,6 +167,7 @@
     --wireguard-ip "{{ admiral_wireguard_ip | default('') }}"
     --public-ip "{{ fleet_public_ip | default('') }}"
     --role portal
+    --token "{{ admiral_fleet_token_value }}"
     --os "{{ ansible_distribution ~ ' ' ~ ansible_distribution_version }}"
   delegate_to: localhost
   environment:
