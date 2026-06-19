@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 %global debug_package %{nil}
-%global commit a4680eeba170aee6f8bf509d865dc41934791f3d
+%global commit 9432f9b15f2fd187c79b3d6e8bdc5e1d89dbda4e
 
 Name:    admirald
 Version: 0.0.1beta4
@@ -68,7 +68,8 @@ restorecon -F %{_bindir}/admirald 2>/dev/null || :
 
 %changelog
 * Fri Jun 19 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta4-2
-- Rebuild with fixed systemd unit (remove hardcoded ADMIRAL_LISTEN_ADDRESS)
+- Rebuild against current superproject HEAD
+- Remove hardcoded ADMIRAL_LISTEN_ADDRESS from systemd unit
 * Fri Jun 19 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta4-1
 - Bump to 0.0.1beta4, update spec commit ref
 - Derive node token type from NodeRole instead of hardcoded worker

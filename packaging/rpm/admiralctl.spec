@@ -2,10 +2,10 @@
 # SPDX-License-Identifier: Apache-2.0
 
 %global debug_package %{nil}
-%global commit e40f7761d080de05f38228799821d0feb48c5e17
+%global commit 9432f9b15f2fd187c79b3d6e8bdc5e1d89dbda4e
 
 Name:    admiralctl
-Version: 0.0.1beta3
+Version: 0.0.1beta4
 Release: 2%{?dist}
 Summary: Admiral Command-Line Interface
 
@@ -58,8 +58,12 @@ go test ./... || echo "WARNING: tests skipped or failed in build sandbox"
 restorecon -F %{_bindir}/admiralctl 2>/dev/null || :
 
 %changelog
-* Thu Jun 18 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta3-2
+* Fri Jun 19 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta4-2
 - Rebuild against current superproject HEAD
+- Remove hardcoded ADMIRAL_LISTEN_ADDRESS from admirald systemd unit
+* Fri Jun 19 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta4-1
+- Bump to 0.0.1beta4, update spec commit ref
+- Add nodes remove subcommand with --force flag
 
 * Thu Jun 18 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta3-1
 - Bump to 0.0.1beta3, update spec commit ref

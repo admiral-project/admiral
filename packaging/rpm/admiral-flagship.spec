@@ -2,11 +2,11 @@
 # SPDX-License-Identifier: Apache-2.0
 
 %global debug_package %{nil}
-%global commit e021c47f14ec3084ec6dbae6cc5c4f192c17cefd
+%global commit f9beb9816b9337a496b1310645ecf70736ac1f8e
 
 Name:    admiral-flagship
-Version: 0.0.1beta3
-Release: 1%{?dist}
+Version: 0.0.1beta4
+Release: 2%{?dist}
 Summary: Admiral Administrative Web Console
 
 License: Apache-2.0
@@ -75,6 +75,12 @@ restorecon -R %{_prefix}/lib/admiral/flagship 2>/dev/null || :
 %{python3} -m pytest tests/ -x --tb=short 2>/dev/null || echo "WARNING: tests skipped (pytest not available)"
 
 %changelog
+* Fri Jun 19 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta4-2
+- Rebuild against current superproject HEAD
+- Remove hardcoded ADMIRAL_LISTEN_ADDRESS from admirald systemd unit
+* Fri Jun 19 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta4-1
+- Bump to 0.0.1beta4, update spec commit ref
+- Add remove node modal with type-to-confirm in BFF and UI
 * Thu Jun 18 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta3-1
 - Bump to 0.0.1beta3, update spec commit ref
 - Add BuildRequires: python3-rpm-macros

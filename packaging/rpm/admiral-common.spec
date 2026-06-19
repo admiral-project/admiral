@@ -1,10 +1,10 @@
 # SPDX-FileCopyrightText: William Moreno Reyes CP | MBA
 # SPDX-License-Identifier: Apache-2.0
 
-%global commit e40f7761d080de05f38228799821d0feb48c5e17
+%global commit 9432f9b15f2fd187c79b3d6e8bdc5e1d89dbda4e
 
 Name:    admiral-common
-Version: 0.0.1beta3
+Version: 0.0.1beta4
 Release: 2%{?dist}
 Summary: Common files and utilities for Admiral PaaS
 
@@ -150,8 +150,16 @@ if [ $1 -eq 0 ]; then
 fi
 
 %changelog
-* Thu Jun 18 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta3-2
+* Fri Jun 19 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta4-2
 - Rebuild against current superproject HEAD
+- Pass admiral_wireguard_ip for admin/single node installs
+- Remove hardcoded ADMIRAL_LISTEN_ADDRESS from admirald systemd unit
+* Fri Jun 19 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta4-1
+- Bump to 0.0.1beta4, update spec commit ref
+- Use sudo -u postgres for all psql tasks
+- Add multi-node Ansible fixes (WireGuard, TLS, CA key cleanup)
+- Add nodes remove API, CLI, and UI
+- Make --worker-node/--portal-node mutually exclusive
 
 * Thu Jun 18 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta3-1
 - Bump to 0.0.1beta3, update spec commit ref
