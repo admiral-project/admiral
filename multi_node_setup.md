@@ -10,7 +10,10 @@ Instalación y configuración de Admiral en modo multi-nodo con 3 VPS:
 ## Commits realizados
 
 ```
+f5fbaaa fix(inventory): fleet uses bare hostname as node_id in single-node
+5cd0374 fix(inventory): use hostname-portal node_id for harbor in single-node
 6e6b5b0 fix(inventory): register harbor before fleet in single-node
+28631e1 docs: update session log with harbor-before-fleet fix and node cleanup
 4885aa3 fix(ansible): pass fleet token when registering portal node in single-node
 65891a1 fix(ansible): reload systemd daemon after installing firewalld package
 deca742 fix: use ansible_hostname for harbor node_id and set /var/lib/admiral ownership to admiral
@@ -184,21 +187,46 @@ a964b66df312  docker.io/traefik/whoami  Up 1 min    0.0.0.0:40000->80/tcp
 
 ## Sesión 2026-06-19 (continuación)
 
-### Fix de token en single-node — solución limpia
+### Fix de token en single-node — solución de tabla separada
 
-**Problema**: En single-node, harbor y fleet corren en el mismo host. Cuando harbor registraba sin `--token`, admirald generaba un token con `TokenType=portal`. Este sobreescribía el token de fleet (`TokenType=worker`) en la DB. Fleet hacía heartbeat → 401 porque `TokenType != "worker"`.
+**Problema root cause**: En single-node, harbor y fleet corren en el mismo host físico y comparten el mismo `node_id` (hostname). Ambos usan `UpsertNodeToken` que writea en la misma row de `nodes`. La última escritura gana — siempre sobreescribía el token anterior.
 
-**Solución alternativa probada anteriormente**: pasar `--token {{ admiral_fleet_token_value }}` en harbor (commit 4885aa3) — no suficiente porque `UpsertNodeToken` sobreescribe todos los campos incluyendo `TokenType`.
+El `TokenType` importa: `NodeAuthMiddleware` exige `token_type == "worker"` para heartbeat. Si harbor writea último con `token_type=portal`, fleet recibe 401.
 
-**Solución definitiva**: invertir el orden de registro en `ansible/site.yml` — harbor registra primero, fleet registra último. El último write gana, así que `TokenType=worker` persiste.
+**Intentos previos**:
+1. Pass `--token` en harbor para que use el fleet token — no funciona porque `UpsertNodeToken` sobreescribe todos los campos incluyendo `token_type`
+2. Invertir orden de registro (harbor → fleet) — no funciona porque ambos usan el mismo `node_id` y hay solo una row
+
+**Solución definitiva**: tabla `node_tokens` separada con clave compuesta `(node_id, token_type)`.
+
+```
+Commit: 89cceb4 feat(db): add node_tokens table with composite key (node_id, token_type)
+```
+
+**Cambios en admirald**:
+- Migration 11: crea tabla `node_tokens (node_id, token_type, token_identifier, token_hash, token_status, token_value_encrypted, token_expires_at, claim_id)` con PK compuesta
+- `UpsertNodeToken`: ahora writea en `node_tokens` con `ON CONFLICT (node_id, token_type) DO UPDATE`
+- `GetNodeTokenByIdentifier`: JOIN entre `nodes` y `node_tokens` para auth — retorna el `token_type` del token row, no del node
+- `NodeAuthMiddleware`: usa `nodeToken.TokenType` del token row para verificar `expectedTokenType`
+- `ReapExpiredNodeTokens`: DELETE de `node_tokens` en vez de `nodes`
+- `RemoveNode`: DELETE de `node_tokens` antes de `nodes`
+
+**Por qué funciona**: fleet y harbor escriben en la misma tabla `node_tokens` pero con `token_type` diferente. Cada uno tiene su propia row con PK `(node_id, token_type)`. No hay colisión.
+
+### Fix de orden de roles en site.yml
+
+Complementario al fix de DB, se invierte el orden de roles en `ansible/site.yml`:
 
 ```
 Commit: 6e6b5b0 fix(inventory): register harbor before fleet in single-node
+Commit: 5cd0374 fix(inventory): use hostname-portal node_id for harbor in single-node
+Commit: f5fbaaa fix(inventory): fleet uses bare hostname as node_id in single-node
 ```
 
-**Cambio en `ansible/site.yml`**:
 - Antes: fleet → flagship → harbor
 - Después: harbor → flagship → fleet
+- Harbor usa `{hostname}-portal` como node_id en single-node
+- Fleet usa `{hostname}` (bare) como node_id en single-node
 
 ### Limpieza del nodo admin para re-test single-node
 
@@ -212,7 +240,7 @@ Este nodo (165.22.178.97) tenía una instalación multi-nodo anterior con worker
 - Sistema limpio para re-instalación single-node
 
 ## Pendientes
-- [ ] Validar `--single-node` completo en este host (165.22.178.97) con el fix de orden de registro
+- [ ] Rebuild RPMs con el fix de `node_tokens` y validar en single-node
 - [ ] Validar acceso a Harbor UI desde browser (single-node y portal)
 - [ ] Deploy WordPress u otra app oficial
 - [ ] Failure testing automatizado
