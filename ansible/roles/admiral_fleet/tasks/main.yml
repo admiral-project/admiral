@@ -53,7 +53,7 @@
   copy:
     dest: /etc/admiral/fleet.env
     content: |
-      ADMIRAL_FLEET_NODE_ID={{ fleet_node_id_effective | default(fleet_node_id | default(ansible_hostname)) }}
+      ADMIRAL_FLEET_NODE_ID={{ ansible_hostname if admiral_install_mode == 'single-node' else fleet_node_id_effective | default(fleet_node_id | default(ansible_hostname)) }}
       ADMIRAL_FLEET_TOKEN={{ admirald_fleet_token | default(admiral_fleet_token_value) }}
       ADMIRAL_API_URL={{ admiral_fleet_api_url | default('https://127.0.0.1:8080') }}
       ADMIRAL_API_CA_FILE=/etc/admiral/tls/ca.pem
@@ -80,10 +80,12 @@
 # The role registered here ('worker' or 'portal') determines the node's
 # WireGuard IP pool, systemd services, and API behavior.
 # Roles are mutually exclusive per host by design.
+# In single-node, fleet registers as the primary node (TokenType=worker)
+# and harbor registers with -portal suffix to avoid node_id collision.
 - name: Register node with admirald (admin-to-node)
   command: >
     /usr/bin/admiralctl nodes register
-    --id "{{ fleet_node_id_effective | default(fleet_node_id | default(ansible_hostname)) }}"
+    --id "{{ ansible_hostname if admiral_install_mode == 'single-node' else fleet_node_id_effective | default(fleet_node_id | default(ansible_hostname)) }}"
     --hostname "{{ ansible_fqdn }}"
     --ip "{{ ansible_default_ipv4.address }}"
     --role "{{ fleet_node_role | default('worker') }}"
