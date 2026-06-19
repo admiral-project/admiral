@@ -14,9 +14,11 @@
         path: "{{ item.path }}"
         state: directory
         mode: "{{ item.mode }}"
+        owner: "{{ item.owner | default(omit) }}"
+        group: "{{ item.group | default(omit) }}"
       loop:
-        - { path: "/etc/admiral", mode: "0750" }
-        - { path: "/etc/admiral/tls", mode: "0750" }
+        - { path: "/etc/admiral", mode: "0750", owner: "root", group: "admiral" }
+        - { path: "/etc/admiral/tls", mode: "0750", owner: "root", group: "admiral" }
       when:
         - admiral_install_mode in ['worker-node', 'portal-node']
         - admiral_bootstrap_from_controller | default(false) | bool
