@@ -10,6 +10,8 @@ Instalación y configuración de Admiral en modo multi-nodo con 3 VPS:
 ## Commits realizados
 
 ```
+4885aa3 fix(ansible): pass fleet token when registering portal node in single-node
+d6bae51 docs: update session log and beta known limitations with single-node validation
 65891a1 fix(ansible): reload systemd daemon after installing firewalld package
 deca742 fix: use ansible_hostname for harbor node_id and set /var/lib/admiral ownership to admiral
 d31205f build: update submodule commit macros in SPEC files to match HEAD
@@ -95,12 +97,23 @@ a4680ee fix(ansible): use sudo -u postgres for all psql tasks
 - **Fix**: harbor ahora usa `ansible_hostname` como fallback (igual que fleet)
 - **Nota**: doble registro en single-node (worker + portal) es comportamiento correcto
 
+#### 9. Harbor sin --token causaba HTTP 401 en fleet heartbeat
+- En single-node, harbor registra sin `--token` — admirald genera nuevo token
+- Este nuevo token sobreescribe el de fleet en la DB
+- Fleet hace heartbeat con su token guardado → no coincide → 401
+- **Fix**: harbor ahora pasa `--token {{ admiral_fleet_token_value }}`
+- **Pendiente**: re-testar en 159.223.165.61 después del fix
+
 ### Limpieza y rebuild de specs
 
 Todos los specs actualizados a 0.0.1beta4, Release 2.
+admiral-common rebuild a Release 4 con fix de permisos.
 
 RPMs construidos (0.0.1beta4-2):
-- admiral-common, admirald, admiral-fleet, admiralctl, admiral-flagship, admiral-harbor
+- admirald, admiral-fleet, admiralctl, admiral-flagship, admiral-harbor
+
+RPMs construidos (0.0.1beta4-4):
+- admiral-common
 
 ## Validación Single-Node (67.205.167.193)
 
@@ -116,6 +129,19 @@ RPMs construidos (0.0.1beta4-2):
 **Issues encontrados y resueltos durante instalación**:
 - firewalld no estaba corriendo — fix en Ansible
 - permisos de /var/lib/admiral — fix en SPEC
+
+## Validación Single-Node (159.223.165.61 — Rocky Linux 9)
+
+**Test**: `install.sh --single-node` en droplet limpio Rocky Linux 9
+**Swap**: 8GB swap creado para evitar OOM
+**admiral-common**: release 4 con fixes de permisos
+**Resultado**: ✓ Instalación completa — 0 failed
+
+- Todos los servicios activos
+- Nodo único registrado con hostname real (fix de inventory_hostname funcionó)
+- **Issue descubierto**: fleet heartbeat falla con HTTP 401
+  - Causa: harbor registra sin `--token`, admirald genera nuevo token que sobreescribe el de fleet
+  - **Fix**: pasar `--token {{ admiral_fleet_token_value }}` en harbor (commit 4885aa3)
 
 ## Validación Rootless Remote
 
