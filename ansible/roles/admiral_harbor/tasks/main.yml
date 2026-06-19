@@ -161,7 +161,7 @@
 - name: Register portal node with admirald (admin-to-node)
   command: >
     /usr/bin/admiralctl nodes register
-    --id "{{ fleet_node_id | default(ansible_hostname) }}"
+    --id "{{ ansible_hostname ~ '-portal' if admiral_install_mode == 'single-node' else fleet_node_id | default(ansible_hostname) }}"
     --hostname "{{ ansible_fqdn }}"
     --ip "{{ ansible_default_ipv4.address }}"
     --wireguard-ip "{{ admiral_wireguard_ip | default('') }}"
