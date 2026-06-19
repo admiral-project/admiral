@@ -274,7 +274,7 @@ fi
 if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]]; then
     info "Exchanging WireGuard peers between hub and spoke..."
     SPOKE_KEY=$(ssh -i "$INSTALL_TARGET_SSH_KEY" -o BatchMode=yes -o StrictHostKeyChecking=accept-new "${INSTALL_TARGET_SSH_USER}@${INSTALL_PUBLIC_IP}" "wg pubkey < /etc/wireguard/admiral.key" 2>/dev/null || true)
-    SPOKE_NODE_ID="${INSTALL_NODE_ID:-$(ssh -i "$INSTALL_TARGET_SSH_KEY" -o BatchMode=yes -o StrictHostKeyChecking=accept-new "${INSTALL_TARGET_SSH_USER}@${INSTALL_PUBLIC_IP}" "cat /etc/admiral/fleet.env 2>/dev/null | grep ADMIRAL_FLEET_NODE_ID | cut -d= -f2" 2>/dev/null || true)}"
+    SPOKE_NODE_ID="${INSTALL_NODE_ID:-$(ssh -i "$INSTALL_TARGET_SSH_KEY" -o BatchMode=yes -o StrictHostKeyChecking=accept-new "${INSTALL_TARGET_SSH_USER}@${INSTALL_PUBLIC_IP}" "grep -E 'ADMIRAL_FLEET_NODE_ID|HARBOR_NODE_ID' /etc/admiral/*.env 2>/dev/null | cut -d= -f2" 2>/dev/null || true)}"
     if [[ -n "$SPOKE_KEY" && -n "$SPOKE_NODE_ID" ]]; then
         SPOKE_WG_IP=$(admiralctl nodes list --output json 2>/dev/null | python3 -c "
 import sys, json
