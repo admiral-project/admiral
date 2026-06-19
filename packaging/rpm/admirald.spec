@@ -70,6 +70,7 @@ restorecon -F %{_bindir}/admirald 2>/dev/null || :
 * Fri Jun 19 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta4-2
 - Rebuild against current superproject HEAD
 - Remove hardcoded ADMIRAL_LISTEN_ADDRESS from systemd unit
+- Fix node removal: filter cancelled instances in active count check
 * Fri Jun 19 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta4-1
 - Bump to 0.0.1beta4, update spec commit ref
 - Derive node token type from NodeRole instead of hardcoded worker
