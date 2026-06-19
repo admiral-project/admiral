@@ -57,10 +57,10 @@ Hoy debe leerse como intención de producto, no como capacidad madura.
 
 Este archivo sí marca una decisión importante ya incorporada al código: uso de PostgreSQL para la cola duradera.
 
-### `docs/development/alpha_known_limitations.md`
+### `docs/development/beta_known_limitations.md`
 
 Sigue siendo útil, pero ahora el resumen corto y canónico es `docs/development/scope.md`.
-`alpha_known_limitations.md` puede quedarse como soporte detallado del scope validado.
+`beta_known_limitations.md` puede quedarse como soporte detallado del scope validado.
 
 ### `docs/development/rootless.md`
 
@@ -110,7 +110,7 @@ No debe escribir en base de datos ni contener lógica de negocio propia.
 1. Reducir la documentación a una sola verdad por tema.
 2. Eliminar de los textos de contexto cualquier mención a brokers externos como runtime oficial.
 3. Alinear `PROYECTO.md` con el estado actual del código, no con el plan histórico.
-4. Mantener `alpha_known_limitations.md` como referencia operativa para el scope validado.
+4. Mantener `beta_known_limitations.md` como referencia operativa para el scope validado.
 5. Consolidar `docs/development/scope.md` como la entrada corta para consultar el estado vigente.
 6. Separar claramente:
    - implementación actual

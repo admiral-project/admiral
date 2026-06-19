@@ -44,7 +44,7 @@ This is the compact reference for what is currently relevant in Admiral developm
 
 - `fase1.md` to `fase5.md` are historical context, not source of truth.
 - `rootless.md` and `message_broker_refactor.md` still describe active decisions.
-- `alpha_known_limitations.md` remains useful, but this file is the shorter summary to consult first.
+- `beta_known_limitations.md` remains useful, but this file is the shorter summary to consult first.
 
 ## Source Documents
 
@@ -53,4 +53,4 @@ This is the compact reference for what is currently relevant in Admiral developm
 - `docs/networking_v1.md`
 - `docs/development/rootless.md`
 - `docs/development/message_broker_refactor.md`
-- `docs/development/alpha_known_limitations.md`
+- `docs/development/beta_known_limitations.md`
