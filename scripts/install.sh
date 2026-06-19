@@ -216,6 +216,9 @@ if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]]; t
     EXTRA_VARS="$EXTRA_VARS admiral_wireguard_hub_endpoint=$INSTALL_ADMIN_ENDPOINT"
     EXTRA_VARS="$EXTRA_VARS admiral_bootstrap_from_controller=true"
 fi
+if [[ "$INSTALL_MODE" == "admin-node" || "$INSTALL_MODE" == "single-node" ]]; then
+    EXTRA_VARS="$EXTRA_VARS admiral_wireguard_ip=10.99.0.1"
+fi
 
 # --- 9. run official playbook ---
 # The playbook handles the rest: packages, configuration, services
