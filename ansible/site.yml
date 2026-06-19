@@ -19,6 +19,7 @@
       loop:
         - { path: "/etc/admiral", mode: "0750", owner: "root", group: "admiral" }
         - { path: "/etc/admiral/tls", mode: "0750", owner: "root", group: "admiral" }
+        - { path: "/var/lib/admiral", mode: "0771", owner: "root", group: "admiral" }
       when:
         - admiral_install_mode in ['worker-node', 'portal-node']
         - admiral_bootstrap_from_controller | default(false) | bool
