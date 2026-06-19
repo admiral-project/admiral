@@ -197,7 +197,7 @@ if [[ -d "$ANSIBLE_DIR" ]]; then
     ANSIBLE_REMOTE_TEMP=/tmp/ansible-remote
     ANSIBLE_GALAXY_CACHE_DIR=/tmp/ansible-galaxy-cache
     if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]]; then
-        TMP_INVENTORY="$(mktemp)"
+        TMP_INVENTORY="$(mktemp).yml"
         cat > "$TMP_INVENTORY" <<EOF
 all:
   hosts:
