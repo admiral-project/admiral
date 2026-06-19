@@ -10,8 +10,8 @@ Instalación y configuración de Admiral en modo multi-nodo con 3 VPS:
 ## Commits realizados
 
 ```
+6e6b5b0 fix(inventory): register harbor before fleet in single-node
 4885aa3 fix(ansible): pass fleet token when registering portal node in single-node
-d6bae51 docs: update session log and beta known limitations with single-node validation
 65891a1 fix(ansible): reload systemd daemon after installing firewalld package
 deca742 fix: use ansible_hostname for harbor node_id and set /var/lib/admiral ownership to admiral
 d31205f build: update submodule commit macros in SPEC files to match HEAD
@@ -182,7 +182,37 @@ a964b66df312  docker.io/traefik/whoami  Up 1 min    0.0.0.0:40000->80/tcp
 - Nodo worker y portal registrados (correcto en single-node)
 - Permisos de /var/lib/admiral — corregidos
 
+## Sesión 2026-06-19 (continuación)
+
+### Fix de token en single-node — solución limpia
+
+**Problema**: En single-node, harbor y fleet corren en el mismo host. Cuando harbor registraba sin `--token`, admirald generaba un token con `TokenType=portal`. Este sobreescribía el token de fleet (`TokenType=worker`) en la DB. Fleet hacía heartbeat → 401 porque `TokenType != "worker"`.
+
+**Solución alternativa probada anteriormente**: pasar `--token {{ admiral_fleet_token_value }}` en harbor (commit 4885aa3) — no suficiente porque `UpsertNodeToken` sobreescribe todos los campos incluyendo `TokenType`.
+
+**Solución definitiva**: invertir el orden de registro en `ansible/site.yml` — harbor registra primero, fleet registra último. El último write gana, así que `TokenType=worker` persiste.
+
+```
+Commit: 6e6b5b0 fix(inventory): register harbor before fleet in single-node
+```
+
+**Cambio en `ansible/site.yml`**:
+- Antes: fleet → flagship → harbor
+- Después: harbor → flagship → fleet
+
+### Limpieza del nodo admin para re-test single-node
+
+Este nodo (165.22.178.97) tenía una instalación multi-nodo anterior con worker-001 y una instancia e2e-whoami. Para probar single-node limpio:
+
+- Instancia `inst_a0d9fe7e113fc431` puesta en deprovisioning (nodo offline, no completaba)
+- Paquetes Admiral removidos: `admiralctl`, `admirald`, `admiral-fleet`, `admiral-flagship`, `admiral-harbor`, `admiral-common`
+- Directorios eliminados: `/etc/admiral`, `/var/lib/admiral`, `/var/log/admiral`
+- PostgreSQL data removido: `/var/lib/pgsql/data`
+- Firewalld: puertos 51820/udp y 9999/tcp removidos
+- Sistema limpio para re-instalación single-node
+
 ## Pendientes
+- [ ] Validar `--single-node` completo en este host (165.22.178.97) con el fix de orden de registro
 - [ ] Validar acceso a Harbor UI desde browser (single-node y portal)
 - [ ] Deploy WordPress u otra app oficial
 - [ ] Failure testing automatizado
