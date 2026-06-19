@@ -3,13 +3,16 @@
 ## Resumen
 
 Instalación y configuración de Admiral en modo multi-nodo con 3 VPS:
-- **Admin**: (CentOS Stream)
-- **Worker**: (CentOS Stream 10)
-- **Portal**: (CentOS Stream 10, parcial)
+- **Admin**: (CentOS Stream, AlmaLinux 9)
+- **Worker**: (AlmaLinux 9)
+- **Portal**: (AlmaLinux 9)
 
 ## Commits realizados
 
 ```
+4c774a7 fix(db): filter cancelled instances when counting active instances per node
+6168d99 docs: update known limitations with rootless remote validation
+1ec3f9c docs: update session log and known limitations
 067b517 fix(install): auto-generate node-id for worker and portal spoke nodes
 f2330d2 fix(install): read node ID from harbor.env for portal nodes
 9c5f85c build(makefile): bump VERSION to 0.0.1beta4
@@ -27,8 +30,8 @@ a4680ee fix(ansible): use sudo -u postgres for all psql tasks
 - portal-002 (157.230.9.254) — destruido
 
 ### Nuevos droplets
-- Worker (CentOS Stream 10)
-- Portal (CentOS Stream 10)
+- Worker (AlmaLinux 9)
+- Portal (AlmaLinux 9)
 
 ### Admin VPS — install.sh --admin-node
 - `dnf update` desde COPR
@@ -51,17 +54,20 @@ a4680ee fix(ansible): use sudo -u postgres for all psql tasks
 - **Fix**: `install.sh` ahora pasa `admiral_wireguard_ip=10.99.0.1` para admin/single mode
 
 #### 3. Persistencia de peers WireGuard
-- El playbook sobreescribe `wg-admiral.conf` sin peers
-- **Fix pendiente**: peers se agregan con `wg-quick save` manualmente
+- El playbook sobreescribe `wg-admiral.conf` al re-ejecutar install.sh
+- Peers previos se pierden
+- **Pendiente**: salvar peers antes de re-ejecutar o usar `wg-quick save`
 
 #### 4. Portal: node ID en harbor.env
 - install.sh buscaba `ADMIRAL_FLEET_NODE_ID` en `fleet.env`
 - Portal usa `harbor.env` que no tiene esa variable
 - **Fix**: `grep -E 'ADMIRAL_FLEET_NODE_ID|HARBOR_NODE_ID' /etc/admiral/*.env`
+- **Verificado**: portal-001 registrado correctamente
 
 #### 5. Portal: auto-generate node-id
 - No se pasaba `--node-id` al ejecutar `--portal-node`
 - **Fix**: auto-genera `portal-001` / `worker-001` si no se especifica
+- **Verificado**: portal-001 y worker-001 generados y usados correctamente
 
 ### Limpieza y rebuild de specs
 
@@ -96,17 +102,16 @@ a964b66df312  docker.io/traefik/whoami  Up 1 min    0.0.0.0:40000->80/tcp
 
 ### Worker VPS
 - admiral-fleet — active/running (v0.0.1beta4-2)
-- e2e-whoami instance — corriendo rootless
+- e2e-whoami instance `inst_a0d9fe7e113fc431` — running rootless (provisoned via admirald → fleet agent)
 
 ### Portal VPS
-- admiral-harbor — installed but malfunctioning
-- Nodo registrado como "target" en lugar de "portal-001"
-- Peer WireGuard no agregado
-- **Pendiente de arreglar**: task de Ansible usa `inventory_hostname` en lugar de `fleet_node_id`
+- admiral-harbor — active/running (v0.0.1beta4-2)
+- Nodo registrado como `portal-001` — reachable
+- Health status: `unhealthy` con razón `fleet_offline` (esperado — portal no corre fleet agent)
+- WireGuard peer 10.99.0.100 agregado y funcional
 
 ## Pendientes
-- [ ] Fix task de Ansible para usar `fleet_node_id` en registro de portal
-- [ ] Persistencia de peers WireGuard en hub
-- [ ] Instalar portal correctamente
-- [ ] Deploy WordPress
+- [ ] Persistencia de peers WireGuard en hub (wg-admiral.conf se sobreescribe al re-ejecutar install.sh)
 - [ ] Regression test `--single-node`
+- [ ] Validar acceso a Harbor UI desde browser
+- [ ] Deploy WordPress u otra app oficial
