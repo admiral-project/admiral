@@ -10,11 +10,18 @@ Instalación y configuración de Admiral en modo multi-nodo con 3 VPS:
 ## Commits realizados
 
 ```
+e2fafc7 docs: update session log with node_tokens table analysis and fixes
 f5fbaaa fix(inventory): fleet uses bare hostname as node_id in single-node
 5cd0374 fix(inventory): use hostname-portal node_id for harbor in single-node
 6e6b5b0 fix(inventory): register harbor before fleet in single-node
 28631e1 docs: update session log with harbor-before-fleet fix and node cleanup
 4885aa3 fix(ansible): pass fleet token when registering portal node in single-node
+```
+
+**Submodule admirald** (`89cceb4`):
+```
+89cceb4 feat(db): add node_tokens table with composite key (node_id, token_type)
+```
 65891a1 fix(ansible): reload systemd daemon after installing firewalld package
 deca742 fix: use ansible_hostname for harbor node_id and set /var/lib/admiral ownership to admiral
 d31205f build: update submodule commit macros in SPEC files to match HEAD
@@ -239,9 +246,44 @@ Este nodo (165.22.178.97) tenía una instalación multi-nodo anterior con worker
 - Firewalld: puertos 51820/udp y 9999/tcp removidos
 - Sistema limpio para re-instalación single-node
 
+## Validación 2026-06-19 (confirmada)
+
+**Host**: 165.22.178.97 (CentOS Stream 10) — mismo nodo admin convertido a single-node
+
+### Procedimiento
+1. Limpieza completa: paquetes removidos, datos borrados, firewall limpio
+2. Instalación `--single-node` con playbook actual (sin los fixes de orden)
+3. Rebuild de admirald RPM con commit `89cceb4` (node_tokens table)
+4. Re-install RPM sobre instalación existente
+5. Restart admirald — migration 11 creó `node_tokens` y migró token de portal
+6. Re-registro manual de fleet para crear token worker en `node_tokens`
+
+### Resultado
+- **confirmado**: fleet authenticates with `token_type=worker` from `node_tokens` — no more HTTP 401
+- **confirmado**: node `centos-s-2vcpu-2gb-90gb-intel-nyc1` status=active, health=healthy, available=true
+- **confirmado**: `node_tokens` tiene 2 rows — `portal` (available) y `worker` (active)
+- **confirmado**: admiral-fleet service running, fetched task encryption key successfully
+- **confirmado**: admiral-harbor service running (desde instalación anterior)
+
+### Arquitectura de tokens (validada)
+```
+nodes:
+  id=centos-s-2vcpu-2gb-90gb-intel-nyc1 (bare hostname — único para el host)
+  node_role=worker (último en registrarse)
+
+node_tokens:
+  (centos-s-2vcpu-2gb-90gb-intel-nyc1, portal)   → token de harbor
+  (centos-s-2vcpu-2gb-90gb-intel-nyc1, worker)   → token de fleet
+```
+
+### Nota sobre re-registro manual
+El playbook actual (sin re-run) usa el mismo node_id para fleet y harbor en single-node. El fix de DB permite que ambos convivan con tokens separados en `node_tokens`. No fue necesario re-run del playbook para validar el fix — el re-registro manual de fleet fue suficiente.
+
+En un deploy limpio con el playbook actualizado (orden + hostname-portal suffix), harbor tendría su propio node_id `{hostname}-portal` y no compartiría el nodo.
+
 ## Pendientes
-- [ ] Rebuild RPMs con el fix de `node_tokens` y validar en single-node
-- [ ] Validar acceso a Harbor UI desde browser (single-node y portal)
-- [ ] Deploy WordPress u otra app oficial
+- [ ] Re-run playbook actualizado (con harbor-first + hostname-portal) en droplet limpio para validar E2E completa
+- [ ] Validar acceso a Harbor UI desde browser
+- [ ] Deploy WordPress u otra app oficial en single-node
 - [ ] Failure testing automatizado
 - [ ] Validación multi-node E2E automatizada
