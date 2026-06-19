@@ -184,6 +184,7 @@ fi
 if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]]; then
     EXTRA_VARS="$EXTRA_VARS fleet_node_role=$( [[ "$INSTALL_MODE" == "portal-node" ]] && echo 'portal' || echo 'worker' )"
     EXTRA_VARS="$EXTRA_VARS admiral_admin_endpoint=$INSTALL_ADMIN_ENDPOINT"
+    EXTRA_VARS="$EXTRA_VARS admiral_admin_wireguard_ip=10.99.0.1"
     EXTRA_VARS="$EXTRA_VARS admiral_wireguard_hub_endpoint=$INSTALL_ADMIN_ENDPOINT"
     EXTRA_VARS="$EXTRA_VARS admiral_bootstrap_from_controller=true"
 fi
@@ -236,6 +237,32 @@ if [[ "$INSTALL_MODE" == "single-node" || "$INSTALL_MODE" == "admin-node" ]]; th
 ADMIRAL_PUBLIC_IP=${INSTALL_PUBLIC_IP}
 EOF
     chmod 0640 /etc/admiral/install.env
+fi
+
+# --- 10b. exchange WireGuard peers for spoke installs ---
+if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]]; then
+    info "Exchanging WireGuard peers between hub and spoke..."
+    SPOKE_KEY=$(ssh -i "$INSTALL_TARGET_SSH_KEY" -o BatchMode=yes -o StrictHostKeyChecking=accept-new "${INSTALL_TARGET_SSH_USER}@${INSTALL_PUBLIC_IP}" "wg pubkey < /etc/wireguard/admiral.key" 2>/dev/null || true)
+    SPOKE_NODE_ID="${INSTALL_NODE_ID:-$(ssh -i "$INSTALL_TARGET_SSH_KEY" -o BatchMode=yes -o StrictHostKeyChecking=accept-new "${INSTALL_TARGET_SSH_USER}@${INSTALL_PUBLIC_IP}" "cat /etc/admiral/fleet.env 2>/dev/null | grep ADMIRAL_FLEET_NODE_ID | cut -d= -f2" 2>/dev/null || true)}"
+    if [[ -n "$SPOKE_KEY" && -n "$SPOKE_NODE_ID" ]]; then
+        SPOKE_WG_IP=$(admiralctl nodes list --output json 2>/dev/null | python3 -c "
+import sys, json
+data = json.load(sys.stdin)
+for n in data if isinstance(data, list) else data.get('nodes', []):
+    if n.get('node_id') == '$SPOKE_NODE_ID' or n.get('id') == '$SPOKE_NODE_ID':
+        sys.stdout.write(n.get('wireguard_ip', n.get('wg_ip', '')))
+        break
+" 2>/dev/null || true)
+        if [[ -z "$SPOKE_WG_IP" ]]; then
+            SPOKE_WG_IP="10.99.0.2"
+            warn "Could not resolve wireguard_ip from admirald; falling back to $SPOKE_WG_IP"
+        fi
+        wg set wg-admiral peer "$SPOKE_KEY" allowed-ips "${SPOKE_WG_IP}/32" persistent-keepalive 25
+        wg-quick save wg-admiral
+        info "WireGuard peer added for spoke node ($SPOKE_WG_IP) on hub."
+    else
+        warn "Could not read spoke WireGuard public key or node ID. Peer not added on hub."
+    fi
 fi
 
 # --- 11. verify core runtime ---
