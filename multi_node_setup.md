@@ -10,6 +10,7 @@ Instalación y configuración de Admiral en modo multi-nodo con 3 VPS:
 ## Commits realizados
 
 ```
+56dfe8e fix(ansible): generate unique random token per node on registration
 e2fafc7 docs: update session log with node_tokens table analysis and fixes
 f5fbaaa fix(inventory): fleet uses bare hostname as node_id in single-node
 5cd0374 fix(inventory): use hostname-portal node_id for harbor in single-node
@@ -281,8 +282,37 @@ El playbook actual (sin re-run) usa el mismo node_id para fleet y harbor en sing
 
 En un deploy limpio con el playbook actualizado (orden + hostname-portal suffix), harbor tendría su propio node_id `{hostname}-portal` y no compartiría el nodo.
 
+## Fix de token único por nodo — multi-node
+
+**Problema**: Worker nodes en multi-node fallaban con:
+```
+pq: duplicate key value violates unique constraint "node_tokens_token_identifier_key"
+```
+
+**Root cause**: Todos los workers usaban `admiral_fleet_token_value` (el token compartido del inventario). Cada worker generaba el mismo `token_identifier = SHA256(raw_token + pepper)` → violaba el UNIQUE constraint en `node_tokens.token_identifier`.
+
+**Solución**: Cada nodo genera un token aleatorio único en tiempo de registro:
+```bash
+openssl rand -hex 32
+```
+
+**Cambios en ansible** (solo, sin cambios en admirald):
+
+`ansible/roles/admiral_fleet/tasks/main.yml`:
+- Nueva task: `Generate random fleet node token` — `set_fact: fleet_node_token_value`
+- `fleet.env` usa `{{ fleet_node_token_value }}` en vez de `{{ admiral_fleet_token_value }}`
+- `--token` en registro usa `{{ fleet_node_token_value }}`
+
+`ansible/roles/admiral_harbor/tasks/main.yml`:
+- Nueva task: `Generate random harbor node token` — `set_fact: harbor_node_token_value`
+- `--token` en registro usa `{{ harbor_node_token_value }}`
+
+**Por qué funciona**: Cada nodo tiene un token raw diferente → SHA256 diferente → `token_identifier` único → UNIQUE constraint satisfecha.
+
+**Pendiente**: Re-test de instalación multi-node en workers 137.184.142.125 y 134.209.219.244 con el playbook actualizado.
+
 ## Pendientes
-- [ ] Re-run playbook actualizado (con harbor-first + hostname-portal) en droplet limpio para validar E2E completa
+- [ ] Re-test multi-node worker installation en 137.184.142.125 y 134.209.219.244
 - [ ] Validar acceso a Harbor UI desde browser
 - [ ] Deploy WordPress u otra app oficial en single-node
 - [ ] Failure testing automatizado
