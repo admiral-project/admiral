@@ -3,7 +3,7 @@
 
 Name:    admiral-harbor
 Version: 0.0.1beta5
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: Admiral Customer Portal - Web UI for end users
 
 License: Apache-2.0
@@ -111,6 +111,8 @@ restorecon -R %{_localstatedir}/lib/admiral/harbor 2>/dev/null || :
 %{python3} -m pytest tests/ -x --tb=short 2>/dev/null || echo "WARNING: tests skipped (pytest not available)"
 
 %changelog
+* Fri Jun 19 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta5-2
+- Rebuild against current superproject HEAD
 * Fri Jun 19 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta4-2
 - Rebuild against current superproject HEAD
 - Remove hardcoded ADMIRAL_LISTEN_ADDRESS from admirald systemd unit

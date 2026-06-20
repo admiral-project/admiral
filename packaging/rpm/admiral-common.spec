@@ -1,11 +1,11 @@
 # SPDX-FileCopyrightText: William Moreno Reyes CP | MBA
 # SPDX-License-Identifier: Apache-2.0
 
-%global commit 89cceb4ec46caf18298a9a125a9e7cbc7df0217c
+%global commit 66cc3f88a66b28a8776c79e2309b84603b55dd14
 
 Name:    admiral-common
 Version: 0.0.1beta5
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: Common files and utilities for Admiral PaaS
 
 License: Apache-2.0
@@ -148,6 +148,8 @@ if [ $1 -eq 0 ]; then
 fi
 
 %changelog
+* Fri Jun 19 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta5-2
+- Rebuild against current superproject HEAD
 * Fri Jun 19 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta4-2
 - Rebuild against current superproject HEAD
 - Pass admiral_wireguard_ip for admin/single node installs
