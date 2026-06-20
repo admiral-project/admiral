@@ -46,11 +46,10 @@
         admiral_wireguard_role: "{{ admiral_wireguard_role }}"
     - role: admirald
       when: admiral_install_mode in ['single-node', 'admin-node']
-    # fleet and harbor are mutually exclusive per host by design.
-    # A host running admiral-fleet (worker) cannot also run admiral-harbor (portal).
-    # If both capabilities are required, deploy separate physical nodes.
-    # In single-node, harbor registers first (TokenType=portal), then fleet registers
-    # last (TokenType=worker). The last token write wins, so heartbeat succeeds.
+    # Remote spoke hosts are role-exclusive: a worker spoke cannot also be a
+    # portal spoke. --single-node is the only supported mode that combines both.
+    # In --single-node, harbor uses a "-portal" node ID suffix while fleet uses
+    # the bare hostname, so both register without colliding.
     - role: admiral_harbor
       when: admiral_install_mode in ['single-node', 'portal-node']
     - role: admiral_flagship

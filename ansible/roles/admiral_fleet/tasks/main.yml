@@ -1,6 +1,7 @@
 ---
-# Fleet is the worker agent. It runs on --single-node and --worker-node hosts.
-# Fleet and harbor are mutually exclusive per host by design.
+# Fleet runs on --single-node and on dedicated --worker-node spoke hosts.
+# A remote spoke host cannot run both fleet and harbor. --single-node is the
+# only supported mode that combines worker and portal roles on one machine.
 
 - name: Install admiral-fleet
   dnf:
@@ -23,17 +24,18 @@
     admiral_known_hosts_inventory: "{{ admiral_known_hosts_slurp.content | b64decode | from_yaml }}"
   when: admiral_known_hosts_file.stat.exists
 
-- name: Resolve worker node id from known host inventory
+- name: Resolve effective fleet node id
   set_fact:
-    fleet_node_id_effective: "{{ fleet_node_id | default((admiral_known_hosts_inventory.next.worker.node_id | default('')), true) }}"
-  when: admiral_install_mode == 'worker-node'
-
-- name: Fall back to hostname for worker node id when inventory has no assignment
-  set_fact:
-    fleet_node_id_effective: "{{ fleet_node_id | default(ansible_hostname) }}"
-  when:
-    - admiral_install_mode == 'worker-node'
-    - (fleet_node_id_effective | default('')) == ''
+    fleet_node_id_effective: >-
+      {{
+        ansible_hostname
+        if admiral_install_mode == 'single-node'
+        else (
+          fleet_node_id
+          | default((admiral_known_hosts_inventory.next.worker.node_id | default('')), true)
+          | default(ansible_hostname)
+        )
+      }}
 
 - name: Require remote control-plane settings for worker-node installs
   assert:
@@ -57,7 +59,7 @@
   copy:
     dest: /etc/admiral/fleet.env
     content: |
-      ADMIRAL_FLEET_NODE_ID={{ ansible_hostname if admiral_install_mode == 'single-node' else fleet_node_id_effective | default(fleet_node_id | default(ansible_hostname)) }}
+      ADMIRAL_FLEET_NODE_ID={{ ansible_hostname if admiral_install_mode == 'single-node' else (fleet_node_id_effective | default(fleet_node_id | default(ansible_hostname))) }}
       ADMIRAL_FLEET_TOKEN={{ fleet_node_token_value }}
       ADMIRAL_API_URL={{ admiral_fleet_api_url | default('https://127.0.0.1:8080') }}
       ADMIRAL_API_CA_FILE=/etc/admiral/tls/ca.pem
@@ -81,15 +83,13 @@
     state: started
     daemon_reload: true
 
-# The role registered here ('worker' or 'portal') determines the node's
-# WireGuard IP pool, systemd services, and API behavior.
-# Roles are mutually exclusive per host by design.
-# In single-node, fleet registers as the primary node (TokenType=worker)
-# and harbor registers with -portal suffix to avoid node_id collision.
+# Fleet uses the bare hostname in --single-node.
+# Remote worker-node installs use either an explicit --node-id or the next
+# worker assignment from know_host.yaml.
 - name: Register node with admirald (admin-to-node)
   command: >
     /usr/bin/admiralctl nodes register
-    --id "{{ ansible_hostname if admiral_install_mode == 'single-node' else fleet_node_id_effective | default(fleet_node_id | default(ansible_hostname)) }}"
+    --id "{{ ansible_hostname if admiral_install_mode == 'single-node' else (fleet_node_id_effective | default(fleet_node_id | default(ansible_hostname))) }}"
     --hostname "{{ ansible_fqdn }}"
     --ip "{{ ansible_default_ipv4.address }}"
     --role "{{ fleet_node_role | default('worker') }}"
@@ -102,4 +102,3 @@
     ADMIRAL_ADMIN_TOKEN: "{{ admiral_admin_token_value }}"
     ADMIRAL_SERVER_URL: "https://127.0.0.1:8080"
     ADMIRAL_TLS_CA_FILE: /etc/admiral/tls/ca.pem
-    

@@ -1,6 +1,41 @@
 ---
-# Harbor is the portal service. It runs on --single-node and --portal-node hosts.
-# Harbor and fleet are mutually exclusive per host by design.
+# Harbor runs on --single-node and on dedicated --portal-node spoke hosts.
+# A remote spoke host cannot run both harbor and fleet. --single-node is the
+# only supported mode that combines worker and portal roles on one machine.
+
+- name: Check for Admirald-managed known host inventory
+  stat:
+    path: /var/lib/admiral/know_host.yaml
+  register: admiral_known_hosts_file
+  when: admiral_install_mode == 'portal-node'
+
+- name: Read Admirald-managed known host inventory
+  slurp:
+    src: /var/lib/admiral/know_host.yaml
+  register: admiral_known_hosts_slurp
+  when:
+    - admiral_install_mode == 'portal-node'
+    - admiral_known_hosts_file.stat.exists
+
+- name: Decode Admirald-managed known host inventory
+  set_fact:
+    admiral_known_hosts_inventory: "{{ admiral_known_hosts_slurp.content | b64decode | from_yaml }}"
+  when:
+    - admiral_install_mode == 'portal-node'
+    - admiral_known_hosts_file.stat.exists
+
+- name: Resolve effective harbor node id
+  set_fact:
+    harbor_node_id_effective: >-
+      {{
+        (ansible_hostname ~ '-portal')
+        if admiral_install_mode == 'single-node'
+        else (
+          fleet_node_id
+          | default((admiral_known_hosts_inventory.next.portal.node_id | default('')), true)
+          | default(ansible_hostname)
+        )
+      }}
 
 - name: Set harbor API URL for portal-node
   set_fact:
@@ -24,6 +59,7 @@
       HARBOR_MAX_BACKUP_UPLOAD_BYTES=536870912
       HARBOR_ENCRYPTION_KEY={{ admiral_harbor_encryption_key_value }}
       HARBOR_DATABASE_URL=postgresql://admiral:{{ admiral_postgres_password }}@127.0.0.1:5432/admiral_harbor?sslmode=disable
+      HARBOR_NODE_ID={{ harbor_node_id_effective }}
       ADMIRAL_API_URL={{ admiral_api_url_for_harbor | default('https://127.0.0.1:8080') }}
       HARBOR_PAYPAL_CLIENT_ID=
       HARBOR_PAYPAL_CLIENT_SECRET=
@@ -165,7 +201,7 @@
 - name: Register portal node with admirald (admin-to-node)
   command: >
     /usr/bin/admiralctl nodes register
-    --id "{{ ansible_hostname ~ '-portal' if admiral_install_mode == 'single-node' else fleet_node_id | default(ansible_hostname) }}"
+    --id "{{ (ansible_hostname ~ '-portal') if admiral_install_mode == 'single-node' else (harbor_node_id_effective | default(fleet_node_id | default(ansible_hostname))) }}"
     --hostname "{{ ansible_fqdn }}"
     --ip "{{ ansible_default_ipv4.address }}"
     --wireguard-ip "{{ admiral_wireguard_ip | default('') }}"

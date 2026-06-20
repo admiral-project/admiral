@@ -1,9 +1,9 @@
 %global debug_package %{nil}
-%global commit 66a8fe9b068768d2a7b6c994a83f49712789ba26
+%global commit ab9a99977bf4a01755f3cee17c472a8f9aec1410
 
 Name:    admiral-harbor
-Version: 0.0.1beta5
-Release: 2%{?dist}
+Version: 0.0.1beta6
+Release: 1%{?dist}
 Summary: Admiral Customer Portal - Web UI for end users
 
 License: Apache-2.0
@@ -111,6 +111,8 @@ restorecon -R %{_localstatedir}/lib/admiral/harbor 2>/dev/null || :
 %{python3} -m pytest tests/ -x --tb=short 2>/dev/null || echo "WARNING: tests skipped (pytest not available)"
 
 %changelog
+* Sat Jun 20 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta6-1
+- Bump to 0.0.1beta6, update source commit ref
 * Fri Jun 19 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta5-2
 - Rebuild against current superproject HEAD
 * Fri Jun 19 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta4-2
