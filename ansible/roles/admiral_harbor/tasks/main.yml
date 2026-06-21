@@ -42,6 +42,29 @@
     admiral_api_url_for_harbor: "https://{{ admiral_admin_wireguard_ip | default(admiral_admin_endpoint | default('10.99.0.1')) }}:8080"
   when: admiral_install_mode == 'portal-node'
 
+- name: Generate random harbor node token
+  set_fact:
+    harbor_node_token_value: "{{ lookup('ansible.builtin.pipe', 'openssl rand -hex 32') }}"
+  no_log: true
+
+- name: Register portal node with admirald
+  command: >
+    /usr/bin/admiralctl nodes register
+    --id "{{ harbor_node_id_effective }}"
+    --hostname "{{ ansible_fqdn }}"
+    --ip "{{ ansible_default_ipv4.address }}"
+    --wireguard-ip "{{ admiral_wireguard_ip | default('') }}"
+    --public-ip "{{ fleet_public_ip | default('') }}"
+    --role portal
+    --token "{{ harbor_node_token_value }}"
+    --os "{{ ansible_distribution ~ ' ' ~ ansible_distribution_version }}"
+  delegate_to: localhost
+  environment:
+    ADMIRAL_ADMIN_TOKEN: "{{ admiral_admin_token_value }}"
+    ADMIRAL_SERVER_URL: "https://127.0.0.1:8080"
+    ADMIRAL_TLS_CA_FILE: /etc/admiral/tls/ca.pem
+  no_log: true
+
 - name: Install admiral-harbor
   dnf:
     name: admiral-harbor
@@ -193,24 +216,3 @@
        | list
        | length) > 0
   no_log: true
-
-- name: Generate random harbor node token
-  set_fact:
-    harbor_node_token_value: "{{ lookup('ansible.builtin.pipe', 'openssl rand -hex 32') }}"
-
-- name: Register portal node with admirald (admin-to-node)
-  command: >
-    /usr/bin/admiralctl nodes register
-    --id "{{ (ansible_hostname ~ '-portal') if admiral_install_mode == 'single-node' else (harbor_node_id_effective | default(fleet_node_id | default(ansible_hostname))) }}"
-    --hostname "{{ ansible_fqdn }}"
-    --ip "{{ ansible_default_ipv4.address }}"
-    --wireguard-ip "{{ admiral_wireguard_ip | default('') }}"
-    --public-ip "{{ fleet_public_ip | default('') }}"
-    --role portal
-    --token "{{ harbor_node_token_value }}"
-    --os "{{ ansible_distribution ~ ' ' ~ ansible_distribution_version }}"
-  delegate_to: localhost
-  environment:
-    ADMIRAL_ADMIN_TOKEN: "{{ admiral_admin_token_value }}"
-    ADMIRAL_SERVER_URL: "https://127.0.0.1:8080"
-    ADMIRAL_TLS_CA_FILE: /etc/admiral/tls/ca.pem

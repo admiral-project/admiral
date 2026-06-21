@@ -62,3 +62,25 @@
       when:
         - admiral_install_mode == 'worker-node'
         - admiral_enable_ssh_tunnel | default(false) | bool
+
+  post_tasks:
+    - name: Read single-node registered nodes
+      command:
+        cmd: /usr/bin/admiralctl nodes list --output json
+      register: admiral_single_node_nodes
+      changed_when: false
+      environment:
+        ADMIRAL_ADMIN_TOKEN: "{{ admiral_admin_token_value }}"
+        ADMIRAL_SERVER_URL: "https://127.0.0.1:8080"
+        ADMIRAL_TLS_CA_FILE: /etc/admiral/tls/ca.pem
+      when: admiral_install_mode == 'single-node'
+
+    - name: Verify single-node worker and portal registrations
+      assert:
+        that:
+          - ansible_hostname in ((admiral_single_node_nodes.stdout | from_json) | map(attribute='id') | list)
+          - (ansible_hostname ~ '-portal') in ((admiral_single_node_nodes.stdout | from_json) | map(attribute='id') | list)
+        fail_msg: >-
+          Single-node install must register both '{{ ansible_hostname }}'
+          and '{{ ansible_hostname }}-portal' with admirald.
+      when: admiral_install_mode == 'single-node'
