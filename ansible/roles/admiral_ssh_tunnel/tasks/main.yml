@@ -1,12 +1,4 @@
 ---
-- name: Ensure SSH service key directory exists
-  file:
-    path: /etc/admiral/ssh
-    state: directory
-    mode: "0700"
-    owner: admiral
-    group: admiral
-
 - name: Generate SSH service key (if not present)
   command:
     cmd: >

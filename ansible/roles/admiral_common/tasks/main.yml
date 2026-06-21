@@ -29,12 +29,6 @@
     state: latest
     update_cache: true
 
-- name: Ensure /etc/caddy directory exists
-  file:
-    path: /etc/caddy
-    state: directory
-    mode: "0755"
-
 - name: Install managed Caddyfile for Admiral
   copy:
     dest: /etc/caddy/Caddyfile

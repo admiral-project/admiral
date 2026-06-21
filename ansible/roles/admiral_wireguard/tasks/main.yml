@@ -4,12 +4,6 @@
     name: wireguard-tools
     state: present
 
-- name: Create WireGuard configuration directory
-  file:
-    path: /etc/wireguard
-    state: directory
-    mode: "0700"
-
 - name: Generate WireGuard private key
   shell:
     cmd: |

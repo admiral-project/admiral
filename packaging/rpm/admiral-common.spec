@@ -51,6 +51,7 @@ install -Dm0755 scripts/admiral_https_setup.py %{buildroot}%{_bindir}/admiral_ht
 # Configuration directory (owned by root, 755)
 mkdir -p %{buildroot}%{_sysconfdir}/admiral
 mkdir -p %{buildroot}%{_sysconfdir}/admiral/tls
+mkdir -p %{buildroot}%{_sysconfdir}/admiral/ssh
 
 # Log directory (admiral user needs write)
 mkdir -p %{buildroot}%{_localstatedir}/log/admiral
@@ -61,7 +62,6 @@ mkdir -p %{buildroot}%{_localstatedir}/lib/admiral/outbox
 mkdir -p %{buildroot}%{_localstatedir}/lib/admiral/backups
 mkdir -p %{buildroot}%{_localstatedir}/lib/admiral/instances
 mkdir -p %{buildroot}%{_localstatedir}/lib/admiral-apps
-
 %pre
 # Create users and groups before file install so RPM can apply ownership
 getent group admiral >/dev/null || groupadd -r admiral
@@ -80,6 +80,7 @@ getent passwd admiral-apps >/dev/null || \
 %doc README.md
 
 %dir %attr(0750, root, admiral) %{_sysconfdir}/admiral
+%dir %attr(0750, root, admiral) %{_sysconfdir}/admiral/ssh
 %dir %attr(0755, root, root) %{_sysconfdir}/containers/systemd/admiral
 %dir %attr(0750, root, admiral) %{_sysconfdir}/admiral/tls
 %dir %attr(0750, admiral, admiral) %{_localstatedir}/log/admiral
