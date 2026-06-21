@@ -8,7 +8,7 @@ Wants=network-online.target admirald.service
 Type=simple
 EnvironmentFile=/etc/admiral/flagship.env
 Environment=ENV=production
-ExecStart=/usr/bin/gunicorn --workers 2 --bind 127.0.0.1:5000 --certfile /etc/admiral/tls/admirald.pem --keyfile /etc/admiral/tls/admirald-key.pem run:app
+ExecStart=/usr/bin/gunicorn --workers 2 --bind 0.0.0.0:5000 --certfile /etc/admiral/tls/admirald.pem --keyfile /etc/admiral/tls/admirald-key.pem run:app
 WorkingDirectory=/usr/lib/admiral/flagship
 Restart=on-failure
 RestartSec=10
