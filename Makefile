@@ -1,5 +1,5 @@
 SHELL := /bin/bash
-VERSION := 0.0.1beta6
+VERSION := 0.0.1beta7
 HARBOR_COMMIT := edcbfb21c903cabb77a5b564f26ca9129366dfac
 RPMDIR := $(CURDIR)/packaging/build
 RPMTOPDIR := $(RPMDIR)

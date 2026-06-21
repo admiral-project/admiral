@@ -5,7 +5,7 @@
 %global commit c566252d82bc4eb0fc767a0ffda32f2ba3de4d75
 
 Name:    admirald
-Version: 0.0.1beta6
+Version: 0.0.1beta7
 Release: 2%{?dist}
 Summary: Admiral Control Plane - Core API and orchestration service
 
@@ -67,8 +67,8 @@ restorecon -F %{_bindir}/admirald 2>/dev/null || :
 %systemd_postun_with_restart admirald.service
 
 %changelog
-* Sat Jun 20 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta6-1
-- Bump to 0.0.1beta6, update source commit ref
+* Sat Jun 20 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta7-1
+- Bump to 0.0.1beta7, update source commit ref
 * Fri Jun 19 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta5-2
 - Rebuild against current superproject HEAD
 * Fri Jun 19 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta4-2
