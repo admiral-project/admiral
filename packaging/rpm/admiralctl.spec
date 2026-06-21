@@ -38,8 +38,7 @@ go build -buildmode=pie -ldflags="-s -w -X main.Version=%{version}" -o admiralct
 cd admiralctl
 install -Dm0755 admiralctl %{buildroot}%{_bindir}/admiralctl
 install -Dm0644 %{SOURCE1} %{buildroot}%{_sysconfdir}/admiralctl/config.yaml
-# man page not yet generated from docs/man.md
-# install -Dm0644 docs/admiralctl.1 %{buildroot}%{_mandir}/man1/admiralctl.1
+install -Dm0644 docs/admiralctl.1 %{buildroot}%{_mandir}/man1/admiralctl.1
 
 %check
 cd admiralctl
@@ -50,7 +49,7 @@ go test ./... || echo "WARNING: tests skipped or failed in build sandbox"
 %files
 %license admiralctl/LICENSE
 %{_bindir}/admiralctl
-# %{_mandir}/man1/admiralctl.1*
+%{_mandir}/man1/admiralctl.1*
 %dir %{_sysconfdir}/admiralctl
 %config(noreplace) %{_sysconfdir}/admiralctl/config.yaml
 
