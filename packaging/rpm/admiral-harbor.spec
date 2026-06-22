@@ -1,9 +1,9 @@
 %global debug_package %{nil}
-%global commit ab12e4baac5f910d4a87e443b3fe9ea04ecd0ff6
+%global commit 69e502f0599a7a7d1e811eb0bd494adfeef882d2
 
 Name:    admiral-harbor
-Version: 0.0.1beta7
-Release: 3%{?dist}
+Version: 0.0.1beta8
+Release: 1%{?dist}
 Summary: Admiral Customer Portal - Web UI for end users
 
 License: Apache-2.0
@@ -111,9 +111,8 @@ restorecon -R %{_localstatedir}/lib/admiral/harbor 2>/dev/null || :
 %{python3} -m pytest tests/ -x --tb=short 2>/dev/null || echo "WARNING: tests skipped (pytest not available)"
 
 %changelog
-* Sun Jun 21 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta7-3
-- Add revision and no-op migration stubs to env.py for Alembic 1.13+ compatibility
-- Add version_locations config for migrations/versions directory discovery
+* Mon Jun 22 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta8-1
+- Bump to 0.0.1beta8, update source commit ref
 * Sat Jun 20 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta7-1
 - Bump to 0.0.1beta7, update source commit ref
 * Fri Jun 19 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta5-2

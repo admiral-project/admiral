@@ -2,11 +2,11 @@
 # SPDX-License-Identifier: Apache-2.0
 
 %global debug_package %{nil}
-%global commit ab278417c4e5ebf25c9c9098190db10f867c3afd
+%global commit 102fdce84ca57dae9c90fbe38884339614d3e68e
 
 Name:    admiral-fleet
-Version: 0.0.1beta7
-Release: 2%{?dist}
+Version: 0.0.1beta8
+Release: 1%{?dist}
 Summary: Admiral Fleet Worker Agent
 
 License: Apache-2.0
@@ -70,8 +70,8 @@ restorecon -F %{_bindir}/admiral-fleet 2>/dev/null || :
 %systemd_postun_with_restart admiral-fleet.service
 
 %changelog
-* Sat Jun 20 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta7-1
-- Bump to 0.0.1beta7, update source commit ref
+* Mon Jun 22 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta8-1
+- Bump to 0.0.1beta8, update source commit ref
 * Fri Jun 19 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta5-2
 - Rebuild against current superproject HEAD
 * Fri Jun 19 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta4-2
