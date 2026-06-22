@@ -40,6 +40,27 @@ worker and portal capabilities, deploy separate physical or virtual nodes.
 
 The Harbor package also ships `admiral-harbor-worker.service`, `admiral-harbor-worker.timer`, `admiral-harbor-catalog-sync.service`, and `admiral-harbor-catalog-sync.timer`.
 
+## Public Exposure Policy
+
+The default installation is designed so that only the following ingress is public:
+
+- `22/tcp` for SSH on every node
+- `80/tcp` and `443/tcp` on admin and single-node hosts, terminated by Caddy
+- `51820/udp` for WireGuard on every node
+
+Everything else is internal-only. Do not publish the following ports directly to the Internet:
+
+- `8080/tcp` `admirald`
+- `9099/tcp` `admiral-fleet`
+- `5000/tcp` `admiral-flagship`
+- `5001/tcp` `admiral-harbor` direct listener
+- `5432/tcp` PostgreSQL
+- `2019/tcp` Caddy Admin API
+
+`admiral-harbor` is the only customer-facing HTTP service, and it is meant to be published through Caddy, not by exposing its Gunicorn port directly.
+
+`admirald` and `admiral-flagship` have authentication and transport protection, but they are still control-plane services. Their direct ports are not a supported public edge.
+
 ## Node Authentication and VPN Security
 
 In multinode deployments (`--worker-node`), the use of a WireGuard VPN is **mandatory** for secure node authentication.
@@ -47,6 +68,12 @@ In multinode deployments (`--worker-node`), the use of a WireGuard VPN is **mand
 - **WireGuard IP Verification**: `admirald` strictly validates that any incoming worker requests (such as heartbeats, task callbacks, health reports, and storage reports) originate from the registered WireGuard IP of the claiming node.
 - **Node Scoping & Isolation**: Even though a shared token is used for protocol authentication, `admirald` enforces node scoping. A node cannot query, update, or report status for instances or resources belonging to another node. Attempts to do so, or requests coming from mismatching VPN IPs, will be rejected with a `403 Forbidden` error.
 - **Single-Node Mode Exception**: In single-node deployments (`--single-node`), since all components run locally on `127.0.0.1` and no WireGuard IP is registered, this IP matching verification is bypassed automatically.
+
+## TLS Material
+
+`/etc/admiral/tls/ca.pem` is the public CA certificate used to validate Admiral-issued TLS material and may be distributed where trust is needed.
+
+`/etc/admiral/tls/ca-key.pem` is the private CA signing key. It must remain on the admin node only and must not be copied to workers or portal nodes.
 
 ## Systemd and Config
 

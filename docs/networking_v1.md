@@ -10,6 +10,23 @@ Contract version: `networking_v1`
 
 Admiral soporta tanto configuraciones de nodo único (single-node) como multinodo (multi-node). La arquitectura multinodo utiliza WireGuard como red privada para toda la comunicación entre nodos y tráfico interno. Los puertos de servicios internos no se exponen a Internet.
 
+Superficie pública soportada por defecto:
+
+- `22/tcp` en todos los nodos para SSH
+- `80/tcp` y `443/tcp` en `--single-node` y `--admin-node`, terminados por Caddy
+- `51820/udp` en todos los nodos para WireGuard
+
+Puertos internos no soportados como edge público:
+
+- `8080/tcp` `admirald`
+- `9099/tcp` `admiral-fleet`
+- `5000/tcp` `admiral-flagship`
+- `5001/tcp` `admiral-harbor` directo
+- `5432/tcp` PostgreSQL
+- `2019/tcp` Caddy Admin API
+
+`admiral-harbor` es el único servicio HTTP orientado al cliente, pero debe publicarse detrás de Caddy. `admirald` y `admiral-flagship` tienen autenticación y controles de sesión, pero siguen siendo servicios de plano de control y no un edge público soportado.
+
 ### 1.1 Diagrama de Red (Multinodo)
 
 ```

@@ -48,6 +48,13 @@ El instalador:
 - genera secretos y certificados internos
 - arranca los servicios principales del modo seleccionado
 
+La postura por defecto es:
+
+- `22/tcp` siempre público para administración por SSH
+- `80/tcp` y `443/tcp` públicos solo en `--single-node` y `--admin-node`, servidos por Caddy
+- `51820/udp` público siempre para WireGuard
+- ningún puerto interno de `admirald`, `admiral-fleet`, `admiral-flagship`, `admiral-harbor`, PostgreSQL o la Admin API de Caddy debe exponerse directamente
+
 ### 3. Configurar HTTPS público
 
 `admiral_install` no configura el wildcard público ni maneja DNS.
@@ -58,6 +65,9 @@ sudo admiral_https_setup --domain cloud.example.com
 ```
 
 `admiral_https_setup` usa DNS-01. El operador debe publicar el TXT record que certbot solicite.
+
+El certificado público `ca.pem` puede distribuirse para validación TLS donde sea necesario.
+La clave privada `ca-key.pem` no debe salir del nodo admin.
 
 ### 4. Configurar backup storage S3
 
