@@ -159,13 +159,13 @@ Sección de networking en `/etc/admirald.ini`:
 ```ini
 networking_base_domain=cloud.example.com
 networking_admin_host=admin.cloud.example.com
-networking_admin_target=http://127.0.0.1:5000
+networking_admin_target=https://127.0.0.1:5000
 networking_portal_host=portal.cloud.example.com
 networking_portal_target=
 networking_apps_domain=apps.cloud.example.com
 networking_apps_redirect=portal.cloud.example.com
 networking_flagship_host=flagship.cloud.example.com
-networking_flagship_target=http://127.0.0.1:5000
+networking_flagship_target=https://127.0.0.1:5000
 networking_cockpit_host=cockpit.cloud.example.com
 networking_cockpit_target=http://127.0.0.1:9090
 networking_tls_provider=letsencrypt
