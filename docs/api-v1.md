@@ -2,11 +2,11 @@
 
 Este documento describe la superficie HTTP actualmente implementada por `admirald`.
 
-Todo el trafico debe usar `HTTPS`. `GET /health` es publico, pero tambien se sirve solo sobre TLS.
+Todo el trafico debe usar `HTTPS`. Las rutas de health y status requieren token administrativo.
 
 ## Autenticacion
 
-### API publica `/api/v1/*`
+### API v1 protegida `/api/v1/*`
 
 Requiere uno de:
 
@@ -39,9 +39,11 @@ Formato comun:
 }
 ```
 
-## API publica v1
+## API v1
 
 ### `GET /health`
+
+Requiere `X-Admiral-Token` o `Authorization: Bearer ...`.
 
 Respuesta (tambien disponible en `GET /api/v1/health`):
 
@@ -429,7 +431,7 @@ Respuesta (password change requerido — primer login con credenciales de bootst
 
 #### `POST /api/admin/auth/logout`
 
-Invalida la sesion actual.
+Invalida la sesion actual. Requiere `X-Admiral-Admin-Token` o `Authorization: Bearer ...`.
 
 #### `GET /api/admin/auth/me`
 

@@ -364,7 +364,7 @@ The installer will:
 On success, all services will be active and the API health endpoint will respond:
 
 ```bash
-curl -sk https://127.0.0.1:8080/api/v1/health
+curl -sk -H "X-Admiral-Token: $ADMIRAL_ADMIN_TOKEN" https://127.0.0.1:8080/api/v1/health
 # {"status":"healthy"}
 ```
 
