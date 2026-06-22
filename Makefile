@@ -1,6 +1,6 @@
 SHELL := /bin/bash
 VERSION := 0.0.1beta8
-HARBOR_COMMIT := 69e502f0599a7a7d1e811eb0bd494adfeef882d2
+HARBOR_COMMIT := 7d62c6d89f49fdf7d3d3abe50fc33c5a023025f6
 RPMDIR := $(CURDIR)/packaging/build
 RPMTOPDIR := $(RPMDIR)
 SPECSDIR := $(CURDIR)/packaging/rpm
