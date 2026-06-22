@@ -18,3 +18,4 @@ __pycache__/
 
 # Security issues tracking (not committed, local reference only)
 /ISSUES.md
+swapfile
