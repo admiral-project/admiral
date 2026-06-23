@@ -160,7 +160,7 @@ case "$ID" in
         info "Fedora detected (Tier 2 - development, not recommended for production)"
         ;;
     amzn)
-        info "Amazon Linux detected (Tier 3 - best effort)"
+        die "Amazon Linux does not ship Podman (required for rootless containers). Admiral is not installable on AL2023."
         ;;
     *)
         die "Unsupported OS: $ID. Supported: EL10, Fedora, Amazon Linux."
@@ -187,11 +187,7 @@ fi
 
 # --- 6. enable COPR repos ---
 info "Enabling Caddy COPR repository..."
-if [[ "$ID" == "amzn" ]]; then
-    dnf copr enable -y "@caddy/caddy" "epel-9-$(uname -m)"
-else
-    dnf copr enable -y "@caddy/caddy"
-fi
+dnf copr enable -y "@caddy/caddy"
 
 info "Enabling Admiral COPR repository..."
 dnf copr enable -y "admiral-project/admiral"
@@ -206,38 +202,8 @@ fi
 
 # Install admiral-common first so its playbooks are on disk
 if ! rpm -q admiral-common >/dev/null 2>&1; then
-    if [[ "$ID" == "amzn" ]]; then
-        # Amazon Linux lacks ansible-collection-ansible-posix RPM (Tier 3 workaround).
-        # Install via ansible-galaxy, then bypass the RPM dep with --nodeps.
-        if ! ansible-galaxy collection list 2>/dev/null | grep -q 'ansible.posix'; then
-            info "Installing ansible.posix collection via ansible-galaxy..."
-            ansible-galaxy collection install ansible.posix -p /usr/share/ansible/collections
-        fi
-        info "Installing Caddy (required by admiral-common, bypassed due to --nodeps)..."
-        dnf install -y caddy
-        info "Downloading admiral-common RPM..."
-        dnf download --destdir /tmp/admiral-common admiral-common
-        rpm -Uvh --nodeps /tmp/admiral-common/admiral-common-*.noarch.rpm
-    else
-        info "Installing admiral-common..."
-        dnf install -y admiral-common
-    fi
-fi
-
-# Amazon Linux patches to the installed playbook (Tier 3 best effort).
-if [[ "$ID" == "amzn" ]]; then
-    _admiral_tasks="/usr/share/admiral/ansible/roles/admiral_common/tasks/main.yml"
-    if [[ -f "$_admiral_tasks" ]]; then
-        # AL2023 has no EPEL; disable the EPEL task.
-        sed -i '/name: Enable EPEL repository/,/state: present/ s/state: present$/state: present\n  when: false/' "$_admiral_tasks"
-        # AL2023 ships postgresql16-server instead of postgresql-server; remap the package name.
-        sed -i '/name: Install PostgreSQL server utilities/,/state: present/ s/postgresql-server/postgresql16-server/' "$_admiral_tasks"
-        # AL2023 enables mdns in the public zone by default; remove it alongside cockpit and dhcpv6-client.
-        _firewall_tasks="/usr/share/admiral/ansible/roles/admiral_firewall/tasks/main.yml"
-        if [[ -f "$_firewall_tasks" ]]; then
-            sed -i '/dhcpv6-client/ s/dhcpv6-client$/dhcpv6-client\n    - mdns/' "$_firewall_tasks"
-        fi
-    fi
+    info "Installing admiral-common..."
+    dnf install -y admiral-common
 fi
 
 # --- 8. build extra-vars ---

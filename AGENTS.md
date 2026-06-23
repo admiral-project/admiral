@@ -71,7 +71,7 @@ Do not introduce Kubernetes-style complexity unless there is a clear, documented
 |------|-------------|------|
 | **Tier 1** | EL10 (RHEL 10 / CentOS Stream 10) | Target primario. Mandatorio. |
 | **Tier 2** | Fedora (44, rawhide) | Development. Upstream para EL11. Soportado, no recomendado para producción. |
-| **Tier 3** | Amazon Linux 2023 | Best effort. |
+| **Tier 3** | Amazon Linux 2023 | Best effort. **No instalable**: AL2023 no incluye Podman (solo Docker/containerd). Admiral requiere Podman para contenedores rootless. |
 | **Derivados** | Alma+epel 10, RHEL+epel 10 | Heredan de EL10. |
 
 Policy:
