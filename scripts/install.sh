@@ -187,7 +187,11 @@ fi
 
 # --- 6. enable COPR repos ---
 info "Enabling Caddy COPR repository..."
-dnf copr enable -y "@caddy/caddy"
+if [[ "$ID" == "amzn" ]]; then
+    dnf copr enable -y "@caddy/caddy" "epel-9-$(uname -m)"
+else
+    dnf copr enable -y "@caddy/caddy"
+fi
 
 info "Enabling Admiral COPR repository..."
 dnf copr enable -y "admiral-project/admiral"
