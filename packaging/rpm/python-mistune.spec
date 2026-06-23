@@ -3,43 +3,53 @@
 
 %global debug_package %{nil}
 
-Name:    python3-mistune
-Version: 3.2.1
-Release: 4%{?dist}
-Summary: A sane Markdown parser with useful plugins and rules
+Name:           python3-mistune
+Version:        3.2.1
+Release:        5%{?dist}
+Summary:        A sane Markdown parser with useful plugins and rules
 
-License: BSD-3-Clause
-URL:     https://github.com/lepture/mistune
-Source0: https://files.pythonhosted.org/packages/source/m/mistune/mistune-%{version}.tar.gz
+License:        BSD-3-Clause
+URL:            https://github.com/lepture/mistune
+Source0:        https://github.com/lepture/mistune/archive/refs/tags/v%{version}/mistune-%{version}.tar.gz
 
-BuildArch: noarch
+BuildArch:      noarch
 
-BuildRequires: gcc
-BuildRequires: python3-devel
-BuildRequires: python3-pip
-
-Requires: python3
-Provides: python3dist(mistune) = %{version}
+BuildRequires:  python3-devel
+BuildRequires:  pyproject-rpm-macros
 
 %description
 A sane Markdown parser with useful plugins and rules in pure Python.
 
 %prep
 %autosetup -n mistune-%{version}
+cat > setup.cfg <<CFG
+[metadata]
+name = mistune
+version = %{version}
+license = BSD-3-Clause
+
+[options]
+packages = find:
+package_dir =
+    = src
+
+[options.packages.find]
+where = src
+CFG
 
 %build
-# pure Python; no compilation needed
+%pyproject_wheel
 
 %install
-python3 -m pip install --root=%{buildroot} --no-deps --no-cache-dir --no-build-isolation .
+%pyproject_install
+%pyproject_save_files mistune
 
-%files
-%license %{python3_sitelib}/mistune-%{version}.dist-info/licenses/LICENSE
-%exclude %{python3_sitelib}/mistune-%{version}.dist-info/licenses/LICENSE
-%{python3_sitelib}/mistune/
-%{python3_sitelib}/mistune-%{version}.dist-info/
+%files -f %{pyproject_files}
+%license LICENSE
 
 %changelog
+* Tue Jun 23 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 3.2.1-5
+- Migrate to pyproject-rpm-macros for PEP 517 compliant build
 * Tue Jun 23 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 3.2.1-4
 - Migrate from wheel to source build for architecture-agnostic packaging
 * Tue Jun 16 2026 Admiral Project <dev@admiral-project.org> - 3.2.1-3

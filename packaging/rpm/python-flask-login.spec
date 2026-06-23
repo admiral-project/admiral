@@ -3,44 +3,42 @@
 
 %global debug_package %{nil}
 
-Name:    python3-flask-login
-Version: 0.6.3
-Release: 4%{?dist}
-Summary: User session management for Flask
+Name:           python3-flask-login
+Version:        0.6.3
+Release:        5%{?dist}
+Summary:        User session management for Flask
 
-License: MIT
-URL:     https://github.com/maxcountryman/flask-login
-Source0: https://files.pythonhosted.org/packages/source/f/flask-login/Flask-Login-%{version}.tar.gz
+License:        MIT
+URL:            https://github.com/maxcountryman/flask-login
+Source0:        https://github.com/maxcountryman/flask-login/archive/refs/tags/%{version}/flask-login-%{version}.tar.gz
 
-BuildArch: noarch
+BuildArch:      noarch
 
-BuildRequires: gcc
-BuildRequires: python3-devel
-BuildRequires: python3-pip
-BuildRequires: python3-flit-core
+BuildRequires:  python3-devel
+BuildRequires:  pyproject-rpm-macros
 
-Requires: python3-flask
+Requires:       python3-flask
 
 %description
 Flask-Login provides user session management for Flask. It handles the
 common tasks of logging in, logging out, and remembering user sessions.
 
 %prep
-%autosetup -n Flask-Login-%{version}
+%autosetup -n flask-login-%{version}
 
 %build
-# pure Python; no compilation needed
+%pyproject_wheel
 
 %install
-python3 -m pip install --root=%{buildroot} --no-deps --no-cache-dir --no-build-isolation .
+%pyproject_install
+%pyproject_save_files flask_login
 
-%files
-%license %{python3_sitelib}/Flask_Login-%{version}.dist-info/LICENSE
-%exclude %{python3_sitelib}/Flask_Login-%{version}.dist-info/LICENSE
-%{python3_sitelib}/flask_login/
-%{python3_sitelib}/Flask_Login-%{version}.dist-info/
+%files -f %{pyproject_files}
+%license LICENSE
 
 %changelog
+* Tue Jun 23 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.6.3-5
+- Migrate to pyproject-rpm-macros and switch to GitHub source archive
 * Tue Jun 23 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.6.3-4
 - Migrate from wheel to source build for architecture-agnostic packaging
 * Tue Jun 16 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.6.3-3

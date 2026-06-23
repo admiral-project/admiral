@@ -76,28 +76,28 @@ source-admiral-harbor: | $(SOURCEDIR)
 		-o $(SOURCEDIR)/admiral-harbor-$(VERSION).tar.gz $(HARBOR_COMMIT)
 
 source-python-flask-sqlalchemy: | $(SOURCEDIR)
-	python3 -m pip download --no-binary :all: --no-deps \
-		-d $(SOURCEDIR) Flask-SQLAlchemy==$(FLASK_SQLALCHEMY_VERSION)
+	curl -sL -o $(SOURCEDIR)/flask-sqlalchemy-$(FLASK_SQLALCHEMY_VERSION).tar.gz \
+		https://github.com/pallets-eco/flask-sqlalchemy/archive/refs/tags/$(FLASK_SQLALCHEMY_VERSION)/flask-sqlalchemy-$(FLASK_SQLALCHEMY_VERSION).tar.gz
 
 source-python-alembic: | $(SOURCEDIR)
-	python3 -m pip download --no-binary :all: --no-deps \
-		-d $(SOURCEDIR) alembic==$(ALEMBIC_VERSION)
+	curl -sL -o $(SOURCEDIR)/alembic-$(ALEMBIC_VERSION).tar.gz \
+		https://github.com/sqlalchemy/alembic/archive/refs/tags/rel_$(subst .,_,$(ALEMBIC_VERSION))/alembic-$(ALEMBIC_VERSION).tar.gz
 
 source-python-typing-extensions: | $(SOURCEDIR)
-	python3 -m pip download --no-binary :all: --no-deps \
-		-d $(SOURCEDIR) typing_extensions==$(TYPING_EXTENSIONS_VERSION)
+	curl -sL -o $(SOURCEDIR)/typing_extensions-$(TYPING_EXTENSIONS_VERSION).tar.gz \
+		https://github.com/python/typing_extensions/archive/refs/tags/$(TYPING_EXTENSIONS_VERSION)/typing_extensions-$(TYPING_EXTENSIONS_VERSION).tar.gz
 
 source-python-flask-alembic: | $(SOURCEDIR)
-	python3 -m pip download --no-binary :all: --no-deps \
-		-d $(SOURCEDIR) Flask-Alembic==$(FLASK_ALEMBIC_VERSION)
+	curl -sL -o $(SOURCEDIR)/flask-alembic-$(FLASK_ALEMBIC_VERSION).tar.gz \
+		https://github.com/pallets-eco/flask-alembic/archive/refs/tags/$(FLASK_ALEMBIC_VERSION)/flask-alembic-$(FLASK_ALEMBIC_VERSION).tar.gz
 
 source-python-flask-login: | $(SOURCEDIR)
-	python3 -m pip download --no-binary :all: --no-deps \
-		-d $(SOURCEDIR) Flask-Login==$(FLASK_LOGIN_VERSION)
+	curl -sL -o $(SOURCEDIR)/flask-login-$(FLASK_LOGIN_VERSION).tar.gz \
+		https://github.com/maxcountryman/flask-login/archive/refs/tags/$(FLASK_LOGIN_VERSION)/flask-login-$(FLASK_LOGIN_VERSION).tar.gz
 
 source-python-mistune: | $(SOURCEDIR)
-	python3 -m pip download --no-binary :all: --no-deps \
-		-d $(SOURCEDIR) mistune==$(MISTUNE_VERSION)
+	curl -sL -o $(SOURCEDIR)/mistune-$(MISTUNE_VERSION).tar.gz \
+		https://github.com/lepture/mistune/archive/refs/tags/v$(MISTUNE_VERSION)/mistune-$(MISTUNE_VERSION).tar.gz
 
 all-sources: source-superproject \
 	source-admiral-flagship source-admiral-harbor \

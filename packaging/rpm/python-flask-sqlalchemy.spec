@@ -3,45 +3,43 @@
 
 %global debug_package %{nil}
 
-Name:    python3-flask-sqlalchemy
-Version: 3.1.1
-Release: 4%{?dist}
-Summary: Add SQLAlchemy support to a Flask application
+Name:           python3-flask-sqlalchemy
+Version:        3.1.1
+Release:        5%{?dist}
+Summary:        Add SQLAlchemy support to a Flask application
 
-License: BSD-3-Clause
-URL:     https://github.com/pallets-eco/flask-sqlalchemy/
-Source0: https://files.pythonhosted.org/packages/source/f/flask-sqlalchemy/Flask-SQLAlchemy-%{version}.tar.gz
+License:        BSD-3-Clause
+URL:            https://github.com/pallets-eco/flask-sqlalchemy/
+Source0:        https://github.com/pallets-eco/flask-sqlalchemy/archive/refs/tags/%{version}/flask-sqlalchemy-%{version}.tar.gz
 
-BuildArch: noarch
+BuildArch:      noarch
 
-BuildRequires: gcc
-BuildRequires: python3-devel
-BuildRequires: python3-pip
-BuildRequires: python3-flit-core
+BuildRequires:  python3-devel
+BuildRequires:  pyproject-rpm-macros
 
-Requires: python3-flask
-Requires: python3-sqlalchemy
+Requires:       python3-flask
+Requires:       python3-sqlalchemy
 
 %description
 Flask-SQLAlchemy adds SQLAlchemy support to Flask applications and
 provides useful defaults and helpers for common database tasks.
 
 %prep
-%autosetup -n Flask-SQLAlchemy-%{version}
+%autosetup -n flask-sqlalchemy-%{version}
 
 %build
-# pure Python; no compilation needed
+%pyproject_wheel
 
 %install
-python3 -m pip install --root=%{buildroot} --no-deps --no-cache-dir --no-build-isolation .
+%pyproject_install
+%pyproject_save_files flask_sqlalchemy
 
-%files
-%license %{python3_sitelib}/flask_sqlalchemy-3.1.1.dist-info/LICENSE.rst
-%exclude %{python3_sitelib}/flask_sqlalchemy-3.1.1.dist-info/LICENSE.rst
-%{python3_sitelib}/flask_sqlalchemy/
-%{python3_sitelib}/flask_sqlalchemy-3.1.1.dist-info/
+%files -f %{pyproject_files}
+%license LICENSE.rst
 
 %changelog
+* Tue Jun 23 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 3.1.1-5
+- Migrate to pyproject-rpm-macros for PEP 517 compliant build
 * Tue Jun 23 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 3.1.1-4
 - Migrate from wheel to source build for architecture-agnostic packaging
 * Tue Jun 16 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 3.1.1-3

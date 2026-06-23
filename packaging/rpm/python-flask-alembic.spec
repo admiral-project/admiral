@@ -3,25 +3,23 @@
 
 %global debug_package %{nil}
 
-Name:    python3-flask-alembic
-Version: 3.1.1
-Release: 4%{?dist}
-Summary: Integrate Alembic with Flask
+Name:           python3-flask-alembic
+Version:        3.1.1
+Release:        5%{?dist}
+Summary:        Integrate Alembic with Flask
 
-License: MIT
-URL:     https://github.com/pallets-eco/flask-alembic/
-Source0: https://files.pythonhosted.org/packages/source/f/flask-alembic/Flask-Alembic-%{version}.tar.gz
+License:        MIT
+URL:            https://github.com/pallets-eco/flask-alembic/
+Source0:        https://github.com/pallets-eco/flask-alembic/archive/refs/tags/%{version}/flask-alembic-%{version}.tar.gz
 
-BuildArch: noarch
+BuildArch:      noarch
 
-BuildRequires: gcc
-BuildRequires: python3-devel
-BuildRequires: python3-pip
-BuildRequires: python3-flit-core
+BuildRequires:  python3-devel
+BuildRequires:  pyproject-rpm-macros
 
-Requires: python3-alembic >= 1.13
-Requires: python3-flask >= 3.0
-Requires: python3-sqlalchemy >= 2.0
+Requires:       python3-alembic >= 1.13
+Requires:       python3-flask >= 3.0
+Requires:       python3-sqlalchemy >= 2.0
 
 %description
 Flask-Alembic provides a configurable Alembic migration environment
@@ -29,21 +27,21 @@ for Flask applications, with direct support for Flask-SQLAlchemy and
 plain SQLAlchemy applications.
 
 %prep
-%autosetup -n Flask-Alembic-%{version}
+%autosetup -n flask-alembic-%{version}
 
 %build
-# pure Python; no compilation needed
+%pyproject_wheel
 
 %install
-python3 -m pip install --root=%{buildroot} --no-deps --no-cache-dir --no-build-isolation .
+%pyproject_install
+%pyproject_save_files flask_alembic
 
-%files
-%license %{python3_sitelib}/flask_alembic-3.1.1.dist-info/LICENSE.txt
-%exclude %{python3_sitelib}/flask_alembic-3.1.1.dist-info/LICENSE.txt
-%{python3_sitelib}/flask_alembic/
-%{python3_sitelib}/flask_alembic-3.1.1.dist-info/
+%files -f %{pyproject_files}
+%license LICENSE.txt
 
 %changelog
+* Tue Jun 23 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 3.1.1-5
+- Migrate to pyproject-rpm-macros and switch to GitHub source archive
 * Tue Jun 23 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 3.1.1-4
 - Migrate from wheel to source build for architecture-agnostic packaging
 * Tue Jun 16 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 3.1.1-3
