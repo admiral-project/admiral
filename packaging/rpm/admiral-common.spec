@@ -15,7 +15,6 @@ Source0: https://github.com/admiral-project/admiral/archive/%{commit}/admiral-%{
 BuildArch: noarch
 
 Requires: python3
-Requires: caddy
 Requires: ansible-core
 Requires: ansible-collection-ansible-posix
 Requires: openssh-clients
@@ -24,7 +23,6 @@ Requires: shadow-utils
 Requires: systemd >= 250
 Requires: wireguard-tools
 Requires: policycoreutils-python-utils
-Requires: certbot
 Requires: openssl
 
 %description

@@ -20,6 +20,8 @@ BuildRequires: systemd
 BuildRequires: git
 
 Requires: admiral-common
+Requires: caddy
+Requires: certbot
 Requires: podman >= 5
 Requires: postgresql-server
 Requires: shadow-utils
