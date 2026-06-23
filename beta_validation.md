@@ -316,6 +316,50 @@ After the fix, `admiral-flagship` was started manually on the existing admin
 host and confirmed responding with HTTP 200 at
 `https://flagship.testcloud.bmogroup.solutions`.
 
+### WireGuard interface not in firewalld trusted zone
+
+The `wg-admiral` WireGuard interface was not added to any firewalld zone on
+the workers (only `eth0`/`eth1` were assigned to `public`). ICMP ping worked
+but TCP connections through the tunnel were silently dropped.
+
+Fixed by adding `wg-admiral` to the `trusted` zone on all four workers:
+```bash
+firewall-cmd --permanent --zone=trusted --add-interface=wg-admiral
+firewall-cmd --reload
+```
+
+This must be added to the `admiral_common` firewall role for new workers.
+
+### Caddy upstream hardcoded to 127.0.0.1 (multi-node critical bug)
+
+When `ActivateInstanceRoutes` received host ports from the fleet worker,
+the Caddy upstream was hardcoded to `127.0.0.1:<hostPort>`, which only works
+in single-node mode where containers run on the same machine as Caddy.
+
+In multi-node topology, Caddy (admin node) must dial through the WireGuard
+tunnel to reach the worker. Fixed in
+`admirald/internal/networking/manager.go:219` to use `node.WireguardIP`
+when available, falling back to `node.IP`.
+
+Existing routes in the database were also corrected from `127.0.0.1:<port>`
+to `<wireguard_ip>:<hostPort>` before re-syncing.
+
+Commit: `f8458fb` (admirald submodule), `995aeb9` (parent).
+
+### Result: app provisioning works end-to-end
+
+New instance `example-app960666` provisioned from Harbor as a free app.
+After the Caddy upstream and firewall fixes, HTTPS access succeeds:
+
+```text
+$ curl -sk https://example-app960666.apps.testcloud.bmogroup.solutions/
+Hostname: admiral-inst_b6db488f6be2a5fd
+...
+X-Forwarded-Proto: https
+```
+
+This is the first confirmed end-to-end multi-node app provisioning in the beta.
+
 ### cockpit-podman plugin
 
 `cockpit-podman` was already installed on the admin host. The `admiral_cockpit`
