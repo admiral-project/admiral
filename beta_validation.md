@@ -322,6 +322,41 @@ host and confirmed responding with HTTP 200 at
 role was reviewed and confirmed to include `cockpit-podman` as a dependency in
 the RPM spec, so no action was needed.
 
+## Fixes applied 2026-06-23
+
+### Harbor DATABASE_URL sslmode
+
+The `admiral_harbor` Ansible template at
+`ansible/roles/admiral_harbor/tasks/main.yml:84` still had
+`sslmode=disable`, which caused the fleet agent's `queue.go:54` to
+reject inbound tasks. Aligned to `sslmode=require` to match the
+`admirald` and `admiral-fleet` templates.
+
+Commit: `1b8f729` (parent), `db ref` in admirald and admiral-flagship submodules.
+
+### Portal health check localhost candidate
+
+When `admirald` and `portal-001` share the same host, the health
+check loop only tried `portal.PublicIP`, `portal.IP`, and
+`portal.WireguardIP` — never `127.0.0.1:5001`. Added `127.0.0.1`
+as a fourth candidate at `admirald/internal/api/api.go:319`.
+
+Commit: `5dd572e` (admirald submodule).
+
+### Flagship instance detail URL
+
+`InstanceDetailView` in `admiral-flagship/app/static/js/app.js`
+now displays a `Hostname` row showing `instance.hostname` so
+operators can see the public URL without switching to a CLI.
+
+### Flagship node select portal filter
+
+The `CreateInstanceView` and migrate modal fetched all nodes
+including `portal` role. The BFF at
+`admiral-flagship/app/bff/nodes.py` now accepts a `node_role`
+query parameter, and both callers pass `node_role=worker` to
+show only worker-capable nodes.
+
 ## Validation summary
 
 All four worker nodes are registered and operational:
