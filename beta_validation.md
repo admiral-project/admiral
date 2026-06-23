@@ -297,6 +297,31 @@ Service URLs after HTTPS:
 Caddy manages ACME for portal, flagship, and cockpit. The wildcard certificate is
 reserved for app instances. The Admiral API stays on `127.0.0.1:8080` — not publicly exposed.
 
+## Ansible playbook fixes
+
+### admiral-flagship not installed on --admin-node
+
+The `admiral_flagship` role was gated by `when: admiral_install_mode ==
+'single-node'` in `ansible/site.yml:54`, so `--admin-node` never installed the
+Flagship RPM, systemd unit, or configuration. The role was corrected to:
+
+```yaml
+- role: admiral_flagship
+  when: admiral_install_mode in ['single-node', 'admin-node']
+```
+
+This matches the pattern already used by `admirald` and `admiral_cockpit`.
+
+After the fix, `admiral-flagship` was started manually on the existing admin
+host and confirmed responding with HTTP 200 at
+`https://flagship.testcloud.bmogroup.solutions`.
+
+### cockpit-podman plugin
+
+`cockpit-podman` was already installed on the admin host. The `admiral_cockpit`
+role was reviewed and confirmed to include `cockpit-podman` as a dependency in
+the RPM spec, so no action was needed.
+
 ## Validation summary
 
 All four worker nodes are registered and operational:

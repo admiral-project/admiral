@@ -52,7 +52,7 @@
     - role: admiral_harbor
       when: admiral_install_mode in ['single-node', 'portal-node']
     - role: admiral_flagship
-      when: admiral_install_mode == 'single-node'
+      when: admiral_install_mode in ['single-node', 'admin-node']
     - role: admiral_fleet
       when: admiral_install_mode in ['single-node', 'worker-node']
     - role: admiral_cockpit
