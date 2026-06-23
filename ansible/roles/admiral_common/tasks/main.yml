@@ -24,10 +24,8 @@
     cmd: dnf copr enable -y admiral-project/admiral
     creates: /etc/yum.repos.d/_copr:copr.fedorainfracloud.org:admiral-project:admiral.repo
 
-- name: Refresh and update the system after enabling repositories
+- name: Refresh package metadata after enabling repositories
   dnf:
-    name: "*"
-    state: latest
     update_cache: true
 
 - name: Install managed Caddyfile for Admiral
@@ -313,7 +311,7 @@
       {{ san }}
   when: admiral_install_mode in ['single-node', 'admin-node', 'portal-node']
 
-- name: Generate self-signed CA certificate
+- name: Generate self-signed CA certificate on hub nodes
   command:
     cmd: >
       openssl req -x509 -nodes -days 3650 -newkey rsa:4096
@@ -321,7 +319,7 @@
       -out /etc/admiral/tls/ca.pem
       -subj "/CN=Admiral CA"
     creates: /etc/admiral/tls/ca.pem
-  when: admiral_install_mode in ['single-node', 'admin-node', 'portal-node']
+  when: admiral_wireguard_role == 'hub'
 
 - name: Generate admirald server key
   command:
@@ -350,7 +348,7 @@
     group: admiral
   when: admiral_install_mode in ['single-node', 'admin-node', 'portal-node']
 
-- name: Sign admirald certificate with CA
+- name: Sign admirald certificate with CA on hub nodes
   command:
     cmd: >
       openssl x509 -req -days 3650
@@ -360,7 +358,104 @@
       -CAcreateserial
       -out /etc/admiral/tls/admirald.pem
       -extfile /etc/admiral/tls/admirald-ext.cnf
-  when: admiral_install_mode in ['single-node', 'admin-node', 'portal-node']
+  when: admiral_wireguard_role == 'hub'
+
+- name: Read portal-node CSR for controller-side signing
+  slurp:
+    src: /etc/admiral/tls/admirald.csr
+  register: admiral_portal_tls_csr
+  when:
+    - admiral_install_mode == 'portal-node'
+    - admiral_wireguard_role == 'spoke'
+
+- name: Create temporary CSR file on controller for portal-node
+  tempfile:
+    state: file
+    prefix: admiral-portal-
+    suffix: .csr
+  register: admiral_portal_tls_csr_tmp
+  delegate_to: localhost
+  when:
+    - admiral_install_mode == 'portal-node'
+    - admiral_wireguard_role == 'spoke'
+
+- name: Create temporary extensions file on controller for portal-node
+  tempfile:
+    state: file
+    prefix: admiral-portal-
+    suffix: .ext
+  register: admiral_portal_tls_ext_tmp
+  delegate_to: localhost
+  when:
+    - admiral_install_mode == 'portal-node'
+    - admiral_wireguard_role == 'spoke'
+
+- name: Create temporary certificate file on controller for portal-node
+  tempfile:
+    state: file
+    prefix: admiral-portal-
+    suffix: .pem
+  register: admiral_portal_tls_cert_tmp
+  delegate_to: localhost
+  when:
+    - admiral_install_mode == 'portal-node'
+    - admiral_wireguard_role == 'spoke'
+
+- name: Write portal-node CSR to controller temporary file
+  copy:
+    dest: "{{ admiral_portal_tls_csr_tmp.path }}"
+    content: "{{ admiral_portal_tls_csr.content | b64decode }}"
+    mode: "0600"
+  delegate_to: localhost
+  when:
+    - admiral_install_mode == 'portal-node'
+    - admiral_wireguard_role == 'spoke'
+
+- name: Write portal-node SAN extensions to controller temporary file
+  copy:
+    dest: "{{ admiral_portal_tls_ext_tmp.path }}"
+    content: |
+      subjectAltName={{ admiral_tls_san }}
+    mode: "0600"
+  delegate_to: localhost
+  when:
+    - admiral_install_mode == 'portal-node'
+    - admiral_wireguard_role == 'spoke'
+
+- name: Sign portal-node certificate on controller
+  command:
+    cmd: >
+      openssl x509 -req -days 3650
+      -in {{ admiral_portal_tls_csr_tmp.path }}
+      -CA /etc/admiral/tls/ca.pem
+      -CAkey /etc/admiral/tls/ca-key.pem
+      -CAcreateserial
+      -out {{ admiral_portal_tls_cert_tmp.path }}
+      -extfile {{ admiral_portal_tls_ext_tmp.path }}
+  delegate_to: localhost
+  when:
+    - admiral_install_mode == 'portal-node'
+    - admiral_wireguard_role == 'spoke'
+
+- name: Read signed portal-node certificate from controller
+  slurp:
+    src: "{{ admiral_portal_tls_cert_tmp.path }}"
+  register: admiral_portal_tls_cert
+  delegate_to: localhost
+  when:
+    - admiral_install_mode == 'portal-node'
+    - admiral_wireguard_role == 'spoke'
+
+- name: Deploy signed portal-node certificate
+  copy:
+    dest: /etc/admiral/tls/admirald.pem
+    content: "{{ admiral_portal_tls_cert.content | b64decode }}"
+    mode: "0640"
+    owner: root
+    group: admiral
+  when:
+    - admiral_install_mode == 'portal-node'
+    - admiral_wireguard_role == 'spoke'
 
 - name: Remove temporary openssl extensions file
   file:
@@ -380,6 +475,19 @@
     state: absent
   when:
     - admiral_install_mode in ['worker-node', 'portal-node']
+    - admiral_wireguard_role == 'spoke'
+
+- name: Remove temporary portal-node signing files from controller
+  file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - "{{ admiral_portal_tls_csr_tmp.path }}"
+    - "{{ admiral_portal_tls_ext_tmp.path }}"
+    - "{{ admiral_portal_tls_cert_tmp.path }}"
+  delegate_to: localhost
+  when:
+    - admiral_install_mode == 'portal-node'
     - admiral_wireguard_role == 'spoke'
 
 - name: Set TLS cert permissions
@@ -408,7 +516,6 @@
     owner: root
     group: root
   when:
-    - admiral_install_mode in ['single-node', 'admin-node', 'portal-node']
     - admiral_wireguard_role == 'hub'
 
 - name: Ensure PostgreSQL runtime directory exists

@@ -30,7 +30,6 @@
       loop:
         - { src: "/etc/admiral/secrets", dest: "/etc/admiral/secrets", mode: "0600" }
         - { src: "/etc/admiral/tls/ca.pem", dest: "/etc/admiral/tls/ca.pem", mode: "0644" }
-        - { src: "/etc/admiral/tls/ca-key.pem", dest: "/etc/admiral/tls/ca-key.pem", mode: "0600" }
         - { src: "/var/lib/admiral/know_host.yaml", dest: "/var/lib/admiral/know_host.yaml", mode: "0644" }
         - { src: "/etc/wireguard/admiral.pub", dest: "/etc/wireguard/admiral.pub", mode: "0644" }
       when:
