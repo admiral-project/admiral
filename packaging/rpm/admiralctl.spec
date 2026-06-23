@@ -15,6 +15,7 @@ Source0: https://github.com/admiral-project/admiral/archive/%{commit}/admiral-%{
 Source1: admiralctl.yaml
 
 BuildRequires: golang >= 1.22
+BuildRequires: git
 
 Requires: admiral-common
 Requires: openssh-clients
