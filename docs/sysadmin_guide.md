@@ -116,6 +116,112 @@ sudo admiral_https_setup --domain cloud.example.com
 
 For backup storage, use `admiralctl` after the platform is up. The installer does not create or configure the backup-storage backend.
 
+## Backup Storage Configuration
+
+Backups are a critical data-protection feature. Admiral stores backups in
+external S3-compatible storage (MinIO, Backblaze B2, AWS S3, etc.) to
+ensure data survives node failure.
+
+### Configure S3 backup storage
+
+Use `admiralctl` to configure the active backup storage backend:
+
+```bash
+admiralctl backups storage set \
+  --backend s3 \
+  --endpoint http://10.99.0.1:9000 \
+  --region us-east-1 \
+  --bucket admiral-backups \
+  --prefix admiral/multi-node-beta
+```
+
+Verify connectivity from a worker node:
+
+```bash
+admiralctl backups storage test
+```
+
+### Fleet worker credentials
+
+Each worker node running `admiral-fleet` needs S3 credentials in
+`/etc/admiral/fleet.env`:
+
+```text
+ADMIRAL_S3_ACCESS_KEY_ID=<access-key>
+ADMIRAL_S3_SECRET_ACCESS_KEY=<secret-key>
+```
+
+The fleet worker reads these environment variables when uploading
+backups to S3. Without them, backups fall back to local-only storage
+on the worker node and will be lost if the node fails.
+
+### Admirald verifier credentials
+
+The admin node running `admirald` also needs S3 credentials in
+`/etc/admiral/admirald.env` to run the backup verifier:
+
+```text
+ADMIRAL_S3_ACCESS_KEY_ID=<access-key>
+ADMIRAL_S3_SECRET_ACCESS_KEY=<secret-key>
+```
+
+The verifier is a background goroutine that independently confirms
+backups exist in S3 (see below).
+
+### Post-upload verification (fleet)
+
+When `admiral-fleet` uploads a backup to S3, it does not trust the
+HTTP 2xx response alone. After the PUT, the fleet worker issues an
+HTTP HEAD request to the same object key and verifies that the
+`Content-Length` reported by S3 matches the local backup size. If the
+verification fails, the backup is reported as failed — even if the
+PUT appeared to succeed.
+
+This catches:
+- Silent data loss during upload
+- Partial writes
+- Eventual-consistency lag
+- Network errors that return 2xx but do not persist the object
+
+### Backup verifier goroutine (admirald)
+
+`admirald` runs a background goroutine (`StartBackupVerifier`) that
+independently verifies succeeded S3 backups every 30 minutes.
+
+For each backup record with `status='succeeded'` and
+`storage_backend='s3'`, the verifier:
+
+1. Issues an HTTP HEAD request to the object's `storage_key` in S3
+2. Compares the reported `Content-Length` with the recorded `size_bytes`
+3. On success: sets `verified_at` timestamp in the `backup_records` table
+4. On failure: clears `verified_at` and records the error message
+
+This is a paranoid second layer of verification — even if the fleet
+worker reports a successful upload with post-upload verification,
+admirald independently confirms the object is still reachable and has
+the correct size at a later time.
+
+To check verification status:
+
+```bash
+admiralctl backups list --instance <instance-id>
+```
+
+The `verified_at` field shows the last successful verification
+timestamp. An empty `verified_at` with an `error_message` indicates
+verification failed and the backup may not be recoverable.
+
+### Important notes
+
+- Backups must be stored off-node. Local-only backups on a worker
+  node will be lost if the node fails.
+- The S3 endpoint must be reachable from all worker nodes via the
+  WireGuard network (e.g., `http://10.99.0.1:9000` for MinIO on the
+  admin node).
+- The verifier requires `ADMIRAL_S3_ACCESS_KEY_ID` and
+  `ADMIRAL_S3_SECRET_ACCESS_KEY` in `admirald`'s environment. Without
+  them, the verifier logs an error and skips verification.
+
 ## Secrets
 
 `/etc/admiral/secrets` is the source of truth for generated platform secrets and the encryption material used by Admiral and Harbor.

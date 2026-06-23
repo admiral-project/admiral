@@ -360,6 +360,129 @@ X-Forwarded-Proto: https
 
 This is the first confirmed end-to-end multi-node app provisioning in the beta.
 
+### S3 backup storage validation
+
+Backblaze B2 S3-compatible storage was configured via the admirald admin API,
+and credentials were deployed to fleet workers' `/etc/admiral/fleet.env`.
+
+**B2 access withdrawn** — the access/secret keys are no longer valid.
+S3 backup validation is **blocked** pending new credentials from another S3 provider
+(e.g., MinIO on admin node, or a fresh B2 account).
+
+The `/api/admin/settings/backup-storage` and `/api/admin/auth/login` endpoints
+use session-based auth (`s.AdminAuthMiddleware`). Login with the bootstrap credentials
+from `/etc/admiral/secrets` also returned `Invalid credentials` — the database user
+may not exist or the password hash may differ. This requires separate debug
+independent of the B2 issue.
+
+**Pendiente para 1.0:** 
+1. Proporcionar nuevas credenciales S3 (MinIO local o nueva cuenta B2).
+2. Depurar login de admin session (validar hash en DB vs secrets file).
+3. Configurar backup-storage via API.
+4. Ejecutar backup real y verificar upload.
+
+### MinIO S3 backend and end-to-end backup validation
+
+MinIO was deployed on the admin node via Podman (`quay.io/minio/minio`,
+listening on `10.99.0.1:9000`). Bucket `admiral-backups` created. Service
+account `admiralminio` provisioned.
+
+Backup storage configured via `admiralctl backups storage set` with
+endpoint `http://10.99.0.1:9000`, region `us-east-1`, bucket
+`admiral-backups`, prefix `admiral/multi-node-beta`. Connectivity test
+passed from workers via WireGuard.
+
+S3 credentials deployed to all workers in `/etc/admiral/fleet.env` and
+to admirald in `/etc/admiral/admirald.env` (loaded via systemd drop-in
+`20-s3-backup.conf`).
+
+#### Bugs found and fixed during backup validation
+
+1. **env-file permissions (0600 vs 0644)**: `ExecWithEnv` in
+   `inspector.go` created the temporary env-file with `0600` owner root.
+   `runuser -u admiral-apps` could not read it. Fixed to `0644`.
+
+2. **PrivateTmp isolation**: The fleet systemd unit has `PrivateTmp=true`,
+   giving the fleet process its own `/tmp` mount. Rootless podman exec
+   connects to the podman service in the user's systemd session, which
+   has a separate `/tmp`. The env-file was invisible to podman. Fixed by
+   adding a `TempDir` field to the Inspector, set to `DataDir`
+   (`/var/lib/admiral`), a shared `ReadWritePath` visible to both.
+
+3. **LoadCredentialEncrypted unsupported**: Quadlet's
+   `LoadCredentialEncrypted` directive is not supported in all
+   Podman/systemd versions across the distributions Admiral targets.
+   When unsupported, quadlet silently skips generating the service unit,
+   causing database containers to never start. Fixed by including
+   secrets directly in the `EnvironmentFile` (already `0600`, owned by
+   the rootless user) instead of using `LoadCredentialEncrypted`.
+
+4. **No post-upload S3 verification**: `uploadToS3` trusted the HTTP 2xx
+   response without confirming the object existed. Added `HeadObject` and
+   `VerifyObject` methods to the S3 client. `uploadToS3` now issues a
+   HEAD request after PUT and verifies `Content-Length` matches the
+   local backup size.
+
+5. **No independent backup verification**: admirald had no way to
+   independently confirm backups exist in S3. Added a
+   `StartBackupVerifier` goroutine that runs every 30 minutes, queries
+   all `succeeded` S3 backup records, issues HEAD requests to verify
+   object existence and size, and sets `verified_at` or records an error.
+
+#### S3 client moved to shared package
+
+`admiral-fleet/internal/storage/s3.go` was moved to
+`admirald/pkg/admiral/storage/s3.go` so both admirald and admiral-fleet
+use the same S3 client implementation. This eliminates code duplication
+and enables admirald to independently verify backups.
+
+Migration 12 added `verified_at TIMESTAMP` column to `backup_records`.
+
+#### End-to-end backup validation on all 4 OS
+
+All existing instances were deprovisioned. A fresh `backup-demo` instance
+(with PostgreSQL database) was provisioned on each worker. Manual
+database backups were triggered via the admin API.
+
+Results:
+
+| Worker | Distribution | Instance | Backup status | Size | S3 object | Verifier |
+|--------|-------------|----------|--------------|------|-----------|----------|
+| worker-001 | Fedora 44 | inst_93d210f4ab1a4f4a | succeeded | 426B | confirmed in MinIO | verified_at set |
+| worker-002 | CentOS Stream 10 | inst_52de3432e8c5bf28 | succeeded | 426B | confirmed in MinIO | verified_at set |
+| worker-003 | AlmaLinux 10.2 | inst_cd0c8dd155bdf159 | succeeded | 426B | confirmed in MinIO | verified_at set |
+| worker-004 | Rocky Linux 10.2 | inst_e9db72591749fc35 | succeeded | 426B | confirmed in MinIO | verified_at set |
+
+MinIO bucket listing confirmed all 4 objects physically exist:
+
+```text
+worker-001/inst_93d210f4ab1a4f4a/db-database-op_ca2264133591cffa  426B
+worker-002/inst_52de3432e8c5bf28/db-database-op_b85f4731d4eb53ad  426B
+worker-003/inst_cd0c8dd155bdf159/db-database-op_ce4388cf35c6877f  426B
+worker-004/inst_e9db72591749fc35/db-database-op_df155a1d03762448  426B
+```
+
+The admirald backup verifier goroutine independently confirmed all 4
+objects via HEAD requests and set `verified_at` timestamps.
+
+```text
+{"message":"Backup verifier iteration complete","total":4,"verified":4,"failed":0}
+```
+
+#### Documentation
+
+The `docs/sysadmin_guide.md` was updated with a comprehensive backup
+storage configuration section covering:
+- S3 storage setup via `admiralctl`
+- Fleet worker credentials (`ADMIRAL_S3_ACCESS_KEY_ID`)
+- Admirald verifier credentials (`ADMIRAL_S3_ACCESS_KEY_ID`)
+- Post-upload verification (fleet HEAD check)
+- Backup verifier goroutine (admirald independent verification)
+- Important notes about off-node storage requirements
+
+Ansible does not configure backup storage. Operators must configure it
+manually after installation using `admiralctl`.
+
 ### cockpit-podman plugin
 
 `cockpit-podman` was already installed on the admin host. The `admiral_cockpit`
@@ -419,3 +542,25 @@ All four workers comply with the security baseline:
 - No `ca-key.pem` present on any worker
 - Firewall exposure limited to `ssh` and `51820/udp`
 - No `caddy`/`certbot` dependency from `admiral-common`
+
+## Node selection algorithm
+
+Confirmed the algorithm `selectNodeForTier` in
+`admirald/internal/api/handlers_policy.go:209`:
+
+1. Gets all nodes from the database, sorted by node ID.
+2. For each node, evaluates eligibility via `evaluateNodeForTier`:
+   - Excludes `admin` and `portal` role nodes.
+   - Excludes nodes with `status != active` or `health_status != healthy`.
+   - Excludes manually disabled nodes.
+   - Excludes nodes with stale or invalid metrics.
+   - Checks RAM and disk commit limits (configurable per node, defaults
+     to 85% of total for RAM, 80% for disk).
+3. Among eligible nodes, selects the one with the **most remaining RAM**
+   after allocation (spread-based placement).
+4. Tie-breaks on remaining disk, then lower node ID.
+5. A specific node can be forced via `requestedNodeID` (used by Harbor
+   when an operator selects a target node during provisioning).
+
+This is called from `HandleCustomerApps` (`handlers_instances.go:358`)
+when processing a provision request from Harbor/Flagship.
