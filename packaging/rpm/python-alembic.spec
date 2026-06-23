@@ -6,7 +6,7 @@
 
 Name:           python3-alembic
 Version:        1.18.4
-Release:        5%{?dist}
+Release:        6%{?dist}
 Summary:        A database migration tool for SQLAlchemy
 
 License:        MIT
@@ -16,6 +16,9 @@ Source0:        https://github.com/sqlalchemy/alembic/archive/refs/tags/rel_%{ta
 BuildArch:      noarch
 
 BuildRequires:  python3-devel
+BuildRequires:  python3-pip
+BuildRequires:  python3-setuptools
+BuildRequires:  python3-wheel
 BuildRequires:  pyproject-rpm-macros
 
 Requires:       python3-sqlalchemy >= 1.4.23
@@ -30,14 +33,16 @@ makes it simple to create and manage database schema versions.
 %autosetup -n alembic-rel_%{tag_version}
 cat > setup.cfg <<CFG
 [metadata]
-name = alembic
-version = %{version}
 license = MIT
 
 [options]
 packages =
     alembic
 CFG
+# Fix PEP 621 license format - plain string is invalid, must be inline table
+sed -i 's/^license = "MIT"/license = {text = "MIT"}/' pyproject.toml
+# Remove PEP 639 license-files - not yet fully supported by all setuptools
+sed -i '/^license-files/d' pyproject.toml
 
 %build
 %pyproject_wheel
@@ -48,8 +53,13 @@ CFG
 
 %files -f %{pyproject_files}
 %license LICENSE
+%if (0%{?rhel} >= 10 || 0%{?fedora}) && !0%{?amzn}
+%{_bindir}/alembic
+%endif
 
 %changelog
+* Tue Jun 23 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 1.18.4-6
+- Add explicit BuildRequires: python3-setuptools for EL10 compatibility
 * Tue Jun 23 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 1.18.4-5
 - Migrate to pyproject-rpm-macros and fix source directory name
 * Tue Jun 23 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 1.18.4-4

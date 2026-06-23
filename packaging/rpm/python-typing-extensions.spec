@@ -5,7 +5,7 @@
 
 Name:           python3-typing-extensions
 Version:        4.15.0
-Release:        5%{?dist}
+Release:        6%{?dist}
 Summary:        Backported and Experimental Type Hints for Python
 
 License:        PSF-2.0
@@ -15,6 +15,8 @@ Source0:        https://github.com/python/typing_extensions/archive/refs/tags/%{
 BuildArch:      noarch
 
 BuildRequires:  python3-devel
+BuildRequires:  python3-pip
+BuildRequires:  python3-flit-core
 BuildRequires:  pyproject-rpm-macros
 
 %description
@@ -38,6 +40,8 @@ sed -i '/^license-files/d' pyproject.toml
 %license LICENSE
 
 %changelog
+* Tue Jun 23 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 4.15.0-6
+- Add explicit BuildRequires: python3-flit-core for EL10 compatibility
 * Tue Jun 23 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 4.15.0-5
 - Migrate to pyproject-rpm-macros and switch to GitHub source archive
 * Tue Jun 23 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 4.15.0-4

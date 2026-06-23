@@ -5,7 +5,7 @@
 
 Name:           python3-flask-login
 Version:        0.6.3
-Release:        5%{?dist}
+Release:        6%{?dist}
 Summary:        User session management for Flask
 
 License:        MIT
@@ -15,6 +15,9 @@ Source0:        https://github.com/maxcountryman/flask-login/archive/refs/tags/%
 BuildArch:      noarch
 
 BuildRequires:  python3-devel
+BuildRequires:  python3-pip
+BuildRequires:  python3-setuptools
+BuildRequires:  python3-wheel
 BuildRequires:  pyproject-rpm-macros
 
 Requires:       python3-flask
@@ -37,6 +40,8 @@ common tasks of logging in, logging out, and remembering user sessions.
 %license LICENSE
 
 %changelog
+* Tue Jun 23 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.6.3-6
+- Add explicit BuildRequires: python3-setuptools for EL10 compatibility
 * Tue Jun 23 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.6.3-5
 - Migrate to pyproject-rpm-macros and switch to GitHub source archive
 * Tue Jun 23 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.6.3-4

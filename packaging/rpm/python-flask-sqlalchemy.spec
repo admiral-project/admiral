@@ -5,7 +5,7 @@
 
 Name:           python3-flask-sqlalchemy
 Version:        3.1.1
-Release:        5%{?dist}
+Release:        6%{?dist}
 Summary:        Add SQLAlchemy support to a Flask application
 
 License:        BSD-3-Clause
@@ -15,6 +15,8 @@ Source0:        https://github.com/pallets-eco/flask-sqlalchemy/archive/refs/tag
 BuildArch:      noarch
 
 BuildRequires:  python3-devel
+BuildRequires:  python3-pip
+BuildRequires:  python3-flit-core
 BuildRequires:  pyproject-rpm-macros
 
 Requires:       python3-flask
@@ -38,6 +40,8 @@ provides useful defaults and helpers for common database tasks.
 %license LICENSE.rst
 
 %changelog
+* Tue Jun 23 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 3.1.1-6
+- Add explicit BuildRequires: python3-flit-core for EL10 compatibility
 * Tue Jun 23 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 3.1.1-5
 - Migrate to pyproject-rpm-macros for PEP 517 compliant build
 * Tue Jun 23 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 3.1.1-4

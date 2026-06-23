@@ -5,7 +5,7 @@
 
 Name:           python3-mistune
 Version:        3.2.1
-Release:        5%{?dist}
+Release:        6%{?dist}
 Summary:        A sane Markdown parser with useful plugins and rules
 
 License:        BSD-3-Clause
@@ -15,6 +15,9 @@ Source0:        https://github.com/lepture/mistune/archive/refs/tags/v%{version}
 BuildArch:      noarch
 
 BuildRequires:  python3-devel
+BuildRequires:  python3-pip
+BuildRequires:  python3-setuptools
+BuildRequires:  python3-wheel
 BuildRequires:  pyproject-rpm-macros
 
 %description
@@ -48,6 +51,8 @@ CFG
 %license LICENSE
 
 %changelog
+* Tue Jun 23 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 3.2.1-6
+- Add explicit BuildRequires: python3-setuptools for EL10 compatibility
 * Tue Jun 23 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 3.2.1-5
 - Migrate to pyproject-rpm-macros for PEP 517 compliant build
 * Tue Jun 23 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 3.2.1-4
