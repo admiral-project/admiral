@@ -17,6 +17,7 @@ Source2: fleet.env
 
 BuildRequires: golang >= 1.22
 BuildRequires: systemd >= 250
+BuildRequires: git
 
 Requires: admiral-common
 Requires: podman >= 5
