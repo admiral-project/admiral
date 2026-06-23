@@ -186,8 +186,10 @@ if ! rpm -q dnf-plugins-core >/dev/null 2>&1; then
 fi
 
 # --- 6. enable COPR repos ---
-info "Enabling Caddy COPR repository..."
-dnf copr enable -y "@caddy/caddy"
+if [[ "$INSTALL_MODE" == "single-node" || "$INSTALL_MODE" == "admin-node" ]]; then
+    info "Enabling Caddy COPR repository..."
+    dnf copr enable -y "@caddy/caddy"
+fi
 
 info "Enabling Admiral COPR repository..."
 dnf copr enable -y "admiral-project/admiral"
