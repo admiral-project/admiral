@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: William Moreno Reyes CP | MBA
 # SPDX-License-Identifier: Apache-2.0
 
-%global commit c49cad25008d09f391ccac6f0e8972baf341d37f
+%global commit 2d9e16e728f1f7df260e3cb8639568505498f1f9
 
 Name:    admiral-common
 Version: 0.0.1beta9
@@ -147,6 +147,14 @@ if [ $1 -eq 0 ]; then
 fi
 
 %changelog
+* Tue Jun 23 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta9-1
+- Bump to 0.0.1beta9, update source commit ref
+- Multi-node beta: 4 OS distribution validation
+- Ansible: restrict Caddy setup to admin/single-node only
+- Ansible: add WireGuard wg-admiral to firewalld trusted zone
+- Ansible: add flagship role for --admin-node mode
+- Ansible: remove mdns from public zone firewall policy
+- Align DATABASE_URL sslmode to require across templates
 * Mon Jun 22 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta8-2
 - Bump to 0.0.1beta8, update source commit ref
 * Fri Jun 19 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta5-2

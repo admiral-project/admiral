@@ -1,5 +1,5 @@
 %global debug_package %{nil}
-%global commit 7d62c6d89f49fdf7d3d3abe50fc33c5a023025f6
+%global commit 95cfab5610c0a0402ce8804f84fee351132a52b3
 
 Name:    admiral-harbor
 Version: 0.0.1beta9
@@ -111,6 +111,13 @@ restorecon -R %{_localstatedir}/lib/admiral/harbor 2>/dev/null || :
 %{python3} -m pytest tests/ -x --tb=short 2>/dev/null || echo "WARNING: tests skipped (pytest not available)"
 
 %changelog
+* Tue Jun 23 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta9-1
+- Bump to 0.0.1beta9, update source commit ref
+- Multi-node beta: add rate limiting and audit remediation
+- Harden harbor and modernize session configuration
+- Fix admin login rate limit tests
+- Align DATABASE_URL sslmode to require
+- Fix admin login with bootstrap user credentials
 * Mon Jun 22 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta8-2
 - Bump to 0.0.1beta8, update source commit ref
 * Sat Jun 20 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta7-1

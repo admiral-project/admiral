@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 %global debug_package %{nil}
-%global commit c49cad25008d09f391ccac6f0e8972baf341d37f
+%global commit 2d9e16e728f1f7df260e3cb8639568505498f1f9
 
 Name:    admiralctl
 Version: 0.0.1beta9
@@ -58,6 +58,12 @@ go test ./... || echo "WARNING: tests skipped or failed in build sandbox"
 restorecon -F %{_bindir}/admiralctl 2>/dev/null || :
 
 %changelog
+* Tue Jun 23 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta9-1
+- Bump to 0.0.1beta9, update source commit ref
+- Multi-node beta: sync man pages with CLI
+- Add admin man8 page
+- Update README with complete CLI reference
+- Expand test coverage for CLI output and client helpers
 * Mon Jun 22 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta8-2
 - Bump to 0.0.1beta8, update source commit ref
 * Fri Jun 19 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta5-2

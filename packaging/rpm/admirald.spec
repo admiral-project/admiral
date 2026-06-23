@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 %global debug_package %{nil}
-%global commit c49cad25008d09f391ccac6f0e8972baf341d37f
+%global commit 2d9e16e728f1f7df260e3cb8639568505498f1f9
 
 Name:    admirald
 Version: 0.0.1beta9
@@ -70,6 +70,18 @@ restorecon -F %{_bindir}/admirald 2>/dev/null || :
 %systemd_postun_with_restart admirald.service
 
 %changelog
+* Tue Jun 23 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta9-1
+- Bump to 0.0.1beta9, update source commit ref
+- Multi-node beta: 4 OS distribution validation (Fedora 44, CentOS Stream 10,
+  AlmaLinux 10.2, Rocky Linux 10.2)
+- Add paranoid S3 verification and backup verifier goroutine
+- Fix Caddy upstream to use WireGuard IP for multi-node routing
+- Add localhost as portal health check candidate
+- Fix admin auth middleware (X-Admiral-Token + static token fallback)
+- Relax S3 endpoint validation for WireGuard private network
+- Add migration 12: verified_at column in backup_records
+- Move S3 client to shared package (admirald + admiral-fleet)
+- Fix admin login with bootstrap credentials
 * Mon Jun 22 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta8-2
 - Bump to 0.0.1beta8, update source commit ref
 * Fri Jun 19 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta5-2

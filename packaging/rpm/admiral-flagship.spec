@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 %global debug_package %{nil}
-%global commit 5a5eb0df42fecbc8c545a6f4e14e801387b0c690
+%global commit 0ad3bd7bd1f5705b05b297c66120cdea692ac08d
 
 Name:    admiral-flagship
 Version: 0.0.1beta9
@@ -75,6 +75,13 @@ restorecon -R %{_prefix}/lib/admiral/flagship 2>/dev/null || :
 %{python3} -m pytest tests/ -x --tb=short 2>/dev/null || echo "WARNING: tests skipped (pytest not available)"
 
 %changelog
+* Tue Jun 23 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta9-1
+- Bump to 0.0.1beta9, update source commit ref
+- Multi-node beta: show instance hostname in detail view
+- Filter portal nodes from instance placement (node_role=worker)
+- Harden flagship for direct internet exposure
+- Add rate limiting coverage for in-memory limiter
+- Throttle repeated unauthorized flagship access
 * Mon Jun 22 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta8-2
 - Rebuild against current superproject HEAD
 * Fri Jun 19 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta5-2
