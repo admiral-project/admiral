@@ -156,8 +156,14 @@ case "$ID" in
         MAJOR="${VERSION_ID%%.*}"
         [[ "$MAJOR" -ge 10 ]] || die "Enterprise Linux 10 required (got $ID $VERSION_ID)"
         ;;
+    fedora)
+        info "Fedora detected (Tier 2 - development, not recommended for production)"
+        ;;
+    amzn)
+        info "Amazon Linux detected (Tier 3 - best effort)"
+        ;;
     *)
-        die "Unsupported OS: $ID. Supported: RHEL, CentOS Stream, Rocky Linux, AlmaLinux 10."
+        die "Unsupported OS: $ID. Supported: EL10, Fedora, Amazon Linux."
         ;;
 esac
 
@@ -165,7 +171,7 @@ esac
 command -v python3 >/dev/null 2>&1 || die "Python 3 is required but not installed."
 
 # --- 4. enable EPEL (Enterprise Linux only) ---
-if [[ "$ID" != "fedora" ]]; then
+if [[ "$ID" != "fedora" && "$ID" != "amzn" ]]; then
     if ! rpm -q epel-release >/dev/null 2>&1; then
         info "Installing EPEL repository..."
         dnf install -y epel-release
