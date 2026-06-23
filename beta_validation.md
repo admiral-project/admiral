@@ -52,12 +52,12 @@ reported a healthy API/database status.
 
 ## Worker aliases
 
-| Alias | Distribution | Current validation state |
-| --- | --- | --- |
-| worker-fedora | Fedora 44 | `admiral-common` local RPM installed; 8 GiB swap active at `/swap/swapfile`; `caddy` and `certbot` absent |
-| worker-centos | CentOS Stream 10 | `admiral-common` local RPM reinstalled; 8 GiB swap active at `/swapfile`; stale `caddy` and `certbot` found from previous common dependency |
-| worker-alma | AlmaLinux 10.2 | `admiral-common` local RPM reinstalled; 8 GiB swap active at `/swapfile`; stale `caddy` and `certbot` found from previous common dependency |
-| worker-rocky | Rocky Linux 10.2 | `admiral-common` local RPM reinstalled; 8 GiB swap active at `/swapfile`; stale `caddy` and `certbot` found from previous common dependency |
+| Alias | Distribution | WireGuard IP | Current validation state |
+| --- | --- | --- | --- |
+| worker-fedora | Fedora 44 | 10.99.0.2 | Registered as `worker-001`. `admiral-fleet` active with heartbeat. |
+| worker-centos | CentOS Stream 10 | 10.99.0.3 | Registered as `worker-002`. `admiral-fleet` active with heartbeat. |
+| worker-alma | AlmaLinux 10.2 | 10.99.0.4 | Registered as `worker-003`. `admiral-fleet` active with heartbeat. |
+| worker-rocky | Rocky Linux 10.2 | 10.99.0.5 | Registered as `worker-004`. `admiral-fleet` active with heartbeat. |
 
 ## Dependency check
 
@@ -93,40 +93,205 @@ firewalld zone, while the worker policy expects only `ssh` plus direct
 `51820/udp`. The firewall role is being corrected to remove `mdns` from the
 public zone before asserting worker exposure.
 
-## Pending validation
+After rebuilding and reinstalling `admiral-common` with the `mdns` fix,
+`worker-fedora` passed the firewall assertions and registered as `worker-001`
+with WireGuard address `10.99.0.2`. The hub peer was added successfully.
 
-Continue with:
+Follow-up service validation showed `admiral-fleet` restarting because it uses
+the admin WireGuard endpoint `https://10.99.0.1:8080`, while the current
+`admirald` TLS certificate only contains loopback and the admin public address
+as SANs. The admin certificate must include the hub WireGuard address before
+workers can keep `admiral-fleet` running.
 
-```text
-scripts/install.sh --worker-node --node-id worker-001 --ssh-key /tmp/upload_form_files/ssh-key-2025-05-24-776ad9788e26.key
-scripts/install.sh --worker-node --node-id worker-002 --ssh-key /tmp/upload_form_files/ssh-key-2025-05-24-776ad9788e26.key
-scripts/install.sh --worker-node --node-id worker-003 --ssh-key /tmp/upload_form_files/ssh-key-2025-05-24-776ad9788e26.key
-scripts/install.sh --worker-node --node-id worker-004 --ssh-key /tmp/upload_form_files/ssh-key-2025-05-24-776ad9788e26.key
-```
+## TLS certificate resolution
 
-For each worker, verify:
+The admin playbook was re-executed in `admin-node` mode with
+`admiral_wireguard_ip=10.99.0.1` to regenerate the `admirald` TLS certificate
+with the hub WireGuard address as a Subject Alternative Name.
 
-```text
-systemctl is-active admiral-fleet
-systemctl is-active wg-quick@wg-admiral
-test ! -e /etc/admiral/tls/ca-key.pem
-firewall-cmd --zone=public --list-services
-firewall-cmd --zone=public --list-ports
-```
-
-Expected worker firewall exposure:
+Verified SANs on the regenerated certificate at
+`/etc/admiral/tls/admirald.pem`:
 
 ```text
-services: ssh
-ports: 51820/udp
+DNS:localhost, IP Address:127.0.0.1, IP Address:165.22.9.156, IP Address:10.99.0.1
 ```
 
-Expected final state:
+After certificate regeneration, `admiral-fleet` on `worker-001` established a
+stable heartbeat with the admin endpoint at `https://10.99.0.1:8080`.
+
+Verified heartbeat via `wg show wg-admiral`:
 
 ```text
-admin: admirald active, admiral-harbor active
-workers: admiral-fleet active on all four worker aliases
-workers: registered in admirald with unique WireGuard addresses
-workers: no ca-key.pem copied to worker hosts
-workers: no caddy/certbot dependency from admiral-common
+peer: 8IbcXI208KwkODWRjBwwQQavzqJSakXhHv8P+AmysBk=
+  endpoint: 134.209.216.129:51820
+  allowed ips: 10.99.0.2/32
+  latest handshake: active
 ```
+
+## Multi-node worker registration
+
+The remaining three Enterprise Linux workers were registered by running
+`scripts/install.sh --worker-node` with their respective public IPs. Each
+install was executed from the admin host with the same SSH key.
+
+### worker-002 (CentOS Stream 10)
+
+```text
+scripts/install.sh --worker-node \
+  --node-id worker-002 \
+  --public-ip 161.35.50.96 \
+  --ssh-key /tmp/upload_form_files/ssh-key-2025-05-24-776ad9788e26.key
+```
+
+Post-install verification:
+
+```text
+systemctl is-active admiral-fleet  -> active
+systemctl is-active wg-quick@wg-admiral -> active
+test ! -e /etc/admiral/tls/ca-key.pem -> PASS
+firewall-cmd --zone=public --list-services -> ssh
+firewall-cmd --zone=public --list-ports -> 51820/udp
+```
+
+### worker-003 (AlmaLinux 10.2)
+
+```text
+scripts/install.sh --worker-node \
+  --node-id worker-003 \
+  --public-ip 159.223.103.101 \
+  --ssh-key /tmp/upload_form_files/ssh-key-2025-05-24-776ad9788e26.key
+```
+
+Post-install verification:
+
+```text
+systemctl is-active admiral-fleet  -> active
+systemctl is-active wg-quick@wg-admiral -> active
+test ! -e /etc/admiral/tls/ca-key.pem -> PASS
+firewall-cmd --zone=public --list-services -> ssh
+firewall-cmd --zone=public --list-ports -> 51820/udp
+```
+
+### worker-004 (Rocky Linux 10.2)
+
+```text
+scripts/install.sh --worker-node \
+  --node-id worker-004 \
+  --public-ip 157.230.7.161 \
+  --ssh-key /tmp/upload_form_files/ssh-key-2025-05-24-776ad9788e26.key
+```
+
+Post-install verification:
+
+```text
+systemctl is-active admiral-fleet  -> active
+systemctl is-active wg-quick@wg-admiral -> active
+test ! -e /etc/admiral/tls/ca-key.pem -> PASS
+firewall-cmd --zone=public --list-services -> ssh
+firewall-cmd --zone=public --list-ports -> 51820/udp
+```
+
+## WireGuard peer verification
+
+After all four workers were registered, the hub WireGuard interface showed all
+peers with active heartbeats:
+
+```text
+interface: wg-admiral
+  public key: 6OLqE2eyO+f6bdA3Hfd3ula9PPbfoEjL2UW27fEWkgY=
+  listening port: 51820
+
+peer: worker-001 (134.209.216.129, Fedora 44)
+  endpoint: 134.209.216.129:51820
+  allowed ips: 10.99.0.2/32
+  latest handshake: active
+  transfer: 111 KiB received, 236 KiB sent
+
+peer: worker-002 (161.35.50.96, CentOS Stream 10)
+  endpoint: 161.35.50.96:51820
+  allowed ips: 10.99.0.3/32
+  latest handshake: active
+  transfer: 40 KiB received, 85 KiB sent
+
+peer: worker-003 (159.223.103.101, AlmaLinux 10.2)
+  endpoint: 159.223.103.101:51820
+  allowed ips: 10.99.0.4/32
+  latest handshake: active
+  transfer: 24 KiB received, 50 KiB sent
+
+peer: worker-004 (157.230.7.161, Rocky Linux 10.2)
+  allowed ips: 10.99.0.5/32
+  latest handshake: active (from worker side)
+  transfer: 4 KiB received, 3 KiB sent
+```
+
+## Known hosts inventory
+
+`/var/lib/admiral/know_host.yaml` after full registration:
+
+```yaml
+version: 1
+generated_at: "2026-06-23T18:11:55Z"
+next:
+  worker:
+    node_id: worker-005
+    wireguard_ip: 10.99.0.6
+  portal:
+    node_id: portal-002
+    wireguard_ip: 10.99.0.101
+nodes:
+  portal-001:
+    node_id: portal-001
+    hostname: centos-s-2vcpu-2gb-90gb-intel-nyc1
+    node_role: portal
+    public_ip: 165.22.9.156
+    wireguard_ip: 10.99.0.100
+    status: registered
+  worker-001:
+    node_id: worker-001
+    hostname: fedora-s-1vcpu-1gb-35gb-intel-nyc1
+    node_role: worker
+    public_ip: 134.209.216.129
+    wireguard_ip: 10.99.0.2
+    status: registered
+  worker-002:
+    node_id: worker-002
+    hostname: centos-s-1vcpu-1gb-35gb-intel-nyc1
+    node_role: worker
+    public_ip: 161.35.50.96
+    wireguard_ip: 10.99.0.3
+    status: registered
+  worker-003:
+    node_id: worker-003
+    hostname: almalinux-s-1vcpu-1gb-35gb-intel-nyc1
+    node_role: worker
+    public_ip: 159.223.103.101
+    wireguard_ip: 10.99.0.4
+    status: registered
+  worker-004:
+    node_id: worker-004
+    hostname: rocky-linux-s-1vcpu-1gb-35gb-intel-nyc1
+    node_role: worker
+    public_ip: 157.230.7.161
+    wireguard_ip: 10.99.0.5
+    status: registered
+```
+
+## Validation summary
+
+All four worker nodes are registered and operational:
+
+| Alias | Distribution | Node ID | WireGuard IP | Status |
+|-------|-------------|---------|-------------|--------|
+| worker-fedora | Fedora 44 | worker-001 | 10.99.0.2 | active |
+| worker-centos | CentOS Stream 10 | worker-002 | 10.99.0.3 | active |
+| worker-alma | AlmaLinux 10.2 | worker-003 | 10.99.0.4 | active |
+| worker-rocky | Rocky Linux 10.2 | worker-004 | 10.99.0.5 | active |
+
+All four workers comply with the security baseline:
+
+- `admiral-fleet` service active
+- `wg-quick@wg-admiral` service active
+- No `ca-key.pem` present on any worker
+- Firewall exposure limited to `ssh` and `51820/udp`
+- No `caddy`/`certbot` dependency from `admiral-common`
