@@ -92,6 +92,38 @@
   register: firewall_public_ports
   changed_when: false
 
+- name: Detect local admin packages for portal-node validation
+  command:
+    cmd: rpm -q {{ item }}
+  register: firewall_admin_package_state
+  changed_when: false
+  failed_when: false
+  loop:
+    - caddy
+    - admirald
+  when: admiral_install_mode == 'portal-node'
+
+- name: Determine whether portal-node shares an admin host
+  set_fact:
+    firewall_portal_shares_admin_host: >-
+      {{
+        (
+          firewall_admin_package_state.results
+          | selectattr('item', 'equalto', 'caddy')
+          | map(attribute='rc')
+          | first
+          | default(1)
+        ) == 0 and
+        (
+          firewall_admin_package_state.results
+          | selectattr('item', 'equalto', 'admirald')
+          | map(attribute='rc')
+          | first
+          | default(1)
+        ) == 0
+      }}
+  when: admiral_install_mode == 'portal-node'
+
 - name: Assert only expected public services remain exposed (admin/single)
   assert:
     that:
@@ -99,12 +131,30 @@
     fail_msg: "Unexpected public firewalld services remain enabled: {{ firewall_public_services.stdout }}"
   when: admiral_install_mode in ['single-node', 'admin-node']
 
-- name: Assert only ssh remains exposed (worker/portal)
+- name: Assert only ssh remains exposed (worker)
   assert:
     that:
       - (firewall_public_services.stdout.split() | difference(['ssh']) | length) == 0
     fail_msg: "Unexpected public firewalld services remain enabled: {{ firewall_public_services.stdout }}"
-  when: admiral_install_mode in ['worker-node', 'portal-node']
+  when: admiral_install_mode == 'worker-node'
+
+- name: Assert admin ingress services remain exposed when portal-node shares the admin host
+  assert:
+    that:
+      - (firewall_public_services.stdout.split() | difference(['ssh', 'http', 'https']) | length) == 0
+    fail_msg: "Unexpected public firewalld services remain enabled: {{ firewall_public_services.stdout }}"
+  when:
+    - admiral_install_mode == 'portal-node'
+    - firewall_portal_shares_admin_host | default(false) | bool
+
+- name: Assert only ssh remains exposed on dedicated portal spokes
+  assert:
+    that:
+      - (firewall_public_services.stdout.split() | difference(['ssh']) | length) == 0
+    fail_msg: "Unexpected public firewalld services remain enabled: {{ firewall_public_services.stdout }}"
+  when:
+    - admiral_install_mode == 'portal-node'
+    - not (firewall_portal_shares_admin_host | default(false) | bool)
 
 - name: Assert only WireGuard port remains exposed
   assert:
