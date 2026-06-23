@@ -222,6 +222,17 @@ if ! rpm -q admiral-common >/dev/null 2>&1; then
     fi
 fi
 
+# Amazon Linux patches to the installed playbook (Tier 3 best effort).
+if [[ "$ID" == "amzn" ]]; then
+    _admiral_tasks="/usr/share/admiral/ansible/roles/admiral_common/tasks/main.yml"
+    if [[ -f "$_admiral_tasks" ]]; then
+        # AL2023 has no EPEL; disable the EPEL task.
+        sed -i '/name: Enable EPEL repository/,/state: present/ s/state: present$/state: present\n  when: false/' "$_admiral_tasks"
+        # AL2023 ships postgresql16-server instead of postgresql-server; remap the package name.
+        sed -i '/name: Install PostgreSQL server utilities/,/state: present/ s/postgresql-server/postgresql16-server/' "$_admiral_tasks"
+    fi
+fi
+
 # --- 8. build extra-vars ---
 EXTRA_VARS="admiral_install_mode=$INSTALL_MODE"
 if [[ -n "$INSTALL_NODE_ID" ]]; then
