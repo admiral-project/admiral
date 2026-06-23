@@ -22,8 +22,8 @@
 
       port = {{ admirald_port | default('8080') }}
       listen_address = {{ admirald_listen_address | default('0.0.0.0' if (fleet_public_ip is defined and fleet_public_ip != '' and fleet_public_ip != '127.0.0.1') else '127.0.0.1') }}
-      database_url = {{ admirald_database_url | default('postgres://admiral:' ~ admiral_postgres_password ~ '@127.0.0.1:5432/admiral?sslmode=disable') }}
-      queue_database_url = {{ admirald_queue_database_url | default('postgres://admiral:' ~ admiral_postgres_password ~ '@127.0.0.1:5432/admiral_queue?sslmode=disable') }}
+      database_url = {{ admirald_database_url | default('postgres://admiral:' ~ admiral_postgres_password ~ '@127.0.0.1:5432/admiral?sslmode=require') }}
+      queue_database_url = {{ admirald_queue_database_url | default('postgres://admiral:' ~ admiral_postgres_password ~ '@127.0.0.1:5432/admiral_queue?sslmode=require') }}
       admin_token = {{ admirald_admin_token | default(admiral_admin_token_value) }}
       token_pepper = {{ admirald_token_pepper | default(admiral_token_pepper_value) }}
       secrets_key = {{ admirald_secrets_key | default(admiral_secrets_key_value) }}
