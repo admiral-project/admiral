@@ -277,6 +277,26 @@ nodes:
     status: registered
 ```
 
+## HTTPS setup
+
+Wildcard TLS certificate obtained via Certbot for
+`*.apps.testcloud.bmogroup.solutions` and deployed through `admiral_https_setup`.
+
+```text
+Certificate: /etc/letsencrypt/live/apps.testcloud.bmogroup.solutions/fullchain.pem
+Expires:     2026-09-21 (manual renewal)
+```
+
+Service URLs after HTTPS:
+
+- **Portal**:   `https://portal.testcloud.bmogroup.solutions`
+- **Flagship**: `https://flagship.testcloud.bmogroup.solutions`
+- **Cockpit**:  `https://cockpit.testcloud.bmogroup.solutions`
+- **Apps**:     `https://<app><6digits>.apps.testcloud.bmogroup.solutions`
+
+Caddy manages ACME for portal, flagship, and cockpit. The wildcard certificate is
+reserved for app instances. The Admiral API stays on `127.0.0.1:8080` — not publicly exposed.
+
 ## Validation summary
 
 All four worker nodes are registered and operational:
