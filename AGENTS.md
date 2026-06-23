@@ -1,52 +1,69 @@
-El proyecto Admiral se desarrolla mediante un repositorio madre llamado admiral (este repositorio),
-el cual integra como submódulos Git los cinco componentes principales de la plataforma:
+# Proyecto Admiral
 
-- admirald
-- admiral-fleet
-- admiralctl
-- admiral-flagship
-- admiral-harbor
+Admiral es una PaaS simple orientado a facturación para agencias que quieren operar SaaS
+sobre Linux con Podman, systemd y PostgreSQL, escalable de 1 a N nodos.
 
-El repositorio madre funcionará como punto central de integración, documentación, empaquetado,
-pruebas end-to-end, despliegue y versionado coordinado del producto completo. Cada componente
-mantendrá su propio repositorio independiente, pero su integración oficial dentro de una versión
-de Admiral será controlada desde el repositorio madre mediante referencias específicas de submódulo.
+## Componentes
 
-Considera el archivo PROYECTO.md como parte del el contexto para el desarrollo.
+- `admirald`: control plane y fuente de verdad — estable.
+- `admiral-fleet`: ejecución local en nodos workloads — estable.
+- `admiralctl`: operación técnica por terminal — estable.
+- `admiral-flagship`: consola administrativa web — estable.
+- `admiral-harbor`: portal de cliente - verificar flujo real con paypal.
+
+El desarrollo se da en el repositorio `admiral` donde se coordina el desarrollo de todo el conjunto
+como un solo proyecto.
+
+## Decisiones de arquitectura vigentes
+
+- Go para `admirald`, `admiral-fleet` y `admiralctl`.
+- Python/Flask para `admiral-flagship` y `admiral-harbor`.
+- Podman rootless para workloads.
+- systemd y Quadlet para persistencia de servicios.
+- PostgreSQL para estado y cola duradera.
+- RPM como formato de distribución (EL10 y Fedora Soportados).
+- VPN con WireGuard.
+
+## Principios
+
+1. Simplicidad.
+2. Comportamiento explícito.
+3. Seguridad por defecto.
+4. Auditabilidad.
+5. Operación predecible.
+6. Errores claros.
+7. Compatibilidad con Fedora y Enterprise Linux.
+
+## Qué debe recordar un agente
+
+- `admirald` no ejecuta contenedores remotos.
+- `admiral-fleet` no toma decisiones comerciales.
+- `admiralctl` no escribe directo en la base.
+- `admiral-flagship` es una UI delgada sobre la API.
+- `admiral-harbor` es portal de cliente y no administra ni conoce infraestructura.
 
 La etapa actual del proyecto es:
 
-- **Beta** (2026-06-17). Todos los componentes funcionales.
-- Single-node E2E validado. Multinodo validado teóricamente (playbooks Ansible).
-- Upgrade vía COPR RPM.
+- **Beta** (2026-06-23). Todos los componentes funcionales.
+- Single-node E2E validado.
+- Multi-node E2E validado (un nodo admin con admirald + harbor / N node workers).
+- RPM disponible en https://copr.fedorainfracloud.org/coprs/admiral-project/admiral/.
 - Storage quota notification por email (harbor worker async).
-- Pendiente para 1.0: failure testing, templates oficiales, E2E multi-nodo.
-
-Cada proyecto tiene su archivo AGENTS.md
+- Pendiente para 1.0: pago verificado con PayPal real.
 
 ## Project Context
-
-This repository is part of the Admiral platform.
-
-Admiral is a lightweight PaaS designed to help software agencies sell, deploy, operate, back up, pause, resume, resize, and deprovision SaaS applications using Linux containers.
 
 Admiral is intentionally simple. It is not Kubernetes, does not try to replace Kubernetes, and must avoid unnecessary orchestration complexity.
 
 The platform is built around existing Linux technologies:
 
 - Go for core services and CLI tools.
-- Podman for containers and pods.
+- Python for web apps.
+- Podman for rootless containers and pods.
 - systemd for service supervision.
 - PostgreSQL for persistent state.
-- Redis for cache when needed.
 - RPM packaging for Fedora and Enterprise Linux.
 - Fedora and Enterprise Linux compatible systems as the target runtime.
-
-The Go projects are:
-
-- `admirald`: core API and control plane.
-- `admiral-fleet`: worker agent installed on workload nodes.
-- `admiralctl`: official command-line interface.
 
 ## Product Principles
 
@@ -62,8 +79,8 @@ When contributing to this repository, prioritize:
 8. Compatibility with Fedora and Enterprise Linux.
 9. Integration with Podman and systemd instead of reinventing them.
 10. Billing-aware platform behavior without embedding payment-provider logic into low-level components.
+11. Secure by default.
 
-Do not introduce Kubernetes-style complexity unless there is a clear, documented product requirement.
 
 ## Distribution Support Tiers
 
@@ -72,14 +89,12 @@ Do not introduce Kubernetes-style complexity unless there is a clear, documented
 | **Tier 1** | EL10 (RHEL 10 / CentOS Stream 10) | Target primario. Mandatorio. |
 | **Tier 2** | Fedora (44, rawhide) | Development. Upstream para EL11. Soportado, no recomendado para producción. |
 | **Tier 3** | Amazon Linux 2023 | Best effort. **No instalable**: AL2023 no incluye Podman (solo Docker/containerd). Admiral requiere Podman para contenedores rootless. |
-| **Derivados** | Alma+epel 10, RHEL+epel 10 | Heredan de EL10. |
 
 Policy:
 - Bugs exclusivos de Tier 2 o Tier 3 tienen menor prioridad que los de Tier 1.
 - Los spec files y parches no deben sacrificar claridad en EL10 por compatibilidad con tiers inferiores.
-- Workarounds específicos de AL2023 (setup.cfg overrides, `!0%{?amzn}` guards, bindir condicional) se mantienen pero sin complejizar el código base innecesariamente.
-- Fedora sirve como campo de pruebas para EL11; no es recomendado como plataforma de producción.
-- Todos los RPM deben compilarse para ambas arquitecturas: **aarch64** y **x86_64**.
+- Fedora es upstream para desarrollo e integración continua.
+- Todos los RPM deben compilarse para **aarch64** y **x86_64**.
 
 ## Repository Role
 
@@ -139,9 +154,7 @@ When adding dependencies:
 - Avoid dependencies that require nonstandard runtime services.
 - Keep transitive dependency count low.
 
-Target Linux as the primary runtime.
-
-Do not add Windows-specific behavior unless it is related to local development convenience and does not affect production paths.
+Target Linux as the only runtime.
 
 ## Code Style
 
@@ -157,6 +170,7 @@ Recommended checks:
 
 go test ./...
 go vet ./...
+golangci-lint run ./...
 
 Use clear package names.
 
@@ -181,80 +195,51 @@ podman
 systemd
 backups
 
-Keep functions small and focused.
-
-Avoid clever abstractions before there are at least two real use cases.
-
-Error Handling
-
-Errors must be explicit and actionable.
-
-Prefer wrapping errors with context:
-
-return fmt.Errorf("create pod %q: %w", podName, err)
-
-Do not silently ignore errors.
-
-Do not log and return the same error unless there is a clear reason.
-
-CLI errors should be understandable to an operator.
-
-API errors should be structured and should not leak secrets or sensitive internal details.
-
-Worker errors should include enough context for troubleshooting task failures.
-
-Logging
-
-Use structured logging where practical.
-
-Logs should include relevant identifiers when available:
-
-request_id
-operation_id
-task_id
-node_id
-instance_id
-app_id
-customer_id, only where appropriate and not sensitive
-pod_name
-service_name
-
-Do not log secrets, tokens, passwords, private keys, payment credentials, or database credentials.
-
-Configuration
-
-Configuration should support:
-
-Config files.
-Environment variables.
-Reasonable defaults for local development.
-Explicit production configuration.
-
-Do not hardcode production paths, credentials, domains, node IDs, queue names, or database URLs.
-
-Configuration loading should fail clearly when required values are missing.
-
-Security Requirements
-
-Security is a core requirement.
-
-Do not introduce code that:
-
-Executes arbitrary shell commands from user input.
-Accepts unauthenticated task execution.
-Trusts remote input without validation.
-Logs secrets.
-Stores plaintext credentials unnecessarily.
-Bypasses authorization checks.
-Allows path traversal.
-Pulls arbitrary images without policy checks where image policy applies.
-Changes billing-sensitive state without auditability.
-
-Use least privilege where possible.
-
-Any component-to-component communication must be authenticated.
-
-Destructive operations must be explicit and auditable.
+- Keep functions small and focused.
+- Avoid clever abstractions before there are at least two real use cases.
+- Error Handling
+    - Errors must be explicit and actionable.
+    - Prefer wrapping errors with context:
+    - return fmt.Errorf("create pod %q: %w", podName, err)
+    - Do not silently ignore errors.
+    - Do not log and return the same error unless there is a clear reason.
+    - CLI errors should be understandable to an operator.
+    - API errors should be structured and should not leak secrets or sensitive internal details.
+    - Worker errors should include enough context for troubleshooting task failures.
+- Logging
+    - Use structured logging where practical.
+    - Logs should include relevant identifiers when available:
+        - request_id
+        - operation_id
+        - task_id
+        - node_id
+        - instance_id
+        - app_id
+        - customer_id, only where appropriate and not sensitive
+        - pod_name
+        - service_name
+    - Do not log secrets, tokens, passwords, private keys, payment credentials, or database credentials.
+- Configuration should support:
+    - Config files.
+    - Environment variables.
+    - Reasonable defaults for local development.
+    - Explicit production configuration.
+    - Do not hardcode production paths, credentials, domains, node IDs, queue names, or database URLs.
+    - Configuration loading should fail clearly when required values are missing.
+- Security is a core requirement.
+    - Do not introduce code that:
+        - Executes arbitrary shell commands from user input.
+        - Accepts unauthenticated task execution.
+        - Trusts remote input without validation.
+        - Logs secrets.
+        - Stores plaintext credentials unnecessarily.
+        - Bypasses authorization checks.
+        - Allows path traversal.
+        - Pulls arbitrary images without policy checks where image policy applies.
+        - Changes billing-sensitive state without auditability.
+- Use least privilege where possible.
+- Any component-to-component communication must be authenticated.
+- Destructive operations must be explicit and auditable.
 
 Database Rules
 
