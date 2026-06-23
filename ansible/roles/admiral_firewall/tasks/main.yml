@@ -32,6 +32,7 @@
   loop:
     - cockpit
     - dhcpv6-client
+    - mdns
 
 - name: Remove direct public Admiral ports from public zone
   command:

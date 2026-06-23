@@ -34,6 +34,7 @@ Relevant commits already included in the local build:
 36a0f83 fix(installer): preserve admin ingress on shared portal host
 aa84864 fix(installer): keep admin CA key on shared portal host
 4c408dc fix(packaging): move web dependencies to admirald
+7dbb356 fix(installer): limit caddy setup to admin nodes
 ```
 
 ## Admin host status
@@ -64,9 +65,33 @@ The rebuilt `admiral-common` RPM no longer requires `caddy` or `certbot`.
 Those dependencies were moved to `admirald`, because dedicated worker nodes do
 not need Caddy.
 
+Follow-up installer validation found that the shared common role still enabled
+the Caddy COPR repository and wrote `/etc/caddy/Caddyfile` on non-admin nodes.
+That was corrected so Caddy setup runs only for `single-node` and `admin-node`.
+
 On the Enterprise Linux worker nodes, the stale `caddy` and `certbot` packages
 were present only because an older `admiral-common` build had installed them.
 `rpm -q --whatrequires caddy certbot` reported no package requiring either one.
+The stale packages were removed from the Enterprise Linux worker nodes before
+continuing worker installation.
+
+## Worker install findings
+
+`worker-fedora` was the first node used to verify `scripts/install.sh
+--worker-node`. The run confirmed:
+
+```text
+Caddy COPR setup skipped
+Caddyfile deployment skipped
+ca-key.pem not copied during bootstrap
+ca-key.pem cleanup task executed on the spoke
+WireGuard UDP port 51820 allowed
+```
+
+The run then failed because Fedora exposes `mdns` by default in the public
+firewalld zone, while the worker policy expects only `ssh` plus direct
+`51820/udp`. The firewall role is being corrected to remove `mdns` from the
+public zone before asserting worker exposure.
 
 ## Pending validation
 
