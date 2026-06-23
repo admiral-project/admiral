@@ -230,6 +230,11 @@ if [[ "$ID" == "amzn" ]]; then
         sed -i '/name: Enable EPEL repository/,/state: present/ s/state: present$/state: present\n  when: false/' "$_admiral_tasks"
         # AL2023 ships postgresql16-server instead of postgresql-server; remap the package name.
         sed -i '/name: Install PostgreSQL server utilities/,/state: present/ s/postgresql-server/postgresql16-server/' "$_admiral_tasks"
+        # AL2023 enables mdns in the public zone by default; remove it alongside cockpit and dhcpv6-client.
+        _firewall_tasks="/usr/share/admiral/ansible/roles/admiral_firewall/tasks/main.yml"
+        if [[ -f "$_firewall_tasks" ]]; then
+            sed -i '/dhcpv6-client/ s/dhcpv6-client$/dhcpv6-client\n    - mdns/' "$_firewall_tasks"
+        fi
     fi
 fi
 
