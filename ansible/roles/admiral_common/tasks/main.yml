@@ -311,6 +311,38 @@
       {{ san }}
   when: admiral_install_mode in ['single-node', 'admin-node', 'portal-node']
 
+- name: Detect local admin packages for portal-node TLS cleanup
+  command:
+    cmd: rpm -q {{ item }}
+  register: admiral_common_admin_package_state
+  changed_when: false
+  failed_when: false
+  loop:
+    - caddy
+    - admirald
+  when: admiral_install_mode == 'portal-node'
+
+- name: Determine whether portal-node shares an admin host for TLS cleanup
+  set_fact:
+    admiral_portal_shares_admin_host: >-
+      {{
+        (
+          admiral_common_admin_package_state.results
+          | selectattr('item', 'equalto', 'caddy')
+          | map(attribute='rc')
+          | first
+          | default(1)
+        ) == 0 and
+        (
+          admiral_common_admin_package_state.results
+          | selectattr('item', 'equalto', 'admirald')
+          | map(attribute='rc')
+          | first
+          | default(1)
+        ) == 0
+      }}
+  when: admiral_install_mode == 'portal-node'
+
 - name: Generate self-signed CA certificate on hub nodes
   command:
     cmd: >
@@ -476,6 +508,7 @@
   when:
     - admiral_install_mode in ['worker-node', 'portal-node']
     - admiral_wireguard_role == 'spoke'
+    - not (admiral_portal_shares_admin_host | default(false) | bool)
 
 - name: Remove temporary portal-node signing files from controller
   file:
