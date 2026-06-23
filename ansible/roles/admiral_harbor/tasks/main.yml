@@ -81,7 +81,7 @@
       HARBOR_BOOTSTRAP_ADMIN_DISPLAY_NAME=Harbor Bootstrap Admin
       HARBOR_MAX_BACKUP_UPLOAD_BYTES=536870912
       HARBOR_ENCRYPTION_KEY={{ admiral_harbor_encryption_key_value }}
-      HARBOR_DATABASE_URL=postgresql://admiral:{{ admiral_postgres_password }}@127.0.0.1:5432/admiral_harbor?sslmode=disable
+      HARBOR_DATABASE_URL=postgresql://admiral:{{ admiral_postgres_password }}@127.0.0.1:5432/admiral_harbor?sslmode=require
       HARBOR_NODE_ID={{ harbor_node_id_effective }}
       ADMIRAL_API_URL={{ admiral_api_url_for_harbor | default('https://127.0.0.1:8080') }}
       HARBOR_PAYPAL_CLIENT_ID=
