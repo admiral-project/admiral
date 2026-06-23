@@ -65,6 +65,22 @@ When contributing to this repository, prioritize:
 
 Do not introduce Kubernetes-style complexity unless there is a clear, documented product requirement.
 
+## Distribution Support Tiers
+
+| Tier | Distribution | Role |
+|------|-------------|------|
+| **Tier 1** | EL10 (RHEL 10 / CentOS Stream 10) | Target primario. Mandatorio. |
+| **Tier 2** | Fedora (44, rawhide) | Development. Upstream para EL11. Soportado, no recomendado para producción. |
+| **Tier 3** | Amazon Linux 2023 | Best effort. |
+| **Derivados** | Alma+epel 10, RHEL+epel 10 | Heredan de EL10. |
+
+Policy:
+- Bugs exclusivos de Tier 2 o Tier 3 tienen menor prioridad que los de Tier 1.
+- Los spec files y parches no deben sacrificar claridad en EL10 por compatibilidad con tiers inferiores.
+- Workarounds específicos de AL2023 (setup.cfg overrides, `!0%{?amzn}` guards, bindir condicional) se mantienen pero sin complejizar el código base innecesariamente.
+- Fedora sirve como campo de pruebas para EL11; no es recomendado como plataforma de producción.
+- Todos los RPM deben compilarse para ambas arquitecturas: **aarch64** y **x86_64**.
+
 ## Repository Role
 
 Each Go repository has a clear product responsibility.
