@@ -5,7 +5,7 @@
 %global commit c49cad25008d09f391ccac6f0e8972baf341d37f
 
 Name:    admiralctl
-Version: 0.0.1beta8
+Version: 0.0.1beta9
 Release: 2%{?dist}
 Summary: Admiral Command-Line Interface
 
