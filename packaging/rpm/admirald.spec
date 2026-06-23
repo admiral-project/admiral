@@ -17,6 +17,7 @@ Source2: admirald.ini
 
 BuildRequires: golang >= 1.22
 BuildRequires: systemd
+BuildRequires: git
 
 Requires: admiral-common
 Requires: podman >= 5
