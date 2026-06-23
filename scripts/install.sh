@@ -213,6 +213,8 @@ if ! rpm -q admiral-common >/dev/null 2>&1; then
             info "Installing ansible.posix collection via ansible-galaxy..."
             ansible-galaxy collection install ansible.posix -p /usr/share/ansible/collections
         fi
+        info "Installing Caddy (required by admiral-common, bypassed due to --nodeps)..."
+        dnf install -y caddy
         info "Downloading admiral-common RPM..."
         dnf download --destdir /tmp/admiral-common admiral-common
         rpm -Uvh --nodeps /tmp/admiral-common/admiral-common-*.noarch.rpm
