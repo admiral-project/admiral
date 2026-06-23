@@ -564,3 +564,11 @@ Confirmed the algorithm `selectNodeForTier` in
 
 This is called from `HandleCustomerApps` (`handlers_instances.go:358`)
 when processing a provision request from Harbor/Flagship.
+
+## Validación pendiente para 1.0
+
+- **Procesar pagos reales con PayPal.** Actualmente Harbor opera en modo
+  `PAYPAL_MODE=mock`. La integración con PayPal sandbox y posteriormente
+  producción debe validarse con una transacción real antes de declarar 1.0.
+  Esto incluye: creación de orden, captura de pago, webhook de confirmación,
+  manejo de reembolsos y notificación al cliente por email.
