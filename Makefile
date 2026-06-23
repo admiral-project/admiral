@@ -76,27 +76,27 @@ source-admiral-harbor: | $(SOURCEDIR)
 		-o $(SOURCEDIR)/admiral-harbor-$(VERSION).tar.gz $(HARBOR_COMMIT)
 
 source-python-flask-sqlalchemy: | $(SOURCEDIR)
-	python3 -m pip download --only-binary=:all: --no-deps \
+	python3 -m pip download --no-binary :all: --no-deps \
 		-d $(SOURCEDIR) Flask-SQLAlchemy==$(FLASK_SQLALCHEMY_VERSION)
 
 source-python-alembic: | $(SOURCEDIR)
-	python3 -m pip download --only-binary=:all: --no-deps \
+	python3 -m pip download --no-binary :all: --no-deps \
 		-d $(SOURCEDIR) alembic==$(ALEMBIC_VERSION)
 
 source-python-typing-extensions: | $(SOURCEDIR)
-	python3 -m pip download --only-binary=:all: --no-deps \
+	python3 -m pip download --no-binary :all: --no-deps \
 		-d $(SOURCEDIR) typing_extensions==$(TYPING_EXTENSIONS_VERSION)
 
 source-python-flask-alembic: | $(SOURCEDIR)
-	python3 -m pip download --only-binary=:all: --no-deps \
+	python3 -m pip download --no-binary :all: --no-deps \
 		-d $(SOURCEDIR) Flask-Alembic==$(FLASK_ALEMBIC_VERSION)
 
 source-python-flask-login: | $(SOURCEDIR)
-	python3 -m pip download --only-binary=:all: --no-deps \
+	python3 -m pip download --no-binary :all: --no-deps \
 		-d $(SOURCEDIR) Flask-Login==$(FLASK_LOGIN_VERSION)
 
 source-python-mistune: | $(SOURCEDIR)
-	python3 -m pip download --only-binary=:all: --no-deps \
+	python3 -m pip download --no-binary :all: --no-deps \
 		-d $(SOURCEDIR) mistune==$(MISTUNE_VERSION)
 
 all-sources: source-superproject \
