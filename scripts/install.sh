@@ -204,19 +204,22 @@ if ! rpm -q ansible-core >/dev/null 2>&1; then
     dnf install -y ansible-core
 fi
 
-# On Amazon Linux, ansible-collection-ansible-posix is not available as RPM;
-# install it via ansible-galaxy before admiral-common.
-if [[ "$ID" == "amzn" ]]; then
-    if ! ansible-galaxy collection list 2>/dev/null | grep -q 'ansible.posix'; then
-        info "Installing ansible.posix collection via ansible-galaxy..."
-        ansible-galaxy collection install ansible.posix -p /usr/share/ansible/collections
-    fi
-fi
-
 # Install admiral-common first so its playbooks are on disk
 if ! rpm -q admiral-common >/dev/null 2>&1; then
-    info "Installing admiral-common..."
-    dnf install -y admiral-common
+    if [[ "$ID" == "amzn" ]]; then
+        # Amazon Linux lacks ansible-collection-ansible-posix RPM (Tier 3 workaround).
+        # Install via ansible-galaxy, then bypass the RPM dep with --nodeps.
+        if ! ansible-galaxy collection list 2>/dev/null | grep -q 'ansible.posix'; then
+            info "Installing ansible.posix collection via ansible-galaxy..."
+            ansible-galaxy collection install ansible.posix -p /usr/share/ansible/collections
+        fi
+        info "Downloading admiral-common RPM..."
+        dnf download --destdir /tmp/admiral-common admiral-common
+        rpm -Uvh --nodeps /tmp/admiral-common/admiral-common-*.noarch.rpm
+    else
+        info "Installing admiral-common..."
+        dnf install -y admiral-common
+    fi
 fi
 
 # --- 8. build extra-vars ---
