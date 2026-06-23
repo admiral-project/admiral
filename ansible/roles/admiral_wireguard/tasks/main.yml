@@ -155,16 +155,13 @@
     state: started
     daemon_reload: true
 
-- name: Assign WireGuard interface to trusted zone (hub only)
+- name: Assign WireGuard interface to trusted zone
   command:
     cmd: firewall-cmd --permanent --zone=trusted --change-interface=wg-admiral
   register: firewall_wg_trusted
   changed_when: "'success' in firewall_wg_trusted.stdout"
-  when: admiral_wireguard_role == 'hub'
 
 - name: Reload firewall to apply zone changes
   command:
     cmd: firewall-cmd --reload
-  when:
-    - admiral_wireguard_role == 'hub'
-    - firewall_wg_trusted.changed
+  when: firewall_wg_trusted.changed
