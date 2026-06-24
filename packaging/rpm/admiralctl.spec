@@ -6,7 +6,7 @@
 
 Name:    admiralctl
 Version: 0.0.1beta9
-Release: 2%{?dist}
+Release: 3%{?dist}
 Summary: Admiral Command-Line Interface
 
 License: Apache-2.0
@@ -58,6 +58,8 @@ go test ./... || echo "WARNING: tests skipped or failed in build sandbox"
 restorecon -F %{_bindir}/admiralctl 2>/dev/null || :
 
 %changelog
+* Wed Jun 24 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta9-3
+- Update source commit for SharedVolumes / DependsOn API types
 * Tue Jun 23 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta9-1
 - Bump to 0.0.1beta9, update source commit ref
 - Multi-node beta: sync man pages with CLI

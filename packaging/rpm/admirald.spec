@@ -6,7 +6,7 @@
 
 Name:    admirald
 Version: 0.0.1beta9
-Release: 2%{?dist}
+Release: 3%{?dist}
 Summary: Admiral Control Plane - Core API and orchestration service
 
 License: Apache-2.0
@@ -70,6 +70,8 @@ restorecon -F %{_bindir}/admirald 2>/dev/null || :
 %systemd_postun_with_restart admirald.service
 
 %changelog
+* Wed Jun 24 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta9-3
+- Update source commit to support shared volumes and depends_on
 * Tue Jun 23 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta9-1
 - Bump to 0.0.1beta9, update source commit ref
 - Multi-node beta: 4 OS distribution validation (Fedora 44, CentOS Stream 10,
