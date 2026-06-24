@@ -140,7 +140,8 @@
     content: |
       [Service]
       ExecStart=
-      ExecStart=/usr/bin/harbor-gunicorn --workers 2 --bind 0.0.0.0:5001 --certfile /etc/admiral/tls/admirald.pem --keyfile /etc/admiral/tls/admirald-key.pem run:app
+      ExecStart=/usr/bin/harbor-gunicorn --workers 2 --bind 0.0.0.0:5001 run:app
+      Environment=ENV=development
     mode: "0644"
   when: admiral_dev_mode | default(false) | bool
 
