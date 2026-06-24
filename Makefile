@@ -1,5 +1,6 @@
 SHELL := /bin/bash
 VERSION := 0.0.1beta9
+ADMIRALD_COMMIT := be42362e3082e5e524ed6075a702f406185f3b50
 HARBOR_COMMIT := f008d90a24365e454e269b6a55f115e49866d4d9
 RPMDIR := $(CURDIR)/packaging/build
 RPMTOPDIR := $(RPMDIR)
@@ -53,9 +54,11 @@ source-superproject: | $(SOURCEDIR)
 		-o $(SOURCEDIR)/admiral-$(VERSION).tar HEAD
 	for sm in admirald admiral-fleet admiralctl admiral-flagship admiral-harbor; do \
 		echo "  Adding $$sm..."; \
+		commit="HEAD"; \
+		if [ "$$sm" = "admirald" ]; then commit="$(ADMIRALD_COMMIT)"; fi; \
 		cd $$sm && git archive --format=tar \
 			--prefix=admiral-v$(VERSION)/$$sm/ \
-			-o $(SOURCEDIR)/$$sm-partial.tar HEAD && \
+			-o $(SOURCEDIR)/$$sm-partial.tar $$commit && \
 		cd $(CURDIR) && \
 		tar --concatenate --file=$(SOURCEDIR)/admiral-$(VERSION).tar \
 			$(SOURCEDIR)/$$sm-partial.tar && \
