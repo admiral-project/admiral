@@ -14,7 +14,6 @@ Campos soportados en la raiz del YAML:
 | `services` | map[string]YAMLService | si | Servicios contenedores de la app |
 | `tiers` | map[string]YAMLTier | si | Planes de precio y recursos disponibles |
 | `secrets` | map[string]YAMLSecret | no | Secretos globales de la aplicacion |
-| `private_registry` | YAMLRegistry | no | Credenciales globales para registro privado de contenedores; aplica a todos los servicios que no definan su propio `registry` |
 
 ```yaml
 name: simple-crm
@@ -173,28 +172,6 @@ rootless antes de iniciar el pod, almacenando las credenciales en el
 Se pueden usar registros con certificados autofirmados configurando
 `insecure = true` en `/etc/containers/registries.conf.toml` del nodo worker.
 
-### Registro privado global (`private_registry`)
-
-Cuando todas las imagenes de la aplicacion residen en el mismo registro
-privado, se puede definir un bloque `private_registry` a nivel raiz en
-lugar de repetir `registry` en cada servicio:
-
-```yaml
-private_registry:
-  server: registry.digitalocean.com
-  username: soluciones.bmo@gmail.com
-  password: dop_v1_...
-```
-
-Las credenciales globales aplican a todo servicio que **no** defina su
-propio bloque `registry`. Si un servicio tiene su propio `registry`,
-este tiene precedencia sobre `private_registry`.
-
-Durante el provisionamiento, `admiral-fleet` ejecuta `podman login`
-con las credenciales correspondientes antes de iniciar las unidades
-Quadlet. Una vez iniciadas (y las imagenes descargadas), ejecuta
-`podman logout` para limpiar las credenciales del almacen local.
-
 ## Secretos
 
 `env` es para valores no sensibles. `secrets` es para valores sensibles
@@ -240,89 +217,17 @@ compartir credenciales.
 
 ## Health checks (opcional)
 
-Cada servicio puede definir un healthcheck. Si no se define, el estado de
-salud default es `unknown` y no afecta el ciclo de vida.
+Aunque el contrato YAML permite definir `healthcheck` en los servicios, actualmente `admiral-fleet` utiliza un Health Checker simplificado basado únicamente en el estado del pod de Podman.
 
-```yaml
-services:
-  web:
-    image: wordpress:latest
-    public: true
-    port: 80
-    healthcheck:
-      type: http        # http | tcp | command
-      path: /
-      expected_status: 200
-      timeout_seconds: 5
-      interval_seconds: 30
-      failure_threshold: 3
-
-  db:
-    image: mariadb:latest
-    healthcheck:
-      type: tcp
-      port: 3306
-      timeout_seconds: 5
-      interval_seconds: 15
-```
-
-### Tipos soportados
-
-- `http`: peticion HTTP GET al `path` configurado. Saludable si el codigo de
-  respuesta coincide con `expected_status`.
-- `tcp`: intenta abrir conexion TCP al `port`. Saludable si el puerto acepta.
-- `command`: ejecuta el comando en el contenedor. Saludable si retorna 0.
-
-Ejemplo de healthcheck tipo `command`:
-
-```yaml
-services:
-  web:
-    image: my-app:latest
-    healthcheck:
-      type: command
-      command: ["/usr/local/bin/healthcheck.sh", "--endpoint", "/status"]
-      interval_seconds: 30
-      timeout_seconds: 5
-      failure_threshold: 3
-```
-
-### Campos del healthcheck
-
-| Campo | Tipo | Requerido | Descripcion |
-|-------|------|-----------|-------------|
-| `type` | string | si | `http`, `tcp` o `command` |
-| `port` | int | condicional | Puerto TCP (requerido si `type=tcp`) |
-| `path` | string | condicional | Ruta HTTP (requerido si `type=http`) |
-| `expected_status` | int | no | Codigo HTTP esperado (default `200`, solo si `type=http`) |
-| `command` | []string | condicional | Comando y argumentos en formato arreglo (requerido si `type=command`) |
-| `timeout_seconds` | int | no | Timeout por chequeo (default del sistema) |
-| `interval_seconds` | int | no | Intervalo entre chequeos (default del sistema) |
-| `failure_threshold` | int | no | Fallos consecutivos para marcar unhealthy (default del sistema) |
-
-### Reglas
-
-- `healthcheck` es opcional pero recomendado.
-- Si no existe, el estado de salud es `unknown`.
-- `healthcheck` no bloquea provisioning.
-- `healthcheck` NO remueve rutas automaticamente.
-- La ruta permanece activa mientras `status=active`, independientemente del
-  health.
-- Para servicios `public: true`, el health check HTTP del servicio se usa
-  tambien para evaluar la salud de la ruta publica. Si no existe un
-  `healthcheck.type=http`, la ruta publica se evalua sobre `/` esperando `200`.
+Reglas actuales:
+- Si el pod está `Running`, el estado es `healthy`.
+- En cualquier otro caso, el estado es `stopped`.
+- Los campos específicos de `http`, `tcp` o `command` definidos en el YAML son validados por `admirald` pero **ignorados** por el agente de ejecución en esta fase.
 
 ### Separacion de conceptos
 
-- `status` refleja el ciclo de vida (provisioning, running, stopped,
-  deprovisioned)
-- `health` refleja el estado de salud (healthy, unhealthy, unknown, starting,
-  stopped)
-
-Ambos son independientes. Es posible tener una instancia:
-- `status=active, health=healthy` — funcionando correctamente
-- `status=active, health=unhealthy` — activa pero con problemas
-- `status=stopped, health=stopped` — pausada intencionalmente
+- `status` refleja el ciclo de vida (provisioning, running, stopped, deprovisioned).
+- `health` refleja el estado de salud según el checker de `admiral-fleet`.
 
 ## Tiers
 
@@ -359,9 +264,9 @@ Campos de `tiers.<name>.backups`:
 |-------|------|-----------|-------------|
 | `enabled` | bool | si | Activa backups programados para este tier |
 | `schedule` | string | condicional | `disabled`, `daily` o `weekly` (validado solo si `enabled=true`) |
-| `weekday` | string | no | Dia de la semana si `schedule=weekly` (ej: `sunday`); no validado actualmente |
-| `time` | string | no | Hora del backup (formato `HH:MM`, 24h); no validado actualmente |
-| `timezone` | string | no | Zona horaria (ej: `UTC`, `America/Mexico_City`); no validado actualmente |
+| `weekday` | string | no | Reservado para uso futuro (no implementado) |
+| `time` | string | no | Reservado para uso futuro (no implementado) |
+| `timezone` | string | no | Reservado para uso futuro (no implementado) |
 | `retention.count` | int | condicional | Numero maximo de backups a conservar (validado si `enabled=true`) |
 | `retention.days` | int | condicional | Dias maximos de retencion (validado si `enabled=true`) |
 | `manual_backups` | bool | no | Permite backups manuales (default `false`) |
@@ -522,21 +427,14 @@ Reglas activas en `admirald/pkg/admiral/validation.go`:
 - cada secreto debe definir exactamente una fuente (`generate`, `value`)
 - `generate` debe ser `username`, `password`, `random` o `ssh_key`
 - si existe `backup`:
-  - `type` requerido (`database` o `volume`)
-  - `service` debe existir en servicios
+  - `type` requerido (`database`, `volume` o `none`)
   - si `type=database`: `engine` requerido (`postgresql`, `mysql`, `mariadb`)
-  - si `type=database`: `database_env`, `username_env`, `password_env`
-    requeridos y deben existir en el servicio indicado
+  - si `type=database`: `database_env`, `username_env`, `password_env` requeridos
   - si `type=volume`: el servicio debe declarar `volume`
-- `healthcheck`:
-  - `type` requerido: `http`, `tcp`, `command`
-  - `http`: `path` requerido
-  - `tcp`: `port` requerido
-  - `command`: `command` requerido
+- `healthcheck`: validación sintáctica de `type` (`http`, `tcp`, `command`) y sus campos asociados.
 - `environment` del tier: formato `^[A-Z_][A-Z0-9_]*$`, sin prefijo `ADMIRAL_`
 - `memory` y `storage`: formato numero + unidad (`k/kb/kib/m/mb/mib/g/gb/gib/t/tb/tib`)
 - `backup.schedule`: `disabled`, `daily` o `weekly`
-- `private_registry`: si se define, requiere `server`, `username` y `password`
 
 ## Notas
 

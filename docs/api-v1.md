@@ -98,7 +98,7 @@ Campos requeridos:
 - `hostname`
 - `ip`
 
-`os` y `podman_version` son opcionales, no se usan actualmente.
+`os` y `podman_version` son campos de metadatos opcionales.
 
 Respuesta:
 
@@ -141,6 +141,10 @@ Campos requeridos:
 ### `GET /api/v1/customer-apps/{instance_id}`
 
 Devuelve una instancia de cliente concreta.
+
+### `GET /api/v1/customer-apps/{instance_id}/credentials`
+
+Devuelve las credenciales expuestas de la instancia.
 
 ### `GET /api/v1/networking/certificate`
 
@@ -241,6 +245,7 @@ Acciones publicas soportadas hoy:
 - `backup`
 - `deprovision`
 - `reactivate`
+- `resize` (requiere campo `tier`)
 
 Respuesta `202 Accepted`:
 
@@ -253,11 +258,10 @@ Respuesta `202 Accepted`:
 
 ### `GET /api/v1/operations`
 
-Lista operaciones.
+Lista todas las operaciones.
 
-### `GET /api/v1/operations?id=op_123`
-
-Devuelve una operacion concreta.
+Soporta filtro por ID para obtener una operación concreta:
+`GET /api/v1/operations?id=op_123`
 
 ### `POST /api/v1/fleet/callback`
 
@@ -365,17 +369,7 @@ Devuelve una instancia concreta.
 
 ### `POST /api/v1/instances/{instance_id}/{action}`
 
-Encola una accion sobre una instancia existente.
-
-Acciones soportadas:
-- `pause`
-- `resume`
-- `start`
-- `stop`
-- `backup`
-- `deprovision`
-- `inspect`
-- `reactivate`
+Encola una accion sobre una instancia existente. Soporta las mismas acciones que `/api/v1/customer-apps/action`.
 
 ### `GET /api/v1/backups`
 
@@ -437,6 +431,21 @@ Invalida la sesion actual. Requiere `X-Admiral-Admin-Token` o `Authorization: Be
 
 Devuelve usuario autenticado.
 
+#### `POST /api/admin/auth/change-password`
+
+Cambia la contraseña del administrador actual.
+
+Request:
+
+```json
+{
+  "current_password": "old-password",
+  "new_password": "new-secure-password"
+}
+```
+
+Respuesta `200 OK`.
+
 ### Apps administrativas
 
 #### `GET /api/admin/apps`
@@ -481,6 +490,10 @@ Lista instancias.
 
 Devuelve una instancia.
 
+#### `GET /api/admin/instances/{instance_id}/inspect`
+
+Devuelve los datos de inspección (Quadlet/Podman) de la instancia si están disponibles.
+
 #### `POST /api/admin/instances/{instance_id}/{action}`
 
 Acciones soportadas hoy:
@@ -489,10 +502,11 @@ Acciones soportadas hoy:
 - `resume`
 - `start`
 - `stop`
-- `backup` (referencia a HandleTriggerBackup para bases de datos o volumenes)
+- `backup`
 - `deprovision`
-- `inspect` (crea operacion `inspect_app`)
+- `inspect` (inicia tarea de inspección en el nodo)
 - `reactivate`
+- `migrate` (requiere `target_node_id`)
 
 ### Backups administrativos
 
@@ -644,10 +658,6 @@ Respuesta:
 ]
 ```
 
-#### `GET /api/admin/users/{username}`
-
-Devuelve un usuario concreto.
-
 #### `POST /api/admin/users`
 
 Crea un nuevo usuario administrativo.
@@ -657,18 +667,9 @@ Request:
 ```json
 {
   "username": "operator",
-  "password": "secure-password",
-  "role": "support"
+  "password": "secure-password"
 }
 ```
-
-Roles disponibles:
-
-- `superadmin`
-- `admin`
-- `platform`
-- `support`
-- `audit`
 
 Requiere sesion administrativa con token compartido o token de admin existente (`X-Admiral-Token` o `X-Admiral-Admin-Token`).
 
@@ -677,7 +678,7 @@ Respuesta `201 Created`:
 ```json
 {
   "username": "operator",
-  "role": "support"
+  "role": "admin"
 }
 ```
 
@@ -690,20 +691,6 @@ Request:
 ```json
 {
   "new_password": "new-secure-password"
-}
-```
-
-Respuesta `200 OK`.
-
-#### `POST /api/admin/users/{username}/set-role`
-
-Cambia el rol de un usuario.
-
-Request:
-
-```json
-{
-  "role": "admin"
 }
 ```
 

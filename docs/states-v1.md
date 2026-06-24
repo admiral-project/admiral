@@ -4,58 +4,35 @@ Este documento distingue entre estados que el producto contempla y estados que e
 
 ## Customer apps
 
-### Estados comerciales observados hoy
+### Estados comerciales
 
 - `active`
 - `cancelled`
 
-El modelo de producto contempla otros estados, pero los handlers actuales no los emiten todavia.
+### Estados tecnicos
 
-### Estados tecnicos observados hoy
-
-- `pending_provision`
-- `running`
-- `stopped`
-- `backup_running`
-- `deprovisioning`
-- `deprovisioned`
-- `failed`
-- `restoring`
-
-Notas:
-
-- `pending_provision` se asigna al crear la instancia
-- `running` se asigna tras `provision_app`, `start_app`, `resume_app` y `restore_backup` exitosos
-- `stopped` se asigna tras `stop_app` y `pause_app`
-- `backup_running` se asigna al encolar backups
-- `restoring` se asigna al encolar restore
-- `provisioning` se asigna durante el provisionamiento
-- `paused` se asigna via `pause_app_storage` (por sobreconsumo de almacenamiento)
+- `pending_provision`: asignado al crear la instancia.
+- `running`: tras `provision_app`, `start_app`, `resume_app`, `reactivate_app` o `restore_backup` exitosos.
+- `stopped`: tras `stop_app` o `pause_app` exitosos.
+- `backup_running`: durante la ejecución de un backup.
+- `deprovisioning`: durante la eliminación de la instancia.
+- `deprovisioned`: tras `deprovision_app` exitoso.
+- `failed`: cuando una operación técnica falla (excepto backups).
+- `restoring`: durante la ejecución de un restore.
+- `paused_for_storage`: pausada automáticamente por sobreconsumo de almacenamiento.
 
 ## Operaciones
 
-Estados observados hoy:
-
-- `queued`
-- `running`
-- `succeeded`
-- `failed`
-
-No hay emision real de `cancelled` en los handlers actuales.
+- `queued`: operación en espera de ser procesada o despachada.
+- `running`: operación en ejecución.
+- `succeeded`: operación completada con éxito.
+- `failed`: operación fallida.
 
 ## Nodos
 
-Estados observados hoy:
-
-- `registered`
-- `active`
-
-Notas:
-
-- `registered` se usa en el primer `POST /api/v1/nodes`
-- `active` se asigna por update de nodo y por heartbeat
-
-Estados como `draining`, `inactive`, `unreachable` o `maintenance` no los emite hoy el codigo operativo.
+- `registered`: estado inicial tras el registro.
+- `active`: nodo reportando heartbeats y disponible para operaciones.
+- `offline`: nodo que ha superado el tiempo de espera de heartbeat.
 
 ## Rutas publicas
 
