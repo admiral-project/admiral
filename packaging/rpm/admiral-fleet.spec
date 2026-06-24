@@ -2,11 +2,11 @@
 # SPDX-License-Identifier: Apache-2.0
 
 %global debug_package %{nil}
-%global commit ea5baf6a5c140f69c8515473d066f8730dded43a
+%global commit e5fba5ad535fec88aced35a3b9bda2e601896ed3
 
 Name:    admiral-fleet
 Version: 0.0.1beta9
-Release: 3%{?dist}
+Release: 4%{?dist}
 Summary: Admiral Fleet Worker Agent
 
 License: Apache-2.0
@@ -71,6 +71,10 @@ restorecon -F %{_bindir}/admiral-fleet 2>/dev/null || :
 %systemd_postun_with_restart admiral-fleet.service
 
 %changelog
+* Wed Jun 24 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta9-4
+- Replace LoadCredentialEncrypted with Quadlet native Secret= directive
+- Secrets injected via Podman secret store (encrypted at rest)
+- Fix provisioning on systemd >=256 and credential delivery to containers
 * Wed Jun 24 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta9-3
 - Move LoadCredentialEncrypted from [Container] to [Service] section
 - Fix quadlet-generator rejection on systemd >=256
