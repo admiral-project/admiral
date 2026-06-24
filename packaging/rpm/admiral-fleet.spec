@@ -2,11 +2,11 @@
 # SPDX-License-Identifier: Apache-2.0
 
 %global debug_package %{nil}
-%global commit 8a042e180b94c78d6f1c64864c9c28a97e041bbe
+%global commit ea5baf6a5c140f69c8515473d066f8730dded43a
 
 Name:    admiral-fleet
 Version: 0.0.1beta9
-Release: 2%{?dist}
+Release: 3%{?dist}
 Summary: Admiral Fleet Worker Agent
 
 License: Apache-2.0
@@ -71,6 +71,9 @@ restorecon -F %{_bindir}/admiral-fleet 2>/dev/null || :
 %systemd_postun_with_restart admiral-fleet.service
 
 %changelog
+* Wed Jun 24 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta9-3
+- Move LoadCredentialEncrypted from [Container] to [Service] section
+- Fix quadlet-generator rejection on systemd >=256
 * Tue Jun 23 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta9-1
 - Bump to 0.0.1beta9, update source commit ref
 - Multi-node beta: 4 OS distribution validation
