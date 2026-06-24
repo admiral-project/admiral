@@ -12,6 +12,7 @@ Campos soportados en la raiz del YAML:
 | `display_name` | string | si | Nombre legible para mostrar en UI |
 | `description` | string | no | Descripcion de la aplicacion |
 | `services` | map[string]YAMLService | si | Servicios contenedores de la app |
+| `shared_volumes` | map[string]YAMLSharedVolume | no | Volumenes persistentes compartidos entre varios servicios |
 | `tiers` | map[string]YAMLTier | si | Planes de precio y recursos disponibles |
 | `secrets` | map[string]YAMLSecret | no | Secretos globales de la aplicacion |
 
@@ -99,6 +100,7 @@ Campos soportados por servicio:
 | `port` | int | no | Puerto interno del contenedor |
 | `public` | bool | no | Si el servicio es accesible via internet |
 | `volume` | string | no | Nombre del volumen persistente |
+| `depends_on` | []string | no | Dependencias de orden de arranque entre servicios |
 | `command` | string | no | Comando alternativo para el contenedor |
 | `env` | map[string]string | no | Variables de entorno estaticas |
 | `secrets` | map[string]YAMLSecret | no | Secretos generados o explicitos |
@@ -118,6 +120,14 @@ al host.
 
 **Solo un servicio puede ser publico por aplicacion.** Si se marcan varios,
 la validacion rechaza la definicion.
+
+### `port`
+
+`port` representa el puerto interno del contenedor dentro del pod.
+
+Todos los servicios que declaren `port` deben usar valores unicos dentro de la
+misma app. Admiral rechaza definiciones con conflictos como dos Redis usando
+`6379` en el mismo pod.
 
 ### `command`
 
@@ -141,6 +151,65 @@ No se requiere nombre de host ni alias de red para la comunicacion intra-pod.
 > **Nota para aplicaciones PHP**: El driver `mysqli` de PHP interpreta
 > `localhost` como conexion via Unix socket en lugar de TCP. Use `127.0.0.1`
 > como host de base de datos.
+
+### `depends_on`
+
+`depends_on` permite declarar orden de arranque entre servicios:
+
+```yaml
+services:
+  backend:
+    depends_on:
+      - db
+      - redis-cache
+```
+
+La implementacion actual traduce estas dependencias a `Wants=` y `After=` en
+las unidades Quadlet generadas por `admiral-fleet`. Eso significa:
+
+- systemd decide el orden de activacion
+- no se implementa un orquestador adicional en Fleet
+- `depends_on` expresa orden de arranque, no readiness real de aplicacion
+
+Si una app requiere esperar a que un servicio acepte conexiones, esa garantia
+no la da `depends_on` por si solo en esta version.
+
+## Shared Volumes
+
+`shared_volumes` permite montar el mismo volumen persistente en varios
+servicios de una app.
+
+```yaml
+shared_volumes:
+  sites:
+    mount: /home/frappe/frappe-bench/sites
+    services:
+      - backend
+      - scheduler
+      - worker-default
+```
+
+Campos:
+
+| Campo | Tipo | Requerido | Descripcion |
+|-------|------|-----------|-------------|
+| `mount` | string | si | Ruta absoluta donde se monta el volumen en cada servicio |
+| `services` | []string | si | Servicios que comparten el volumen |
+| `uid` | int | no | UID deseado para uso operativo futuro |
+| `gid` | int | no | GID deseado para uso operativo futuro |
+
+Reglas:
+
+- cada shared volume debe tener nombre unico dentro de la app
+- `mount` debe ser una ruta absoluta
+- `services` no puede estar vacio
+- todos los servicios listados deben existir en `services`
+- dos shared volumes no pueden usar el mismo `mount`
+- un servicio no puede tener conflicto entre su `volume` privado y un shared
+  volume en la misma ruta de montaje
+
+Fleet crea un solo volumen Podman por shared volume y lo monta en todos los
+contenedores declarados.
 
 ### Registro privado de contenedores
 
@@ -330,7 +399,8 @@ Reglas:
 
 - Cada servicio debe declarar `backup`.
 - `type: none` indica explicitamente que el servicio no requiere respaldo.
-- `type: volume` requiere que el servicio declare `volume`.
+- `type: volume` requiere que el servicio declare `volume` o participe en al
+  menos un `shared_volumes`.
 - `type: database` requiere `engine`, `database_env`, `username_env` y `password_env`.
 
 ### `type: database`
@@ -344,8 +414,11 @@ Respaldo logico via dump de base de datos. Admirald envia la accion
 
 ### `type: volume`
 
-Respaldo del volumen completo del servicio. Admirald envia la accion
-`backup_volumes` y fleet comprime el contenido del volumen en un tarball.
+Respaldo del contenido persistente del servicio. Admirald envia la accion
+`backup_volumes` y fleet comprime en un tarball:
+
+- el volumen privado del servicio si existe
+- los shared volumes asociados a ese servicio si existen
 
 Los backups de volumen tambien se activan independientemente via
 `tier.<name>.backups.backup_volumes: true`.
@@ -411,6 +484,9 @@ Los volumenes se montan en un directorio default segun la imagen o nombre:
 | servicio se llama `db` | `/var/lib/postgresql/data` |
 | cualquier otra | `/data` |
 
+Los `shared_volumes` no usan autodeteccion de mount target: la ruta se toma
+directamente de `shared_volumes.<name>.mount`.
+
 ## Validacion actual
 
 Reglas activas en `admirald/pkg/admiral/validation.go`:
@@ -419,8 +495,12 @@ Reglas activas en `admirald/pkg/admiral/validation.go`:
 - `display_name` requerido
 - al menos un servicio
 - cada servicio debe tener `image`
+- si un servicio declara `port > 0`, ese puerto debe ser unico dentro de la app
 - solo un servicio puede ser `public: true`
 - servicio publico requiere `port > 0`
+- `depends_on`: cada dependencia debe existir y no se permiten ciclos
+- `shared_volumes`: nombre valido, `mount` absoluto, servicios existentes,
+  lista no vacia y sin mounts duplicados
 - al menos un tier
 - cada tier debe tener `cpu > 0`, `memory`, `storage`, `price_monthly >= 0`
 - si `free: true`, `price_monthly` debe ser 0
@@ -430,7 +510,7 @@ Reglas activas en `admirald/pkg/admiral/validation.go`:
   - `type` requerido (`database`, `volume` o `none`)
   - si `type=database`: `engine` requerido (`postgresql`, `mysql`, `mariadb`)
   - si `type=database`: `database_env`, `username_env`, `password_env` requeridos
-  - si `type=volume`: el servicio debe declarar `volume`
+  - si `type=volume`: el servicio debe declarar `volume` o usar `shared_volumes`
 - `healthcheck`: validación sintáctica de `type` (`http`, `tcp`, `command`) y sus campos asociados.
 - `environment` del tier: formato `^[A-Z_][A-Z0-9_]*$`, sin prefijo `ADMIRAL_`
 - `memory` y `storage`: formato numero + unidad (`k/kb/kib/m/mb/mib/g/gb/gib/t/tb/tib`)
@@ -440,6 +520,8 @@ Reglas activas en `admirald/pkg/admiral/validation.go`:
 
 - Los servicios dentro de una misma app se ejecutan en un pod de Podman y se
   comunican via `localhost`.
+- El orden de arranque entre servicios lo resuelve systemd a partir de
+  `depends_on` traducido a Quadlet (`Wants=` y `After=`).
 - Cuando el tier define CPU o memoria, `admiral-fleet` aplica limites al pod
   completo con Quadlet/Podman.
 - Las variables de entorno que referencien otros servicios deben usar

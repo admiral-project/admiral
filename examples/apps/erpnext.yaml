@@ -1,0 +1,181 @@
+name: erpnext
+display_name: ERPNext 15
+description: |
+  ERPNext is a comprehensive, open-source Enterprise Resource Planning (ERP)
+  software based on the Frappe framework.
+
+  This example demonstrates a complex, multi-service deployment using
+  shared volumes, multiple Redis services, and systemd-managed startup order.
+
+shared_volumes:
+  sites:
+    mount: /home/frappe/frappe-bench/sites
+    services:
+      - backend
+      - websocket
+      - scheduler
+      - worker-default
+
+services:
+  frontend:
+    image: docker.io/frappe/erpnext:v15.10.0
+    port: 8080
+    public: true
+    command: nginx-entrypoint.sh
+    env:
+      BACKEND: 127.0.0.1:8000
+      SOCKETIO: 127.0.0.1:9000
+      FRAPPE_SITE_NAME_HEADER: 127.0.0.1
+      UPSTREAM_REAL_IP_ADDRESS: 127.0.0.1
+    backup:
+      type: none
+
+  backend:
+    image: docker.io/frappe/erpnext:v15.10.0
+    depends_on:
+      - db
+      - redis-cache
+      - redis-queue
+      - redis-socketio
+    env:
+      DB_HOST: 127.0.0.1
+      DB_PORT: "3306"
+      REDIS_CACHE: 127.0.0.1:6379
+      REDIS_QUEUE: 127.0.0.1:6380
+      REDIS_SOCKETIO: 127.0.0.1:6381
+    healthcheck:
+      type: tcp
+      port: 8000
+    backup:
+      type: volume
+
+  websocket:
+    image: docker.io/frappe/erpnext:v15.10.0
+    command: node /home/frappe/frappe-bench/apps/frappe/socketio.js
+    depends_on:
+      - db
+      - redis-cache
+      - redis-queue
+      - redis-socketio
+    env:
+      FRAPPE_REDIS_CACHE: redis://127.0.0.1:6379
+      FRAPPE_REDIS_QUEUE: redis://127.0.0.1:6380
+      FRAPPE_REDIS_SOCKETIO: redis://127.0.0.1:6381
+    backup:
+      type: none
+
+  db:
+    image: docker.io/library/mariadb:10.11
+    volume: erp_db
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --skip-character-set-client-handshake
+    env:
+      MARIADB_DATABASE: erpnext
+    secrets:
+      MARIADB_ROOT_PASSWORD:
+        generate: password
+      MARIADB_USER:
+        generate: username
+        expose: true
+      MARIADB_PASSWORD:
+        generate: password
+        expose: true
+    backup:
+      type: database
+      engine: mariadb
+      database_env: MARIADB_DATABASE
+      username_env: MARIADB_USER
+      password_env: MARIADB_PASSWORD
+
+  redis-cache:
+    image: docker.io/library/redis:7-alpine
+    port: 6379
+    command: redis-server --port 6379 --maxmemory 2gb
+    backup:
+      type: none
+
+  redis-queue:
+    image: docker.io/library/redis:7-alpine
+    port: 6380
+    command: redis-server --port 6380 --maxmemory 2gb
+    backup:
+      type: none
+
+  redis-socketio:
+    image: docker.io/library/redis:7-alpine
+    port: 6381
+    command: redis-server --port 6381 --maxmemory 512mb
+    backup:
+      type: none
+
+  scheduler:
+    image: docker.io/frappe/erpnext:v15.10.0
+    command: bench schedule
+    depends_on:
+      - db
+      - redis-cache
+      - redis-queue
+      - redis-socketio
+    env:
+      FRAPPE_REDIS_CACHE: redis://127.0.0.1:6379
+      FRAPPE_REDIS_QUEUE: redis://127.0.0.1:6380
+      FRAPPE_REDIS_SOCKETIO: redis://127.0.0.1:6381
+    backup:
+      type: none
+
+  worker-default:
+    image: docker.io/frappe/erpnext:v15.10.0
+    command: bench worker --queue default
+    depends_on:
+      - db
+      - redis-cache
+      - redis-queue
+      - redis-socketio
+    env:
+      FRAPPE_REDIS_CACHE: redis://127.0.0.1:6379
+      FRAPPE_REDIS_QUEUE: redis://127.0.0.1:6380
+      FRAPPE_REDIS_SOCKETIO: redis://127.0.0.1:6381
+    backup:
+      type: none
+
+tiers:
+  production-s:
+    cpu: 1
+    memory: 2G
+    storage: 10G
+    price_monthly: 20
+    backups:
+      enabled: true
+      schedule: daily
+      retention:
+        count: 7
+        days: 30
+      backup_database: true
+      backup_volumes: true
+
+  production-m:
+    cpu: 2
+    memory: 4G
+    storage: 20G
+    price_monthly: 40
+    backups:
+      enabled: true
+      schedule: daily
+      retention:
+        count: 7
+        days: 30
+      backup_database: true
+      backup_volumes: true
+
+  production-l:
+    cpu: 4
+    memory: 8G
+    storage: 50G
+    price_monthly: 80
+    backups:
+      enabled: true
+      schedule: daily
+      retention:
+        count: 14
+        days: 60
+      backup_database: true
+      backup_volumes: true
