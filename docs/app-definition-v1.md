@@ -102,6 +102,7 @@ Campos soportados por servicio:
 | `volume` | string | no | Nombre del volumen persistente |
 | `depends_on` | []string | no | Dependencias de orden de arranque entre servicios |
 | `command` | string | no | Comando alternativo para el contenedor |
+| `setup_command` | string | no | Comando de inicializacion ejecutado una sola vez tras el provision |
 | `env` | map[string]string | no | Variables de entorno estaticas |
 | `secrets` | map[string]YAMLSecret | no | Secretos generados o explicitos |
 | `healthcheck` | YAMLHealthCheck | no | Healthcheck del servicio |
@@ -139,6 +140,44 @@ default de la imagen. Se pasa directamente a la unidad Quadlet como
 (por ejemplo, `server /data --console-address :9001` para MinIO), debe
 declararse explicitamente en `command`. Admiral no infiere comandos;
 la definicion debe ser explicita.
+
+### `setup_command`
+
+`setup_command` declara un comando de inicializacion que se ejecuta una
+sola vez, despues de que todos los servicios estan corriendo, durante
+el provisionamiento. El comando se ejecuta con `sh -c` dentro del
+contenedor del servicio, por lo que puede usar expansion de variables
+(`$VAR`), redireccion y comillas.
+
+```yaml
+services:
+  backend:
+    image: frappe/erpnext:v15
+    setup_command: bench new-site site.local --mariadb-root-password $MARIADB_ROOT_PASSWORD --install-app erpnext
+```
+
+**Cuando una app define `setup_command` en algun servicio:**
+
+- La instancia pasa por el estado tecnico `initializing` (en lugar de
+  ir directamente a `running`) para informar al usuario que la
+  inicializacion esta en curso.
+- `admiral-fleet` ejecuta cada `setup_command` con un timeout de 10
+  minutos.
+- Si **todos** los `setup_command` terminan con exito, la instancia pasa
+  a `running` y se marca `setup_completed = true` en la base de datos.
+- Si **algun** `setup_command` falla, la tarea completa reporta
+  `Success = false` con metadatos `setup_failed = true`. Admirald marca
+  la instancia como `setup_failed` y `commercial_status = cancelled`.
+  Harbor, al sincronizar este estado, cancela la suscripcion de PayPal
+  y reembolsa el ultimo pago al cliente.
+
+**Idempotencia:** `setup_command` solo se ejecuta si y solo si la
+columna `setup_completed` en la base de datos de admirald es `false`.
+Ademas, `admiral-fleet` escribe un archivo marker local (`setup_done`)
+para evitar re-ejecutar el setup si el callback se pierde y hay un
+retry en el mismo nodo. La base de datos sigue siendo la fuente de
+verdad; si `setup_completed` es `true`, fleet omite el setup incluso si
+el marker no existe (por ejemplo, una migracion cross-node).
 
 ### Modelo de red: Pod
 

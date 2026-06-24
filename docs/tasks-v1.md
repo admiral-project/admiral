@@ -50,6 +50,7 @@ Ver `docs/app-definition-v1.md` para formato aceptado y `docs/configuration-v1.m
       "port": 8080,
       "volume": "web_data",
       "command": "/usr/bin/myapp --serve",
+      "setup_command": "init-db --apply-migrations",
       "env": {
         "DATABASE_HOST": "db"
       },
@@ -63,6 +64,7 @@ Ver `docs/app-definition-v1.md` para formato aceptado y `docs/configuration-v1.m
       }
     }
   ],
+  "setup_completed": false,
   "backup": {
     "type": "database",
     "engine": "postgresql",
@@ -104,6 +106,7 @@ Cada item de `services` incluye:
 | `port` | int | Puerto interno del contenedor |
 | `volume` | string | Nombre del volumen persistente (opcional) |
 | `command` | string | Comando alternativo al entrypoint (opcional) |
+| `setup_command` | string | Comando de inicializacion ejecutado una sola vez post-provision (opcional) |
 | `env` | map | Variables de entorno materializadas |
 | `secrets` | map | Secretos desencriptados |
 | `registry` | RegistryConfig | Credenciales para registro privado (opcional) |
@@ -264,8 +267,12 @@ Campos opcionales:
 
 Ejemplos reales:
 
-- provision:
+- provision (sin setup_command):
   - `{"executor":"systemd-podman","action":"provision_app","host_ports":{"web":40000}}`
+- provision (con setup_command correcto):
+  - `{"executor":"systemd-podman","action":"provision_app","host_ports":{"web":40000},"has_setup":true}`
+- provision (setup_command fallido):
+  - `{"executor":"systemd-podman","action":"provision_app","host_ports":{"web":40000},"has_setup":true,"setup_failed":true,"setup_error":"bench new-site failed: ..."}`
 - backup database:
   - `{"executor":"systemd-podman","backup":{...}}`
 - delete backup:
@@ -276,7 +283,38 @@ Ejemplos reales:
 `metadata` sigue siendo opaco para el contrato, pero `admirald` ya parsea algunos campos concretos:
 
 - `host_ports` tras `provision_app`
+- `has_setup` y `setup_failed` + `setup_error` tras `provision_app`
 - `backup.*` tras backups
+
+### Idempotencia de setup_command
+
+`FleetTask.setup_completed` (booleano, default false) es la fuente de
+verdad para que fleet omita el setup en retries. Admirald lo popula
+desde la columna `customer_apps.setup_completed` en la base de datos.
+Si es `true`, `admiral-fleet` nunca ejecuta `setup_command` aunque el
+pod ya exista o el worker sea reiniciado.
+
+Ademas, `admiral-fleet` escribe un archivo marker local
+(`<data_dir>/instances/<id>/setup_done`) tras una ejecucion exitosa de
+setup. Esto protege contra el escenario de "callback perdido":
+admirald nunca recibio el callback de exito, re-despacha la tarea con
+`setup_completed=false`, y el worker no puede distinguir si ya corrio
+el setup. El marker previene la re-ejecucion en el mismo nodo. La DB
+sigue ganando: si `setup_completed=true` el worker omite el setup
+incluso si el marker no existe (caso de migracion cross-node).
+
+### Comportamiento del callback en setup_command fallido
+
+Cuando un `setup_command` falla, la tarea reporta `success = false` con
+metadatos `setup_failed = true`. Admirald distingue provision fallido
+de setup fallido usando este flag:
+
+- provision fallido (sin `setup_failed`): la instancia pasa a `failed`,
+  `commercial_status` se mantiene.
+- setup fallido (`setup_failed = true`): la instancia pasa a
+  `setup_failed` y `commercial_status = cancelled`. Harbor, al
+  sincronizar, cancela la suscripcion de PayPal y reembolsa el ultimo
+  pago del cliente. Se considera estado irrecuperable.
 
 ## Reglas del worker
 

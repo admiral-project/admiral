@@ -12,14 +12,29 @@ Este documento distingue entre estados que el producto contempla y estados que e
 ### Estados tecnicos
 
 - `pending_provision`: asignado al crear la instancia.
-- `running`: tras `provision_app`, `start_app`, `resume_app`, `reactivate_app` o `restore_backup` exitosos.
+- `initializing`: asignado al despachar `provision_app` cuando la app
+  define `setup_command` en algun servicio. Indica al usuario que la
+  inicializacion post-provision esta en curso.
+- `running`: tras `provision_app`, `start_app`, `resume_app`,
+  `reactivate_app` o `restore_backup` exitosos. Si la app tenia
+  `setup_command`, tambien requiere `setup_completed = true`.
 - `stopped`: tras `stop_app` o `pause_app` exitosos.
 - `backup_running`: durante la ejecución de un backup.
 - `deprovisioning`: durante la eliminación de la instancia.
 - `deprovisioned`: tras `deprovision_app` exitoso.
-- `failed`: cuando una operación técnica falla (excepto backups).
+- `setup_failed`: cuando una `setup_command` falla durante el
+  provision. La instancia se considera irrecuperable: la suscripcion se
+  cancela y se reembolsa el ultimo pago al cliente.
+- `failed`: cuando una operación técnica falla (excepto backups y
+  setup_command).
 - `restoring`: durante la ejecución de un restore.
 - `paused_for_storage`: pausada automáticamente por sobreconsumo de almacenamiento.
+
+Campo relacionado:
+
+- `setup_completed` (booleano, default `false`): `true` despues de que
+  `setup_command` termina con exito. La fuente de verdad para que fleet
+  omita re-ejecutar el setup en retries.
 
 ## Operaciones
 
@@ -84,6 +99,10 @@ Campos relacionados en la instancia:
 - el callback de fleet decide la transicion final de la operacion
 - si una tarea falla, la operacion pasa a `failed` y la instancia pasa a `failed`
 - `deprovision_app` exitoso mueve la instancia a `cancelled` / `deprovisioned`
+- `setup_command` fallido mueve la instancia a `setup_failed` /
+  `cancelled`, libera capacidad del nodo, falla las rutas publicas, y
+  Harbor worker cancela la suscripcion de PayPal y reembolsa el ultimo
+  pago
 - `pause_app_storage` mueve la instancia a `stopped` por sobreconsumo de almacenamiento
 - `reactivate_app` reanuda una instancia pausada por storage
 - las rutas publicas de una instancia provisionada pasan de `pending` a `active` cuando fleet reporta `host_ports` y `admirald` activa el target real
