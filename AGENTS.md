@@ -87,7 +87,7 @@ When contributing to this repository, prioritize:
 | Tier | Distribution | Role |
 |------|-------------|------|
 | **Tier 1** | EL10 (RHEL 10 / CentOS Stream 10) | Target primario. Mandatorio. |
-| **Tier 2** | Fedora (44, rawhide) | Development. Upstream para EL11. Soportado, no recomendado para producción. |
+| **Tier 2** | Fedora (44, rawhide) | Development (`--dev-node`). Upstream para EL11. Soportado solo para `--dev-node`. Python 3.14 + OpenSSL 3.4 aplica validación estricta de key usage en CAs autofirmadas, lo que exige `ADMIRAL_INSECURE_SKIP_VERIFY=1`. No recomendado para `--single-node` producción. |
 | **Tier 3** | Amazon Linux 2023 | Best effort. **No instalable**: AL2023 no incluye Podman (solo Docker/containerd). Admiral requiere Podman para contenedores rootless. |
 
 Policy:
