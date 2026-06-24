@@ -80,9 +80,9 @@
   file:
     path: "{{ item }}"
     state: directory
-    mode: "0755"
+    mode: "0750"
     owner: root
-    group: root
+    group: admiral
   loop:
     - /etc/admiral
     - /etc/admiral/tls
