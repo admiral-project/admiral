@@ -153,7 +153,7 @@ contenedor del servicio, por lo que puede usar expansion de variables
 services:
   backend:
     image: frappe/erpnext:v15
-    setup_command: bench new-site site.local --mariadb-root-password $MARIADB_ROOT_PASSWORD --install-app erpnext
+    setup_command: bench new-site site.local --db-root-password $MARIADB_ROOT_PASSWORD --install-app erpnext
 ```
 
 **Cuando una app define `setup_command` en algun servicio:**

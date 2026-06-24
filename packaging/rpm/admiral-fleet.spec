@@ -2,11 +2,11 @@
 # SPDX-License-Identifier: Apache-2.0
 
 %global debug_package %{nil}
-%global commit e5fba5ad535fec88aced35a3b9bda2e601896ed3
+%global commit de95eeed1d70e20e1b34387a1a6e93bf92622661
 
 Name:    admiral-fleet
-Version: 0.0.1beta9
-Release: 4%{?dist}
+Version: 0.0.1beta10
+Release: 1%{?dist}
 Summary: Admiral Fleet Worker Agent
 
 License: Apache-2.0
@@ -71,6 +71,8 @@ restorecon -F %{_bindir}/admiral-fleet 2>/dev/null || :
 %systemd_postun_with_restart admiral-fleet.service
 
 %changelog
+* Wed Jun 24 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta10-1
+- Coordinate beta10 release for setup_command catalog validation
 * Wed Jun 24 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta9-4
 - Replace LoadCredentialEncrypted with Quadlet native Secret= directive
 - Secrets injected via Podman secret store (encrypted at rest)

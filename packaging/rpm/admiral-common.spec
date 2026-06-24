@@ -4,8 +4,8 @@
 %global commit ea5baf6a5c140f69c8515473d066f8730dded43a
 
 Name:    admiral-common
-Version: 0.0.1beta9
-Release: 2%{?dist}
+Version: 0.0.1beta10
+Release: 1%{?dist}
 Summary: Common files and utilities for Admiral PaaS
 
 License: Apache-2.0
@@ -147,6 +147,8 @@ if [ $1 -eq 0 ]; then
 fi
 
 %changelog
+* Wed Jun 24 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta10-1
+- Prepare beta10 coordinated release for setup_command validation cycle
 * Tue Jun 23 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta9-1
 - Bump to 0.0.1beta9, update source commit ref
 - Multi-node beta: 4 OS distribution validation

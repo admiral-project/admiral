@@ -2,11 +2,11 @@
 # SPDX-License-Identifier: Apache-2.0
 
 %global debug_package %{nil}
-%global commit 0ad3bd7bd1f5705b05b297c66120cdea692ac08d
+%global commit b47d3ffe66fd26c81762c6f42c97fea7f8dc1ab6
 
 Name:    admiral-flagship
-Version: 0.0.1beta9
-Release: 2%{?dist}
+Version: 0.0.1beta10
+Release: 1%{?dist}
 Summary: Admiral Administrative Web Console
 
 License: Apache-2.0
@@ -75,6 +75,8 @@ restorecon -R %{_prefix}/lib/admiral/flagship 2>/dev/null || :
 %{python3} -m pytest tests/ -x --tb=short 2>/dev/null || echo "WARNING: tests skipped (pytest not available)"
 
 %changelog
+* Wed Jun 24 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta10-1
+- Surface initializing and setup_failed states in dashboard summaries and labels
 * Tue Jun 23 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta9-1
 - Bump to 0.0.1beta9, update source commit ref
 - Multi-node beta: show instance hostname in detail view

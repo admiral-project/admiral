@@ -2,11 +2,11 @@
 # SPDX-License-Identifier: Apache-2.0
 
 %global debug_package %{nil}
-%global commit e5fba5ad535fec88aced35a3b9bda2e601896ed3
+%global commit 1210218f5285ad5b56af3aff8ad674a21be2371f
 
 Name:    admiralctl
-Version: 0.0.1beta9
-Release: 3%{?dist}
+Version: 0.0.1beta10
+Release: 1%{?dist}
 Summary: Admiral Command-Line Interface
 
 License: Apache-2.0
@@ -58,6 +58,8 @@ go test ./... || echo "WARNING: tests skipped or failed in build sandbox"
 restorecon -F %{_bindir}/admiralctl 2>/dev/null || :
 
 %changelog
+* Wed Jun 24 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta10-1
+- Coordinate beta10 release for setup_command catalog validation
 * Wed Jun 24 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta9-3
 - Update source commit for SharedVolumes / DependsOn API types
 * Tue Jun 23 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta9-1

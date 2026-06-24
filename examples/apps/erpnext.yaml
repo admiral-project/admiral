@@ -32,6 +32,7 @@ services:
 
   backend:
     image: docker.io/frappe/erpnext:v15.10.0
+    setup_command: bench new-site site.local --db-root-password $MARIADB_ROOT_PASSWORD --install-app erpnext
     depends_on:
       - db
       - redis-cache
@@ -43,6 +44,9 @@ services:
       REDIS_CACHE: 127.0.0.1:6379
       REDIS_QUEUE: 127.0.0.1:6380
       REDIS_SOCKETIO: 127.0.0.1:6381
+    secrets:
+      MARIADB_ROOT_PASSWORD:
+        generate: password
     healthcheck:
       type: tcp
       port: 8000
