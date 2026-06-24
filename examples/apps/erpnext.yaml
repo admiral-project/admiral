@@ -138,6 +138,13 @@ services:
       type: none
 
 tiers:
+  dev:
+    cpu: 0.5
+    memory: 256M
+    storage: 1G
+    price_monthly: 0
+    free: true
+
   production-s:
     cpu: 1
     memory: 2G
