@@ -76,6 +76,17 @@
   when: not admiral_secrets_file.stat.exists
   no_log: true
 
+- name: Ensure Admiral configuration and TLS directories exist
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: "0755"
+    owner: root
+    group: root
+  loop:
+    - /etc/admiral
+    - /etc/admiral/tls
+
 - name: Extract existing Admiral secrets
   set_fact:
     admiral_existing_postgres_password: "{{ admiral_secrets_text | regex_findall('(?m)^ADMIRAL_POSTGRES_PASSWORD=(.*)$') | first | default('') }}"
@@ -552,6 +563,27 @@
     group: root
   when:
     - admiral_wireguard_role == 'hub'
+
+- name: Ensure admirald.pem exists for dev mode
+  command:
+    cmd: >
+      openssl req -x509 -nodes -days 365 -newkey rsa:2048
+      -keyout /etc/admiral/tls/admirald-key.pem
+      -out /etc/admiral/tls/admirald.pem
+      -subj "/CN=localhost"
+    creates: /etc/admiral/tls/admirald.pem
+  when: admiral_dev_mode | default(false) | bool
+
+- name: Set permissions on dev mode certificates
+  file:
+    path: "{{ item }}"
+    mode: "0640"
+    owner: root
+    group: admiral
+  loop:
+    - /etc/admiral/tls/admirald.pem
+    - /etc/admiral/tls/admirald-key.pem
+  when: admiral_dev_mode | default(false) | bool
 
 - name: Ensure PostgreSQL runtime directory exists
   file:

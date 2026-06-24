@@ -17,7 +17,7 @@
     content: |
       [Socket]
       ListenStream=
-      ListenStream=127.0.0.1:9090
+      ListenStream={{ '0.0.0.0:9090' if (admiral_dev_mode | default(false) | bool) else '127.0.0.1:9090' }}
 
 - name: Ensure cockpit configuration directory exists
   file:

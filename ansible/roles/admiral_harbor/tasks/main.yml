@@ -127,10 +127,28 @@
   no_log: true
   when: not harbor_smtp_env.stat.exists
 
+- name: Ensure admiral-harbor systemd override directory exists
+  file:
+    path: /etc/systemd/system/admiral-harbor.service.d
+    state: directory
+    mode: "0755"
+  when: admiral_dev_mode | default(false) | bool
+
+- name: Relax admiral-harbor binding in dev mode
+  copy:
+    dest: /etc/systemd/system/admiral-harbor.service.d/override.conf
+    content: |
+      [Service]
+      ExecStart=
+      ExecStart=/usr/bin/harbor-gunicorn --workers 2 --bind 0.0.0.0:5001 --certfile /etc/admiral/tls/admirald.pem --keyfile /etc/admiral/tls/admirald-key.pem run:app
+    mode: "0644"
+  when: admiral_dev_mode | default(false) | bool
+
 - name: Remove legacy admiral-harbor systemd override
   file:
     path: /etc/systemd/system/admiral-harbor.service.d
     state: absent
+  when: not (admiral_dev_mode | default(false) | bool)
 
 - name: Enable and start admiral-harbor
   systemd:

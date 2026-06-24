@@ -12,12 +12,14 @@ usage() {
     cat <<'EOF'
 Usage:
   admiral_install --single-node [--public-ip <public-ip>]
+  admiral_install --dev-node [--public-ip <public-ip>]
   admiral_install --admin-node --public-ip <public-ip>
   admiral_install --worker-node --public-ip <public-ip>
   admiral_install --portal-node --public-ip <public-ip>
 
 Options:
   --single-node       Install all single-node components on one host.
+  --dev-node          Evaluation mode: single-node with relaxed firewall/bindings.
   --admin-node        Install control plane components only.
   --worker-node       Install worker components only.
   --portal-node       Install portal components only.
@@ -35,6 +37,7 @@ EOF
 }
 
 INSTALL_MODE=""
+INSTALL_DEV_MODE="false"
 INSTALL_NODE_ID=""
 INSTALL_PUBLIC_IP=""
 INSTALL_ADMIN_ENDPOINT=""
@@ -46,6 +49,16 @@ while [[ $# -gt 0 ]]; do
         --single-node)
             [[ -z "$INSTALL_MODE" ]] || die "Only one installation mode may be selected."
             INSTALL_MODE="single-node"
+            ;;
+        --dev-node)
+            [[ -z "$INSTALL_MODE" ]] || die "Only one installation mode may be selected."
+            INSTALL_MODE="single-node"
+            INSTALL_DEV_MODE="true"
+            warn "----------------------------------------------------------------"
+            warn "WARNING: --dev-node is INSECURE."
+            warn "It exposes WSGI servers (Harbor and Flagship) directly to the internet."
+            warn "ONLY use for development/evaluation."
+            warn "----------------------------------------------------------------"
             ;;
         --admin-node)
             [[ -z "$INSTALL_MODE" ]] || die "Only one installation mode may be selected."
@@ -90,7 +103,7 @@ while [[ $# -gt 0 ]]; do
     shift
 done
 
-[[ -n "$INSTALL_MODE" ]] || die "An installation mode is required. Use --single-node, --admin-node, --worker-node or --portal-node."
+[[ -n "$INSTALL_MODE" ]] || die "An installation mode is required. Use --single-node, --dev-node, --admin-node, --worker-node or --portal-node."
 if [[ "$INSTALL_MODE" == "single-node" || "$INSTALL_MODE" == "admin-node" ]]; then
     if [[ -z "$INSTALL_PUBLIC_IP" ]]; then
         INSTALL_PUBLIC_IP="127.0.0.1"
@@ -210,6 +223,9 @@ fi
 
 # --- 8. build extra-vars ---
 EXTRA_VARS="admiral_install_mode=$INSTALL_MODE"
+if [[ "$INSTALL_DEV_MODE" == "true" ]]; then
+    EXTRA_VARS="$EXTRA_VARS admiral_dev_mode=true"
+fi
 if [[ -n "$INSTALL_NODE_ID" ]]; then
     EXTRA_VARS="$EXTRA_VARS fleet_node_id=$INSTALL_NODE_ID"
 fi
@@ -351,6 +367,22 @@ Admiral installation completed.
 
 Installation mode:
   $INSTALL_MODE
+EOF
+
+if [[ "$INSTALL_DEV_MODE" == "true" ]]; then
+    cat <<EOF
+
+***** SECURITY WARNING *****
+This node was installed in --dev-node mode.
+WSGI servers (Harbor and Flagship) are exposed directly to the internet
+on ports 5001 and 5000. Cockpit is exposed on port 9090.
+Local self-signed certificates are used to protect the network.
+This configuration is NOT recommended for production use.
+***** SECURITY WARNING *****
+EOF
+fi
+
+cat <<EOF
 
 Bootstrap credentials and signing keys are stored at:
   /etc/admiral/secrets
