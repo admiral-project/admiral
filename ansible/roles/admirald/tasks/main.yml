@@ -43,6 +43,15 @@
     group: admiral
   no_log: true
 
+- name: Set ADMIRAL_ENV=development in dev mode
+  copy:
+    dest: /etc/systemd/system/admirald.service.d/dev-mode.conf
+    content: |
+      [Service]
+      Environment=ADMIRAL_ENV=development
+    mode: "0644"
+  when: admiral_dev_mode | default(false) | bool
+
 - name: Enable and start admirald
   systemd:
     name: admirald
