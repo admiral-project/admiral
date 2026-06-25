@@ -1,11 +1,11 @@
 name: erpnext
 display_name: ERPNext 15
 description: |
-  ERPNext is a comprehensive, open-source Enterprise Resource Planning (ERP)
-  software based on the Frappe framework.
+  Stress app for the Admiral app-definition contract.
 
-  This example demonstrates a complex, multi-service deployment using
-  shared volumes, multiple Redis services, and systemd-managed startup order.
+  This definition exercises multi-service topology, shared volumes,
+  one-time setup, dependency readiness, exposed secrets, and customer
+  notices after setup.
 
 shared_volumes:
   sites:
@@ -32,7 +32,10 @@ services:
 
   backend:
     image: docker.io/frappe/erpnext:v15.10.0
-    setup_command: bench new-site site.local --db-root-password $MARIADB_ROOT_PASSWORD --install-app erpnext
+    setup_command: bench new-site site.local --db-root-password $MARIADB_ROOT_PASSWORD --admin-password $ERP_ADMIN_PASSWORD --install-app erpnext
+    notify_on_setup:
+      - label: Usuario administrador
+        value: Administrator
     depends_on:
       - db
       - redis-cache
@@ -47,6 +50,9 @@ services:
     secrets:
       MARIADB_ROOT_PASSWORD:
         generate: password
+      ERP_ADMIN_PASSWORD:
+        generate: password
+        expose: true
     healthcheck:
       type: tcp
       port: 8000
@@ -83,6 +89,12 @@ services:
       MARIADB_PASSWORD:
         generate: password
         expose: true
+    healthcheck:
+      type: command
+      command:
+        - sh
+        - -c
+        - mariadb-admin ping -h 127.0.0.1 -uroot -p"$MARIADB_ROOT_PASSWORD" --silent
     backup:
       type: database
       engine: mariadb
@@ -94,6 +106,9 @@ services:
     image: docker.io/library/redis:7-alpine
     port: 6379
     command: redis-server --port 6379 --maxmemory 2gb
+    healthcheck:
+      type: command
+      command: ["redis-cli", "-p", "6379", "ping"]
     backup:
       type: none
 
@@ -101,6 +116,9 @@ services:
     image: docker.io/library/redis:7-alpine
     port: 6380
     command: redis-server --port 6380 --maxmemory 2gb
+    healthcheck:
+      type: command
+      command: ["redis-cli", "-p", "6380", "ping"]
     backup:
       type: none
 
@@ -108,6 +126,9 @@ services:
     image: docker.io/library/redis:7-alpine
     port: 6381
     command: redis-server --port 6381 --maxmemory 512mb
+    healthcheck:
+      type: command
+      command: ["redis-cli", "-p", "6381", "ping"]
     backup:
       type: none
 

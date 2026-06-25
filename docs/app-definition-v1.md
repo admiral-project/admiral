@@ -103,6 +103,7 @@ Campos soportados por servicio:
 | `depends_on` | []string | no | Dependencias de orden de arranque entre servicios |
 | `command` | string | no | Comando alternativo para el contenedor |
 | `setup_command` | string | no | Comando de inicializacion ejecutado una sola vez tras el provision |
+| `notify_on_setup` | []YAMLSetupNotice | no | Datos informativos para mostrar al cliente tras completar setup |
 | `env` | map[string]string | no | Variables de entorno estaticas |
 | `secrets` | map[string]YAMLSecret | no | Secretos generados o explicitos |
 | `healthcheck` | YAMLHealthCheck | no | Healthcheck del servicio |
@@ -152,8 +153,11 @@ contenedor del servicio, por lo que puede usar expansion de variables
 ```yaml
 services:
   backend:
-    image: frappe/erpnext:v15
-    setup_command: bench new-site site.local --db-root-password $MARIADB_ROOT_PASSWORD --install-app erpnext
+    image: registry.example.com/app-suite:1
+    setup_command: app bootstrap --admin-password $ADMIN_PASSWORD
+    notify_on_setup:
+      - label: Usuario administrador
+        value: Administrator
 ```
 
 **Cuando una app define `setup_command` en algun servicio:**
@@ -163,6 +167,11 @@ services:
   inicializacion esta en curso.
 - `admiral-fleet` ejecuta cada `setup_command` con un timeout de 10
   minutos.
+- Antes de ejecutar `setup_command`, `admiral-fleet` espera a que el
+  servicio objetivo y sus dependencias declaradas en `depends_on`
+  alcancen readiness. Si un servicio define `healthcheck`, ese contrato
+  se usa como criterio de readiness; si no lo define, se exige al menos
+  que el contenedor exista y este en estado `running`.
 - Si **todos** los `setup_command` terminan con exito, la instancia pasa
   a `running` y se marca `setup_completed = true` en la base de datos.
 - Si **algun** `setup_command` falla, la tarea completa reporta
@@ -178,6 +187,21 @@ para evitar re-ejecutar el setup si el callback se pierde y hay un
 retry en el mismo nodo. La base de datos sigue siendo la fuente de
 verdad; si `setup_completed` es `true`, fleet omite el setup incluso si
 el marker no existe (por ejemplo, una migracion cross-node).
+
+### `notify_on_setup`
+
+`notify_on_setup` permite declarar pares `label/value` para mostrarlos al
+cliente junto con las credenciales expuestas cuando el provisionamiento
+responde o cuando Harbor consulta `/credentials`.
+
+Uso recomendado:
+
+- nombres de usuario predefinidos por la aplicacion
+- URLs internas relevantes para onboarding
+- identificadores operativos que no sean secretos
+
+No debe usarse para contrasenas, tokens o material secreto; para eso se
+deben usar `secrets` con `expose: true`.
 
 ### Modelo de red: Pod
 
@@ -208,10 +232,9 @@ las unidades Quadlet generadas por `admiral-fleet`. Eso significa:
 
 - systemd decide el orden de activacion
 - no se implementa un orquestador adicional en Fleet
-- `depends_on` expresa orden de arranque, no readiness real de aplicacion
-
-Si una app requiere esperar a que un servicio acepte conexiones, esa garantia
-no la da `depends_on` por si solo en esta version.
+- `depends_on` expresa orden de arranque y, si el servicio dependido tiene
+  `healthcheck`, tambien condiciona el inicio de `setup_command` a ese
+  readiness declarado
 
 ## Shared Volumes
 
