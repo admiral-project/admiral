@@ -12,6 +12,7 @@ shared_volumes:
     mount: /home/frappe/frappe-bench/sites
     services:
       - backend
+      - setup
       - websocket
       - scheduler
       - worker-default
@@ -32,6 +33,29 @@ services:
 
   backend:
     image: docker.io/frappe/erpnext:v15.10.0
+    depends_on:
+      - db
+      - redis-cache
+      - redis-queue
+      - redis-socketio
+    env:
+      DB_HOST: 127.0.0.1
+      DB_PORT: "3306"
+      REDIS_CACHE: 127.0.0.1:6379
+      REDIS_QUEUE: 127.0.0.1:6380
+      REDIS_SOCKETIO: 127.0.0.1:6381
+    secrets:
+      MARIADB_ROOT_PASSWORD:
+        generate: password
+    healthcheck:
+      type: tcp
+      port: 8000
+    backup:
+      type: volume
+
+  setup:
+    image: docker.io/frappe/erpnext:v15.10.0
+    command: sh -c "sleep infinity"
     setup_command: bench new-site site.local --db-root-password $MARIADB_ROOT_PASSWORD --admin-password $ERP_ADMIN_PASSWORD --install-app erpnext
     notify_on_setup:
       - label: Usuario administrador
@@ -53,11 +77,8 @@ services:
       ERP_ADMIN_PASSWORD:
         generate: password
         expose: true
-    healthcheck:
-      type: tcp
-      port: 8000
     backup:
-      type: volume
+      type: none
 
   websocket:
     image: docker.io/frappe/erpnext:v15.10.0
