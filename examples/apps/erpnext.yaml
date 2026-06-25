@@ -79,7 +79,7 @@ services:
   setup:
     image: docker.io/frappe/erpnext:v15.10.0
     command: sh -c "sleep infinity"
-    setup_command: bench new-site --mariadb-user-host-login-scope='%' --db-root-username root --db-root-password $MARIADB_ROOT_PASSWORD --admin-password $ERP_ADMIN_PASSWORD --install-app erpnext --set-default frontend
+    setup_command: bench new-site "$FRAPPE_DEFAULT_SITE" --db-type mariadb --db-host "$DB_HOST" --db-port "$DB_PORT" --db-root-username $MARIADB_ROOT_USERNAME --db-root-password $MARIADB_ROOT_PASSWORD --admin-password $ERP_ADMIN_PASSWORD --install-app erpnext --set-default --no-mariadb-socket
     notify_on_setup:
       - label: Usuario administrador
         value: Administrator
@@ -97,6 +97,11 @@ services:
       DB_HOST: 127.0.0.1
       DB_PORT: "3306"
       FRAPPE_SITE_NAME_HEADER: frontend
+      FRAPPE_DEFAULT_SITE: frontend
+      MARIADB_ROOT_USERNAME: root
+      FRAPPE_REDIS_CACHE: redis://127.0.0.1:6379
+      FRAPPE_REDIS_QUEUE: redis://127.0.0.1:6380
+      FRAPPE_REDIS_SOCKETIO: redis://127.0.0.1:6381
       REDIS_CACHE: 127.0.0.1:6379
       REDIS_QUEUE: 127.0.0.1:6380
       REDIS_SOCKETIO: 127.0.0.1:6381
@@ -233,6 +238,12 @@ tiers:
     storage: 1G
     price_monthly: 0
     free: true
+
+  production-xs:
+    cpu: 1
+    memory: 1G
+    storage: 5G
+    price_monthly: 10
 
   production-s:
     cpu: 1
