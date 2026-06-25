@@ -5,8 +5,8 @@
 %global commit 080278a0cbfaf5c0705fc69e4e1d95eb8e59607a
 
 Name:    admiralctl
-Version: 0.0.1beta10
-Release: 3%{?dist}
+Version: 0.0.1beta11
+Release: 1%{?dist}
 Summary: Admiral Command-Line Interface
 
 License: Apache-2.0
@@ -58,6 +58,8 @@ go test ./... || echo "WARNING: tests skipped or failed in build sandbox"
 restorecon -F %{_bindir}/admiralctl 2>/dev/null || :
 
 %changelog
+* Thu Jun 25 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta11-1
+- Bump to 0.0.1beta11 and reset packaging release to 1
 * Thu Jun 25 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta10-2
 - Add instances credentials subcommand
 - Improve provision --wait to display post-setup credentials and hostname

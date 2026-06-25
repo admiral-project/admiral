@@ -5,8 +5,8 @@
 %global commit 17d32989d3c0c6ac156d6b31d5b34f67b65fef12
 
 Name:    admirald
-Version: 0.0.1beta10
-Release: 3%{?dist}
+Version: 0.0.1beta11
+Release: 1%{?dist}
 Summary: Admiral Control Plane - Core API and orchestration service
 
 License: Apache-2.0
@@ -72,6 +72,8 @@ restorecon -F %{_bindir}/admirald 2>/dev/null || :
 %systemd_postun_with_restart admirald.service
 
 %changelog
+* Thu Jun 25 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta11-1
+- Bump to 0.0.1beta11 and reset packaging release to 1
 * Thu Jun 25 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta10-2
 - Bump release to 2 for coordinated packaging update
 * Wed Jun 24 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta10-1

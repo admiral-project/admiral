@@ -5,8 +5,8 @@
 %global commit 4de43c541c908b654d0e880901fddff7649b33ce
 
 Name:    admiral-flagship
-Version: 0.0.1beta10
-Release: 2%{?dist}
+Version: 0.0.1beta11
+Release: 1%{?dist}
 Summary: Admiral Administrative Web Console
 
 License: Apache-2.0
@@ -77,6 +77,8 @@ restorecon -R %{_prefix}/lib/admiral/flagship 2>/dev/null || :
 %{python3} -m pytest tests/ -x --tb=short 2>/dev/null || echo "WARNING: tests skipped (pytest not available)"
 
 %changelog
+* Thu Jun 25 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta11-1
+- Bump to 0.0.1beta11 and reset packaging release to 1
 * Thu Jun 25 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta10-2
 - Add BFF endpoint for instance credentials
 - Display credentials in instance create and detail views

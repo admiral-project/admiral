@@ -2,8 +2,8 @@
 %global commit 4c4b5ea1d19be52bc33e59b0ae9924105499b05d
 
 Name:    admiral-harbor
-Version: 0.0.1beta10
-Release: 2%{?dist}
+Version: 0.0.1beta11
+Release: 1%{?dist}
 Summary: Admiral Customer Portal - Web UI for end users
 
 License: Apache-2.0
@@ -113,6 +113,8 @@ restorecon -R %{_localstatedir}/lib/admiral/harbor 2>/dev/null || :
 %{python3} -m pytest tests/ -x --tb=short 2>/dev/null || echo "WARNING: tests skipped (pytest not available)"
 
 %changelog
+* Thu Jun 25 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta11-1
+- Bump to 0.0.1beta11 and reset packaging release to 1
 * Wed Jun 24 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta10-1
 - Coordinate beta10 release for setup_command catalog validation
 * Tue Jun 23 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta9-1

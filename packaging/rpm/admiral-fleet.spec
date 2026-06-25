@@ -5,8 +5,8 @@
 %global commit 211efa164684222e15c2e42ab30562c8b40070ab
 
 Name:    admiral-fleet
-Version: 0.0.1beta10
-Release: 4%{?dist}
+Version: 0.0.1beta11
+Release: 1%{?dist}
 Summary: Admiral Fleet Worker Agent
 
 License: Apache-2.0
@@ -72,6 +72,8 @@ restorecon -F %{_bindir}/admiral-fleet 2>/dev/null || :
 %systemd_postun_with_restart admiral-fleet.service
 
 %changelog
+* Thu Jun 25 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta11-1
+- Bump to 0.0.1beta11 and reset packaging release to 1
 * Thu Jun 25 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta10-3
 - Revert to validated systemctl --machine=<user>@ --user invocation
 - Add Requires: systemd-container so rootless user manager access works on EL10

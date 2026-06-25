@@ -4,8 +4,8 @@
 %global commit 2f7ee27a2e6047eb2404e51de81ed8669355602b
 
 Name:    admiral-common
-Version: 0.0.1beta10
-Release: 5%{?dist}
+Version: 0.0.1beta11
+Release: 1%{?dist}
 Summary: Common files and utilities for Admiral PaaS
 
 License: Apache-2.0
@@ -148,6 +148,8 @@ if [ $1 -eq 0 ]; then
 fi
 
 %changelog
+* Thu Jun 25 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta11-1
+- Bump to 0.0.1beta11 and reset packaging release to 1
 * Thu Jun 25 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta10-4
 - Add /run/user to ReadWritePaths in admiral-fleet.service for rootless Podman secret creation
 * Thu Jun 25 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta10-3
