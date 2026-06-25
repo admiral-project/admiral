@@ -14,7 +14,7 @@ StandardError=journal
 EnvironmentFile=/etc/admiral/fleet.env
 
 # Runtime directories
-ReadWritePaths=/etc/containers/systemd/admiral /var/lib/admiral /etc/containers/systemd/users
+ReadWritePaths=/etc/containers/systemd/admiral /var/lib/admiral /etc/containers/systemd/users /run/user
 
 # Hardening
 # Fleet must manage rootless users and Podman/systemd state, so it needs the

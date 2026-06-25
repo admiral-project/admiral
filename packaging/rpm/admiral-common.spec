@@ -5,7 +5,7 @@
 
 Name:    admiral-common
 Version: 0.0.1beta10
-Release: 3%{?dist}
+Release: 4%{?dist}
 Summary: Common files and utilities for Admiral PaaS
 
 License: Apache-2.0
@@ -148,6 +148,8 @@ if [ $1 -eq 0 ]; then
 fi
 
 %changelog
+* Thu Jun 25 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta10-4
+- Add /run/user to ReadWritePaths in admiral-fleet.service for rootless Podman secret creation
 * Thu Jun 25 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta10-3
 - Create /run/user/<UID>/libpod with mode 01700 (sticky bit) for Podman
 
