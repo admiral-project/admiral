@@ -7,6 +7,7 @@ __pycache__/
 
 # RPM build artifacts
 /packaging/build/
+/tmp-srpm/
 
 # Sensitive app definitions (DO NOT COMMIT)
 /examples/apps/cacao-conector.yaml
