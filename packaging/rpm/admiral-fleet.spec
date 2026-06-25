@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 %global debug_package %{nil}
-%global commit 7d16e7828aceb64736c2be84c20e47e008c7fcac
+%global commit 8df019b8095a3538451bd1d56e3186780f910d92
 
 Name:    admiral-fleet
 Version: 0.0.1beta10
