@@ -49,19 +49,40 @@ Ver `docs/app-definition-v1.md` para formato aceptado y `docs/configuration-v1.m
       "image": "registry.example.com/simple-crm:1.0.0",
       "port": 8080,
       "volume": "web_data",
+      "depends_on": ["db"],
+      "requires": ["db"],
       "command": "/usr/bin/myapp --serve",
       "setup_command": "init-db --apply-migrations",
+      "notify_on_setup": [
+        {
+          "label": "Usuario administrador",
+          "value": "Administrator"
+        }
+      ],
       "env": {
         "DATABASE_HOST": "db"
       },
       "secrets": {
         "APP_SECRET": "decrypted-value"
       },
+      "healthcheck": {
+        "type": "tcp",
+        "port": 8080
+      },
+      "healthcheck_wait_timeout": 180,
       "registry": {
         "server": "registry.example.com",
         "username": "deploy",
         "password": "token"
-      }
+      },
+      "user": "1000"
+    }
+  ],
+  "shared_volumes": [
+    {
+      "name": "sites",
+      "mount": "/home/frappe/frappe-bench/sites",
+      "services": ["web", "setup"]
     }
   ],
   "setup_completed": false,
@@ -105,11 +126,17 @@ Cada item de `services` incluye:
 | `image` | string | Referencia completa de la imagen |
 | `port` | int | Puerto interno del contenedor |
 | `volume` | string | Nombre del volumen persistente (opcional) |
+| `depends_on` | []string | Orden debil de arranque entre servicios |
+| `requires` | []string | Dependencias fuertes entre servicios |
 | `command` | string | Comando alternativo al entrypoint (opcional) |
 | `setup_command` | string | Comando de inicializacion ejecutado una sola vez post-provision (opcional) |
+| `notify_on_setup` | []YAMLSetupNotice | Datos informativos para el cliente tras setup |
 | `env` | map | Variables de entorno materializadas |
 | `secrets` | map | Secretos desencriptados |
+| `healthcheck` | YAMLHealthCheck | Healthcheck del servicio |
+| `healthcheck_wait_timeout` | int | Tiempo maximo para esperar readiness |
 | `registry` | RegistryConfig | Credenciales para registro privado (opcional) |
+| `user` | string | UID o usuario usado por contenedores one-shot de setup/healthcheck |
 
 ### Campos de tier
 
