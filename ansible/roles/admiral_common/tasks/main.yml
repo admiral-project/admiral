@@ -18,7 +18,6 @@
   command:
     cmd: dnf copr enable -y @caddy/caddy
     creates: /etc/yum.repos.d/_copr:copr.fedorainfracloud.org:group_caddy:caddy.repo
-  when: admiral_install_mode in ['single-node', 'admin-node']
 
 - name: Enable Admiral COPR repository
   command:
@@ -29,6 +28,14 @@
   dnf:
     update_cache: true
 
+- name: Install Admiral packages
+  dnf:
+    name:
+      - admiral-common
+      - admiralctl
+      - caddy
+    state: present
+
 - name: Install managed Caddyfile for Admiral
   copy:
     dest: /etc/caddy/Caddyfile
@@ -37,14 +44,6 @@
       {
         admin 127.0.0.1:2019
       }
-  when: admiral_install_mode in ['single-node', 'admin-node']
-
-- name: Install Admiral packages
-  dnf:
-    name:
-      - admiral-common
-      - admiralctl
-    state: present
 
 - name: Install PostgreSQL server utilities
   dnf:

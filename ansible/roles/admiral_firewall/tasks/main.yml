@@ -4,8 +4,13 @@
     name: firewalld
     state: present
 
+- name: Unmask firewalld service
+  systemd:
+    name: firewalld
+    masked: false
+
 - name: Ensure firewalld is enabled and running
-  service:
+  systemd:
     name: firewalld
     state: started
     enabled: true
@@ -15,6 +20,9 @@
   command:
     cmd: firewall-cmd --set-default-zone=public
   register: firewall_default_zone
+  until: firewall_default_zone.rc == 0
+  retries: 5
+  delay: 2
   changed_when: "'success' in firewall_default_zone.stdout"
 
 - name: Ensure public zone target is default deny
