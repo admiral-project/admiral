@@ -144,7 +144,47 @@ Devuelve una instancia de cliente concreta.
 
 ### `GET /api/v1/customer-apps/{instance_id}/credentials`
 
-Devuelve las credenciales expuestas de la instancia.
+Devuelve las credenciales expuestas de la instancia. Incluye:
+
+- Secretos marcados con `expose: true` en la app definition.
+- Notificaciones estaticas declaradas en `notify_on_setup`.
+
+Respuesta `200 OK` (array):
+
+```json
+[
+  {
+    "service": "setup",
+    "name": "WORDPRESS_ADMIN_USER",
+    "value": "admin",
+    "generate": "username"
+  },
+  {
+    "service": "setup",
+    "name": "WORDPRESS_ADMIN_PASSWORD",
+    "value": "a1b2c3d4e5f6...",
+    "generate": "password"
+  },
+  {
+    "service": "setup",
+    "name": "Usuario administrador",
+    "value": "Administrator",
+    "kind": "notice"
+  }
+]
+```
+
+Campos:
+
+- `service`: nombre del servicio donde se declaro el secreto o la notificacion.
+- `name`: nombre de la variable de entorno o etiqueta de la notificacion.
+- `value`: valor en texto plano del secreto o la notificacion.
+- `generate`: directiva usada para generar el valor (`username`, `password`, `random`, `ssh_key`). Solo para secretos.
+- `kind`: `"notice"` para entradas informativas de `notify_on_setup`; omitido para secretos normales.
+
+Este endpoint permite a clientes como `admiralctl`, `admiral-flagship` y
+`admiral-harbor` obtener las credenciales finales despues de que el
+`setup_command` haya completado.
 
 ### `GET /api/v1/networking/certificate`
 
