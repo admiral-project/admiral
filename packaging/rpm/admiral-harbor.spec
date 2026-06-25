@@ -75,6 +75,7 @@ install -Dm0644 %{SOURCE3} %{buildroot}%{_unitdir}/admiral-harbor-worker.timer
 install -Dm0644 %{SOURCE4} %{buildroot}%{_unitdir}/admiral-harbor-catalog-sync.service
 install -Dm0644 %{SOURCE5} %{buildroot}%{_unitdir}/admiral-harbor-catalog-sync.timer
 install -Dm0644 %{SOURCE8} %{buildroot}%{_sysconfdir}/admiral/harbor.env
+install -d %{buildroot}/etc/systemd/system/admiral-harbor.service.d
 mkdir -p %{buildroot}%{_localstatedir}/lib/admiral/harbor/uploads
 
 %files -f harbor.files
@@ -87,6 +88,7 @@ mkdir -p %{buildroot}%{_localstatedir}/lib/admiral/harbor/uploads
 %{_bindir}/harbor-gunicorn
 %{_bindir}/harborctl
 %config(noreplace) %{_sysconfdir}/admiral/harbor.env
+%dir %attr(0750, root, admiral) /etc/systemd/system/admiral-harbor.service.d
 %dir %attr(0750, admiral, admiral) %{_localstatedir}/lib/admiral/harbor
 %dir %attr(0750, admiral, admiral) %{_localstatedir}/lib/admiral/harbor/uploads
 

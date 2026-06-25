@@ -46,6 +46,7 @@ cd admirald
 install -Dm0755 admirald %{buildroot}%{_bindir}/admirald
 install -Dm0644 %{SOURCE1} %{buildroot}%{_unitdir}/admirald.service
 install -Dm0644 %{SOURCE2} %{buildroot}%{_sysconfdir}/admirald.ini
+install -d %{buildroot}/etc/systemd/system/admirald.service.d
 
 %check
 cd admirald
@@ -58,6 +59,7 @@ go test ./... || echo "WARNING: tests skipped or failed in build sandbox"
 %{_bindir}/admirald
 %{_unitdir}/admirald.service
 %config(noreplace) %{_sysconfdir}/admirald.ini
+%dir %attr(0750, root, admiral) /etc/systemd/system/admirald.service.d
 
 %post
 %systemd_post admirald.service

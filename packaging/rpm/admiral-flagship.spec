@@ -55,11 +55,13 @@ EOF
 fi
 install -Dm0644 %{SOURCE1} %{buildroot}%{_unitdir}/admiral-flagship.service
 install -Dm0644 %{SOURCE2} %{buildroot}%{_sysconfdir}/admiral/flagship.env
+install -d %{buildroot}/etc/systemd/system/admiral-flagship.service.d
 
 %files -f flagships.files
 %license %{_licensedir}/admiral-flagship/LICENSE
 %{_unitdir}/admiral-flagship.service
 %config(noreplace) %{_sysconfdir}/admiral/flagship.env
+%dir %attr(0750, root, admiral) /etc/systemd/system/admiral-flagship.service.d
 
 %post
 %systemd_post admiral-flagship.service
