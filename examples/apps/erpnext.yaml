@@ -8,9 +8,19 @@ description: |
   notices after setup.
 
 shared_volumes:
+  logs:
+    mount: /home/frappe/frappe-bench/logs
+    services:
+      - frontend
+      - backend
+      - setup
+      - websocket
+      - scheduler
+      - worker-default
   sites:
     mount: /home/frappe/frappe-bench/sites
     services:
+      - frontend
       - backend
       - setup
       - websocket
@@ -25,8 +35,10 @@ services:
     command: nginx-entrypoint.sh
     depends_on:
       - backend
+      - websocket
     requires:
       - backend
+      - websocket
     env:
       BACKEND: 127.0.0.1:8000
       SOCKETIO: 127.0.0.1:9000
