@@ -30,8 +30,9 @@ services:
     env:
       BACKEND: 127.0.0.1:8000
       SOCKETIO: 127.0.0.1:9000
-      FRAPPE_SITE_NAME_HEADER: 127.0.0.1
+      FRAPPE_SITE_NAME_HEADER: frontend
       UPSTREAM_REAL_IP_ADDRESS: 127.0.0.1
+      UPSTREAM_REAL_IP_HEADER: X-Forwarded-For
     backup:
       type: none
 
@@ -50,6 +51,7 @@ services:
     env:
       DB_HOST: 127.0.0.1
       DB_PORT: "3306"
+      FRAPPE_SITE_NAME_HEADER: frontend
       REDIS_CACHE: 127.0.0.1:6379
       REDIS_QUEUE: 127.0.0.1:6380
       REDIS_SOCKETIO: 127.0.0.1:6381
@@ -65,7 +67,7 @@ services:
   setup:
     image: docker.io/frappe/erpnext:v15.10.0
     command: sh -c "sleep infinity"
-    setup_command: bench new-site site.local --db-root-password $MARIADB_ROOT_PASSWORD --admin-password $ERP_ADMIN_PASSWORD --install-app erpnext
+    setup_command: bench new-site --mariadb-user-host-login-scope='%' --db-root-username root --db-root-password $MARIADB_ROOT_PASSWORD --admin-password $ERP_ADMIN_PASSWORD --install-app erpnext --set-default frontend
     notify_on_setup:
       - label: Usuario administrador
         value: Administrator
@@ -82,6 +84,7 @@ services:
     env:
       DB_HOST: 127.0.0.1
       DB_PORT: "3306"
+      FRAPPE_SITE_NAME_HEADER: frontend
       REDIS_CACHE: 127.0.0.1:6379
       REDIS_QUEUE: 127.0.0.1:6380
       REDIS_SOCKETIO: 127.0.0.1:6381
@@ -103,6 +106,7 @@ services:
       - redis-queue
       - redis-socketio
     env:
+      FRAPPE_SITE_NAME_HEADER: frontend
       FRAPPE_REDIS_CACHE: redis://127.0.0.1:6379
       FRAPPE_REDIS_QUEUE: redis://127.0.0.1:6380
       FRAPPE_REDIS_SOCKETIO: redis://127.0.0.1:6381
@@ -182,6 +186,7 @@ services:
       - redis-queue
       - redis-socketio
     env:
+      FRAPPE_SITE_NAME_HEADER: frontend
       FRAPPE_REDIS_CACHE: redis://127.0.0.1:6379
       FRAPPE_REDIS_QUEUE: redis://127.0.0.1:6380
       FRAPPE_REDIS_SOCKETIO: redis://127.0.0.1:6381
@@ -202,6 +207,7 @@ services:
       - redis-queue
       - redis-socketio
     env:
+      FRAPPE_SITE_NAME_HEADER: frontend
       FRAPPE_REDIS_CACHE: redis://127.0.0.1:6379
       FRAPPE_REDIS_QUEUE: redis://127.0.0.1:6380
       FRAPPE_REDIS_SOCKETIO: redis://127.0.0.1:6381
