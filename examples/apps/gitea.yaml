@@ -8,6 +8,9 @@ services:
     port: 3000
     public: true
     volume: gitea_data
+    depends_on:
+      - db
+    setup_command: gitea admin user list --admin | grep -F "$GITEA_ADMIN_USERNAME" || gitea admin user create --username "$GITEA_ADMIN_USERNAME" --password "$GITEA_ADMIN_PASSWORD" --email "$GITEA_ADMIN_EMAIL" --admin
     backup:
       type: volume
     env:
@@ -16,11 +19,19 @@ services:
       GITEA__database__NAME: gitea
       ROOT_URL: http://127.0.0.1:3000/
       SSH_PORT: 2222
+      GITEA_ADMIN_EMAIL: admin@example.com
+    healthcheck:
+      type: tcp
+      port: 3000
     secrets:
       GITEA__database__USER:
         generate: username
-        expose: true
       GITEA__database__PASSWD:
+        generate: password
+      GITEA_ADMIN_USERNAME:
+        generate: username
+        expose: true
+      GITEA_ADMIN_PASSWORD:
         generate: password
         expose: true
 
@@ -38,10 +49,14 @@ services:
     secrets:
       POSTGRES_USER:
         generate: username
-        expose: true
       POSTGRES_PASSWORD:
         generate: password
-        expose: true
+    healthcheck:
+      type: command
+      command:
+        - sh
+        - -c
+        - pg_isready -h 127.0.0.1 -U "$POSTGRES_USER" -d "$POSTGRES_DB"
 
 tiers:
   small:

@@ -2,12 +2,23 @@ name: wp
 display_name: WordPress
 description: Minimal WordPress deployment for Admiral end-to-end validation.
 
+shared_volumes:
+  site:
+    mount: /var/www/html
+    services:
+      - web
+      - setup
+
 services:
   web:
     image: docker.io/library/wordpress:6
     port: 80
     public: true
-    volume: wp_content
+    depends_on:
+      - db
+    healthcheck:
+      type: tcp
+      port: 80
     backup:
       type: volume
     env:
@@ -16,10 +27,33 @@ services:
     secrets:
       WORDPRESS_DB_USER:
         generate: username
-        expose: true
       WORDPRESS_DB_PASSWORD:
         generate: password
+
+  setup:
+    image: docker.io/library/wordpress:cli
+    command: sh -c "sleep infinity"
+    depends_on:
+      - db
+      - web
+    setup_command: wp core is-installed --path=/var/www/html --allow-root || wp core install --path=/var/www/html --url=https://$ADMIRAL_INSTANCE_ID.local --title=\"Empresa\" --admin_user=$WORDPRESS_ADMIN_USER --admin_password=$WORDPRESS_ADMIN_PASSWORD --admin_email=$WORDPRESS_ADMIN_EMAIL --skip-email --allow-root
+    env:
+      WORDPRESS_DB_HOST: 127.0.0.1
+      WORDPRESS_DB_NAME: wordpress
+      WORDPRESS_ADMIN_EMAIL: admin@empresa.local
+    secrets:
+      WORDPRESS_DB_USER:
+        generate: username
+      WORDPRESS_DB_PASSWORD:
+        generate: password
+      WORDPRESS_ADMIN_USER:
+        generate: username
         expose: true
+      WORDPRESS_ADMIN_PASSWORD:
+        generate: password
+        expose: true
+    backup:
+      type: none
 
   db:
     image: docker.io/library/mariadb:10
@@ -37,10 +71,14 @@ services:
         generate: password
       MARIADB_USER:
         generate: username
-        expose: true
       MARIADB_PASSWORD:
         generate: password
-        expose: true
+    healthcheck:
+      type: command
+      command:
+        - sh
+        - -c
+        - mariadb-admin ping -h 127.0.0.1 -uroot -p"$MARIADB_ROOT_PASSWORD" --silent
 
 tiers:
   small:
