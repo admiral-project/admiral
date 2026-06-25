@@ -8,9 +8,12 @@ services:
     port: 3000
     public: true
     volume: gitea_data
+    user: "1000"
     depends_on:
       - db
-    setup_command: gitea admin user list --admin | grep -F "$GITEA_ADMIN_USERNAME" || gitea admin user create --username "$GITEA_ADMIN_USERNAME" --password "$GITEA_ADMIN_PASSWORD" --email "$GITEA_ADMIN_EMAIL" --admin
+    requires:
+      - db
+    setup_command: mkdir -p /data/gitea/conf && printf '[server]\nROOT_URL = %s\nSSH_PORT = %s\n\n[database]\nDB_TYPE = %s\nHOST = %s\nNAME = %s\nUSER = %s\nPASSWD = %s\n\n[security]\nINSTALL_LOCK = true\n' "$ROOT_URL" "$SSH_PORT" "$GITEA__database__DB_TYPE" "$GITEA__database__HOST" "$GITEA__database__NAME" "$GITEA__database__USER" "$GITEA__database__PASSWD" > /data/gitea/conf/app.ini && gitea migrate && (gitea admin user list --admin | grep -F "$GITEA_ADMIN_USERNAME" || gitea admin user create --username "$GITEA_ADMIN_USERNAME" --password "$GITEA_ADMIN_PASSWORD" --email "$GITEA_ADMIN_EMAIL" --admin)
     backup:
       type: volume
     env:
@@ -57,6 +60,7 @@ services:
         - sh
         - -c
         - pg_isready -h 127.0.0.1 -U "$POSTGRES_USER" -d "$POSTGRES_DB"
+    healthcheck_wait_timeout: 180
 
 tiers:
   small:

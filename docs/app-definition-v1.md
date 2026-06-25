@@ -111,6 +111,7 @@ Campos soportados por servicio:
 | `healthcheck_wait_timeout` | int | no | Tiempo maximo en segundos para esperar que el servicio alcance readiness (default: 120) |
 | `backup` | YAMLServiceBackup | si | Contrato explicito de respaldo para ese servicio |
 | `registry` | YAMLRegistry | no | Credenciales para registro privado |
+| `user` | string | no | UID o nombre de usuario con el que ejecutar el contenedor (`--user` de podman) |
 
 ### `public: true`
 
@@ -151,6 +152,19 @@ sola vez, despues de que todos los servicios estan corriendo, durante
 el provisionamiento. El comando se ejecuta con `sh -c` dentro del
 contenedor del servicio, por lo que puede usar expansion de variables
 (`$VAR`), redireccion y comillas.
+
+El contenedor one-shot se ejecuta como root (UID 0) por defecto. Si la
+imagen requiere un usuario no-root (por ejemplo, Gitea rechaza ejecutar
+como root), se debe declarar el campo `user` con el UID o nombre de
+usuario del contenedor:
+
+```yaml
+services:
+  web:
+    image: docker.io/gitea/gitea:1.22
+    user: "1000"  # git user inside the container
+    setup_command: gitea admin user list --admin | grep -F "$GITEA_ADMIN_USERNAME" || gitea admin user create --username "$GITEA_ADMIN_USERNAME" --password "$GITEA_ADMIN_PASSWORD" --email "$GITEA_ADMIN_EMAIL" --admin
+```
 
 ```yaml
 services:
