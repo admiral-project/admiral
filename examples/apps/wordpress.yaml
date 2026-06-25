@@ -21,6 +21,7 @@ services:
     healthcheck:
       type: tcp
       port: 80
+    healthcheck_wait_timeout: 120
     backup:
       type: volume
     env:
