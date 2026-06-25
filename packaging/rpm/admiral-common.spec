@@ -5,7 +5,7 @@
 
 Name:    admiral-common
 Version: 0.0.1beta10
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: Common files and utilities for Admiral PaaS
 
 License: Apache-2.0
@@ -147,6 +147,8 @@ if [ $1 -eq 0 ]; then
 fi
 
 %changelog
+* Thu Jun 25 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta10-2
+- Bump release to 2 for coordinated packaging update
 * Wed Jun 24 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta10-1
 - Prepare beta10 coordinated release for setup_command validation cycle
 * Tue Jun 23 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta9-1

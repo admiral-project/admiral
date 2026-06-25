@@ -2,11 +2,11 @@
 # SPDX-License-Identifier: Apache-2.0
 
 %global debug_package %{nil}
-%global commit b47d3ffe66fd26c81762c6f42c97fea7f8dc1ab6
+%global commit 4de43c541c908b654d0e880901fddff7649b33ce
 
 Name:    admiral-flagship
 Version: 0.0.1beta10
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: Admiral Administrative Web Console
 
 License: Apache-2.0
@@ -77,6 +77,9 @@ restorecon -R %{_prefix}/lib/admiral/flagship 2>/dev/null || :
 %{python3} -m pytest tests/ -x --tb=short 2>/dev/null || echo "WARNING: tests skipped (pytest not available)"
 
 %changelog
+* Thu Jun 25 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta10-2
+- Add BFF endpoint for instance credentials
+- Display credentials in instance create and detail views
 * Wed Jun 24 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta10-1
 - Surface initializing and setup_failed states in dashboard summaries and labels
 * Tue Jun 23 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta9-1

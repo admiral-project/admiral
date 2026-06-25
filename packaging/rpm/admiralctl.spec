@@ -2,11 +2,11 @@
 # SPDX-License-Identifier: Apache-2.0
 
 %global debug_package %{nil}
-%global commit b72aa90525964a6429da5a9d11657412aa432563
+%global commit 656910f31dedf47a18d137b1629773ae9a9a2c02
 
 Name:    admiralctl
 Version: 0.0.1beta10
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: Admiral Command-Line Interface
 
 License: Apache-2.0
@@ -58,6 +58,9 @@ go test ./... || echo "WARNING: tests skipped or failed in build sandbox"
 restorecon -F %{_bindir}/admiralctl 2>/dev/null || :
 
 %changelog
+* Thu Jun 25 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta10-2
+- Add instances credentials subcommand
+- Improve provision --wait to display post-setup credentials and hostname
 * Wed Jun 24 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta10-1
 - Coordinate beta10 release for setup_command catalog validation
 * Wed Jun 24 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta9-3

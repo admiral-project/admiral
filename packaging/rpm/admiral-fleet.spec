@@ -6,7 +6,7 @@
 
 Name:    admiral-fleet
 Version: 0.0.1beta10
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: Admiral Fleet Worker Agent
 
 License: Apache-2.0
@@ -71,6 +71,8 @@ restorecon -F %{_bindir}/admiral-fleet 2>/dev/null || :
 %systemd_postun_with_restart admiral-fleet.service
 
 %changelog
+* Thu Jun 25 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta10-2
+- Bump release to 2 for coordinated packaging update
 * Wed Jun 24 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta10-1
 - Coordinate beta10 release for setup_command catalog validation
 * Wed Jun 24 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta9-4
