@@ -1,7 +1,10 @@
 SHELL := /bin/bash
 VERSION := 0.0.1beta10
-ADMIRALD_COMMIT := 70320f8705eb87785aee744d03072c87028cd56a
-HARBOR_COMMIT := f0072539164e1c371053c7be0c4702a7c2013205
+ADMIRALD_COMMIT := eabca1e591db453df1d75ac12408572ec44821c8
+FLEET_COMMIT := 7d16e7828aceb64736c2be84c20e47e008c7fcac
+ADMIRALCTL_COMMIT := b72aa90525964a6429da5a9d11657412aa432563
+FLAGSHIP_COMMIT := b47d3ffe66fd26c81762c6f42c97fea7f8dc1ab6
+HARBOR_COMMIT := 9d7c4dc3ec02500a57ceb91a70553fd22a4a28a9
 RPMDIR := $(CURDIR)/packaging/build
 RPMTOPDIR := $(RPMDIR)
 SPECSDIR := $(CURDIR)/packaging/rpm
@@ -56,6 +59,10 @@ source-superproject: | $(SOURCEDIR)
 		echo "  Adding $$sm..."; \
 		commit="HEAD"; \
 		if [ "$$sm" = "admirald" ]; then commit="$(ADMIRALD_COMMIT)"; fi; \
+		if [ "$$sm" = "admiral-fleet" ]; then commit="$(FLEET_COMMIT)"; fi; \
+		if [ "$$sm" = "admiralctl" ]; then commit="$(ADMIRALCTL_COMMIT)"; fi; \
+		if [ "$$sm" = "admiral-flagship" ]; then commit="$(FLAGSHIP_COMMIT)"; fi; \
+		if [ "$$sm" = "admiral-harbor" ]; then commit="$(HARBOR_COMMIT)"; fi; \
 		cd $$sm && git archive --format=tar \
 			--prefix=admiral-v$(VERSION)/$$sm/ \
 			-o $(SOURCEDIR)/$$sm-partial.tar $$commit && \
@@ -71,7 +78,7 @@ source-superproject: | $(SOURCEDIR)
 source-admiral-flagship: | $(SOURCEDIR)
 	cd admiral-flagship && git archive --format=tar.gz \
 		--prefix=admiral-flagship-v$(VERSION)/ \
-		-o $(SOURCEDIR)/admiral-flagship-$(VERSION).tar.gz HEAD
+		-o $(SOURCEDIR)/admiral-flagship-$(VERSION).tar.gz $(FLAGSHIP_COMMIT)
 
 source-admiral-harbor: | $(SOURCEDIR)
 	cd admiral-harbor && git archive --format=tar.gz \
