@@ -100,13 +100,15 @@ Campos soportados por servicio:
 | `port` | int | no | Puerto interno del contenedor |
 | `public` | bool | no | Si el servicio es accesible via internet |
 | `volume` | string | no | Nombre del volumen persistente |
-| `depends_on` | []string | no | Dependencias de orden de arranque entre servicios |
+| `depends_on` | []string | no | Dependencias debiles de orden de arranque entre servicios (`Wants=` + `After=`) |
+| `requires` | []string | no | Dependencias fuertes entre servicios (`Requires=` + `After=`) |
 | `command` | string | no | Comando alternativo para el contenedor |
 | `setup_command` | string | no | Comando de inicializacion ejecutado una sola vez tras el provision |
 | `notify_on_setup` | []YAMLSetupNotice | no | Datos informativos para mostrar al cliente tras completar setup |
 | `env` | map[string]string | no | Variables de entorno estaticas |
 | `secrets` | map[string]YAMLSecret | no | Secretos generados o explicitos |
 | `healthcheck` | YAMLHealthCheck | no | Healthcheck del servicio |
+| `healthcheck_wait_timeout` | int | no | Tiempo maximo en segundos para esperar que el servicio alcance readiness (default: 120) |
 | `backup` | YAMLServiceBackup | si | Contrato explicito de respaldo para ese servicio |
 | `registry` | YAMLRegistry | no | Credenciales para registro privado |
 
@@ -217,7 +219,8 @@ No se requiere nombre de host ni alias de red para la comunicacion intra-pod.
 
 ### `depends_on`
 
-`depends_on` permite declarar orden de arranque entre servicios:
+`depends_on` permite declarar orden de arranque entre servicios con
+dependencia debil:
 
 ```yaml
 services:
@@ -231,10 +234,48 @@ La implementacion actual traduce estas dependencias a `Wants=` y `After=` en
 las unidades Quadlet generadas por `admiral-fleet`. Eso significa:
 
 - systemd decide el orden de activacion
+- si el servicio dependido falla, este servicio igualmente arranca
 - no se implementa un orquestador adicional en Fleet
 - `depends_on` expresa orden de arranque y, si el servicio dependido tiene
   `healthcheck`, tambien condiciona el inicio de `setup_command` a ese
   readiness declarado
+
+### `requires`
+
+`requires` permite declarar dependencias fuertes entre servicios:
+
+```yaml
+services:
+  web:
+    requires:
+      - db
+```
+
+La implementacion traduce estas dependencias a `Requires=` y `After=` en
+las unidades Quadlet generadas por `admiral-fleet`. A diferencia de `depends_on`:
+
+- si el servicio requerido falla, systemd detiene o no arranca este servicio
+- util para servicios que no pueden operar sin su dependencia
+- `requires` y `depends_on` pueden coexistir en el mismo servicio
+
+### `healthcheck_wait_timeout`
+
+Controla el tiempo maximo total (en segundos) que `admiral-fleet` espera
+a que el servicio alcance readiness durante el provisionamiento.
+
+```yaml
+services:
+  db:
+    healthcheck:
+      type: tcp
+      port: 3306
+    healthcheck_wait_timeout: 180
+```
+
+- el valor default es 120 segundos (60 intentos × 2s de intervalo)
+- el intervalo entre intentos se configura via `healthcheck.interval_seconds`
+- si se configura `healthcheck_wait_timeout`, el numero de reintentos se
+  recalcula como `timeout / interval_seconds`
 
 ## Shared Volumes
 

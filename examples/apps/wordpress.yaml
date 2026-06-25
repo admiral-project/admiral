@@ -16,6 +16,8 @@ services:
     public: true
     depends_on:
       - db
+    requires:
+      - db
     healthcheck:
       type: tcp
       port: 80
@@ -36,6 +38,8 @@ services:
     depends_on:
       - db
       - web
+    requires:
+      - db
     setup_command: wp core is-installed --path=/var/www/html --allow-root || wp core install --path=/var/www/html --url=https://$ADMIRAL_INSTANCE_ID.local --title=\"Empresa\" --admin_user=$WORDPRESS_ADMIN_USER --admin_password=$WORDPRESS_ADMIN_PASSWORD --admin_email=$WORDPRESS_ADMIN_EMAIL --skip-email --allow-root
     env:
       WORDPRESS_DB_HOST: 127.0.0.1
@@ -79,6 +83,7 @@ services:
         - sh
         - -c
         - mariadb-admin ping -h 127.0.0.1 -uroot -p"$MARIADB_ROOT_PASSWORD" --silent
+    healthcheck_wait_timeout: 120
 
 tiers:
   small:

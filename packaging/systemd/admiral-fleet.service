@@ -1,8 +1,8 @@
 [Unit]
 Description=Admiral Fleet Worker Agent
 Documentation=https://github.com/admiral-project/admiral
-After=network-online.target
-Wants=network-online.target
+After=network-online.target systemd-machined.service
+Wants=network-online.target systemd-machined.service
 
 [Service]
 Type=simple
