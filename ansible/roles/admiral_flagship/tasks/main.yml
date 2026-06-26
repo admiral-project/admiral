@@ -30,7 +30,7 @@
     content: |
       [Service]
       ExecStart=
-      ExecStart=/usr/bin/gunicorn --workers 2 --bind 0.0.0.0:5000 run:app
+      ExecStart=/usr/bin/gunicorn --workers 2 --bind 0.0.0.0:5000 --certfile /etc/admiral/tls/admirald.pem --keyfile /etc/admiral/tls/admirald-key.pem run:app
       Environment=ENV=development
     mode: "0644"
   when: admiral_dev_mode | default(false) | bool
