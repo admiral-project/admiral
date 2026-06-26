@@ -12,6 +12,7 @@ RestartSec=10
 StandardOutput=journal
 StandardError=journal
 EnvironmentFile=/etc/admiral/fleet.env
+Environment=ADMIRAL_SYSTEMD_TIMEOUT=300
 
 # Runtime directories
 ReadWritePaths=/etc/containers/systemd/admiral /var/lib/admiral /etc/containers/systemd/users /run/user
