@@ -11,6 +11,7 @@ Campos soportados en la raiz del YAML:
 | `name` | string | si | Identificador unico de la app (`^[a-z][a-z0-9-]*$`) |
 | `display_name` | string | si | Nombre legible para mostrar en UI |
 | `description` | string | no | Descripcion de la aplicacion |
+| `environment` | map[string]string | no | Variables de entorno globales compartidas por todos los servicios |
 | `services` | map[string]YAMLService | si | Servicios contenedores de la app |
 | `shared_volumes` | map[string]YAMLSharedVolume | no | Volumenes persistentes compartidos entre varios servicios |
 | `tiers` | map[string]YAMLTier | si | Planes de precio y recursos disponibles |
@@ -20,6 +21,8 @@ Campos soportados en la raiz del YAML:
 name: simple-crm
 display_name: Simple CRM
 description: CRM ligero para pequenas empresas
+environment:
+  APP_BASE_URL: https://crm.example.com
 
 services:
   web:
@@ -105,7 +108,7 @@ Campos soportados por servicio:
 | `command` | string | no | Comando alternativo para el contenedor |
 | `setup_command` | string | no | Comando de inicializacion ejecutado una sola vez tras el provision |
 | `notify_on_setup` | []YAMLSetupNotice | no | Datos informativos para mostrar al cliente tras completar setup |
-| `env` | map[string]string | no | Variables de entorno estaticas |
+| `env` | map[string]string | no | Variables de entorno estaticas o referencias `${VAR}` a env/secretos disponibles |
 | `secrets` | map[string]YAMLSecret | no | Secretos generados o explicitos |
 | `healthcheck` | YAMLHealthCheck | no | Healthcheck del servicio |
 | `healthcheck_wait_timeout` | int | no | Tiempo maximo en segundos para esperar que el servicio alcance readiness (default: 120) |
@@ -184,7 +187,8 @@ services:
 - `admiral-fleet` ejecuta cada `setup_command` con un timeout de 10
   minutos.
 - Antes de ejecutar `setup_command`, `admiral-fleet` espera a que el
-  servicio objetivo y sus dependencias declaradas en `depends_on`
+  servicio objetivo y sus dependencias declaradas en `requires` y
+  `depends_on`
   alcancen readiness. Si un servicio define `healthcheck`, ese contrato
   se usa como criterio de readiness; si no lo define, se exige al menos
   que el contenedor exista y este en estado `running`.
@@ -616,6 +620,7 @@ Reglas activas en `admirald/pkg/admiral/validation.go`:
 - solo un servicio puede ser `public: true`
 - servicio publico requiere `port > 0`
 - `depends_on`: cada dependencia debe existir y no se permiten ciclos
+- `requires`: cada dependencia debe existir y no se permiten ciclos
 - `shared_volumes`: nombre valido, `mount` absoluto, servicios existentes,
   lista no vacia y sin mounts duplicados
 - al menos un tier
@@ -630,6 +635,7 @@ Reglas activas en `admirald/pkg/admiral/validation.go`:
   - si `type=volume`: el servicio debe declarar `volume` o usar `shared_volumes`
 - `healthcheck`: validación sintáctica de `type` (`http`, `tcp`, `command`) y sus campos asociados.
 - `environment` del tier: formato `^[A-Z_][A-Z0-9_]*$`, sin prefijo `ADMIRAL_`
+- `environment` global de la app: formato `^[A-Z_][A-Z0-9_]*$`, sin prefijo `ADMIRAL_`
 - `memory` y `storage`: formato numero + unidad (`k/kb/kib/m/mb/mib/g/gb/gib/t/tb/tib`)
 - `backup.schedule`: `disabled`, `daily` o `weekly`
 
@@ -643,6 +649,10 @@ Reglas activas en `admirald/pkg/admiral/validation.go`:
   completo con Quadlet/Podman.
 - Las variables de entorno que referencien otros servicios deben usar
   `localhost` como host, no el nombre del servicio.
+- Las referencias `${VAR}` en `env` se resuelven en este orden:
+  secretos del servicio, secretos globales, entorno final mergeado.
+- La precedencia del merge de entorno es:
+  variables internas Admiral, `environment` global, `service.env`, `tier.environment`.
 - El contrato no embebe detalles de Podman ni systemd.
 - `admiral-fleet` recibe `env` y `secrets` ya materializados por tarea cuando
   la accion lo requiere.
