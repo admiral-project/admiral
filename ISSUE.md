@@ -77,3 +77,105 @@ The Quadlet `[Container]` section had no `User=` key, so the Gitea `web` service
 - CentOS Stream 10 (EL10 Tier 1)
 - SELinux Enforcing
 - systemd 257
+
+---
+
+# Follow-up: global app `environment` is not resolved for `setup_command`
+
+## Problem
+
+During live validation of demo apps after introducing root-level app `environment`,
+`gitea` provisioning failed even though:
+
+- the YAML passed `admiralctl apps validate`
+- the app definition was applied successfully
+- the generated admin credentials were present
+
+The failure happened at `setup_command` runtime, before the application finished
+initialization, so login could not be validated.
+
+## Evidence
+
+Provisioning operation:
+
+- `op_db253b63a719c78c`
+
+Failed instance:
+
+- `inst_5f5f8877712e1eb9`
+
+Observed error from `admiralctl operations show op_db253b63a719c78c`:
+
+```text
+failed to connect to database: unknown database type: ${DB_TYPE}
+```
+
+The same operation output showed the trusted setup container was launched with
+literal unresolved values such as:
+
+- `--env DB_HOST=${DB_HOST}`
+- `--env DB_NAME=${DB_NAME}`
+- `--env DB_TYPE=${DB_TYPE}`
+- `--env ROOT_URL=${ROOT_URL}`
+- `--env SSH_PORT=${SSH_PORT}`
+
+This proves the root-level app `environment` values were not resolved into the
+service env passed to `setup_command`.
+
+## Expected Behavior
+
+Given an app definition like:
+
+```yaml
+environment:
+  DB_TYPE: postgres
+  DB_HOST: 127.0.0.1:5432
+
+services:
+  web:
+    env:
+      DB_TYPE: ${DB_TYPE}
+      DB_HOST: ${DB_HOST}
+    setup_command: ...
+```
+
+the effective env for the service should contain:
+
+- `DB_TYPE=postgres`
+- `DB_HOST=127.0.0.1:5432`
+
+and `setup_command` should receive those resolved values.
+
+## Actual Behavior
+
+`setup_command` receives literal `${VAR}` strings for root-level app
+`environment` references, causing application bootstrap to fail.
+
+## Scope / Impact
+
+- Affects demo apps modernized to use root-level `environment`
+- Blocks real provisioning validation for apps whose `setup_command` depends on
+  those values
+- Confirmed with `gitea`
+- Likely affects `wordpress` and any future app using the same pattern
+
+## Workaround Used In This Session
+
+To continue demo validation on the low-RAM host, the app examples were adjusted
+to:
+
+- keep shared generated credentials in root-level `secrets`
+- revert static service env values back to literal per-service values where
+  `setup_command` depends on them
+
+This keeps the examples deployable while preserving the broader follow-up issue.
+
+## Follow-up Needed
+
+1. Trace the provisioning path from stored app definition to fleet task payload.
+2. Confirm where root-level `environment` is lost or skipped for service env
+   resolution.
+3. Add an integration test that proves `${VAR}` from app-level `environment`
+   reaches `setup_command`.
+4. Re-enable the more modern example style once the runtime behavior matches the
+   contract and validation.
