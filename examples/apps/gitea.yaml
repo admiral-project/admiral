@@ -1,6 +1,6 @@
 name: gitea
 display_name: Gitea
-description: Self-hosted Git service with PostgreSQL and persistent repositories.
+description: Self-hosted Git service.
 
 services:
   web:
