@@ -1,11 +1,6 @@
 name: erpnext
 display_name: ERPNext 15
-description: |
-  Stress app for the Admiral app-definition contract.
-
-  This definition exercises multi-service topology, shared volumes,
-  one-time setup, dependency readiness, exposed secrets, and customer
-  notices after setup.
+description: Open-source enterprise resource planning software with a modern, comprehensive, and user-friendly Enterprise Resource Planning (ERP) solution.
 
 shared_volumes:
   logs:
