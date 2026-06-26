@@ -78,8 +78,11 @@ services:
       REDIS_QUEUE: ${REDIS_QUEUE}
       REDIS_SOCKETIO: ${REDIS_SOCKETIO}
     healthcheck:
-      type: tcp
-      port: 8000
+      type: command
+      command:
+        - sh
+        - -c
+        - python3 -c "import socket;s=socket.socket();s.settimeout(5);s.connect(('127.0.0.1',8000));s.close()"
     backup:
       type: volume
 
