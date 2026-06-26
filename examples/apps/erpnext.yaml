@@ -86,11 +86,8 @@ services:
   setup:
     image: docker.io/frappe/erpnext:v15.10.0
     command: sh -c "sleep infinity"
-    # setup_command is commented out because systemd-run --wait (default 30s timeout)
-    # and taskMaxAge (5 min) cannot accommodate bench new-site --install-app erpnext
-    # which takes 15-30 minutes. Run it manually after provisioning:
-    #   podman exec -it <setup-container> sh -c 'bench new-site ...'
-    # setup_command: bench new-site "$FRAPPE_DEFAULT_SITE" --db-type mariadb --db-host "$DB_HOST" --db-port "$DB_PORT" --db-root-username root --db-root-password $MARIADB_ROOT_PASSWORD --admin-password $ERP_ADMIN_PASSWORD --install-app erpnext --set-default --no-mariadb-socket
+    setup_command: bench new-site "$FRAPPE_DEFAULT_SITE" --db-type mariadb --db-host "$DB_HOST" --db-port "$DB_PORT" --db-root-username root --db-root-password $MARIADB_ROOT_PASSWORD --admin-password $ERP_ADMIN_PASSWORD --install-app erpnext --set-default --no-mariadb-socket
+    setup_timeout: 3600
     notify_on_setup:
       - label: Usuario administrador
         value: Administrator
@@ -247,7 +244,7 @@ services:
 tiers:
   dev:
     cpu: 0.5
-    memory: 256M
+    memory: 2G
     storage: 1G
     price_monthly: 0
     free: true
