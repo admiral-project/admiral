@@ -107,6 +107,7 @@ Campos soportados por servicio:
 | `requires` | []string | no | Dependencias fuertes entre servicios (`Requires=` + `After=`) |
 | `command` | string | no | Comando alternativo para el contenedor |
 | `setup_command` | string | no | Comando de inicializacion ejecutado una sola vez tras el provision |
+| `setup_timeout` | int | no | Timeout en segundos para `setup_command` (default: 600) |
 | `notify_on_setup` | []YAMLSetupNotice | no | Datos informativos para mostrar al cliente tras completar setup |
 | `env` | map[string]string | no | Variables de entorno estaticas o referencias `${VAR}` a env/secretos disponibles |
 | `secrets` | map[string]YAMLSecret | no | Secretos generados o explicitos |
@@ -183,9 +184,12 @@ services:
 
 - La instancia pasa por el estado tecnico `initializing` (en lugar de
   ir directamente a `running`) para informar al usuario que la
-  inicializacion esta en curso.
-- `admiral-fleet` ejecuta cada `setup_command` con un timeout de 10
-  minutos.
+  inicializacion esta en curso. El tiempo estimado se calcula del
+  campo `setup_timeout` y se muestra en los portales.
+- `admiral-fleet` ejecuta cada `setup_command` con un timeout de
+  `setup_timeout` segundos (default: 600, i.e. 10 minutos).
+  Valores comunes: 120 (2 min) para WP-CLI, 3600 (1 hora) para
+  `bench new-site --install-app erpnext`.
 - Antes de ejecutar `setup_command`, `admiral-fleet` espera a que el
   servicio objetivo y sus dependencias declaradas en `requires` y
   `depends_on`

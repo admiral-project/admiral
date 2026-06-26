@@ -1,44 +1,42 @@
 # Session: ERPNext provisioning — setup timeout and task expiry
 
-## Problema
+## Problema (original)
 
-ERPNext provisioning (`admiralctl instances provision --app erpnext --tier production-s --customer cust-erp-e2e`) falló. Operation status `setup_failed`:
+ERPNext provisioning falló — `systemd-run` SIGKILL por timeout de 30s en restart del pod.
 
+## Solución implementada (2026-06-26)
+
+### App definition: nuevo campo `setup_timeout`
+
+El servicio `setup` ahora acepta `setup_timeout` en segundos:
+
+```yaml
+services:
+  setup:
+    setup_command: bench new-site ...
+    setup_timeout: 3600  # timeout de 1 hora
 ```
-restart unit "admiral-inst_a4c8908fe1952b55-pod.service" after setup: systemd-run
-[--wait --collect --working-directory=/tmp systemctl --machine=admiral-apps@ --user
-restart admiral-inst_a4c8908fe1952b55-p[REDACTED]]: signal: killed
-```
 
-## Diagnóstico
+Default: 600 (10 min) si no se declara.
 
-1. **`systemd.Manager` timeout default 30s** — `Restart` del pod tras setup usa `systemd-run --wait`. Si reiniciar toma >30s, la transcient unit es matada con SIGKILL.
+### Fleet: timeout configurable por servicio
 
-2. **`taskMaxAge = 5 min`** — `queue.go:25`. La firma del task expira a los 5 min. `bench new-site --install-app erpnext` toma 15–30 min.
+- `executor_provision.go`: usa `svc.SetupTimeout` en lugar de hardcode `10*time.Minute`
+- `executor_helpers.go`: `podmanForSetup()` acepta timeout como parámetro
+- `systemd/manager.go`: `ADMIRAL_SYSTEMD_TIMEOUT` env var (default 30s) para `systemd-run --wait`
 
-3. **Setup completó en ~4 min** — demasiado rápido para un `bench new-site` exitoso. La salida no se loggea si no hay error.
+### UX: tiempo estimado en portales
 
-## Secrets Injection — Verificado (Gitea 2026-06-25)
+- `setup_timeout_seconds` se expone en la API de instancias
+- Harbor muestra "tiempo estimado: X minutos" en dashboard, detalle y confirmación
+- Flagship incluye el campo en normalize_instance
 
-Instancia `inst_d0bdaabfb3717123`:
+### Dev tier memory
 
-| Campo | Valor |
-|---|---|
-| App | gitea |
-| Technical | running |
-| Setup | completed |
-| Health | healthy |
-| Admin | usr_911e9ae607a0 / 6910eb65f28b8476c2d3cb3b |
-| API | HTTP 200 en http://159.223.114.23:40010/api/v1/users/usr_911e9ae607a0 |
+- ERPNext dev tier: 256M → 2G (8 contenedores en el pod)
 
-Flujo secreto → env confirmado:
-- `buildServiceInfos` resuelve `${VAR}`
-- `serviceRuntimeEnv` mezcla `svc.Env` + `svc.Secrets`
-- `RunTrustedShellInPod` pasa como `--env KEY=VAL`
-- Shell del setup_command accede como `$VAR`
+## Estado actual
 
-Las secrets **sí** se inyectan correctamente.
-
-## Próximo paso
-
-Re-provisionar ERPNext para obtener el error real de `bench new-site` sin el enmascaramiento por expiry/timeout.
+- ERPNext provisiona automáticamente con `setup_command` y `setup_timeout: 3600`
+- `taskMaxAge` (5 min) es tiempo máximo en cola, no límite de ejecución — no bloquea setups largos
+- Setup de ERPNext probado exitosamente en `--dev-node`
