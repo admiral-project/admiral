@@ -33,8 +33,10 @@ services:
     backup:
       type: volume
     env:
-      WORDPRESS_DB_HOST: 127.0.0.1
+      WORDPRESS_DB_HOST: 127.0.0.1:3306
       WORDPRESS_DB_NAME: wordpress
+      WORDPRESS_DB_USER: ${WORDPRESS_DB_USER}
+      WORDPRESS_DB_PASSWORD: ${WORDPRESS_DB_PASSWORD}
 
   setup:
     image: docker.io/library/wordpress:cli
@@ -46,8 +48,10 @@ services:
       - db
     setup_command: wp core is-installed --path=/var/www/html --allow-root || wp core install --path=/var/www/html --url=https://$ADMIRAL_INSTANCE_ID.local --title=\"$WORDPRESS_SITE_TITLE\" --admin_user=$WORDPRESS_ADMIN_USER --admin_password=$WORDPRESS_ADMIN_PASSWORD --admin_email=$WORDPRESS_ADMIN_EMAIL --skip-email --allow-root
     env:
-      WORDPRESS_DB_HOST: 127.0.0.1
+      WORDPRESS_DB_HOST: 127.0.0.1:3306
       WORDPRESS_DB_NAME: wordpress
+      WORDPRESS_DB_USER: ${WORDPRESS_DB_USER}
+      WORDPRESS_DB_PASSWORD: ${WORDPRESS_DB_PASSWORD}
       WORDPRESS_SITE_TITLE: WordPress
       WORDPRESS_ADMIN_EMAIL: admin@empresa.local
     secrets:

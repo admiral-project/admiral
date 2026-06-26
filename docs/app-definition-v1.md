@@ -192,6 +192,9 @@ services:
   alcancen readiness. Si un servicio define `healthcheck`, ese contrato
   se usa como criterio de readiness; si no lo define, se exige al menos
   que el contenedor exista y este en estado `running`.
+- Después de un `setup_command` exitoso, `admiral-fleet` reinicia el pod
+  afectado para que el servicio largo lea la configuracion persistida por
+  el setup antes de declararlo listo para el primer uso.
 - Si **todos** los `setup_command` terminan con exito, la instancia pasa
   a `running` y se marca `setup_completed = true` en la base de datos.
 - Si **algun** `setup_command` falla, la tarea completa reporta
@@ -407,12 +410,25 @@ compartir credenciales.
 
 ## Health checks (opcional)
 
-Aunque el contrato YAML permite definir `healthcheck` en los servicios, actualmente `admiral-fleet` utiliza un Health Checker simplificado basado únicamente en el estado del pod de Podman.
+Aunque el contrato YAML permite definir `healthcheck` en los servicios, la
+implementacion actual distingue dos usos:
 
-Reglas actuales:
-- Si el pod está `Running`, el estado es `healthy`.
-- En cualquier otro caso, el estado es `stopped`.
-- Los campos específicos de `http`, `tcp` o `command` definidos en el YAML son validados por `admirald` pero **ignorados** por el agente de ejecución en esta fase.
+- durante el provisionamiento, `admiral-fleet` si usa `healthcheck`
+  como criterio de readiness antes de ejecutar `setup_command`
+- fuera de ese flujo, el health checker operativo sigue siendo simplificado
+  y se basa principalmente en el estado del pod/contenedor
+
+Reglas actuales durante provisionamiento:
+- si el contenedor no esta `running`, el servicio no esta listo
+- `type: command` ejecuta el comando dentro del servicio
+- `type: tcp` intenta conectar al puerto publicado del servicio
+- `type: http` hace un GET al puerto publicado y valida el status esperado
+- si no hay `healthcheck`, el readiness minimo es que el contenedor exista y
+  este en estado `running`
+
+Reglas actuales para salud operativa simplificada:
+- si el pod/servicio esta `Running`, el estado es `healthy`
+- en cualquier otro caso, el estado es `stopped`
 
 ### Separacion de conceptos
 
@@ -497,7 +513,8 @@ Precedencia del entorno al provisionar:
 1. `tiers.<name>.environment` — mayor prioridad, permite al operador
    sobreescribir valores por plan
 2. `services.<name>.env`
-3. Variables internas de Admiral (`ADMIRAL_APP_CODE`, `ADMIRAL_TIER_CODE`,
+3. `environment` global de la app
+4. Variables internas de Admiral (`ADMIRAL_APP_CODE`, `ADMIRAL_TIER_CODE`,
    `ADMIRAL_INSTANCE_ID`, `ADMIRAL_TENANT_ID`, `ADMIRAL_ENVIRONMENT`)
 
 Las variables con prefijo `ADMIRAL_` son protegidas por el sistema.
