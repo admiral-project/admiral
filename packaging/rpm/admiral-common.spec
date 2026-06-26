@@ -1,11 +1,11 @@
 # SPDX-FileCopyrightText: William Moreno Reyes CP | MBA
 # SPDX-License-Identifier: Apache-2.0
 
-%global commit 2f7ee27a2e6047eb2404e51de81ed8669355602b
+%global commit 5410f48bacd17b509992a1aed1fa1621ce291161
 
 Name:    admiral-common
 Version: 0.0.1beta12
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: Common files and utilities for Admiral PaaS
 
 License: Apache-2.0
@@ -148,6 +148,9 @@ if [ $1 -eq 0 ]; then
 fi
 
 %changelog
+* Fri Jun 26 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta12-2
+- Restore TLS certs in flagship dev-mode ExecStart override
+- Make HARBOR_PAYPAL_MODE conditional: sandbox for production, mock for dev
 * Fri Jun 26 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta12-1
 - Bump to 0.0.1beta12 and update source commit ref
 * Thu Jun 25 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta11-1
