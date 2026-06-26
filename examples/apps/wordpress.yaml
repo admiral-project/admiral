@@ -1,6 +1,6 @@
 name: wp
 display_name: WordPress
-description: Minimal WordPress deployment for Admiral end-to-end validation.
+description: The open source publishing platform.
 
 shared_volumes:
   site:
