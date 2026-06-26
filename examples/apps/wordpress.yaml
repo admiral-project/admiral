@@ -2,12 +2,6 @@ name: wp
 display_name: WordPress
 description: The open source publishing platform.
 
-environment:
-  WORDPRESS_DB_HOST: 127.0.0.1
-  WORDPRESS_DB_NAME: wordpress
-  WORDPRESS_SITE_TITLE: WordPress
-  WORDPRESS_ADMIN_EMAIL: admin@empresa.local
-
 secrets:
   WORDPRESS_DB_USER:
     generate: username
@@ -39,8 +33,8 @@ services:
     backup:
       type: volume
     env:
-      WORDPRESS_DB_HOST: ${WORDPRESS_DB_HOST}
-      WORDPRESS_DB_NAME: ${WORDPRESS_DB_NAME}
+      WORDPRESS_DB_HOST: 127.0.0.1
+      WORDPRESS_DB_NAME: wordpress
 
   setup:
     image: docker.io/library/wordpress:cli
@@ -52,10 +46,10 @@ services:
       - db
     setup_command: wp core is-installed --path=/var/www/html --allow-root || wp core install --path=/var/www/html --url=https://$ADMIRAL_INSTANCE_ID.local --title=\"$WORDPRESS_SITE_TITLE\" --admin_user=$WORDPRESS_ADMIN_USER --admin_password=$WORDPRESS_ADMIN_PASSWORD --admin_email=$WORDPRESS_ADMIN_EMAIL --skip-email --allow-root
     env:
-      WORDPRESS_DB_HOST: ${WORDPRESS_DB_HOST}
-      WORDPRESS_DB_NAME: ${WORDPRESS_DB_NAME}
-      WORDPRESS_SITE_TITLE: ${WORDPRESS_SITE_TITLE}
-      WORDPRESS_ADMIN_EMAIL: ${WORDPRESS_ADMIN_EMAIL}
+      WORDPRESS_DB_HOST: 127.0.0.1
+      WORDPRESS_DB_NAME: wordpress
+      WORDPRESS_SITE_TITLE: WordPress
+      WORDPRESS_ADMIN_EMAIL: admin@empresa.local
     secrets:
       WORDPRESS_ADMIN_USER:
         generate: username
@@ -76,7 +70,7 @@ services:
       username_env: MARIADB_USER
       password_env: MARIADB_PASSWORD
     env:
-      MARIADB_DATABASE: ${WORDPRESS_DB_NAME}
+      MARIADB_DATABASE: wordpress
       MARIADB_USER: ${WORDPRESS_DB_USER}
       MARIADB_PASSWORD: ${WORDPRESS_DB_PASSWORD}
       MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}

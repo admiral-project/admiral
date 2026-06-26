@@ -2,14 +2,6 @@ name: gitea
 display_name: Gitea
 description: Self-hosted Git service.
 
-environment:
-  DB_TYPE: postgres
-  DB_HOST: 127.0.0.1:5432
-  DB_NAME: gitea
-  ROOT_URL: http://127.0.0.1:3000/
-  SSH_PORT: "2222"
-  GITEA_ADMIN_EMAIL: admin@example.com
-
 secrets:
   DB_USER:
     generate: username
@@ -31,12 +23,14 @@ services:
     backup:
       type: volume
     env:
-      DB_TYPE: ${DB_TYPE}
-      DB_HOST: ${DB_HOST}
-      DB_NAME: ${DB_NAME}
-      ROOT_URL: ${ROOT_URL}
-      SSH_PORT: ${SSH_PORT}
-      GITEA_ADMIN_EMAIL: ${GITEA_ADMIN_EMAIL}
+      DB_TYPE: postgres
+      DB_HOST: 127.0.0.1:5432
+      DB_NAME: gitea
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      ROOT_URL: http://127.0.0.1:3000/
+      SSH_PORT: "2222"
+      GITEA_ADMIN_EMAIL: admin@example.com
     healthcheck:
       type: tcp
       port: 3000
@@ -58,7 +52,7 @@ services:
       username_env: POSTGRES_USER
       password_env: POSTGRES_PASSWORD
     env:
-      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_DB: gitea
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
     healthcheck:
