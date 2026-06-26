@@ -2,6 +2,20 @@ name: gitea
 display_name: Gitea
 description: Self-hosted Git service.
 
+environment:
+  DB_TYPE: postgres
+  DB_HOST: 127.0.0.1:5432
+  DB_NAME: gitea
+  ROOT_URL: http://127.0.0.1:3000/
+  SSH_PORT: "2222"
+  GITEA_ADMIN_EMAIL: admin@example.com
+
+secrets:
+  DB_USER:
+    generate: username
+  DB_PASSWORD:
+    generate: password
+
 services:
   web:
     image: docker.io/gitea/gitea:1.22
@@ -13,24 +27,20 @@ services:
       - db
     requires:
       - db
-    setup_command: mkdir -p /data/gitea/conf && printf '[server]\nROOT_URL = %s\nSSH_PORT = %s\n\n[database]\nDB_TYPE = %s\nHOST = %s\nNAME = %s\nUSER = %s\nPASSWD = %s\n\n[security]\nINSTALL_LOCK = true\n' "$ROOT_URL" "$SSH_PORT" "$GITEA__database__DB_TYPE" "$GITEA__database__HOST" "$GITEA__database__NAME" "$GITEA__database__USER" "$GITEA__database__PASSWD" > /data/gitea/conf/app.ini && gitea migrate && (gitea admin user list --admin | grep -F "$GITEA_ADMIN_USERNAME" || gitea admin user create --username "$GITEA_ADMIN_USERNAME" --password "$GITEA_ADMIN_PASSWORD" --email "$GITEA_ADMIN_EMAIL" --admin)
+    setup_command: mkdir -p /data/gitea/conf && printf '[server]\nROOT_URL = %s\nSSH_PORT = %s\n\n[database]\nDB_TYPE = %s\nHOST = %s\nNAME = %s\nUSER = %s\nPASSWD = %s\n\n[security]\nINSTALL_LOCK = true\n' "$ROOT_URL" "$SSH_PORT" "$DB_TYPE" "$DB_HOST" "$DB_NAME" "$DB_USER" "$DB_PASSWORD" > /data/gitea/conf/app.ini && gitea migrate && (gitea admin user list --admin | grep -F "$GITEA_ADMIN_USERNAME" || gitea admin user create --username "$GITEA_ADMIN_USERNAME" --password "$GITEA_ADMIN_PASSWORD" --email "$GITEA_ADMIN_EMAIL" --admin)
     backup:
       type: volume
     env:
-      GITEA__database__DB_TYPE: postgres
-      GITEA__database__HOST: 127.0.0.1:5432
-      GITEA__database__NAME: gitea
-      ROOT_URL: http://127.0.0.1:3000/
-      SSH_PORT: 2222
-      GITEA_ADMIN_EMAIL: admin@example.com
+      DB_TYPE: ${DB_TYPE}
+      DB_HOST: ${DB_HOST}
+      DB_NAME: ${DB_NAME}
+      ROOT_URL: ${ROOT_URL}
+      SSH_PORT: ${SSH_PORT}
+      GITEA_ADMIN_EMAIL: ${GITEA_ADMIN_EMAIL}
     healthcheck:
       type: tcp
       port: 3000
     secrets:
-      GITEA__database__USER:
-        generate: username
-      GITEA__database__PASSWD:
-        generate: password
       GITEA_ADMIN_USERNAME:
         generate: username
         expose: true
@@ -48,12 +58,9 @@ services:
       username_env: POSTGRES_USER
       password_env: POSTGRES_PASSWORD
     env:
-      POSTGRES_DB: gitea
-    secrets:
-      POSTGRES_USER:
-        generate: username
-      POSTGRES_PASSWORD:
-        generate: password
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
     healthcheck:
       type: command
       command:
