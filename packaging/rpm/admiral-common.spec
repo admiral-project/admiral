@@ -4,7 +4,7 @@
 %global commit 2f7ee27a2e6047eb2404e51de81ed8669355602b
 
 Name:    admiral-common
-Version: 0.0.1beta11
+Version: 0.0.1beta12
 Release: 1%{?dist}
 Summary: Common files and utilities for Admiral PaaS
 
@@ -148,6 +148,8 @@ if [ $1 -eq 0 ]; then
 fi
 
 %changelog
+* Fri Jun 26 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta12-1
+- Bump to 0.0.1beta12 and update source commit ref
 * Thu Jun 25 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta11-1
 - Bump to 0.0.1beta11 and reset packaging release to 1
 * Thu Jun 25 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta10-4

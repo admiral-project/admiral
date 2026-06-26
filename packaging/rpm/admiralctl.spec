@@ -2,10 +2,10 @@
 # SPDX-License-Identifier: Apache-2.0
 
 %global debug_package %{nil}
-%global commit 080278a0cbfaf5c0705fc69e4e1d95eb8e59607a
+%global commit 7b4ebf475df39fd2d7f4354c6ada0483cfe8b3d3
 
 Name:    admiralctl
-Version: 0.0.1beta11
+Version: 0.0.1beta12
 Release: 1%{?dist}
 Summary: Admiral Command-Line Interface
 
@@ -58,6 +58,8 @@ go test ./... || echo "WARNING: tests skipped or failed in build sandbox"
 restorecon -F %{_bindir}/admiralctl 2>/dev/null || :
 
 %changelog
+* Fri Jun 26 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta12-1
+- Bump to 0.0.1beta12 and update source commit ref
 * Thu Jun 25 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta11-1
 - Bump to 0.0.1beta11 and reset packaging release to 1
 * Thu Jun 25 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta10-2
