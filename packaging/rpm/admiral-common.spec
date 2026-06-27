@@ -5,7 +5,7 @@
 
 Name:    admiral-common
 Version: 0.0.1beta12
-Release: 6%{?dist}
+Release: 8%{?dist}
 Summary: Common files and utilities for Admiral PaaS
 
 License: Apache-2.0
@@ -19,11 +19,12 @@ Requires: ansible-core
 Requires: ansible-collection-ansible-posix
 Requires: openssh-clients
 Requires: openssh-server
-Requires: shadow-utils
 Requires: systemd >= 250
 Requires: wireguard-tools
 Requires: policycoreutils-python-utils
 Requires: openssl
+
+Source1: admiral-common.sysusers
 
 %description
 Common configuration files, Ansible playbooks, and utility scripts
@@ -60,18 +61,9 @@ mkdir -p %{buildroot}%{_localstatedir}/lib/admiral/outbox
 mkdir -p %{buildroot}%{_localstatedir}/lib/admiral/backups
 mkdir -p %{buildroot}%{_localstatedir}/lib/admiral/instances
 mkdir -p %{buildroot}%{_localstatedir}/lib/admiral-apps
+install -D -m 0644 %{SOURCE1} %{buildroot}%{_sysusersdir}/%{name}.conf
 %pre
-# Create users and groups before file install so RPM can apply ownership
-getent group admiral >/dev/null || groupadd -r admiral
-getent passwd admiral >/dev/null || \
-    useradd -r -g admiral \
-    -d %{_localstatedir}/lib/admiral \
-    -s /sbin/nologin \
-    -c "Admiral service account" admiral
-
-getent passwd admiral-apps >/dev/null || \
-    useradd -m -d /var/lib/admiral-apps \
-    -s /bin/bash -c "Admiral rootless apps" admiral-apps
+%sysusers_create_package %{name} %{SOURCE1}
 
 %files
 %license LICENSE
@@ -87,6 +79,7 @@ getent passwd admiral-apps >/dev/null || \
 %dir %attr(0755, admiral, admiral) %{_localstatedir}/lib/admiral/backups
 %dir %attr(0755, admiral, admiral) %{_localstatedir}/lib/admiral/instances
 %dir %attr(0755, admiral-apps, admiral-apps) %{_localstatedir}/lib/admiral-apps
+%{_sysusersdir}/%{name}.conf
 
 %{_bindir}/admiral_https_setup
 %{_bindir}/admiral_install
@@ -141,13 +134,11 @@ restorecon -F %{_bindir}/admiral_install 2>/dev/null || :
 semanage fcontext -a -t container_file_t "/var/lib/admiral-apps/.local/share/containers/storage(/.*)?" 2>/dev/null || :
 restorecon -R /var/lib/admiral-apps/.local/share/containers/storage/ 2>/dev/null || :
 
-%preun
-if [ $1 -eq 0 ]; then
-    userdel admiral 2>/dev/null || true
-    groupdel admiral 2>/dev/null || true
-fi
-
 %changelog
+* Sat Jun 27 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta12-8
+- Move admiral and admiral-apps account creation into RPM sysusers handling
+* Sat Jun 27 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta12-7
+- Bootstrap admiral and admiral-apps system accounts before package install
 * Sat Jun 27 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta12-6
 - Bootstrap admiral and admiral-apps system accounts before package install
 * Sat Jun 27 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta12-5

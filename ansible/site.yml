@@ -5,36 +5,6 @@
   become: true
 
   pre_tasks:
-    - name: Ensure Admiral system accounts exist before package installation
-      block:
-        - name: Ensure admiral group exists
-          group:
-            name: admiral
-            state: present
-
-        - name: Ensure admiral service account exists
-          user:
-            name: admiral
-            group: admiral
-            home: /var/lib/admiral
-            shell: /sbin/nologin
-            system: true
-            state: present
-
-        - name: Ensure admiral-apps group exists
-          group:
-            name: admiral-apps
-            state: present
-
-        - name: Ensure admiral-apps rootless account exists
-          user:
-            name: admiral-apps
-            group: admiral-apps
-            home: /var/lib/admiral-apps
-            shell: /bin/bash
-            create_home: true
-            state: present
-
     - name: Determine WireGuard role
       set_fact:
         admiral_wireguard_role: "{{ 'hub' if admiral_install_mode in ['single-node', 'admin-node'] else 'spoke' }}"

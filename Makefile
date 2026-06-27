@@ -133,6 +133,7 @@ source-support-files: | $(SOURCEDIR)
 	cp $(CONFIGDIR)/harbor.env $(SOURCEDIR)/
 	cp $(BINDIR)/harborctl $(SOURCEDIR)/
 	cp $(BINDIR)/harbor-gunicorn $(SOURCEDIR)/
+	cp $(SPECSDIR)/admiral-common.sysusers $(SOURCEDIR)/
 
 # -- RPM build flags -----------------------------------------------------
 

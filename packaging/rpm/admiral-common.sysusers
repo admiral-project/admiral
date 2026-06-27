@@ -1,0 +1,3 @@
+# Admiral system accounts
+u admiral - "Admiral service account" /var/lib/admiral /sbin/nologin
+u admiral-apps - "Admiral rootless apps" /var/lib/admiral-apps /bin/bash
