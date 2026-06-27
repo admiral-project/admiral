@@ -519,11 +519,33 @@ Precedencia del entorno al provisionar:
 2. `services.<name>.env`
 3. `environment` global de la app
 4. Variables internas de Admiral (`ADMIRAL_APP_CODE`, `ADMIRAL_TIER_CODE`,
-   `ADMIRAL_INSTANCE_ID`, `ADMIRAL_TENANT_ID`, `ADMIRAL_ENVIRONMENT`)
+   `ADMIRAL_INSTANCE_ID`, `ADMIRAL_TENANT_ID`, `ADMIRAL_ENVIRONMENT`,
+   `ADMIRAL_PUBLIC_URL`, `ADMIRAL_PUBLIC_HOSTNAME`)
 
 Las variables con prefijo `ADMIRAL_` son protegidas por el sistema.
 No pueden ser sobreescritas desde `env` de servicio ni desde `environment`
 del tier.
+
+`admirald` es la fuente de verdad de las variables internas `ADMIRAL_*`.
+Estas variables son reservadas globales del runtime: se inyectan en todos los
+servicios de la instancia y no deben declararse en la definicion de app, en
+`services.<name>.env`, en `environment` global ni en `tiers.<name>.environment`.
+
+Cuando la instancia tiene una ruta publica, `admirald` tambien inyecta como
+variables reservadas globales:
+
+- `ADMIRAL_PUBLIC_URL`: URL publica completa con esquema y `/` final, por
+  ejemplo `https://wp189654.apps.example.com/`.
+- `ADMIRAL_PUBLIC_HOSTNAME`: hostname publico sin esquema, por ejemplo
+  `wp189654.apps.example.com`.
+
+Las apps que necesitan fijar su URL canonical durante `setup_command` deben
+usar `ADMIRAL_PUBLIC_URL`. Si la app tambien soporta ejecuciones sin ruta
+publica, puede definir un fallback explicito:
+
+```yaml
+setup_command: app setup --url=${ADMIRAL_PUBLIC_URL:-https://$ADMIRAL_INSTANCE_ID.local}
+```
 
 ## `services.<name>.backup`
 
