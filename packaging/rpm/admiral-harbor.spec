@@ -1,8 +1,8 @@
 %global debug_package %{nil}
-%global commit 639b1e3c5c1b0ef9998992ea7c7d4f010388b526
+%global commit 8c678d67fe6c9c67c062a6f7831c4de45cc52976
 
 Name:    admiral-harbor
-Version: 0.0.1beta12
+Version: 0.0.1beta13
 Release: 1%{?dist}
 Summary: Admiral Customer Portal - Web UI for end users
 
@@ -113,6 +113,9 @@ restorecon -R %{_localstatedir}/lib/admiral/harbor 2>/dev/null || :
 %{python3} -m pytest tests/ -x --tb=short 2>/dev/null || echo "WARNING: tests skipped (pytest not available)"
 
 %changelog
+* Sat Jun 27 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta13-1
+- Bump to 0.0.1beta13 and update source commit ref
+
 * Fri Jun 26 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta12-1
 - Bump to 0.0.1beta12 and update source commit ref
 * Thu Jun 25 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta11-1

@@ -1,11 +1,11 @@
 # SPDX-FileCopyrightText: William Moreno Reyes CP | MBA
 # SPDX-License-Identifier: Apache-2.0
 
-%global commit a48a7e795ea0c560d6fb1cc6e0563f51ae6d28b0
+%global commit 3ac90e6ea1710c0587beda6f9a54e1d6acbbcc50
 
 Name:    admiral-common
-Version: 0.0.1beta12
-Release: 8%{?dist}
+Version: 0.0.1beta13
+Release: 1%{?dist}
 Summary: Common files and utilities for Admiral PaaS
 
 License: Apache-2.0
@@ -135,6 +135,9 @@ semanage fcontext -a -t container_file_t "/var/lib/admiral-apps/.local/share/con
 restorecon -R /var/lib/admiral-apps/.local/share/containers/storage/ 2>/dev/null || :
 
 %changelog
+* Sat Jun 27 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta13-1
+- Bump to 0.0.1beta13 and reset packaging release to 1
+
 * Sat Jun 27 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta12-8
 - Move admiral and admiral-apps account creation into RPM sysusers handling
 * Sat Jun 27 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta12-7
