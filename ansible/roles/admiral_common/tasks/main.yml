@@ -323,10 +323,10 @@
       {{ san }}
   when: admiral_install_mode in ['single-node', 'admin-node', 'portal-node']
 
-- name: Detect local admin packages for portal-node TLS cleanup
+- name: Detect active admin services for portal-node TLS cleanup
   command:
-    cmd: rpm -q {{ item }}
-  register: admiral_common_admin_package_state
+    cmd: systemctl is-active --quiet {{ item }}
+  register: admiral_common_admin_service_state
   changed_when: false
   failed_when: false
   loop:
@@ -339,14 +339,14 @@
     admiral_portal_shares_admin_host: >-
       {{
         (
-          admiral_common_admin_package_state.results
+          admiral_common_admin_service_state.results
           | selectattr('item', 'equalto', 'caddy')
           | map(attribute='rc')
           | first
           | default(1)
         ) == 0 and
         (
-          admiral_common_admin_package_state.results
+          admiral_common_admin_service_state.results
           | selectattr('item', 'equalto', 'admirald')
           | map(attribute='rc')
           | first

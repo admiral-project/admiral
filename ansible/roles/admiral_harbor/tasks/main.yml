@@ -42,6 +42,39 @@
     admiral_api_url_for_harbor: "https://{{ admiral_admin_wireguard_ip | default(admiral_admin_endpoint | default('10.99.0.1')) }}:8080"
   when: admiral_install_mode == 'portal-node'
 
+- name: Determine whether portal-node shares the admin host
+  set_fact:
+    harbor_portal_shares_admin_host: "{{ admiral_portal_shares_admin_host | default(false) | bool }}"
+  when: admiral_install_mode == 'portal-node'
+
+- name: Determine admiral-harbor bind address
+  set_fact:
+    harbor_bind_address: >-
+      {{
+        '0.0.0.0'
+        if (admiral_dev_mode | default(false) | bool)
+        else (
+          '127.0.0.1'
+          if admiral_install_mode == 'single-node' or (harbor_portal_shares_admin_host | default(false) | bool)
+          else (admiral_wireguard_ip | default(''))
+        )
+      }}
+
+- name: Determine admiral-harbor route target
+  set_fact:
+    harbor_route_target: "https://{{ '127.0.0.1' if harbor_bind_address in ['0.0.0.0', '127.0.0.1'] else harbor_bind_address }}:5001"
+
+- name: Require WireGuard bind address for dedicated portal nodes
+  assert:
+    that:
+      - harbor_bind_address is defined
+      - harbor_bind_address | length > 0
+    fail_msg: "Dedicated portal-node installs require admiral_wireguard_ip so Harbor can bind to the VPN address."
+  when:
+    - admiral_install_mode == 'portal-node'
+    - not (harbor_portal_shares_admin_host | default(false) | bool)
+    - not (admiral_dev_mode | default(false) | bool)
+
 - name: Generate random harbor node token
   set_fact:
     harbor_node_token_value: "{{ lookup('ansible.builtin.pipe', 'openssl rand -hex 32') }}"
@@ -114,24 +147,16 @@
     path: /etc/systemd/system/admiral-harbor.service.d
     state: directory
     mode: "0755"
-  when: admiral_dev_mode | default(false) | bool
 
-- name: Relax admiral-harbor binding in dev mode
+- name: Deploy admiral-harbor systemd binding override
   copy:
     dest: /etc/systemd/system/admiral-harbor.service.d/override.conf
     content: |
       [Service]
       ExecStart=
-      ExecStart=/usr/bin/harbor-gunicorn --workers 2 --bind 0.0.0.0:5001 --certfile /etc/admiral/tls/admirald.pem --keyfile /etc/admiral/tls/admirald-key.pem run:app
-      Environment=ENV=development
+      ExecStart=/usr/bin/harbor-gunicorn --workers 2 --bind {{ harbor_bind_address }}:5001 --certfile /etc/admiral/tls/admirald.pem --keyfile /etc/admiral/tls/admirald-key.pem run:app
+      Environment=ENV={{ 'development' if (admiral_dev_mode | default(false) | bool) else 'production' }}
     mode: "0644"
-  when: admiral_dev_mode | default(false) | bool
-
-- name: Remove legacy admiral-harbor systemd override
-  file:
-    path: /etc/systemd/system/admiral-harbor.service.d
-    state: absent
-  when: not (admiral_dev_mode | default(false) | bool)
 
 - name: Enable and start admiral-harbor
   systemd:
@@ -171,6 +196,51 @@
     ADMIRAL_SERVER_URL: "https://127.0.0.1:8080"
     ADMIRAL_TLS_CA_FILE: /etc/admiral/tls/ca.pem
   no_log: true
+
+- name: Ensure admirald systemd override directory exists on admin host
+  file:
+    path: /etc/systemd/system/admirald.service.d
+    state: directory
+    mode: "0755"
+  delegate_to: localhost
+  when: admiral_install_mode == 'portal-node'
+
+- name: Configure admin portal route target for this portal node
+  copy:
+    dest: /etc/systemd/system/admirald.service.d/20-portal-target.conf
+    content: |
+      [Service]
+      Environment=ADMIRAL_NETWORKING_PORTAL_TARGET={{ harbor_route_target }}
+    mode: "0644"
+  delegate_to: localhost
+  when: admiral_install_mode == 'portal-node'
+
+- name: Restart admirald after portal route target change
+  systemd:
+    name: admirald
+    state: restarted
+    daemon_reload: true
+  delegate_to: localhost
+  when: admiral_install_mode == 'portal-node'
+
+- name: Wait for admirald after portal route target change
+  wait_for:
+    host: 127.0.0.1
+    port: 8080
+    timeout: 30
+  delegate_to: localhost
+  when: admiral_install_mode == 'portal-node'
+
+- name: Synchronize public routes after portal registration
+  command:
+    cmd: /usr/bin/admiralctl routes sync
+  delegate_to: localhost
+  changed_when: false
+  environment:
+    ADMIRAL_ADMIN_TOKEN: "{{ admiral_admin_token_value }}"
+    ADMIRAL_SERVER_URL: "https://127.0.0.1:8080"
+    ADMIRAL_TLS_CA_FILE: /etc/admiral/tls/ca.pem
+  when: admiral_install_mode == 'portal-node'
 
 - name: Remind operator to configure SMTP
   debug:

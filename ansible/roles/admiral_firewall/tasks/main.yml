@@ -121,10 +121,10 @@
   register: firewall_public_ports
   changed_when: false
 
-- name: Detect local admin packages for portal-node validation
+- name: Detect active admin services for portal-node validation
   command:
-    cmd: rpm -q {{ item }}
-  register: firewall_admin_package_state
+    cmd: systemctl is-active --quiet {{ item }}
+  register: firewall_admin_service_state
   changed_when: false
   failed_when: false
   loop:
@@ -137,14 +137,14 @@
     firewall_portal_shares_admin_host: >-
       {{
         (
-          firewall_admin_package_state.results
+          firewall_admin_service_state.results
           | selectattr('item', 'equalto', 'caddy')
           | map(attribute='rc')
           | first
           | default(1)
         ) == 0 and
         (
-          firewall_admin_package_state.results
+          firewall_admin_service_state.results
           | selectattr('item', 'equalto', 'admirald')
           | map(attribute='rc')
           | first

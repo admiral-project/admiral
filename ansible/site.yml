@@ -5,9 +5,41 @@
   become: true
 
   pre_tasks:
+    - name: Check active admin services for portal-node
+      command:
+        cmd: systemctl is-active --quiet {{ item }}
+      register: admiral_portal_admin_service_state
+      changed_when: false
+      failed_when: false
+      loop:
+        - caddy
+        - admirald
+      when: admiral_install_mode == 'portal-node'
+
+    - name: Determine whether portal-node shares a running admin host
+      set_fact:
+        admiral_portal_shares_admin_host: >-
+          {{
+            (
+              admiral_portal_admin_service_state.results
+              | selectattr('item', 'equalto', 'caddy')
+              | map(attribute='rc')
+              | first
+              | default(1)
+            ) == 0 and
+            (
+              admiral_portal_admin_service_state.results
+              | selectattr('item', 'equalto', 'admirald')
+              | map(attribute='rc')
+              | first
+              | default(1)
+            ) == 0
+          }}
+      when: admiral_install_mode == 'portal-node'
+
     - name: Determine WireGuard role
       set_fact:
-        admiral_wireguard_role: "{{ 'hub' if admiral_install_mode in ['single-node', 'admin-node'] else 'spoke' }}"
+        admiral_wireguard_role: "{{ 'hub' if admiral_install_mode in ['single-node', 'admin-node'] or (admiral_install_mode == 'portal-node' and (admiral_portal_shares_admin_host | default(false) | bool)) else 'spoke' }}"
 
     - name: Create Admiral bootstrap directories on remote spokes
       file:
@@ -43,6 +75,7 @@
     - role: admiral_wireguard
       vars:
         admiral_wireguard_role: "{{ admiral_wireguard_role }}"
+      when: not (admiral_install_mode == 'portal-node' and (admiral_portal_shares_admin_host | default(false) | bool))
     - role: admirald
       when: admiral_install_mode in ['single-node', 'admin-node']
     # Remote spoke hosts are role-exclusive: a worker spoke cannot also be a
