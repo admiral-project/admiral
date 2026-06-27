@@ -240,8 +240,8 @@
 
 - name: Parse generated Ed25519 keys
   set_fact:
-    admiral_ed25519_private_key_generated: "{{ admiral_ed25519_key_generated.stdout | regex_search('private_key:([a-f0-9]+)', '\\1') | first | default('') }}"
-    admiral_task_public_key_generated: "{{ admiral_ed25519_key_generated.stdout | regex_search('public_key:([a-f0-9]+)', '\\1') | first | default('') }}"
+    admiral_ed25519_private_key_generated: "{{ (admiral_ed25519_key_generated.stdout | default('') ~ '\n' ~ admiral_ed25519_key_generated.stderr | default('')) | regex_search('private_key:([a-f0-9]+)', '\\1') | first | default('') }}"
+    admiral_task_public_key_generated: "{{ (admiral_ed25519_key_generated.stdout | default('') ~ '\n' ~ admiral_ed25519_key_generated.stderr | default('')) | regex_search('public_key:([a-f0-9]+)', '\\1') | first | default('') }}"
   when:
     - admiral_install_mode in ['single-node', 'admin-node']
     - admiral_ed25519_key_generated.changed | default(false)
