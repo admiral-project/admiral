@@ -5,7 +5,7 @@
 
 Name:    admiral-common
 Version: 0.0.1beta13
-Release: 4%{?dist}
+Release: 5%{?dist}
 Summary: Common files and utilities for Admiral PaaS
 
 License: Apache-2.0
@@ -137,6 +137,10 @@ semanage fcontext -a -t container_file_t "/var/lib/admiral-apps/.local/share/con
 restorecon -R /var/lib/admiral-apps/.local/share/containers/storage/ 2>/dev/null || :
 
 %changelog
+* Sat Jun 27 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta13-5
+- Guard Ed25519 key parsing with install mode conditional to
+  prevent failure on portal-node and worker-node installs
+
 * Sat Jun 27 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta13-4
 - Set sandbox as default PayPal mode; only --dev-node uses mock
 - Ship harbor.env with HARBOR_PAYPAL_MODE=sandbox so the admin UI
