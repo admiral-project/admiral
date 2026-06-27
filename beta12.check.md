@@ -15,6 +15,8 @@ Admin VPS: `161.35.112.132`
 - Moved system account creation into `admiral-common` packaging via RPM `sysusers`, removing the temporary Ansible bootstrap workaround.
 - Admin-node validation completed successfully on `161.35.112.132`.
 - Portal-node validation completed successfully on `157.245.81.44`.
+- Worker-001, worker-002, worker-003, and worker-004 all completed via `install.sh` after preinstalling `admiral-common-0.0.1beta12-8.el10` on each worker host.
+- `worker-001` required an `admiral-fleet` restart after the bootstrap to clear a transient HTTP 401 heartbeat failure; it is now healthy.
 
 ## Findings from review
 
@@ -33,7 +35,11 @@ Admin VPS: `161.35.112.132`
 
 - Admin node: installed and active.
 - Portal node: installed and active.
-- Worker nodes: in progress, serialized one at a time.
+- Worker-001: installed and active with `admiral-common-0.0.1beta12-8.el10`.
+- Worker-002: installed and active with `admiral-common-0.0.1beta12-8.el10`.
+- Worker-003: installed and active with `admiral-common-0.0.1beta12-8.el10`.
+- Worker-004: installed and active with `admiral-common-0.0.1beta12-8.el10`.
+- Control plane snapshot shows worker-001 through worker-004 as `active` and `healthy` in `admirald`.
 
 ## Commands used during analysis
 
@@ -105,6 +111,39 @@ admiral_install --worker-node \
   --node-id worker-001 \
   --wireguard-ip 10.99.0.2 \
   --ssh-key /root/keys/ssh-key-2025-05-24.key
+```
+
+Worker-001 package refresh:
+
+```bash
+scp -o StrictHostKeyChecking=accept-new -i /root/keys/ssh-key-2025-05-24.key /root/admiral/packaging/build/RPMS/noarch/admiral-common-0.0.1beta12-8.el10.noarch.rpm root@161.35.101.241:/tmp/
+ssh -o StrictHostKeyChecking=accept-new -i /root/keys/ssh-key-2025-05-24.key root@161.35.101.241 'dnf install -y /tmp/admiral-common-0.0.1beta12-8.el10.noarch.rpm'
+```
+
+Worker-002 package refresh:
+
+```bash
+scp -o StrictHostKeyChecking=accept-new -i /root/keys/ssh-key-2025-05-24.key /root/admiral/packaging/build/RPMS/noarch/admiral-common-0.0.1beta12-8.el10.noarch.rpm root@161.35.102.59:/tmp/
+ssh -o StrictHostKeyChecking=accept-new -i /root/keys/ssh-key-2025-05-24.key root@161.35.102.59 'rpm -Uvh --nodeps /tmp/admiral-common-0.0.1beta12-8.el10.noarch.rpm'
+```
+
+Worker-003 package refresh:
+
+```bash
+scp -o StrictHostKeyChecking=accept-new -i /root/keys/ssh-key-2025-05-24.key /root/admiral/packaging/build/RPMS/noarch/admiral-common-0.0.1beta12-8.el10.noarch.rpm root@159.223.163.220:/tmp/
+ssh -o StrictHostKeyChecking=accept-new -i /root/keys/ssh-key-2025-05-24.key root@159.223.163.220 'rpm -Uvh --nodeps /tmp/admiral-common-0.0.1beta12-8.el10.noarch.rpm'
+```
+
+Worker-004 package refresh:
+
+```bash
+scp -o StrictHostKeyChecking=accept-new -i /root/keys/ssh-key-2025-05-24.key /root/admiral/packaging/build/RPMS/noarch/admiral-common-0.0.1beta12-8.el10.noarch.rpm root@143.198.163.223:/tmp/
+ssh -o StrictHostKeyChecking=accept-new -i /root/keys/ssh-key-2025-05-24.key root@143.198.163.223 'rpm -Uvh --nodeps /tmp/admiral-common-0.0.1beta12-8.el10.noarch.rpm'
+```
+
+```bash
+admiralctl nodes list --output json
+wg show wg-admiral
 ```
 
 ```bash
