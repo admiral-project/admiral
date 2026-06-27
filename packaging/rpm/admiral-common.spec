@@ -1,11 +1,11 @@
 # SPDX-FileCopyrightText: William Moreno Reyes CP | MBA
 # SPDX-License-Identifier: Apache-2.0
 
-%global commit 3ac90e6ea1710c0587beda6f9a54e1d6acbbcc50
+%global commit ac64c3d1dd24eb040074cf223de8846d0fe03a08
 
 Name:    admiral-common
 Version: 0.0.1beta13
-Release: 2%{?dist}
+Release: 3%{?dist}
 Summary: Common files and utilities for Admiral PaaS
 
 License: Apache-2.0
@@ -137,6 +137,9 @@ semanage fcontext -a -t container_file_t "/var/lib/admiral-apps/.local/share/con
 restorecon -R /var/lib/admiral-apps/.local/share/containers/storage/ 2>/dev/null || :
 
 %changelog
+* Sat Jun 27 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta13-3
+- Restart Harbor when the systemd bind override changes
+
 * Sat Jun 27 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta13-2
 - Ensure sysusers macro is available when building in COPR
 
