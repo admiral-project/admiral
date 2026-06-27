@@ -1,11 +1,11 @@
 # SPDX-FileCopyrightText: William Moreno Reyes CP | MBA
 # SPDX-License-Identifier: Apache-2.0
 
-%global commit e767dd07f6cd99eef42aa6cf3a300e10fcb2a298
+%global commit a48a7e795ea0c560d6fb1cc6e0563f51ae6d28b0
 
 Name:    admiral-common
 Version: 0.0.1beta12
-Release: 5%{?dist}
+Release: 6%{?dist}
 Summary: Common files and utilities for Admiral PaaS
 
 License: Apache-2.0
@@ -148,6 +148,8 @@ if [ $1 -eq 0 ]; then
 fi
 
 %changelog
+* Sat Jun 27 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta12-6
+- Bootstrap admiral and admiral-apps system accounts before package install
 * Sat Jun 27 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta12-5
 - Disable SSL for portal-node local Harbor database connection
 * Sat Jun 27 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta12-4
