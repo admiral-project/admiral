@@ -5,7 +5,7 @@
 
 Name:    admiral-common
 Version: 0.0.1beta13
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: Common files and utilities for Admiral PaaS
 
 License: Apache-2.0
@@ -13,6 +13,8 @@ URL:     https://github.com/admiral-project/admiral
 Source0: https://github.com/admiral-project/admiral/archive/%{commit}/admiral-%{version}.tar.gz
 
 BuildArch: noarch
+
+BuildRequires: systemd-rpm-macros
 
 Requires: python3
 Requires: ansible-core
@@ -135,6 +137,9 @@ semanage fcontext -a -t container_file_t "/var/lib/admiral-apps/.local/share/con
 restorecon -R /var/lib/admiral-apps/.local/share/containers/storage/ 2>/dev/null || :
 
 %changelog
+* Sat Jun 27 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta13-2
+- Ensure sysusers macro is available when building in COPR
+
 * Sat Jun 27 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta13-1
 - Bump to 0.0.1beta13 and reset packaging release to 1
 
