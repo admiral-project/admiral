@@ -157,12 +157,13 @@
       ExecStart=/usr/bin/harbor-gunicorn --workers 2 --bind {{ harbor_bind_address }}:5001 --certfile /etc/admiral/tls/admirald.pem --keyfile /etc/admiral/tls/admirald-key.pem run:app
       Environment=ENV={{ 'development' if (admiral_dev_mode | default(false) | bool) else 'production' }}
     mode: "0644"
+  register: harbor_systemd_override
 
 - name: Enable and start admiral-harbor
   systemd:
     name: admiral-harbor
     enabled: true
-    state: started
+    state: "{{ 'restarted' if harbor_systemd_override.changed else 'started' }}"
     daemon_reload: true
 
 - name: Enable and start admiral-harbor worker timer
