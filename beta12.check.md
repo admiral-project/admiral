@@ -35,6 +35,42 @@ Date: 2026-06-27
   - `admiralctl-0.0.1beta13-1.el10.x86_64.rpm`
   - `admiral-flagship-0.0.1beta13-1.el10.noarch.rpm`
   - `admiral-harbor-0.0.1beta13-1.el10.noarch.rpm`
+- Clean RPM rebuild completed successfully and produced all six beta13 RPMs.
+- Published the six beta13 SRPMs for COPR import over temporary HTTP on port 8000, then closed the port after import.
+- Confirmed component CI with `gh`:
+  - `admirald` `36452ce`: green.
+  - `admiral-fleet` `8013eed`: green.
+  - `admiralctl` `cad24d5`: green.
+  - `admiral-flagship` `bbfec70`: green.
+  - `admiral-harbor` `8c678d6`: green.
+  - Repo mother `admiral` had no Actions run recorded for the beta13 packaging commit at the time checked.
+
+## Beta13 common package follow-up
+
+Date: 2026-06-27
+
+- First COPR build of `admiral-common-0.0.1beta13-1` failed on upgrade because `%sysusers_create_package` was left literal in the generated RPM scriptlet:
+  - Runtime error: `/var/tmp/rpm-tmp.*: line 1: fg: no job control`.
+  - Root cause: COPR build environment did not have the sysusers macro available during spec parsing.
+- Kept the sysusers macro approach and fixed packaging by adding `BuildRequires: systemd-rpm-macros`.
+- Released `admiral-common-0.0.1beta13-2` and imported the SRPM into COPR.
+- Re-ran `dnf --refresh update 'admiral*'`:
+  - Admin node updated to `admiral-common-0.0.1beta13-2.el10`, `admirald-0.0.1beta13-1.el10`, `admiral-flagship-0.0.1beta13-1.el10`, and `admiralctl-0.0.1beta13-1.el10`.
+  - Portal node updated to `admiral-common-0.0.1beta13-2.el10`, `admiral-harbor-0.0.1beta13-1.el10`, and `admiralctl-0.0.1beta13-1.el10`.
+  - EL10 workers updated to `admiral-common-0.0.1beta13-2.el10`, `admiral-fleet-0.0.1beta13-1.el10`, and `admiralctl-0.0.1beta13-1.el10`.
+  - Fedora worker still needs the Fedora `admiral-common` rebuild equivalent because COPR exposed `0.0.1beta13-1.fc44` during that update attempt.
+- Re-ran `scripts/install.sh --portal-node` for `157.245.81.44` from the admin node with:
+  - `--admin-endpoint 161.35.112.132`
+  - `--node-id portal-001`
+  - `--wireguard-ip 10.99.0.100`
+- The portal-node playbook completed with `failed=0` and registered/synchronized the portal route to `https://10.99.0.100:5001`.
+- Found one remaining idempotency bug: changing the Harbor systemd bind override did not restart an already running `admiral-harbor` service because the task used `state: started`.
+- Manually restarted `admiral-harbor` on the portal node, after which Harbor listened on `10.99.0.100:5001` and responded `HTTP/1.1 200 OK`.
+- Confirmed public portal recovery:
+  - `https://portal.pinky.bmogroup.solutions` returned `HTTP/2 200`.
+  - `admiralctl routes list --output json` showed the portal route as `healthy` and targeting `https://10.99.0.100:5001`.
+- Fixed the playbook so Harbor restarts automatically when `/etc/systemd/system/admiral-harbor.service.d/override.conf` changes.
+- Released `admiral-common-0.0.1beta13-3` with the Harbor restart fix and served `admiral-common-0.0.1beta13-3.el10.src.rpm` for COPR import over temporary HTTP on port 8000.
 
 ## Session summary
 
