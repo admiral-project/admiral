@@ -1,11 +1,11 @@
 # SPDX-FileCopyrightText: William Moreno Reyes CP | MBA
 # SPDX-License-Identifier: Apache-2.0
 
-%global commit 565aa70071dc2e671ec40e042a2e762227df0d4d
+%global commit e767dd07f6cd99eef42aa6cf3a300e10fcb2a298
 
 Name:    admiral-common
 Version: 0.0.1beta12
-Release: 4%{?dist}
+Release: 5%{?dist}
 Summary: Common files and utilities for Admiral PaaS
 
 License: Apache-2.0
@@ -148,6 +148,8 @@ if [ $1 -eq 0 ]; then
 fi
 
 %changelog
+* Sat Jun 27 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta12-5
+- Disable SSL for portal-node local Harbor database connection
 * Sat Jun 27 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta12-4
 - Add explicit spoke WireGuard IP support to admiral_install
 - Auto-detect a non-loopback admin endpoint for later spoke installs
