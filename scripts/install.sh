@@ -8,14 +8,32 @@ set -euo pipefail
 die() { echo "[FATAL] $*" >&2; exit 1; }
 info() { echo "[INFO] $*"; }
 warn() { echo "[WARN] $*"; }
+is_loopback_host() {
+    case "$1" in
+        ""|127.0.0.1|localhost|::1)
+            return 0
+            ;;
+    esac
+    return 1
+}
+detect_non_loopback_ip() {
+    local ip=""
+    if command -v ip >/dev/null 2>&1; then
+        ip=$(ip -o route get 1.1.1.1 2>/dev/null | awk '{for (i = 1; i <= NF; i++) if ($i == "src") { print $(i + 1); exit }}')
+    fi
+    if [[ -z "$ip" ]]; then
+        ip=$(hostname -I 2>/dev/null | awk '{for (i = 1; i <= NF; i++) if ($i !~ /^127\./) { print $i; exit }}')
+    fi
+    [[ -n "$ip" ]] && printf '%s\n' "$ip"
+}
 usage() {
     cat <<'EOF'
 Usage:
   admiral_install --single-node [--public-ip <public-ip>]
   admiral_install --dev-node [--public-ip <public-ip>]
-  admiral_install --admin-node --public-ip <public-ip>
-  admiral_install --worker-node --public-ip <public-ip>
-  admiral_install --portal-node --public-ip <public-ip>
+  admiral_install --admin-node [--public-ip <public-ip>]
+  admiral_install --worker-node --public-ip <public-ip> [--wireguard-ip <wireguard-ip>]
+  admiral_install --portal-node --public-ip <public-ip> [--wireguard-ip <wireguard-ip>]
 
 Options:
   --single-node       Install all single-node components on one host.
@@ -25,6 +43,7 @@ Options:
   --portal-node       Install portal components only.
   --node-id           Set a custom node ID (default: hostname).
   --public-ip         Set the public IP address of the node being configured.
+  --wireguard-ip      Set the WireGuard IP address for a spoke node.
   --admin-endpoint    Override the admin endpoint for spoke installs.
   --ssh-user          SSH user for remote spoke configuration (default: root).
   --ssh-key           SSH private key for remote spoke configuration.
@@ -40,6 +59,7 @@ INSTALL_MODE=""
 INSTALL_DEV_MODE="false"
 INSTALL_NODE_ID=""
 INSTALL_PUBLIC_IP=""
+INSTALL_WIREGUARD_IP=""
 INSTALL_ADMIN_ENDPOINT=""
 INSTALL_TARGET_SSH_USER="root"
 INSTALL_TARGET_SSH_KEY=""
@@ -80,6 +100,10 @@ while [[ $# -gt 0 ]]; do
             shift
             INSTALL_PUBLIC_IP="$1"
             ;;
+        --wireguard-ip)
+            shift
+            INSTALL_WIREGUARD_IP="$1"
+            ;;
         --admin-endpoint)
             shift
             INSTALL_ADMIN_ENDPOINT="$1"
@@ -104,9 +128,13 @@ while [[ $# -gt 0 ]]; do
 done
 
 [[ -n "$INSTALL_MODE" ]] || die "An installation mode is required. Use --single-node, --dev-node, --admin-node, --worker-node or --portal-node."
-if [[ "$INSTALL_MODE" == "single-node" || "$INSTALL_MODE" == "admin-node" ]]; then
+if [[ "$INSTALL_MODE" == "single-node" && -z "$INSTALL_PUBLIC_IP" ]]; then
+    INSTALL_PUBLIC_IP="127.0.0.1"
+fi
+if [[ "$INSTALL_MODE" == "admin-node" && -z "$INSTALL_PUBLIC_IP" ]]; then
+    INSTALL_PUBLIC_IP="$(detect_non_loopback_ip || true)"
     if [[ -z "$INSTALL_PUBLIC_IP" ]]; then
-        INSTALL_PUBLIC_IP="127.0.0.1"
+        die "Could not detect a non-loopback admin public IP. Use --public-ip."
     fi
 fi
 if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]]; then
@@ -124,7 +152,9 @@ if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]]; t
     if [[ -z "$INSTALL_ADMIN_ENDPOINT" && -f /etc/admiral/install.env ]]; then
         # shellcheck disable=SC1091
         source /etc/admiral/install.env
-        INSTALL_ADMIN_ENDPOINT="${ADMIRAL_PUBLIC_IP:-}"
+        if ! is_loopback_host "${ADMIRAL_PUBLIC_IP:-}"; then
+            INSTALL_ADMIN_ENDPOINT="${ADMIRAL_PUBLIC_IP:-}"
+        fi
     fi
     [[ -n "$INSTALL_ADMIN_ENDPOINT" ]] || die "Worker and portal nodes require an admin endpoint from /etc/admiral/install.env or --admin-endpoint."
     [[ -f /etc/admiral/secrets ]] || die "Spoke installs must run from an admin host with /etc/admiral/secrets available."
@@ -229,6 +259,9 @@ if [[ -n "$INSTALL_NODE_ID" ]]; then
 fi
 if [[ -n "$INSTALL_PUBLIC_IP" ]]; then
     EXTRA_VARS="$EXTRA_VARS fleet_public_ip=$INSTALL_PUBLIC_IP"
+fi
+if [[ -n "$INSTALL_WIREGUARD_IP" ]]; then
+    EXTRA_VARS="$EXTRA_VARS admiral_wireguard_ip=$INSTALL_WIREGUARD_IP"
 fi
 # Remote spokes are role-exclusive: fleet_node_role is either 'worker' or 'portal'.
 if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]]; then
@@ -346,7 +379,7 @@ case "$INSTALL_MODE" in
         REQUIRED_SERVICES=(admiral-fleet)
         ;;
     portal-node)
-        REQUIRED_SERVICES=(postgresql admiral-harbor)
+        REQUIRED_SERVICES=(postgresql admiral-harbor admiral-harbor-worker.timer admiral-harbor-catalog-sync.timer)
         ;;
 esac
 

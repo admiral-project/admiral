@@ -135,17 +135,11 @@
     - admiral_wireguard_hub_pub_slurp is defined
     - admiral_wireguard_hub_pub_slurp.content is defined
 
-- name: Check if WireGuard config already exists
-  stat:
-    path: /etc/wireguard/wg-admiral.conf
-  register: wg_config_exists
-
 - name: Deploy WireGuard configuration
   template:
     src: wg-admiral.conf.j2
     dest: /etc/wireguard/wg-admiral.conf
     mode: "0600"
-  when: not wg_config_exists.stat.exists
   notify: restart wireguard
 
 - name: Enable and start WireGuard

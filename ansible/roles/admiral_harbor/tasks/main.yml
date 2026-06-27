@@ -47,24 +47,6 @@
     harbor_node_token_value: "{{ lookup('ansible.builtin.pipe', 'openssl rand -hex 32') }}"
   no_log: true
 
-- name: Register portal node with admirald
-  command: >
-    /usr/bin/admiralctl nodes register
-    --id "{{ harbor_node_id_effective }}"
-    --hostname "{{ ansible_fqdn }}"
-    --ip "{{ ansible_default_ipv4.address }}"
-    --wireguard-ip "{{ admiral_wireguard_ip | default('') }}"
-    --public-ip "{{ fleet_public_ip | default('') }}"
-    --role portal
-    --token "{{ harbor_node_token_value }}"
-    --os "{{ ansible_distribution ~ ' ' ~ ansible_distribution_version }}"
-  delegate_to: localhost
-  environment:
-    ADMIRAL_ADMIN_TOKEN: "{{ admiral_admin_token_value }}"
-    ADMIRAL_SERVER_URL: "https://127.0.0.1:8080"
-    ADMIRAL_TLS_CA_FILE: /etc/admiral/tls/ca.pem
-  no_log: true
-
 - name: Install admiral-harbor
   dnf:
     name: admiral-harbor
@@ -98,8 +80,8 @@
       HARBOR_OVERDUE_DEPROVISION_AFTER_DAYS=10
       HARBOR_OVERDUE_LAST_BACKUP_RETENTION_DAYS=15
       ADMIRAL_ADMIN_TOKEN={{ admiral_admin_token_value }}
-       ADMIRAL_CA_FILE={{ '' if (admiral_dev_mode | default(false) | bool) else '/etc/admiral/tls/ca.pem' }}
-       ADMIRAL_INSECURE_SKIP_VERIFY={{ '1' if (admiral_dev_mode | default(false) | bool) else '0' }}
+      ADMIRAL_CA_FILE={{ '' if (admiral_dev_mode | default(false) | bool) else '/etc/admiral/tls/ca.pem' }}
+      ADMIRAL_INSECURE_SKIP_VERIFY={{ '1' if (admiral_dev_mode | default(false) | bool) else '0' }}
     mode: "0640"
     owner: root
     group: admiral
@@ -171,6 +153,24 @@
     enabled: true
     state: started
     daemon_reload: true
+
+- name: Register portal node with admirald
+  command: >
+    /usr/bin/admiralctl nodes register
+    --id "{{ harbor_node_id_effective }}"
+    --hostname "{{ ansible_fqdn }}"
+    --ip "{{ ansible_default_ipv4.address }}"
+    --wireguard-ip "{{ admiral_wireguard_ip | default('') }}"
+    --public-ip "{{ fleet_public_ip | default('') }}"
+    --role portal
+    --token "{{ harbor_node_token_value }}"
+    --os "{{ ansible_distribution ~ ' ' ~ ansible_distribution_version }}"
+  delegate_to: localhost
+  environment:
+    ADMIRAL_ADMIN_TOKEN: "{{ admiral_admin_token_value }}"
+    ADMIRAL_SERVER_URL: "https://127.0.0.1:8080"
+    ADMIRAL_TLS_CA_FILE: /etc/admiral/tls/ca.pem
+  no_log: true
 
 - name: Remind operator to configure SMTP
   debug:
