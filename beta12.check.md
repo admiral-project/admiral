@@ -4,6 +4,38 @@ Date: 2026-06-26
 Workspace: `/root/admiral`
 Admin VPS: `161.35.112.132`
 
+## Beta13 release update
+
+Date: 2026-06-27
+
+- Bumped all Admiral components to `0.0.1beta13`.
+- Committed component release bumps in the submodules:
+  - `admirald`: `6dee59c` then `36452ce` for the logging test correction.
+  - `admiral-fleet`: `8013eed`.
+  - `admiralctl`: `cad24d5`.
+  - `admiral-flagship`: `bbfec70`.
+  - `admiral-harbor`: `8c678d6`.
+- Pushed all submodule `main` branches to origin before packaging.
+- Added multinode portal routing fixes:
+  - Ansible now binds Harbor to `127.0.0.1:5001` only for `--single-node` or a supported same-host admin+portal installation.
+  - Dedicated `--portal-node` binds Harbor to its WireGuard IP on port `5001`.
+  - Portal-node installation updates the admin `admirald` override with the effective portal target and runs `admiralctl routes sync`.
+  - `admirald` now allows replacing a default portal route target of `https://127.0.0.1:5001` with the Ansible-provided target while preserving custom targets.
+- Corrected the existing `admirald/internal/logging` test to match the current secure behavior: sensitive values are fully masked as `****`.
+- Updated release packaging:
+  - `Makefile` version is `0.0.1beta13`.
+  - All six Admiral specs use `Version: 0.0.1beta13`.
+  - All six Admiral specs reset to `Release: 1%{?dist}`.
+  - Monorepo-backed specs currently pin `%global commit` to the repo-mother commit that includes the `admirald` test fix.
+  - `admiral-flagship` and `admiral-harbor` specs pin their submodule release commits directly.
+- RPM rebuild started from a clean `packaging/build` after the logging test fix. The clean rebuild is expected to produce:
+  - `admiral-common-0.0.1beta13-1.el10.noarch.rpm`
+  - `admirald-0.0.1beta13-1.el10.x86_64.rpm`
+  - `admiral-fleet-0.0.1beta13-1.el10.x86_64.rpm`
+  - `admiralctl-0.0.1beta13-1.el10.x86_64.rpm`
+  - `admiral-flagship-0.0.1beta13-1.el10.noarch.rpm`
+  - `admiral-harbor-0.0.1beta13-1.el10.noarch.rpm`
+
 ## Session summary
 
 - Reviewed `scripts/install.sh`, Ansible playbooks, and `packaging/`.
