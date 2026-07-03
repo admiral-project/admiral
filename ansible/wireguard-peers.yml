@@ -66,8 +66,7 @@
           PublicKey = {{ hostvars[inventory_hostname].node_wg_public_key }}
           AllowedIPs = {{ hostvars[hub_host].admiral_known_hosts_inventory.nodes[node_lookup_key].wireguard_ip }}/32
         dest: "/etc/wireguard/peers.d/{{ inventory_hostname }}.conf"
-        mode: "0644"
-      delegate_to: "{{ hub_host }}"
+          mode: "0600"
 
 - name: Build and deploy hub WireGuard configuration
   hosts: admin
