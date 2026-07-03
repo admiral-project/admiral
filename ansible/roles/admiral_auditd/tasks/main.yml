@@ -1,0 +1,37 @@
+---
+- name: Install auditd
+  dnf:
+    name: audit
+    state: present
+
+- name: Ensure audit rules directory exists
+  file:
+    path: /etc/audit/rules.d
+    state: directory
+    mode: "0750"
+
+- name: Deploy Admiral audit rules baseline
+  copy:
+    dest: /etc/audit/rules.d/admiral.rules
+    mode: "0640"
+    owner: root
+    group: root
+    content: |
+      ## Admiral baseline audit watches
+      -w /etc/admiral -p wa -k admiral_config
+      -w /etc/admirald.ini -p wa -k admiral_config
+      -w /etc/systemd/system -p wa -k admiral_systemd
+      -w /var/lib/admiral -p wa -k admiral_data
+      -w /etc/wireguard -p wa -k admiral_wireguard
+
+- name: Enable and start auditd
+  systemd:
+    name: auditd
+    enabled: true
+    state: started
+
+- name: Load audit rules
+  command:
+    cmd: augenrules --load
+  changed_when: false
+  failed_when: false

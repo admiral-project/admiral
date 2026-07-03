@@ -52,6 +52,28 @@
       }
   when: admiral_install_mode in ['single-node', 'admin-node']
 
+- name: Ensure sshd drop-in directory exists
+  file:
+    path: /etc/ssh/sshd_config.d
+    state: directory
+    mode: "0755"
+
+- name: Deploy Admiral SSH hardening baseline
+  copy:
+    dest: /etc/ssh/sshd_config.d/50-admiral-hardening.conf
+    mode: "0644"
+    content: |
+      PasswordAuthentication no
+      MaxAuthTries 3
+      LoginGraceTime 30
+  register: admiral_sshd_hardening
+
+- name: Reload sshd after hardening update
+  systemd:
+    name: sshd
+    state: reloaded
+  when: admiral_sshd_hardening.changed
+
 - name: Install PostgreSQL server utilities
   dnf:
     name: postgresql-server

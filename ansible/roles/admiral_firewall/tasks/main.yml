@@ -84,6 +84,72 @@
   register: firewall_wg
   changed_when: "'success' in firewall_wg.stdout"
 
+- name: Remove managed egress direct rules (admin profile)
+  command:
+    cmd: firewall-cmd --permanent --direct --remove-rule ipv4 filter OUTPUT {{ item.priority }} {{ item.rule }}
+  loop:
+    - { priority: 10, rule: "-o lo -j ACCEPT" }
+    - { priority: 20, rule: "-m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT" }
+    - { priority: 30, rule: "-d 10.99.0.0/24 -j ACCEPT" }
+    - { priority: 40, rule: "-p tcp --dport 80 -j ACCEPT" }
+    - { priority: 41, rule: "-p tcp --dport 443 -j ACCEPT" }
+    - { priority: 42, rule: "-p udp --dport 53 -j ACCEPT" }
+    - { priority: 43, rule: "-p tcp --dport 53 -j ACCEPT" }
+    - { priority: 200, rule: "-j REJECT" }
+  changed_when: false
+  failed_when: false
+  when:
+    - not (admiral_dev_mode | default(false) | bool)
+    - admiral_install_mode in ['single-node', 'admin-node']
+
+- name: Remove managed egress direct rules (spoke profile)
+  command:
+    cmd: firewall-cmd --permanent --direct --remove-rule ipv4 filter OUTPUT {{ item.priority }} {{ item.rule }}
+  loop:
+    - { priority: 10, rule: "-o lo -j ACCEPT" }
+    - { priority: 20, rule: "-m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT" }
+    - { priority: 30, rule: "-d 10.99.0.0/24 -j ACCEPT" }
+    - { priority: 200, rule: "-j REJECT" }
+  changed_when: false
+  failed_when: false
+  when:
+    - not (admiral_dev_mode | default(false) | bool)
+    - admiral_install_mode in ['worker-node', 'portal-node']
+
+- name: Apply egress controls for admin and single nodes
+  command:
+    cmd: firewall-cmd --permanent --direct --add-rule ipv4 filter OUTPUT {{ item.priority }} {{ item.rule }}
+  register: firewall_egress_admin
+  changed_when: "'success' in firewall_egress_admin.stdout"
+  failed_when: false
+  loop:
+    - { priority: 10, rule: "-o lo -j ACCEPT" }
+    - { priority: 20, rule: "-m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT" }
+    - { priority: 30, rule: "-d 10.99.0.0/24 -j ACCEPT" }
+    - { priority: 40, rule: "-p tcp --dport 80 -j ACCEPT" }
+    - { priority: 41, rule: "-p tcp --dport 443 -j ACCEPT" }
+    - { priority: 42, rule: "-p udp --dport 53 -j ACCEPT" }
+    - { priority: 43, rule: "-p tcp --dport 53 -j ACCEPT" }
+    - { priority: 200, rule: "-j REJECT" }
+  when:
+    - not (admiral_dev_mode | default(false) | bool)
+    - admiral_install_mode in ['single-node', 'admin-node']
+
+- name: Apply egress controls for worker and portal spokes
+  command:
+    cmd: firewall-cmd --permanent --direct --add-rule ipv4 filter OUTPUT {{ item.priority }} {{ item.rule }}
+  register: firewall_egress_spoke
+  changed_when: "'success' in firewall_egress_spoke.stdout"
+  failed_when: false
+  loop:
+    - { priority: 10, rule: "-o lo -j ACCEPT" }
+    - { priority: 20, rule: "-m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT" }
+    - { priority: 30, rule: "-d 10.99.0.0/24 -j ACCEPT" }
+    - { priority: 200, rule: "-j REJECT" }
+  when:
+    - not (admiral_dev_mode | default(false) | bool)
+    - admiral_install_mode in ['worker-node', 'portal-node']
+
 - name: Allow dev mode services
   command:
     cmd: firewall-cmd --permanent --zone=public --add-service={{ item }}
@@ -190,3 +256,17 @@
     that:
       - (firewall_public_ports.stdout.split() | difference(['51820/udp'] + (['5000/tcp', '5001/tcp', '40000-49999/tcp'] if (admiral_dev_mode | default(false) | bool) else [])) | length) == 0
     fail_msg: "Unexpected direct public firewalld ports remain enabled: {{ firewall_public_ports.stdout }}"
+
+- name: Verify effective egress direct rules in non-dev mode
+  command:
+    cmd: firewall-cmd --direct --get-all-rules
+  register: firewall_direct_rules
+  changed_when: false
+  when: not (admiral_dev_mode | default(false) | bool)
+
+- name: Assert managed egress reject rule is active in non-dev mode
+  assert:
+    that:
+      - "'ipv4 filter OUTPUT 200 -j REJECT' in firewall_direct_rules.stdout"
+    fail_msg: "Expected egress reject baseline was not applied in firewalld direct rules."
+  when: not (admiral_dev_mode | default(false) | bool)

@@ -1,0 +1,45 @@
+---
+- name: Install fail2ban packages
+  block:
+    - name: Install fail2ban and firewalld backend
+      dnf:
+        name:
+          - fail2ban
+          - fail2ban-firewalld
+        state: present
+
+    - name: Ensure fail2ban jail.d exists
+      file:
+        path: /etc/fail2ban/jail.d
+        state: directory
+        mode: "0755"
+
+    - name: Configure admiral fail2ban baseline
+      copy:
+        dest: /etc/fail2ban/jail.d/admiral.local
+        mode: "0644"
+        content: |
+          [DEFAULT]
+          bantime = 1h
+          findtime = 10m
+          maxretry = 5
+          banaction = firewallcmd-ipset
+
+          [sshd]
+          enabled = true
+          backend = systemd
+
+    - name: Enable and start fail2ban
+      systemd:
+        name: fail2ban
+        enabled: true
+        state: started
+        daemon_reload: true
+
+  rescue:
+    - name: Warn when fail2ban setup fails
+      debug:
+        msg: >-
+          WARNING: fail2ban setup failed. Continuing installation in fail-safe mode
+          without blocking. Keep firewalld policy enforced and remediate fail2ban
+          after install.

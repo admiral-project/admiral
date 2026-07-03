@@ -72,6 +72,9 @@
     - admiral_common
     - admiral_selinux
     - admiral_firewall
+    - admiral_auditd
+    - role: admiral_fail2ban
+      when: not (admiral_dev_mode | default(false) | bool)
     - role: admiral_wireguard
       vars:
         admiral_wireguard_role: "{{ admiral_wireguard_role }}"
