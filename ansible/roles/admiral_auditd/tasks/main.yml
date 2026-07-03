@@ -19,9 +19,7 @@
     content: |
       ## Admiral baseline audit watches
       -w /etc/admiral -p wa -k admiral_config
-      -w /etc/admirald.ini -p wa -k admiral_config
-      -w /etc/systemd/system -p wa -k admiral_systemd
-      -w /var/lib/admiral -p wa -k admiral_data
+        -w /etc/admiral/secrets -p rwa -k admiral_secrets
       -w /etc/wireguard -p wa -k admiral_wireguard
 
 - name: Enable and start auditd
@@ -34,4 +32,3 @@
   command:
     cmd: augenrules --load
   changed_when: false
-  failed_when: false
