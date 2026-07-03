@@ -8,6 +8,11 @@
     name: admiral-fleet
     state: present
 
+- name: Enable linger for admiral-apps (rootless workload persistence)
+  command: loginctl enable-linger admiral-apps
+  args:
+    creates: /var/lib/systemd/linger/admiral-apps
+
 - name: Check for Admirald-managed known host inventory
   stat:
     path: /var/lib/admiral/know_host.yaml

@@ -64,6 +64,7 @@ go test ./... || echo "WARNING: tests skipped or failed in build sandbox"
 %post
 %systemd_post admiral-fleet.service
 restorecon -F %{_bindir}/admiral-fleet 2>/dev/null || :
+loginctl enable-linger admiral-apps 2>/dev/null || :
 
 %preun
 %systemd_preun admiral-fleet.service
