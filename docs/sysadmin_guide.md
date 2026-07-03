@@ -116,6 +116,20 @@ sudo admiral_https_setup --domain cloud.example.com
 
 For backup storage, use `admiralctl` after the platform is up. The installer does not create or configure the backup-storage backend.
 
+## Security Baseline and Dev-Node Exceptions
+
+The official installer assumes a **fresh VPS** with no unrelated public services already running.
+
+For normal modes (`--single-node`, `--admin-node`, `--worker-node`, `--portal-node`), the installer applies a secure-by-default baseline including firewall policy, SELinux settings, and login hardening. It may print non-blocking warnings if the host diverges from expected baseline values.
+
+`--dev-node` is explicitly an evaluation mode and does **not** apply all production hardening controls. In dev-node mode:
+
+- Fail2ban protections are not applied.
+- Strict egress control is not enforced.
+- Post-install security checklist warnings are skipped.
+
+Use `--dev-node` only for temporary testing workflows where direct port access is required.
+
 ## SELinux Recommended Configuration
 
 Admiral expects SELinux to stay enabled. The recommended operational state is:
