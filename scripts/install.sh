@@ -391,6 +391,70 @@ for service in "${REQUIRED_SERVICES[@]}"; do
     fi
 done
 
+# --- 11b. security checklist (warning-only, skipped in dev mode) ---
+if [[ "$INSTALL_DEV_MODE" != "true" ]]; then
+    SECURITY_WARNINGS=()
+
+    run_target_cmd() {
+        local cmd="$1"
+        if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]]; then
+            ssh -i "$INSTALL_TARGET_SSH_KEY" -o BatchMode=yes -o StrictHostKeyChecking=accept-new \
+                "${INSTALL_TARGET_SSH_USER}@${INSTALL_PUBLIC_IP}" "$cmd" 2>/dev/null || true
+        else
+            bash -lc "$cmd" 2>/dev/null || true
+        fi
+    }
+
+    SELINUX_STATE="$(run_target_cmd "getenforce")"
+    if [[ "$SELINUX_STATE" != "Enforcing" ]]; then
+        SECURITY_WARNINGS+=("SELinux is '$SELINUX_STATE' (expected: Enforcing).")
+    fi
+
+    SELINUX_BOOLS="$(run_target_cmd "getsebool httpd_can_network_connect container_manage_cgroup")"
+    if [[ "$SELINUX_BOOLS" != *"httpd_can_network_connect --> on"* ]]; then
+        SECURITY_WARNINGS+=("SELinux boolean httpd_can_network_connect is not set to on.")
+    fi
+    if [[ "$SELINUX_BOOLS" != *"container_manage_cgroup --> on"* ]]; then
+        SECURITY_WARNINGS+=("SELinux boolean container_manage_cgroup is not set to on.")
+    fi
+
+    SSHD_EFFECTIVE="$(run_target_cmd "sshd -T")"
+    if [[ "$SSHD_EFFECTIVE" != *"passwordauthentication no"* ]]; then
+        SECURITY_WARNINGS+=("sshd password authentication is not disabled.")
+    fi
+    if [[ "$SSHD_EFFECTIVE" != *"maxauthtries 3"* ]]; then
+        SECURITY_WARNINGS+=("sshd MaxAuthTries differs from recommended value 3.")
+    fi
+
+    FW_SERVICES="$(run_target_cmd "firewall-cmd --zone=public --list-services")"
+    case "$INSTALL_MODE" in
+        single-node|admin-node)
+            if [[ "$FW_SERVICES" != *"ssh"* || "$FW_SERVICES" != *"http"* || "$FW_SERVICES" != *"https"* ]]; then
+                SECURITY_WARNINGS+=("Expected public services ssh/http/https for admin profile not fully present.")
+            fi
+            ;;
+        worker-node|portal-node)
+            if [[ "$FW_SERVICES" != *"ssh"* ]]; then
+                SECURITY_WARNINGS+=("Expected public service ssh is missing on spoke profile.")
+            fi
+            if [[ "$FW_SERVICES" == *"http"* || "$FW_SERVICES" == *"https"* ]]; then
+                SECURITY_WARNINGS+=("Spoke profile exposes http/https in public zone.")
+            fi
+            ;;
+    esac
+
+    if [[ ${#SECURITY_WARNINGS[@]} -gt 0 ]]; then
+        warn "----------------------------------------------------------------"
+        warn "SECURITY CHECKLIST WARNINGS (non-blocking)"
+        warn "Installer assumes a fresh VPS with no unrelated services."
+        for warning_item in "${SECURITY_WARNINGS[@]}"; do
+            warn "- $warning_item"
+        done
+        warn "Address these warnings before production deployment."
+        warn "----------------------------------------------------------------"
+    fi
+fi
+
 # --- 12. final message ---
 cat <<EOF
 
