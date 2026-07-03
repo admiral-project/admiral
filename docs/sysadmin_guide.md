@@ -34,7 +34,7 @@ worker and portal capabilities, deploy separate physical or virtual nodes.
 | Mode | Services started by the installer |
 |------|-----------------------------------|
 | single-node | `postgresql`, `caddy`, `admirald`, `admiral-fleet`, `admiral-flagship`, `admiral-harbor`, `cockpit.socket` |
-| admin-node | `postgresql`, `caddy`, `admirald`, `cockpit.socket` |
+| admin-node | `postgresql`, `caddy`, `admirald`, `admiral-flagship`, `cockpit.socket` |
 | worker-node | `admiral-fleet` |
 | portal-node | `postgresql`, `admiral-harbor` |
 
@@ -115,6 +115,26 @@ sudo admiral_https_setup --domain cloud.example.com
 ```
 
 For backup storage, use `admiralctl` after the platform is up. The installer does not create or configure the backup-storage backend.
+
+## SELinux Recommended Configuration
+
+Admiral expects SELinux to stay enabled. The recommended operational state is:
+
+- SELinux in `Enforcing` mode
+- `httpd_can_network_connect` boolean set to `on`
+- `container_manage_cgroup` boolean set to `on`
+
+The official setup path (`admiral_install`) leaves the system configured with these recommended SELinux parameters.
+
+You can verify the effective state with:
+
+```bash
+getenforce
+getsebool httpd_can_network_connect container_manage_cgroup
+ausearch -m AVC -ts recent
+```
+
+If you apply additional host hardening after installation, re-check AVC denials and adjust your SELinux policy accordingly.
 
 ## Backup Storage Configuration
 
