@@ -28,13 +28,19 @@
   dnf:
     update_cache: true
 
-- name: Install Admiral packages
+- name: Install admiral-common baseline package
   dnf:
     name:
       - admiral-common
+    state: present
+
+- name: Install admin-plane packages
+  dnf:
+    name:
       - admiralctl
       - caddy
     state: present
+  when: admiral_install_mode in ['single-node', 'admin-node']
 
 - name: Install managed Caddyfile for Admiral
   copy:
@@ -44,6 +50,7 @@
       {
         admin 127.0.0.1:2019
       }
+  when: admiral_install_mode in ['single-node', 'admin-node']
 
 - name: Install PostgreSQL server utilities
   dnf:

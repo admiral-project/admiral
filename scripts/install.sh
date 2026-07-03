@@ -373,7 +373,7 @@ case "$INSTALL_MODE" in
         REQUIRED_SERVICES=(postgresql caddy admirald admiral-fleet admiral-flagship admiral-harbor cockpit.socket)
         ;;
     admin-node)
-        REQUIRED_SERVICES=(postgresql caddy admirald cockpit.socket)
+        REQUIRED_SERVICES=(postgresql caddy admirald admiral-flagship cockpit.socket)
         ;;
     worker-node)
         REQUIRED_SERVICES=(admiral-fleet)
