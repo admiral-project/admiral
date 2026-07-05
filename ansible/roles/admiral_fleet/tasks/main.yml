@@ -72,6 +72,7 @@
       ADMIRAL_FLEET_CALLBACK_OUTBOX=/var/lib/admiral/outbox
       ADMIRAL_FLEET_HTTP_ADDR={{ fleet_http_addr | default('127.0.0.1:9099') }}
       ADMIRAL_FLEET_ROOTLESS_USER={{ fleet_rootless_user | default('admiral-apps') }}
+      ADMIRAL_TASK_ENCRYPTION_KEY={{ admiral_task_encryption_key_value }}
     mode: "0640"
     owner: root
     group: admiral
