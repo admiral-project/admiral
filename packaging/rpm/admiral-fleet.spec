@@ -2,11 +2,11 @@
 # SPDX-License-Identifier: Apache-2.0
 
 %global debug_package %{nil}
-%global commit 860c44c50aea575d32b98ea71ff7c4850eaebbaf
+%global commit 9851a91a4b2ff4ae8478f9f5971aafe1a0c6076c
 
 Name:    admiral-fleet
 Version: 0.0.1beta14
-Release: 2%{?dist}
+Release: 3%{?dist}
 Summary: Admiral Fleet Worker Agent
 
 License: Apache-2.0
@@ -73,6 +73,9 @@ loginctl enable-linger admiral-apps 2>/dev/null || :
 %systemd_postun_with_restart admiral-fleet.service
 
 %changelog
+* Sun Jul 05 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta14-3
+- Update source commit ref for super-repo hash
+
 * Sun Jul 05 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta14-2
 - Update source commit ref for signature verification, auth header migration, security fixes, and gofmt
 
