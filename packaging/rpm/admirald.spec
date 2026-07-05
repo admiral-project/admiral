@@ -5,8 +5,8 @@
 %global commit 24476d842e40bfc5f04094bc35eaaa700fbcaf1a
 
 Name:    admirald
-Version: 0.0.1beta14
-Release: 9%{?dist}
+Version: 0.0.1beta15
+Release: 1%{?dist}
 Summary: Admiral Control Plane - Core API and orchestration service
 
 License: Apache-2.0

@@ -5,8 +5,8 @@
 %global commit 14ebf03442433907c91f8589261217410938b5e5
 
 Name:    admiral-fleet
-Version: 0.0.1beta14
-Release: 7%{?dist}
+Version: 0.0.1beta15
+Release: 1%{?dist}
 Summary: Admiral Fleet Worker Agent
 
 License: Apache-2.0

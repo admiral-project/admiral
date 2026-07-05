@@ -4,8 +4,8 @@
 %global commit 24476d842e40bfc5f04094bc35eaaa700fbcaf1a
 
 Name:    admiral-common
-Version: 0.0.1beta14
-Release: 3%{?dist}
+Version: 0.0.1beta15
+Release: 1%{?dist}
 Summary: Common files and utilities for Admiral PaaS
 
 License: Apache-2.0
