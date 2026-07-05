@@ -1,9 +1,9 @@
 %global debug_package %{nil}
-%global commit f2d5d070d472a1434c140991c7918a37f49673cc
+%global commit 49b66699a063020c11bfeaede8b23ff9e5ca4b3c
 
 Name:    admiral-harbor
 Version: 0.0.1beta14
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: Admiral Customer Portal - Web UI for end users
 
 License: Apache-2.0
@@ -113,6 +113,9 @@ restorecon -R %{_localstatedir}/lib/admiral/harbor 2>/dev/null || :
 %{python3} -m pytest tests/ -x --tb=short 2>/dev/null || echo "WARNING: tests skipped (pytest not available)"
 
 %changelog
+* Sun Jul 05 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta14-2
+- Update source commit ref for Authorization Bearer migration
+
 * Sun Jul 05 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta14-1
 - chore(release): bump to 0.0.1beta14 and update source commit refs to latest HEAD
 
