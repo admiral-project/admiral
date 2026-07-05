@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 %global debug_package %{nil}
-%global commit 4b71659616d9e1a1a895c560432731c8622bfc97
+%global commit 860c44c50aea575d32b98ea71ff7c4850eaebbaf
 
 Name:    admiral-fleet
 Version: 0.0.1beta14
@@ -74,7 +74,7 @@ loginctl enable-linger admiral-apps 2>/dev/null || :
 
 %changelog
 * Sun Jul 05 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta14-2
-- Update source commit ref for signature verification, auth header migration, and security fixes
+- Update source commit ref for signature verification, auth header migration, security fixes, and gofmt
 
 * Sun Jul 05 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta14-1
 - chore(release): bump to 0.0.1beta14 and update source commit refs to latest HEAD
