@@ -3,7 +3,7 @@
 
 Name:    admiral-harbor
 Version: 0.0.1beta14
-Release: 4%{?dist}
+Release: 5%{?dist}
 Summary: Admiral Customer Portal - Web UI for end users
 
 License: Apache-2.0
@@ -113,6 +113,9 @@ restorecon -R %{_localstatedir}/lib/admiral/harbor 2>/dev/null || :
 %{python3} -m pytest tests/ -x --tb=short 2>/dev/null || echo "WARNING: tests skipped (pytest not available)"
 
 %changelog
+* Sun Jul 05 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta14-5
+- Update submodule commit refs and bump release
+
 * Sun Jul 05 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta14-4
 - Update source commit ref for black format fix
 

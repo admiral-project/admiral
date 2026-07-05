@@ -6,7 +6,7 @@
 
 Name:           python3-alembic
 Version:        1.18.4
-Release:        6%{?dist}
+Release:        7%{?dist}
 Summary:        A database migration tool for SQLAlchemy
 
 License:        MIT
@@ -58,6 +58,9 @@ sed -i '/^license-files/d' pyproject.toml
 %endif
 
 %changelog
+* Sun Jul 05 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 1.18.4-7
+- Rebuild for admiral 0.0.1beta14
+
 * Tue Jun 23 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 1.18.4-6
 - Add explicit BuildRequires: python3-setuptools for EL10 compatibility
 * Tue Jun 23 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 1.18.4-5

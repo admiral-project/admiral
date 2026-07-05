@@ -6,7 +6,7 @@
 
 Name:    admiral-fleet
 Version: 0.0.1beta14
-Release: 6%{?dist}
+Release: 7%{?dist}
 Summary: Admiral Fleet Worker Agent
 
 License: Apache-2.0
@@ -73,6 +73,9 @@ loginctl enable-linger admiral-apps 2>/dev/null || :
 %systemd_postun_with_restart admiral-fleet.service
 
 %changelog
+* Sun Jul 05 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta14-7
+- Update submodule commit refs and bump release
+
 * Sun Jul 05 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta14-6
 - Update source commit ref
 

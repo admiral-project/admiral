@@ -5,7 +5,7 @@
 
 Name:           python3-flask-login
 Version:        0.6.3
-Release:        6%{?dist}
+Release:        7%{?dist}
 Summary:        User session management for Flask
 
 License:        MIT
@@ -40,6 +40,9 @@ common tasks of logging in, logging out, and remembering user sessions.
 %license LICENSE
 
 %changelog
+* Sun Jul 05 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.6.3-7
+- Rebuild for admiral 0.0.1beta14
+
 * Tue Jun 23 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.6.3-6
 - Add explicit BuildRequires: python3-setuptools for EL10 compatibility
 * Tue Jun 23 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.6.3-5

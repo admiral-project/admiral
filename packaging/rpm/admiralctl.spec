@@ -6,7 +6,7 @@
 
 Name:    admiralctl
 Version: 0.0.1beta14
-Release: 6%{?dist}
+Release: 7%{?dist}
 Summary: Admiral Command-Line Interface
 
 License: Apache-2.0
@@ -58,6 +58,9 @@ go test ./... || echo "WARNING: tests skipped or failed in build sandbox"
 restorecon -F %{_bindir}/admiralctl 2>/dev/null || :
 
 %changelog
+* Sun Jul 05 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta14-7
+- Update submodule commit refs and bump release
+
 * Sun Jul 05 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta14-6
 - Update source commit ref
 

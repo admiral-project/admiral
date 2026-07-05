@@ -6,7 +6,7 @@
 
 Name:    admirald
 Version: 0.0.1beta14
-Release: 6%{?dist}
+Release: 7%{?dist}
 Summary: Admiral Control Plane - Core API and orchestration service
 
 License: Apache-2.0
@@ -72,6 +72,9 @@ restorecon -F %{_bindir}/admirald 2>/dev/null || :
 %systemd_postun_with_restart admirald.service
 
 %changelog
+* Sun Jul 05 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta14-7
+- Update submodule commit refs and bump release
+
 * Sun Jul 05 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta14-6
 - Update source commit ref for CI Go version fix
 

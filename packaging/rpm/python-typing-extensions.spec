@@ -5,7 +5,7 @@
 
 Name:           python3-typing-extensions
 Version:        4.15.0
-Release:        6%{?dist}
+Release:        7%{?dist}
 Summary:        Backported and Experimental Type Hints for Python
 
 License:        PSF-2.0
@@ -40,6 +40,9 @@ sed -i '/^license-files/d' pyproject.toml
 %license LICENSE
 
 %changelog
+* Sun Jul 05 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 4.15.0-7
+- Rebuild for admiral 0.0.1beta14
+
 * Tue Jun 23 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 4.15.0-6
 - Add explicit BuildRequires: python3-flit-core for EL10 compatibility
 * Tue Jun 23 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 4.15.0-5

@@ -6,7 +6,7 @@
 
 Name:    admiral-flagship
 Version: 0.0.1beta14
-Release: 2%{?dist}
+Release: 3%{?dist}
 Summary: Admiral Administrative Web Console
 
 License: Apache-2.0
@@ -77,6 +77,9 @@ restorecon -R %{_prefix}/lib/admiral/flagship 2>/dev/null || :
 %{python3} -m pytest tests/ -x --tb=short 2>/dev/null || echo "WARNING: tests skipped (pytest not available)"
 
 %changelog
+* Sun Jul 05 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta14-3
+- Update submodule commit refs and bump release
+
 * Sun Jul 05 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta14-2
 - Update source commit ref for Authorization Bearer migration and test fixes
 

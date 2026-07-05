@@ -5,7 +5,7 @@
 
 Name:           python3-flask-sqlalchemy
 Version:        3.1.1
-Release:        6%{?dist}
+Release:        7%{?dist}
 Summary:        Add SQLAlchemy support to a Flask application
 
 License:        BSD-3-Clause
@@ -40,6 +40,9 @@ provides useful defaults and helpers for common database tasks.
 %license LICENSE.rst
 
 %changelog
+* Sun Jul 05 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 3.1.1-7
+- Rebuild for admiral 0.0.1beta14
+
 * Tue Jun 23 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 3.1.1-6
 - Add explicit BuildRequires: python3-flit-core for EL10 compatibility
 * Tue Jun 23 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 3.1.1-5

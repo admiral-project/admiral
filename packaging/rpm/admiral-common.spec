@@ -5,7 +5,7 @@
 
 Name:    admiral-common
 Version: 0.0.1beta14
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: Common files and utilities for Admiral PaaS
 
 License: Apache-2.0
@@ -137,6 +137,9 @@ semanage fcontext -a -t container_file_t "/var/lib/admiral-apps/.local/share/con
 restorecon -R /var/lib/admiral-apps/.local/share/containers/storage/ 2>/dev/null || :
 
 %changelog
+* Sun Jul 05 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta14-2
+- Update submodule commit refs and bump release
+
 * Sun Jul 05 2026 Antigravity <antigravity@gemini> - 0.0.1beta14-1
 - Bump version to 0.0.1beta14 to match the other Admiral packages
 

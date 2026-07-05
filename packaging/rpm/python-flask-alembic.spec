@@ -5,7 +5,7 @@
 
 Name:           python3-flask-alembic
 Version:        3.1.1
-Release:        6%{?dist}
+Release:        7%{?dist}
 Summary:        Integrate Alembic with Flask
 
 License:        MIT
@@ -42,6 +42,9 @@ plain SQLAlchemy applications.
 %license LICENSE.txt
 
 %changelog
+* Sun Jul 05 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 3.1.1-7
+- Rebuild for admiral 0.0.1beta14
+
 * Tue Jun 23 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 3.1.1-6
 - Add explicit BuildRequires: python3-flit-core for EL10 compatibility
 * Tue Jun 23 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 3.1.1-5
