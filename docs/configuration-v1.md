@@ -117,10 +117,9 @@ No hay fallback a `admin_token`. Producion debe siempre definir
 Variables soportadas:
 
 - `ADMIRAL_FLEET_NODE_ID`
-- `ADMIRAL_QUEUE_DATABASE_URL`
 - `ADMIRAL_API_URL`
 - `ADMIRAL_API_CA_FILE`
-- `ADMIRAL_ADMIN_TOKEN`
+- `ADMIRAL_FLEET_TOKEN`
 - `ADMIRAL_FLEET_EXECUTOR`
 - `ADMIRAL_FLEET_QUADLET_DIR`
 - `ADMIRAL_FLEET_DATA_DIR`
@@ -134,7 +133,6 @@ Variables soportadas:
 
 Defaults actuales:
 
-- `ADMIRAL_QUEUE_DATABASE_URL=postgres://admiral_queue_user:postgres@localhost:5432/admiral_queue?sslmode=disable`
 - `ADMIRAL_API_URL=https://127.0.0.1:8080`
 - `ADMIRAL_FLEET_EXECUTOR=simulated`
 - `ADMIRAL_FLEET_QUADLET_DIR=/etc/containers/systemd/admiral`
@@ -147,8 +145,7 @@ Defaults actuales:
 Reglas:
 
 - `ADMIRAL_FLEET_NODE_ID` es obligatorio
-- `ADMIRAL_ADMIN_TOKEN` es obligatorio
-- `ADMIRAL_QUEUE_DATABASE_URL` es obligatorio
+- `ADMIRAL_FLEET_TOKEN` es obligatorio
 - `ADMIRAL_API_URL` debe usar `https://`
 - executors validos:
   - `simulated`
@@ -160,6 +157,7 @@ Reglas:
   - `stop_pod` — experimental: detiene el pod al exceder storage
 
 `admiral-fleet` no debe recibir `ADMIRAL_SECRETS_KEY`.
+Fleet no requiere acceso directo a la base de datos de cola. Las tareas se reciben via API HTTP desde `admirald`.
 
 ## `admiralctl`
 
@@ -190,7 +188,7 @@ Reglas:
 ## Seguridad operativa
 
 - `ADMIRAL_SECRETS_KEY` solo debe vivir en el nodo de `admirald`
-- `ADMIRAL_QUEUE_DATABASE_URL` de fleet no debe dar acceso a `admiral_core`
+- `ADMIRAL_QUEUE_DATABASE_URL` solo debe configurarse en `admirald`, nunca en `admiral-fleet`
 - `ADMIRAL_FLAGSHIP_ADMIN_USER` solo debe vivir en el nodo de `admirald`
 - `ADMIRAL_FLAGSHIP_ADMIN_PSWD` solo debe vivir en el nodo de `admirald`
 - no exponer `caddy_admin_url` publicamente

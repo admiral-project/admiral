@@ -53,7 +53,6 @@
   set_fact:
     admiral_admin_api_host: "{{ admiral_admin_wireguard_ip | default(admiral_admin_endpoint) }}"
     admiral_fleet_api_url: "{{ fleet_api_url | default('https://' ~ (admiral_admin_wireguard_ip | default(admiral_admin_endpoint)) ~ ':8080') }}"
-    admiral_fleet_queue_database_url: "{{ fleet_queue_database_url | default('postgresql://admiral:' ~ admiral_postgres_password ~ '@' ~ (admiral_admin_wireguard_ip | default(admiral_admin_endpoint)) ~ ':5432/admiral_queue?sslmode=require') }}"
   when: admiral_install_mode == 'worker-node'
 
 - name: Generate random fleet node token
@@ -68,13 +67,11 @@
       ADMIRAL_FLEET_TOKEN={{ fleet_node_token_value }}
       ADMIRAL_API_URL={{ admiral_fleet_api_url | default('https://127.0.0.1:8080') }}
       ADMIRAL_API_CA_FILE=/etc/admiral/tls/ca.pem
-      ADMIRAL_QUEUE_DATABASE_URL={{ admiral_fleet_queue_database_url | default('postgresql://admiral:' ~ admiral_postgres_password ~ '@127.0.0.1:5432/admiral_queue?sslmode=require') }}
       ADMIRAL_FLEET_EXECUTOR={{ fleet_executor | default('systemd-podman') }}
       ADMIRAL_FLEET_DATA_DIR=/var/lib/admiral
       ADMIRAL_FLEET_CALLBACK_OUTBOX=/var/lib/admiral/outbox
       ADMIRAL_FLEET_HTTP_ADDR={{ fleet_http_addr | default('127.0.0.1:9099') }}
       ADMIRAL_FLEET_ROOTLESS_USER={{ fleet_rootless_user | default('admiral-apps') }}
-      ADMIRAL_TASK_PUBLIC_KEY={{ admiral_task_public_key_value }}
     mode: "0640"
     owner: root
     group: admiral
