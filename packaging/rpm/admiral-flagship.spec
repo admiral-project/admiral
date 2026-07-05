@@ -2,10 +2,10 @@
 # SPDX-License-Identifier: Apache-2.0
 
 %global debug_package %{nil}
-%global commit bbfec701e53e244afbb8c31c4ceb803f4753f107
+%global commit 66c9c1804c489fc3157e75a85ca74c46e5cf71fe
 
 Name:    admiral-flagship
-Version: 0.0.1beta13
+Version: 0.0.1beta14
 Release: 1%{?dist}
 Summary: Admiral Administrative Web Console
 
@@ -77,6 +77,9 @@ restorecon -R %{_prefix}/lib/admiral/flagship 2>/dev/null || :
 %{python3} -m pytest tests/ -x --tb=short 2>/dev/null || echo "WARNING: tests skipped (pytest not available)"
 
 %changelog
+* Sun Jul 05 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta14-1
+- chore(release): bump to 0.0.1beta14 and update source commit refs to latest HEAD
+
 * Sat Jun 27 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta13-1
 - Bump to 0.0.1beta13 and update source commit ref
 
