@@ -13,10 +13,6 @@ environment:
   FRAPPE_REDIS_QUEUE: redis://127.0.0.1:6380
   FRAPPE_REDIS_SOCKETIO: redis://127.0.0.1:6381
 
-secrets:
-  MARIADB_ROOT_PASSWORD:
-    generate: password
-
 shared_volumes:
   logs:
     mount: /home/frappe/frappe-bench/logs
@@ -109,7 +105,6 @@ services:
       DB_PORT: ${DB_PORT}
       FRAPPE_SITE_NAME_HEADER: ${FRAPPE_SITE_NAME}
       FRAPPE_DEFAULT_SITE: ${FRAPPE_SITE_NAME}
-      MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
       FRAPPE_REDIS_CACHE: ${FRAPPE_REDIS_CACHE}
       FRAPPE_REDIS_QUEUE: ${FRAPPE_REDIS_QUEUE}
       FRAPPE_REDIS_SOCKETIO: ${FRAPPE_REDIS_SOCKETIO}
@@ -117,6 +112,8 @@ services:
       REDIS_QUEUE: ${REDIS_QUEUE}
       REDIS_SOCKETIO: ${REDIS_SOCKETIO}
     secrets:
+      MARIADB_ROOT_PASSWORD:
+        generate: password
       ERP_ADMIN_PASSWORD:
         generate: password
         expose: true
@@ -150,8 +147,9 @@ services:
     command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --skip-character-set-client-handshake
     env:
       MARIADB_DATABASE: erpnext
-      MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
     secrets:
+      MARIADB_ROOT_PASSWORD:
+        generate: password
       MARIADB_USER:
         generate: username
         expose: true

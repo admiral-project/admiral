@@ -157,6 +157,33 @@ el provisionamiento. El comando se ejecuta con `sh -c` dentro del
 contenedor del servicio, por lo que puede usar expansion de variables
 (`$VAR`), redireccion y comillas.
 
+**Validacion de caracteres:** `admirald` rechaza `setup_command` que
+contengan los siguientes caracteres y patrones inseguros:
+
+| Patron | Motivo |
+|--------|--------|
+| `;` | Separacion de comandos sin control |
+| `&` | Ejecucion en segundo plano (`&`) o AND condicional (`&&`) |
+| `` ` `` | Subshell con backtick |
+| `\|` | Pipe (`\|`) u OR condicional (`\|\|`) |
+| `$(` | Subshell con `$()` |
+
+Los comandos multi-paso deben usar un bloque YAML con literal escalar
+(`\|`) para separar lineas, ya que `sh -c` interpreta saltos de linea
+como separadores de comandos:
+
+```yaml
+services:
+  web:
+    setup_command: |
+      primer-comando --arg $VAR
+      segundo-comando --otro $OTRO_VAR
+      tercero --final
+```
+
+> Nota: La sustitucion simple `$VAR` y `${VAR}` si esta permitida.
+> Solo se bloquea `$(` (subshell) y los caracteres listados arriba.
+
 El contenedor one-shot se ejecuta como root (UID 0) por defecto. Si la
 imagen requiere un usuario no-root (por ejemplo, Gitea rechaza ejecutar
 como root), se debe declarar el campo `user` con el UID o nombre de
@@ -378,6 +405,56 @@ Los secretos pueden definirse a nivel de servicio (`services.<name>.secrets`)
 o a nivel de aplicacion (`secrets` en la raiz del YAML). Los secretos a nivel
 de aplicacion no estan asociados a un servicio particular y se resuelven antes
 del provisionamiento.
+
+### Restriccion de nombres sensibles en `env`
+
+`admiral-fleet` rechaza nombres de variables en `env` que contengan
+(`sin importar mayusculas/minusculas`):
+
+- `SECRET`
+- `PASSWORD`
+- `TOKEN`
+- `KEY`
+- `CREDENTIAL`
+
+Si una variable de entorno tiene un nombre sensible (ej.
+`MARIADB_ROOT_PASSWORD`, `POSTGRES_PASSWORD`, `DB_PASSWORD`, `API_KEY`,
+`AUTH_TOKEN`), debe declararse en `secrets:` del servicio, no en `env:`.
+
+Las variables en `secrets:` se inyectan via `Secret=` de Quadlet
+(almacen secreto cifrado de Podman), no en el archivo de entorno plano:
+
+```yaml
+services:
+  db:
+    image: docker.io/library/mariadb:10
+    env:
+      MARIADB_DATABASE: wordpress        # bien: no contiene palabra sensible
+    secrets:
+      MARIADB_ROOT_PASSWORD:             # bien: va en secrets, no en env
+        generate: password
+      MARIADB_USER:
+        generate: username
+      MARIADB_PASSWORD:
+        generate: password
+```
+
+### Propagacion entre servicios
+
+Cuando un servicio de base de datos (PostgreSQL, MariaDB, MySQL)
+define secretos con nombres como `POSTGRES_USER`, `POSTGRES_PASSWORD`,
+`MARIADB_USER`, `MARIADB_PASSWORD`, `admiral` los propaga automaticamente
+a servicios cliente que tengan secretos con nombres que terminen en:
+
+- `_DB_USER`
+- `_DB_PASSWORD`
+- `_DB_NAME`
+
+O que coincidan exactamente con el nombre del secreto de la DB.
+
+Esto permite que WordPress reciba `WORDPRESS_DB_USER` con el mismo valor
+que `MARIADB_USER`, sin tener que declarar valores explicitos ni
+generar secretos independientes.
 
 Campos de cada secreto:
 
