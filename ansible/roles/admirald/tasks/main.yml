@@ -50,6 +50,18 @@
     mode: "0644"
   when: admiral_dev_mode | default(false) | bool
 
+- name: Set ADMIRAL_SINGLE_NODE for single-node installations
+  copy:
+    dest: /etc/systemd/system/admirald.service.d/single-node.conf
+    content: |
+      [Service]
+      Environment=ADMIRAL_SINGLE_NODE=true
+    mode: "0644"
+  when:
+    - admiral_install_mode is defined
+    - admiral_install_mode == 'single-node'
+    - not (admiral_dev_mode | default(false) | bool)
+
 - name: Enable and start admirald
   systemd:
     name: admirald

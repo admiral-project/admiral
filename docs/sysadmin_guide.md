@@ -67,7 +67,27 @@ In multinode deployments (`--worker-node`), the use of a WireGuard VPN is **mand
 
 - **WireGuard IP Verification**: `admirald` strictly validates that any incoming worker requests (such as heartbeats, task callbacks, health reports, and storage reports) originate from the registered WireGuard IP of the claiming node.
 - **Node Scoping & Isolation**: Even though a shared token is used for protocol authentication, `admirald` enforces node scoping. A node cannot query, update, or report status for instances or resources belonging to another node. Attempts to do so, or requests coming from mismatching VPN IPs, will be rejected with a `403 Forbidden` error.
-- **Single-Node Mode Exception**: In single-node deployments (`--single-node`), since all components run locally on `127.0.0.1` and no WireGuard IP is registered, this IP matching verification is bypassed automatically.
+- **Single-Node Mode and Authentication**: In single-node deployments
+  (`--single-node`), all components run on the same host and communicate
+  over loopback. However, because the Ansible bootstrap assigns a
+  WireGuard IP to every node, `admirald` would normally require the
+  fleet origin IP to match the registered WireGuard IP, which fails
+  for loopback connections.
+
+  The **Laguna M1** security audit (July 2026) hardened node
+  authentication: localhost bypass is no longer allowed in production
+  mode. To restore single-node functionality, the installer sets
+  `ADMIRAL_SINGLE_NODE=true` in the `admirald` systemd environment
+  when running `--single-node` without `--dev-node`.
+
+  This variable tells `admirald` that fleet is connecting from the
+  same host via loopback. This is an intentional design choice, not
+  a security flaw: single-node collocates all services on one machine
+  and does not use the VPN for internal worker-to-control-plane traffic.
+
+  Operators should **not** set `ADMIRAL_SINGLE_NODE=true` on multi-node
+  deployments (workers or portal nodes), since those nodes are expected
+  to communicate over WireGuard.
 
 ## TLS Material
 
