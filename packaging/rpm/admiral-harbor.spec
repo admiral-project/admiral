@@ -1,9 +1,9 @@
 %global debug_package %{nil}
-%global commit 0afedac57f089f8bce79362f38a986c8f0e8e2aa
+%global commit f8161b5fd83f98cd9f0f7c90400c98f3909c4496
 
 Name:    admiral-harbor
 Version: 0.0.1beta14
-Release: 3%{?dist}
+Release: 4%{?dist}
 Summary: Admiral Customer Portal - Web UI for end users
 
 License: Apache-2.0
@@ -113,6 +113,9 @@ restorecon -R %{_localstatedir}/lib/admiral/harbor 2>/dev/null || :
 %{python3} -m pytest tests/ -x --tb=short 2>/dev/null || echo "WARNING: tests skipped (pytest not available)"
 
 %changelog
+* Sun Jul 05 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta14-4
+- Update source commit ref for black format fix
+
 * Sun Jul 05 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta14-3
 - Update source commit ref for customer_id API changes
 

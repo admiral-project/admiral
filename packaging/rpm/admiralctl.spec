@@ -2,11 +2,11 @@
 # SPDX-License-Identifier: Apache-2.0
 
 %global debug_package %{nil}
-%global commit 9851a91a4b2ff4ae8478f9f5971aafe1a0c6076c
+%global commit 4d487247c590a14551d1ad1c2c806db742439269
 
 Name:    admiralctl
 Version: 0.0.1beta14
-Release: 3%{?dist}
+Release: 4%{?dist}
 Summary: Admiral Command-Line Interface
 
 License: Apache-2.0
@@ -58,6 +58,9 @@ go test ./... || echo "WARNING: tests skipped or failed in build sandbox"
 restorecon -F %{_bindir}/admiralctl 2>/dev/null || :
 
 %changelog
+* Sun Jul 05 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta14-4
+- Update source commit ref
+
 * Sun Jul 05 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta14-3
 - Update source commit ref for super-repo hash
 

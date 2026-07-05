@@ -1,11 +1,11 @@
 # SPDX-FileCopyrightText: William Moreno Reyes CP | MBA
 # SPDX-License-Identifier: Apache-2.0
 
-%global commit 9851a91a4b2ff4ae8478f9f5971aafe1a0c6076c
+%global commit 4d487247c590a14551d1ad1c2c806db742439269
 
 Name:    admiral-common
 Version: 0.0.1beta13
-Release: 7%{?dist}
+Release: 8%{?dist}
 Summary: Common files and utilities for Admiral PaaS
 
 License: Apache-2.0
@@ -137,6 +137,9 @@ semanage fcontext -a -t container_file_t "/var/lib/admiral-apps/.local/share/con
 restorecon -R /var/lib/admiral-apps/.local/share/containers/storage/ 2>/dev/null || :
 
 %changelog
+* Sun Jul 05 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta13-8
+- Update source commit ref
+
 * Sun Jul 05 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta13-7
 - Update source commit ref for super-repo hash
 
