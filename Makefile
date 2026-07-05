@@ -22,7 +22,7 @@ FLASK_ALEMBIC_VERSION := 3.1.1
 FLASK_LOGIN_VERSION := 0.6.3
 MISTUNE_VERSION := 3.2.1
 
-.PHONY: all clean rpm rpmlint all-sources \
+.PHONY: all clean rpm rpm-admiral rpmlint all-sources \
 	srpm srpms \
 	rpm-admiral-common rpm-admirald rpm-admiral-fleet \
 	rpm-admiralctl rpm-admiral-flagship rpm-admiral-harbor \
@@ -274,6 +274,22 @@ rpm: all-sources source-support-files
 	$(MAKE) rpm-admiral-harbor
 	@echo "=== All RPMs built ==="
 	@find $(RPMDIR)/RPMS -name '*.rpm' -exec basename {} \;
+
+rpm-admiral: all-sources source-support-files
+	@echo "=== Building admiral-common ==="
+	$(MAKE) rpm-admiral-common
+	@echo "=== Building admirald ==="
+	$(MAKE) rpm-admirald
+	@echo "=== Building admiral-fleet ==="
+	$(MAKE) rpm-admiral-fleet
+	@echo "=== Building admiralctl ==="
+	$(MAKE) rpm-admiralctl
+	@echo "=== Building admiral-flagship ==="
+	$(MAKE) rpm-admiral-flagship
+	@echo "=== Building admiral-harbor ==="
+	$(MAKE) rpm-admiral-harbor
+	@echo "=== All 6 Admiral RPMs built ==="
+	@find $(RPMDIR)/RPMS -name 'admiral*.rpm' -exec basename {} \;
 
 srpms: all-sources source-support-files
 	@echo "=== Building admiral-common SRPM ==="
