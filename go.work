@@ -5,3 +5,5 @@ use (
 	./admiralctl
 	./admirald
 )
+
+replace github.com/admiral-project/admiral/admirald => ./admirald
