@@ -31,6 +31,8 @@ ProtectKernelModules=true
 ProtectKernelTunables=true
 ProtectControlGroups=true
 RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6 AF_NETLINK
+MemoryDenyWriteExecute=true
+RestrictRealtime=true
 
 [Install]
 WantedBy=multi-user.target

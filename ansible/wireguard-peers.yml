@@ -104,6 +104,7 @@
           stdout: "{{ lookup('file', '/etc/wireguard/admiral.key') }}"
         admiral_wireguard_port: "51820"
         admiral_wireguard_peers: "{{ admiral_wireguard_peers }}"
+      no_log: true
       notify: restart wireguard
 
   handlers:
@@ -134,6 +135,7 @@
         admiral_wg_private_key:
           stdout: "{{ lookup('file', '/etc/wireguard/admiral.key') }}"
         admiral_wireguard_port: "51820"
+      no_log: true
       notify: restart wireguard
 
   handlers:

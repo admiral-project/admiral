@@ -19,7 +19,9 @@
     content: |
       ## Admiral baseline audit watches
       -w /etc/admiral -p wa -k admiral_config
-        -w /etc/admiral/secrets -p rwa -k admiral_secrets
+      -w /etc/admiral/secrets -p wa -k admiral_secrets
+      -w /etc/admiral/tls -p wa -k admiral_tls
+      -w /var/lib/admiral -p wa -k admiral_data
       -w /etc/wireguard -p wa -k admiral_wireguard
 
 - name: Enable and start auditd
