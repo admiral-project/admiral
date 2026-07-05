@@ -19,7 +19,11 @@ services:
       - db
     requires:
       - db
-    setup_command: mkdir -p /data/gitea/conf && printf '[server]\nROOT_URL = %s\nSSH_PORT = %s\n\n[database]\nDB_TYPE = %s\nHOST = %s\nNAME = %s\nUSER = %s\nPASSWD = %s\n\n[security]\nINSTALL_LOCK = true\n' "$ROOT_URL" "$SSH_PORT" "$DB_TYPE" "$DB_HOST" "$DB_NAME" "$DB_USER" "$DB_PASSWORD" > /data/gitea/conf/app.ini && gitea migrate && (gitea admin user list --admin | grep -F "$GITEA_ADMIN_USERNAME" || gitea admin user create --username "$GITEA_ADMIN_USERNAME" --password "$GITEA_ADMIN_PASSWORD" --email "$GITEA_ADMIN_EMAIL" --admin)
+    setup_command: |
+      mkdir -p /data/gitea/conf
+      printf '[server]\nROOT_URL = %s\nSSH_PORT = %s\n\n[database]\nDB_TYPE = %s\nHOST = %s\nNAME = %s\nUSER = %s\nPASSWD = %s\n\n[security]\nINSTALL_LOCK = true\n' "$ROOT_URL" "$SSH_PORT" "$DB_TYPE" "$DB_HOST" "$DB_NAME" "$DB_USER" "$DB_PASSWORD" > /data/gitea/conf/app.ini
+      gitea migrate
+      gitea admin user create --username "$GITEA_ADMIN_USERNAME" --password "$GITEA_ADMIN_PASSWORD" --email "$GITEA_ADMIN_EMAIL" --admin
     backup:
       type: volume
     env:
