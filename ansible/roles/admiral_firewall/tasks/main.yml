@@ -170,6 +170,18 @@
     - 40000-49999/tcp
   when: admiral_dev_mode | default(false) | bool
 
+- name: Load nftables modules for iptables direct rules (AlmaLinux workaround)
+  command:
+    cmd: modprobe {{ item }}
+  register: firewall_modprobe
+  changed_when: false
+  failed_when: false
+  loop:
+    - nf_conntrack
+    - nft_ct
+    - nft_reject_ipv4
+  when: ansible_distribution == 'AlmaLinux'
+
 - name: Reload firewall to apply policy
   command:
     cmd: firewall-cmd --reload
