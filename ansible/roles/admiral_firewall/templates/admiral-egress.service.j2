@@ -1,0 +1,13 @@
+[Unit]
+Description=Admiral egress firewall rules
+After=firewalld.service
+Requires=firewalld.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/sbin/nft -f /etc/nftables/admiral-egress.nft
+ExecStop=/sbin/nft delete table inet admiral_egress
+
+[Install]
+WantedBy=multi-user.target

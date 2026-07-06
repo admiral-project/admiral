@@ -16,6 +16,43 @@
     enabled: true
     daemon_reload: true
 
+- name: Load nftables modules for iptables direct rules (AlmaLinux workaround)
+  command:
+    cmd: modprobe {{ item }}
+  register: firewall_modprobe
+  changed_when: false
+  failed_when: false
+  loop:
+    - nf_conntrack
+    - nft_ct
+    - nft_reject_ipv4
+  when: ansible_distribution in ['AlmaLinux', 'Rocky']
+
+- name: Check if firewalld is in failed state
+  command: firewall-cmd --state
+  register: firewall_state_check
+  changed_when: false
+  failed_when: false
+
+- name: Recover firewalld from failed state
+  block:
+    - name: Remove stuck permanent direct rules
+      command: firewall-offline-cmd --direct --remove-rules ipv4 filter OUTPUT
+      failed_when: false
+    - name: Restart firewalld to clear failed state
+      systemd:
+        name: firewalld
+        state: restarted
+  when: firewall_state_check.rc != 0
+
+- name: Set fact for distributions needing nftables egress
+  set_fact:
+    admiral_use_nftables_egress: >-
+      {{
+        (ansible_distribution == 'AlmaLinux' and ansible_distribution_major_version == '10') or
+        (ansible_distribution == 'Rocky' and ansible_distribution_major_version == '10')
+      }}
+
 - name: Set default firewalld zone to public
   command:
     cmd: firewall-cmd --set-default-zone=public
@@ -91,6 +128,7 @@
     - { priority: 10, rule: "-o lo -j ACCEPT" }
     - { priority: 20, rule: "-m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT" }
     - { priority: 30, rule: "-d 10.99.0.0/24 -j ACCEPT" }
+    - { priority: 35, rule: "-p tcp --dport 22 -j ACCEPT" }
     - { priority: 40, rule: "-p tcp --dport 80 -j ACCEPT" }
     - { priority: 41, rule: "-p tcp --dport 443 -j ACCEPT" }
     - { priority: 42, rule: "-p udp --dport 53 -j ACCEPT" }
@@ -101,6 +139,7 @@
   when:
     - not (admiral_dev_mode | default(false) | bool)
     - admiral_install_mode in ['single-node', 'admin-node']
+    - not admiral_use_nftables_egress
 
 - name: Remove managed egress direct rules (spoke profile)
   command:
@@ -109,12 +148,14 @@
     - { priority: 10, rule: "-o lo -j ACCEPT" }
     - { priority: 20, rule: "-m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT" }
     - { priority: 30, rule: "-d 10.99.0.0/24 -j ACCEPT" }
+    - { priority: 35, rule: "-p tcp --dport 22 -j ACCEPT" }
     - { priority: 200, rule: "-j REJECT" }
   changed_when: false
   failed_when: false
   when:
     - not (admiral_dev_mode | default(false) | bool)
     - admiral_install_mode in ['worker-node', 'portal-node']
+    - not admiral_use_nftables_egress
 
 - name: Apply egress controls for admin and single nodes
   command:
@@ -126,6 +167,7 @@
     - { priority: 10, rule: "-o lo -j ACCEPT" }
     - { priority: 20, rule: "-m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT" }
     - { priority: 30, rule: "-d 10.99.0.0/24 -j ACCEPT" }
+    - { priority: 35, rule: "-p tcp --dport 22 -j ACCEPT" }
     - { priority: 40, rule: "-p tcp --dport 80 -j ACCEPT" }
     - { priority: 41, rule: "-p tcp --dport 443 -j ACCEPT" }
     - { priority: 42, rule: "-p udp --dport 53 -j ACCEPT" }
@@ -134,6 +176,7 @@
   when:
     - not (admiral_dev_mode | default(false) | bool)
     - admiral_install_mode in ['single-node', 'admin-node']
+    - not admiral_use_nftables_egress
 
 - name: Apply egress controls for worker and portal spokes
   command:
@@ -145,10 +188,12 @@
     - { priority: 10, rule: "-o lo -j ACCEPT" }
     - { priority: 20, rule: "-m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT" }
     - { priority: 30, rule: "-d 10.99.0.0/24 -j ACCEPT" }
+    - { priority: 35, rule: "-p tcp --dport 22 -j ACCEPT" }
     - { priority: 200, rule: "-j REJECT" }
   when:
     - not (admiral_dev_mode | default(false) | bool)
     - admiral_install_mode in ['worker-node', 'portal-node']
+    - not admiral_use_nftables_egress
 
 - name: Allow dev mode services
   command:
@@ -170,22 +215,41 @@
     - 40000-49999/tcp
   when: admiral_dev_mode | default(false) | bool
 
-- name: Load nftables modules for iptables direct rules (AlmaLinux workaround)
-  command:
-    cmd: modprobe {{ item }}
-  register: firewall_modprobe
-  changed_when: false
-  failed_when: false
-  loop:
-    - nf_conntrack
-    - nft_ct
-    - nft_reject_ipv4
-  when: ansible_distribution == 'AlmaLinux'
-
 - name: Reload firewall to apply policy
   command:
     cmd: firewall-cmd --reload
   changed_when: false
+
+- name: Apply egress controls via nftables (AlmaLinux 10)
+  block:
+    - name: Remove previous egress nftables table if present
+      command: nft delete table inet admiral_egress
+      failed_when: false
+
+    - name: Write egress nftables ruleset
+      template:
+        src: admiral-egress.nft.j2
+        dest: /etc/nftables/admiral-egress.nft
+        mode: 0644
+
+    - name: Load egress nftables ruleset
+      command: nft -f /etc/nftables/admiral-egress.nft
+
+    - name: Write egress systemd oneshot service for boot persistence
+      template:
+        src: admiral-egress.service.j2
+        dest: /etc/systemd/system/admiral-egress.service
+        mode: 0644
+      register: firewall_egress_unit
+
+    - name: Enable egress boot service
+      systemd:
+        name: admiral-egress
+        enabled: true
+        daemon_reload: "{{ firewall_egress_unit.changed }}"
+  when:
+    - not (admiral_dev_mode | default(false) | bool)
+    - admiral_use_nftables_egress
 
 - name: Verify effective public services
   command:
@@ -269,16 +333,38 @@
       - (firewall_public_ports.stdout.split() | difference(['51820/udp'] + (['5000/tcp', '5001/tcp', '40000-49999/tcp'] if (admiral_dev_mode | default(false) | bool) else [])) | length) == 0
     fail_msg: "Unexpected direct public firewalld ports remain enabled: {{ firewall_public_ports.stdout }}"
 
-- name: Verify effective egress direct rules in non-dev mode
+- name: Query egress direct rules (non-AlmaLinux)
   command:
     cmd: firewall-cmd --direct --get-all-rules
   register: firewall_direct_rules
   changed_when: false
-  when: not (admiral_dev_mode | default(false) | bool)
+  when:
+    - not (admiral_dev_mode | default(false) | bool)
+    - not admiral_use_nftables_egress
 
-- name: Assert managed egress reject rule is active in non-dev mode
+- name: Query egress nftables rules (AlmaLinux 10)
+  command:
+    cmd: nft list chain inet admiral_egress output
+  register: firewall_nft_rules
+  changed_when: false
+  when:
+    - not (admiral_dev_mode | default(false) | bool)
+    - admiral_use_nftables_egress
+
+- name: Assert managed egress reject rule is active (non-AlmaLinux)
   assert:
     that:
       - "'ipv4 filter OUTPUT 200 -j REJECT' in firewall_direct_rules.stdout"
     fail_msg: "Expected egress reject baseline was not applied in firewalld direct rules."
-  when: not (admiral_dev_mode | default(false) | bool)
+  when:
+    - not (admiral_dev_mode | default(false) | bool)
+    - not admiral_use_nftables_egress
+
+- name: Assert managed egress reject rule is active (AlmaLinux 10)
+  assert:
+    that:
+      - "'reject' in firewall_nft_rules.stdout"
+    fail_msg: "Expected egress reject baseline was not applied in nftables rules."
+  when:
+    - not (admiral_dev_mode | default(false) | bool)
+    - admiral_use_nftables_egress

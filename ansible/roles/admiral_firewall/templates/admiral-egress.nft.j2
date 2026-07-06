@@ -1,0 +1,13 @@
+table inet admiral_egress {
+    chain output {
+        type filter hook output priority -5; policy accept;
+        oif lo accept
+        ct state { established, related } accept
+        ip daddr 10.99.0.0/24 accept
+{% if admiral_install_mode in ['single-node', 'admin-node'] %}
+        tcp dport { 22, 80, 443, 53 } accept
+        udp dport 53 accept
+{% endif %}
+        reject
+    }
+}

@@ -34,3 +34,11 @@
   command:
     cmd: augenrules --load
   changed_when: false
+  register: audit_augenrules
+  failed_when: false
+
+- name: Load audit rules via auditctl when augenrules is unavailable
+  command:
+    cmd: auditctl -R /etc/audit/rules.d/admiral.rules
+  changed_when: false
+  when: audit_augenrules is failed
