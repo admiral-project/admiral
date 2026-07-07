@@ -389,17 +389,17 @@
 - name: Generate self-signed CA certificate on hub nodes
   command:
     cmd: >
-      openssl req -x509 -nodes -days 3650 -newkey rsa:4096
+      bash -c 'umask 077 && exec openssl req -x509 -nodes -days 3650 -newkey rsa:4096
       -keyout /etc/admiral/tls/ca-key.pem
       -out /etc/admiral/tls/ca.pem
-      -subj "/CN=Admiral CA"
+      -subj "/CN=Admiral CA"'
     creates: /etc/admiral/tls/ca.pem
   when: admiral_wireguard_role == 'hub'
 
 - name: Generate admirald server key
   command:
     cmd: >
-      openssl genrsa -out /etc/admiral/tls/admirald-key.pem 2048
+      bash -c 'umask 077 && exec openssl genrsa -out /etc/admiral/tls/admirald-key.pem 2048'
     creates: /etc/admiral/tls/admirald-key.pem
   when: admiral_install_mode in ['single-node', 'admin-node', 'portal-node']
 
@@ -426,7 +426,7 @@
 - name: Sign admirald certificate with CA on hub nodes
   command:
     cmd: >
-      openssl x509 -req -days 3650
+      openssl x509 -req -days 730
       -in /etc/admiral/tls/admirald.csr
       -CA /etc/admiral/tls/ca.pem
       -CAkey /etc/admiral/tls/ca-key.pem
@@ -500,7 +500,7 @@
 - name: Sign portal-node certificate on controller
   command:
     cmd: >
-      openssl x509 -req -days 3650
+      openssl x509 -req -days 730
       -in {{ admiral_portal_tls_csr_tmp.path }}
       -CA /etc/admiral/tls/ca.pem
       -CAkey /etc/admiral/tls/ca-key.pem
@@ -597,10 +597,10 @@
 - name: Ensure admirald.pem exists for dev mode
   command:
     cmd: >
-      openssl req -x509 -nodes -days 365 -newkey rsa:2048
+      bash -c 'umask 077 && exec openssl req -x509 -nodes -days 365 -newkey rsa:2048
       -keyout /etc/admiral/tls/admirald-key.pem
       -out /etc/admiral/tls/admirald.pem
-      -subj "/CN=localhost"
+      -subj "/CN=localhost"'
     creates: /etc/admiral/tls/admirald.pem
   when: admiral_dev_mode | default(false) | bool
 
