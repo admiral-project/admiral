@@ -16,6 +16,14 @@ is_loopback_host() {
     esac
     return 1
 }
+# Read a single key from the secrets file safely (no shell evaluation).
+# Usage: value=$(read_admiral_secret "KEY_NAME")
+read_admiral_secret() {
+    local key="$1"
+    local file="/etc/admiral/secrets"
+    [[ -f "$file" ]] || { echo ""; return 1; }
+    grep "^${key}=" "$file" 2>/dev/null | head -1 | cut -d= -f2-
+}
 detect_non_loopback_ip() {
     local ip=""
     if command -v ip >/dev/null 2>&1; then
@@ -295,6 +303,30 @@ if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]]; t
     fi
 fi
 
+# --- 7c. read secrets from admin (never copied to spokes) ---
+# Extract only the secrets each spoke type needs and pass them as extra-vars.
+SECRETS_ADMIRAL_TOKEN=""
+SECRETS_TASK_ENCRYPTION_KEY=""
+SECRETS_HARBOR_SECRET_KEY=""
+SECRETS_HARBOR_ENCRYPTION_KEY=""
+SECRETS_HARBOR_POSTGRES_PASSWORD=""
+SECRETS_HARBOR_BOOTSTRAP_USER=""
+SECRETS_HARBOR_BOOTSTRAP_PASSWORD=""
+SECRETS_HARBOR_LEGACY_ADMIN_PASSWORD=""
+if [[ "$INSTALL_MODE" == "worker-node" ]]; then
+    SECRETS_ADMIRAL_TOKEN=$(read_admiral_secret "ADMIRAL_ADMIN_TOKEN") || true
+    SECRETS_TASK_ENCRYPTION_KEY=$(read_admiral_secret "ADMIRAL_TASK_ENCRYPTION_KEY") || true
+fi
+if [[ "$INSTALL_MODE" == "portal-node" ]]; then
+    SECRETS_ADMIRAL_TOKEN=$(read_admiral_secret "ADMIRAL_ADMIN_TOKEN") || true
+    SECRETS_HARBOR_SECRET_KEY=$(read_admiral_secret "HARBOR_SECRET_KEY") || true
+    SECRETS_HARBOR_ENCRYPTION_KEY=$(read_admiral_secret "HARBOR_ENCRYPTION_KEY") || true
+    SECRETS_HARBOR_POSTGRES_PASSWORD=$(read_admiral_secret "ADMIRAL_POSTGRES_PASSWORD") || true
+    SECRETS_HARBOR_BOOTSTRAP_USER=$(read_admiral_secret "HARBOR_BOOTSTRAP_USER") || true
+    SECRETS_HARBOR_BOOTSTRAP_PASSWORD=$(read_admiral_secret "HARBOR_BOOTSTRAP_PASSWORD") || true
+    SECRETS_HARBOR_LEGACY_ADMIN_PASSWORD=$(read_admiral_secret "HARBOR_LEGACY_ADMIN_PASSWORD") || true
+fi
+
 # --- 8. build extra-vars as JSON (prevents injection via --node-id) ---
 EXTRA_VARS_JSON=$(
     INSTALL_MODE="$INSTALL_MODE" \
@@ -303,6 +335,14 @@ EXTRA_VARS_JSON=$(
     INSTALL_PUBLIC_IP="$INSTALL_PUBLIC_IP" \
     INSTALL_WIREGUARD_IP="$INSTALL_WIREGUARD_IP" \
     INSTALL_ADMIN_ENDPOINT="$INSTALL_ADMIN_ENDPOINT" \
+    SECRETS_ADMIRAL_TOKEN="$SECRETS_ADMIRAL_TOKEN" \
+    SECRETS_TASK_ENCRYPTION_KEY="$SECRETS_TASK_ENCRYPTION_KEY" \
+    SECRETS_HARBOR_SECRET_KEY="$SECRETS_HARBOR_SECRET_KEY" \
+    SECRETS_HARBOR_ENCRYPTION_KEY="$SECRETS_HARBOR_ENCRYPTION_KEY" \
+    SECRETS_HARBOR_POSTGRES_PASSWORD="$SECRETS_HARBOR_POSTGRES_PASSWORD" \
+    SECRETS_HARBOR_BOOTSTRAP_USER="$SECRETS_HARBOR_BOOTSTRAP_USER" \
+    SECRETS_HARBOR_BOOTSTRAP_PASSWORD="$SECRETS_HARBOR_BOOTSTRAP_PASSWORD" \
+    SECRETS_HARBOR_LEGACY_ADMIN_PASSWORD="$SECRETS_HARBOR_LEGACY_ADMIN_PASSWORD" \
     python3 -c '
 import json, os
 
@@ -319,6 +359,38 @@ if os.environ.get("INSTALL_PUBLIC_IP"):
 
 if os.environ.get("INSTALL_WIREGUARD_IP"):
     d["admiral_wireguard_ip"] = os.environ["INSTALL_WIREGUARD_IP"]
+
+token = os.environ.get("SECRETS_ADMIRAL_TOKEN", "")
+if token:
+    d["admiral_admin_token_value"] = token
+
+task_key = os.environ.get("SECRETS_TASK_ENCRYPTION_KEY", "")
+if task_key:
+    d["admiral_task_encryption_key_value"] = task_key
+
+harbor_secret = os.environ.get("SECRETS_HARBOR_SECRET_KEY", "")
+if harbor_secret:
+    d["admiral_harbor_secret_key_value"] = harbor_secret
+
+harbor_enc = os.environ.get("SECRETS_HARBOR_ENCRYPTION_KEY", "")
+if harbor_enc:
+    d["admiral_harbor_encryption_key_value"] = harbor_enc
+
+pg_pass = os.environ.get("SECRETS_HARBOR_POSTGRES_PASSWORD", "")
+if pg_pass:
+    d["admiral_postgres_password"] = pg_pass
+
+hb_user = os.environ.get("SECRETS_HARBOR_BOOTSTRAP_USER", "")
+if hb_user:
+    d["admiral_harbor_bootstrap_user"] = hb_user
+
+hb_pass = os.environ.get("SECRETS_HARBOR_BOOTSTRAP_PASSWORD", "")
+if hb_pass:
+    d["admiral_harbor_bootstrap_password"] = hb_pass
+
+hb_legacy = os.environ.get("SECRETS_HARBOR_LEGACY_ADMIN_PASSWORD", "")
+if hb_legacy:
+    d["admiral_harbor_legacy_admin_password"] = hb_legacy
 
 mode = os.environ["INSTALL_MODE"]
 if mode in ("worker-node", "portal-node"):

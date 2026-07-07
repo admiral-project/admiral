@@ -80,30 +80,6 @@
     state: present
   when: admiral_install_mode in ['single-node', 'admin-node', 'portal-node']
 
-- name: Check whether Admiral secret inventory already exists
-  stat:
-    path: /etc/admiral/secrets
-  register: admiral_secrets_file
-
-- name: Read existing Admiral secret inventory
-  slurp:
-    src: /etc/admiral/secrets
-  register: admiral_secrets_slurp
-  when: admiral_secrets_file.stat.exists
-  no_log: true
-
-- name: Decode existing Admiral secret inventory
-  set_fact:
-    admiral_secrets_text: "{{ admiral_secrets_slurp.content | b64decode }}"
-  when: admiral_secrets_file.stat.exists
-  no_log: true
-
-- name: Initialize empty Admiral secret inventory text
-  set_fact:
-    admiral_secrets_text: ""
-  when: not admiral_secrets_file.stat.exists
-  no_log: true
-
 - name: Ensure Admiral configuration and TLS directories exist
   file:
     path: "{{ item }}"
@@ -115,231 +91,264 @@
     - /etc/admiral
     - /etc/admiral/tls
 
-- name: Extract existing Admiral secrets
-  set_fact:
-    admiral_existing_postgres_password: "{{ admiral_secrets_text | regex_findall('(?m)^ADMIRAL_POSTGRES_PASSWORD=(.*)$') | first | default('') }}"
-    admiral_existing_admin_token: "{{ admiral_secrets_text | regex_findall('(?m)^ADMIRAL_ADMIN_TOKEN=(.*)$') | first | default('') }}"
-    admiral_existing_token_pepper: "{{ admiral_secrets_text | regex_findall('(?m)^ADMIRAL_TOKEN_PEPPER=(.*)$') | first | default('') }}"
-    admiral_existing_secrets_key: "{{ admiral_secrets_text | regex_findall('(?m)^ADMIRAL_SECRETS_KEY=(.*)$') | first | default('') }}"
-    admiral_existing_flagship_secret_key: "{{ admiral_secrets_text | regex_findall('(?m)^FLAGSHIP_SECRET_KEY=(.*)$') | first | default('') }}"
-    admiral_existing_flagship_bootstrap_user: "{{ admiral_secrets_text | regex_findall('(?m)^FLAGSHIP_BOOTSTRAP_USER=(.*)$') | first | default('') }}"
-    admiral_existing_flagship_bootstrap_password: "{{ admiral_secrets_text | regex_findall('(?m)^FLAGSHIP_BOOTSTRAP_PASSWORD=(.*)$') | first | default('') }}"
-    admiral_existing_harbor_secret_key: "{{ admiral_secrets_text | regex_findall('(?m)^HARBOR_SECRET_KEY=(.*)$') | first | default('') }}"
-    admiral_existing_harbor_encryption_key: "{{ admiral_secrets_text | regex_findall('(?m)^HARBOR_ENCRYPTION_KEY=(.*)$') | first | default('') }}"
-    admiral_existing_harbor_bootstrap_user: "{{ admiral_secrets_text | regex_findall('(?m)^HARBOR_BOOTSTRAP_USER=(.*)$') | first | default('') }}"
-    admiral_existing_harbor_bootstrap_password: "{{ admiral_secrets_text | regex_findall('(?m)^HARBOR_BOOTSTRAP_PASSWORD=(.*)$') | first | default('') }}"
-    admiral_existing_harbor_legacy_admin_password: "{{ admiral_secrets_text | regex_findall('(?m)^HARBOR_LEGACY_ADMIN_PASSWORD=(.*)$') | first | default('') }}"
-    admiral_existing_cockpit_admin_user: "{{ admiral_secrets_text | regex_findall('(?m)^COCKPIT_ADMIN_USER=(.*)$') | first | default('') }}"
-    admiral_existing_cockpit_admin_password: "{{ admiral_secrets_text | regex_findall('(?m)^COCKPIT_ADMIN_PASSWORD=(.*)$') | first | default('') }}"
-    admiral_existing_fleet_token: "{{ admiral_secrets_text | regex_findall('(?m)^ADMIRAL_FLEET_TOKEN=(.*)$') | first | default('') }}"
-    admiral_existing_ed25519_private_key: "{{ admiral_secrets_text | regex_findall('(?m)^ADMIRAL_ED25519_PRIVATE_KEY=(.*)$') | first | default('') }}"
-    admiral_existing_task_public_key: "{{ admiral_secrets_text | regex_findall('(?m)^ADMIRAL_TASK_PUBLIC_KEY=(.*)$') | first | default('') }}"
-    admiral_existing_task_encryption_key: "{{ admiral_secrets_text | regex_findall('(?m)^ADMIRAL_TASK_ENCRYPTION_KEY=(.*)$') | first | default('') }}"
-  no_log: true
+- name: Manage secrets inventory (admin/single-node only)
+  when: admiral_install_mode in ['single-node', 'admin-node']
+  block:
+    - name: Check whether Admiral secret inventory already exists
+      stat:
+        path: /etc/admiral/secrets
+      register: admiral_secrets_file
 
-- name: Generate Admiral PostgreSQL password
-  shell:
-    cmd: openssl rand -base64 36 | tr '+/' '-_' | tr -d '='
-  register: admiral_postgres_password_generated
-  when: admiral_existing_postgres_password == ''
-  changed_when: true
-  no_log: true
+    - name: Read existing Admiral secret inventory
+      slurp:
+        src: /etc/admiral/secrets
+      register: admiral_secrets_slurp
+      when: admiral_secrets_file.stat.exists
+      no_log: true
 
-- name: Generate Admiral admin token
-  command:
-    cmd: openssl rand -hex 32
-  register: admiral_admin_token_generated
-  when: admiral_existing_admin_token == ''
-  changed_when: true
-  no_log: true
+    - name: Decode existing Admiral secret inventory
+      set_fact:
+        admiral_secrets_text: "{{ admiral_secrets_slurp.content | b64decode }}"
+      when: admiral_secrets_file.stat.exists
+      no_log: true
 
-- name: Generate Admiral token pepper
-  command:
-    cmd: openssl rand -hex 32
-  register: admiral_token_pepper_generated
-  when: admiral_existing_token_pepper == ''
-  changed_when: true
-  no_log: true
+    - name: Initialize empty Admiral secret inventory text
+      set_fact:
+        admiral_secrets_text: ""
+      when: not admiral_secrets_file.stat.exists
+      no_log: true
 
-- name: Generate Admiral secrets key
-  command:
-    cmd: openssl rand -hex 32
-  register: admiral_secrets_key_generated
-  when: admiral_existing_secrets_key == ''
-  changed_when: true
-  no_log: true
+    - name: Extract existing Admiral secrets
+      set_fact:
+        admiral_existing_postgres_password: "{{ admiral_secrets_text | regex_findall('(?m)^ADMIRAL_POSTGRES_PASSWORD=(.*)$') | first | default('') }}"
+        admiral_existing_admin_token: "{{ admiral_secrets_text | regex_findall('(?m)^ADMIRAL_ADMIN_TOKEN=(.*)$') | first | default('') }}"
+        admiral_existing_token_pepper: "{{ admiral_secrets_text | regex_findall('(?m)^ADMIRAL_TOKEN_PEPPER=(.*)$') | first | default('') }}"
+        admiral_existing_secrets_key: "{{ admiral_secrets_text | regex_findall('(?m)^ADMIRAL_SECRETS_KEY=(.*)$') | first | default('') }}"
+        admiral_existing_flagship_secret_key: "{{ admiral_secrets_text | regex_findall('(?m)^FLAGSHIP_SECRET_KEY=(.*)$') | first | default('') }}"
+        admiral_existing_flagship_bootstrap_user: "{{ admiral_secrets_text | regex_findall('(?m)^FLAGSHIP_BOOTSTRAP_USER=(.*)$') | first | default('') }}"
+        admiral_existing_flagship_bootstrap_password: "{{ admiral_secrets_text | regex_findall('(?m)^FLAGSHIP_BOOTSTRAP_PASSWORD=(.*)$') | first | default('') }}"
+        admiral_existing_harbor_secret_key: "{{ admiral_secrets_text | regex_findall('(?m)^HARBOR_SECRET_KEY=(.*)$') | first | default('') }}"
+        admiral_existing_harbor_encryption_key: "{{ admiral_secrets_text | regex_findall('(?m)^HARBOR_ENCRYPTION_KEY=(.*)$') | first | default('') }}"
+        admiral_existing_harbor_bootstrap_user: "{{ admiral_secrets_text | regex_findall('(?m)^HARBOR_BOOTSTRAP_USER=(.*)$') | first | default('') }}"
+        admiral_existing_harbor_bootstrap_password: "{{ admiral_secrets_text | regex_findall('(?m)^HARBOR_BOOTSTRAP_PASSWORD=(.*)$') | first | default('') }}"
+        admiral_existing_harbor_legacy_admin_password: "{{ admiral_secrets_text | regex_findall('(?m)^HARBOR_LEGACY_ADMIN_PASSWORD=(.*)$') | first | default('') }}"
+        admiral_existing_cockpit_admin_user: "{{ admiral_secrets_text | regex_findall('(?m)^COCKPIT_ADMIN_USER=(.*)$') | first | default('') }}"
+        admiral_existing_cockpit_admin_password: "{{ admiral_secrets_text | regex_findall('(?m)^COCKPIT_ADMIN_PASSWORD=(.*)$') | first | default('') }}"
+        admiral_existing_fleet_token: "{{ admiral_secrets_text | regex_findall('(?m)^ADMIRAL_FLEET_TOKEN=(.*)$') | first | default('') }}"
+        admiral_existing_ed25519_private_key: "{{ admiral_secrets_text | regex_findall('(?m)^ADMIRAL_ED25519_PRIVATE_KEY=(.*)$') | first | default('') }}"
+        admiral_existing_task_public_key: "{{ admiral_secrets_text | regex_findall('(?m)^ADMIRAL_TASK_PUBLIC_KEY=(.*)$') | first | default('') }}"
+        admiral_existing_task_encryption_key: "{{ admiral_secrets_text | regex_findall('(?m)^ADMIRAL_TASK_ENCRYPTION_KEY=(.*)$') | first | default('') }}"
+      no_log: true
 
-- name: Generate Flagship secret key
-  command:
-    cmd: openssl rand -hex 32
-  register: admiral_flagship_secret_key_generated
-  when: admiral_existing_flagship_secret_key == ''
-  changed_when: true
-  no_log: true
+    - name: Generate Admiral PostgreSQL password
+      shell:
+        cmd: openssl rand -base64 36 | tr '+/' '-_' | tr -d '='
+      register: admiral_postgres_password_generated
+      when: admiral_existing_postgres_password == ''
+      changed_when: true
+      no_log: true
 
-- name: Generate Flagship bootstrap username suffix
-  command:
-    cmd: openssl rand -hex 5
-  register: admiral_flagship_bootstrap_user_generated
-  when: admiral_existing_flagship_bootstrap_user == ''
-  changed_when: true
-  no_log: true
+    - name: Generate Admiral admin token
+      command:
+        cmd: openssl rand -hex 32
+      register: admiral_admin_token_generated
+      when: admiral_existing_admin_token == ''
+      changed_when: true
+      no_log: true
 
-- name: Generate Flagship bootstrap password
-  command:
-    cmd: openssl rand -base64 24
-  register: admiral_flagship_bootstrap_password_generated
-  when: admiral_existing_flagship_bootstrap_password == ''
-  changed_when: true
-  no_log: true
+    - name: Generate Admiral token pepper
+      command:
+        cmd: openssl rand -hex 32
+      register: admiral_token_pepper_generated
+      when: admiral_existing_token_pepper == ''
+      changed_when: true
+      no_log: true
 
-- name: Generate Harbor secret key
-  command:
-    cmd: openssl rand -hex 32
-  register: admiral_harbor_secret_key_generated
-  when: admiral_existing_harbor_secret_key == ''
-  changed_when: true
-  no_log: true
+    - name: Generate Admiral secrets key
+      command:
+        cmd: openssl rand -hex 32
+      register: admiral_secrets_key_generated
+      when: admiral_existing_secrets_key == ''
+      changed_when: true
+      no_log: true
 
-- name: Generate Harbor encryption key
-  command:
-    cmd: openssl rand -hex 32
-  register: admiral_harbor_encryption_key_generated
-  when: admiral_existing_harbor_encryption_key == ''
-  changed_when: true
-  no_log: true
+    - name: Generate Flagship secret key
+      command:
+        cmd: openssl rand -hex 32
+      register: admiral_flagship_secret_key_generated
+      when: admiral_existing_flagship_secret_key == ''
+      changed_when: true
+      no_log: true
 
-- name: Generate Harbor bootstrap username suffix
-  command:
-    cmd: openssl rand -hex 5
-  register: admiral_harbor_bootstrap_user_generated
-  when: admiral_existing_harbor_bootstrap_user == ''
-  changed_when: true
-  no_log: true
+    - name: Generate Flagship bootstrap username suffix
+      command:
+        cmd: openssl rand -hex 5
+      register: admiral_flagship_bootstrap_user_generated
+      when: admiral_existing_flagship_bootstrap_user == ''
+      changed_when: true
+      no_log: true
 
-- name: Generate Harbor bootstrap password
-  command:
-    cmd: openssl rand -base64 24
-  register: admiral_harbor_bootstrap_password_generated
-  when: admiral_existing_harbor_bootstrap_password == ''
-  changed_when: true
-  no_log: true
+    - name: Generate Flagship bootstrap password
+      command:
+        cmd: openssl rand -base64 24
+      register: admiral_flagship_bootstrap_password_generated
+      when: admiral_existing_flagship_bootstrap_password == ''
+      changed_when: true
+      no_log: true
 
-- name: Generate Harbor legacy admin rotation password
-  command:
-    cmd: openssl rand -base64 24
-  register: admiral_harbor_legacy_admin_password_generated
-  when: admiral_existing_harbor_legacy_admin_password == ''
-  changed_when: true
-  no_log: true
+    - name: Generate Harbor secret key
+      command:
+        cmd: openssl rand -hex 32
+      register: admiral_harbor_secret_key_generated
+      when: admiral_existing_harbor_secret_key == ''
+      changed_when: true
+      no_log: true
 
-- name: Generate Cockpit admin username suffix
-  command:
-    cmd: openssl rand -hex 5
-  register: admiral_cockpit_admin_user_generated
-  when: admiral_existing_cockpit_admin_user == ''
-  changed_when: true
-  no_log: true
+    - name: Generate Harbor encryption key
+      command:
+        cmd: openssl rand -hex 32
+      register: admiral_harbor_encryption_key_generated
+      when: admiral_existing_harbor_encryption_key == ''
+      changed_when: true
+      no_log: true
 
-- name: Generate Cockpit admin password
-  command:
-    cmd: openssl rand -base64 24
-  register: admiral_cockpit_admin_password_generated
-  when: admiral_existing_cockpit_admin_password == ''
-  changed_when: true
-  no_log: true
+    - name: Generate Harbor bootstrap username suffix
+      command:
+        cmd: openssl rand -hex 5
+      register: admiral_harbor_bootstrap_user_generated
+      when: admiral_existing_harbor_bootstrap_user == ''
+      changed_when: true
+      no_log: true
 
-- name: Generate Admiral fleet token
-  command:
-    cmd: openssl rand -hex 32
-  register: admiral_fleet_token_generated
-  when: admiral_existing_fleet_token == ''
-  changed_when: true
-  no_log: true
+    - name: Generate Harbor bootstrap password
+      command:
+        cmd: openssl rand -base64 24
+      register: admiral_harbor_bootstrap_password_generated
+      when: admiral_existing_harbor_bootstrap_password == ''
+      changed_when: true
+      no_log: true
 
-- name: Generate Ed25519 signing key pair (admin only)
-  command:
-    cmd: /usr/bin/admiralctl init --generate-signing-key
-  register: admiral_ed25519_key_generated
-  when:
-    - admiral_install_mode in ['single-node', 'admin-node']
-    - admiral_existing_ed25519_private_key == ''
-  changed_when: true
-  no_log: true
+    - name: Generate Harbor legacy admin rotation password
+      command:
+        cmd: openssl rand -base64 24
+      register: admiral_harbor_legacy_admin_password_generated
+      when: admiral_existing_harbor_legacy_admin_password == ''
+      changed_when: true
+      no_log: true
 
-- name: Parse generated Ed25519 keys
-  set_fact:
-    admiral_ed25519_private_key_generated: "{{ (admiral_ed25519_key_generated.stdout | default('') ~ '\n' ~ admiral_ed25519_key_generated.stderr | default('')) | regex_search('private_key:([a-f0-9]+)', '\\1') | first | default('') }}"
-    admiral_task_public_key_generated: "{{ (admiral_ed25519_key_generated.stdout | default('') ~ '\n' ~ admiral_ed25519_key_generated.stderr | default('')) | regex_search('public_key:([a-f0-9]+)', '\\1') | first | default('') }}"
-  when:
-    - admiral_install_mode in ['single-node', 'admin-node']
-    - admiral_ed25519_key_generated.changed | default(false)
-  no_log: true
+    - name: Generate Cockpit admin username suffix
+      command:
+        cmd: openssl rand -hex 5
+      register: admiral_cockpit_admin_user_generated
+      when: admiral_existing_cockpit_admin_user == ''
+      changed_when: true
+      no_log: true
 
-- name: Generate task encryption key (shared AES-256-GCM key)
-  command:
-    cmd: openssl rand -hex 32
-  register: admiral_task_encryption_key_generated
-  when: admiral_existing_task_encryption_key == ''
-  changed_when: true
-  no_log: true
+    - name: Generate Cockpit admin password
+      command:
+        cmd: openssl rand -base64 24
+      register: admiral_cockpit_admin_password_generated
+      when: admiral_existing_cockpit_admin_password == ''
+      changed_when: true
+      no_log: true
 
-- name: Consolidate Admiral installation secrets
-  set_fact:
-    admiral_postgres_password: "{{ admiral_existing_postgres_password if admiral_existing_postgres_password != '' else (admiral_postgres_password_generated.stdout | default('')) }}"
-    admiral_admin_token_value: "{{ admiral_existing_admin_token if admiral_existing_admin_token != '' else (admiral_admin_token_generated.stdout | default('')) }}"
-    admiral_token_pepper_value: "{{ admiral_existing_token_pepper if admiral_existing_token_pepper != '' else (admiral_token_pepper_generated.stdout | default('')) }}"
-    admiral_secrets_key_value: "{{ admiral_existing_secrets_key if admiral_existing_secrets_key != '' else (admiral_secrets_key_generated.stdout | default('')) }}"
-    admiral_flagship_secret_key_value: "{{ admiral_existing_flagship_secret_key if admiral_existing_flagship_secret_key != '' else (admiral_flagship_secret_key_generated.stdout | default('')) }}"
-    admiral_flagship_bootstrap_user: "{{ admiral_existing_flagship_bootstrap_user if admiral_existing_flagship_bootstrap_user != '' else ('opsf_' ~ (admiral_flagship_bootstrap_user_generated.stdout | default(''))) }}"
-    admiral_flagship_bootstrap_password: "{{ admiral_existing_flagship_bootstrap_password if admiral_existing_flagship_bootstrap_password != '' else (admiral_flagship_bootstrap_password_generated.stdout | default('')) }}"
-    admiral_harbor_secret_key_value: "{{ admiral_existing_harbor_secret_key if admiral_existing_harbor_secret_key != '' else (admiral_harbor_secret_key_generated.stdout | default('')) }}"
-    admiral_harbor_encryption_key_value: "{{ admiral_existing_harbor_encryption_key if admiral_existing_harbor_encryption_key != '' else (admiral_harbor_encryption_key_generated.stdout | default('')) }}"
-    admiral_harbor_bootstrap_user: "{{ admiral_existing_harbor_bootstrap_user if admiral_existing_harbor_bootstrap_user != '' else ('opsh_' ~ (admiral_harbor_bootstrap_user_generated.stdout | default(''))) }}"
-    admiral_harbor_bootstrap_password: "{{ admiral_existing_harbor_bootstrap_password if admiral_existing_harbor_bootstrap_password != '' else (admiral_harbor_bootstrap_password_generated.stdout | default('')) }}"
-    admiral_harbor_legacy_admin_password: "{{ admiral_existing_harbor_legacy_admin_password if admiral_existing_harbor_legacy_admin_password != '' else (admiral_harbor_legacy_admin_password_generated.stdout | default('')) }}"
-    admiral_cockpit_admin_user: "{{ admiral_existing_cockpit_admin_user if admiral_existing_cockpit_admin_user != '' else ('opsc_' ~ (admiral_cockpit_admin_user_generated.stdout | default(''))) }}"
-    admiral_cockpit_admin_password: "{{ admiral_existing_cockpit_admin_password if admiral_existing_cockpit_admin_password != '' else (admiral_cockpit_admin_password_generated.stdout | default('')) }}"
-    admiral_fleet_token_value: "{{ admiral_existing_fleet_token if admiral_existing_fleet_token != '' else (admiral_fleet_token_generated.stdout | default('')) }}"
-    admiral_ed25519_private_key_value: "{{ admiral_existing_ed25519_private_key if admiral_existing_ed25519_private_key != '' else (admiral_ed25519_private_key_generated | default('')) }}"
-    admiral_task_public_key_value: "{{ admiral_existing_task_public_key if admiral_existing_task_public_key != '' else (admiral_task_public_key_generated | default('')) }}"
-    admiral_task_encryption_key_value: "{{ admiral_existing_task_encryption_key if admiral_existing_task_encryption_key != '' else (admiral_task_encryption_key_generated.stdout | default('')) }}"
-  no_log: true
+    - name: Generate Admiral fleet token
+      command:
+        cmd: openssl rand -hex 32
+      register: admiral_fleet_token_generated
+      when: admiral_existing_fleet_token == ''
+      changed_when: true
+      no_log: true
 
-- name: Persist bootstrap secret inventory
-  copy:
-    dest: /etc/admiral/secrets
-    mode: "0600"
-    owner: root
-    group: root
-    content: |
-      # Admiral bootstrap secret inventory.
-      # Back up this file securely.
-      # CRITICAL: HARBOR_ENCRYPTION_KEY protects Harbor encrypted data stored in PostgreSQL.
-      # This includes PayPal client_secret and LMS API keys.
-      # Losing this key invalidates stored PayPal credentials — you will need to
-      # re-enter them through the Harbor admin UI.
-      # CRITICAL: ADMIRAL_SECRETS_KEY protects admirald-encrypted secret material.
-      ADMIRAL_POSTGRES_USER=admiral
-      ADMIRAL_POSTGRES_PASSWORD={{ admiral_postgres_password }}
-      ADMIRAL_ADMIN_TOKEN={{ admiral_admin_token_value }}
-      ADMIRAL_TOKEN_PEPPER={{ admiral_token_pepper_value }}
-      ADMIRAL_SECRETS_KEY={{ admiral_secrets_key_value }}
-      FLAGSHIP_SECRET_KEY={{ admiral_flagship_secret_key_value }}
-      FLAGSHIP_BOOTSTRAP_USER={{ admiral_flagship_bootstrap_user }}
-      FLAGSHIP_BOOTSTRAP_PASSWORD={{ admiral_flagship_bootstrap_password }}
-      HARBOR_SECRET_KEY={{ admiral_harbor_secret_key_value }}
-      HARBOR_ENCRYPTION_KEY={{ admiral_harbor_encryption_key_value }}
-      HARBOR_BOOTSTRAP_USER={{ admiral_harbor_bootstrap_user }}
-      HARBOR_BOOTSTRAP_PASSWORD={{ admiral_harbor_bootstrap_password }}
-      HARBOR_LEGACY_ADMIN_PASSWORD={{ admiral_harbor_legacy_admin_password }}
-      COCKPIT_ADMIN_USER={{ admiral_cockpit_admin_user }}
-      COCKPIT_ADMIN_PASSWORD={{ admiral_cockpit_admin_password }}
-      ADMIRAL_FLEET_TOKEN={{ admiral_fleet_token_value }}
-      ADMIRAL_ED25519_PRIVATE_KEY={{ admiral_ed25519_private_key_value }}
-      ADMIRAL_TASK_PUBLIC_KEY={{ admiral_task_public_key_value }}
-      ADMIRAL_TASK_ENCRYPTION_KEY={{ admiral_task_encryption_key_value }}
-  no_log: true
+    - name: Generate Ed25519 signing key pair (admin only)
+      command:
+        cmd: /usr/bin/admiralctl init --generate-signing-key
+      register: admiral_ed25519_key_generated
+      when:
+        - admiral_install_mode in ['single-node', 'admin-node']
+        - admiral_existing_ed25519_private_key == ''
+      changed_when: true
+      no_log: true
+
+    - name: Parse generated Ed25519 keys
+      set_fact:
+        admiral_ed25519_private_key_generated: "{{ (admiral_ed25519_key_generated.stdout | default('') ~ '\n' ~ admiral_ed25519_key_generated.stderr | default('')) | regex_search('private_key:([a-f0-9]+)', '\\1') | first | default('') }}"
+        admiral_task_public_key_generated: "{{ (admiral_ed25519_key_generated.stdout | default('') ~ '\n' ~ admiral_ed25519_key_generated.stderr | default('')) | regex_search('public_key:([a-f0-9]+)', '\\1') | first | default('') }}"
+      when:
+        - admiral_install_mode in ['single-node', 'admin-node']
+        - admiral_ed25519_key_generated.changed | default(false)
+      no_log: true
+
+    - name: Generate task encryption key (shared AES-256-GCM key)
+      command:
+        cmd: openssl rand -hex 32
+      register: admiral_task_encryption_key_generated
+      when: admiral_existing_task_encryption_key == ''
+      changed_when: true
+      no_log: true
+
+    - name: Consolidate Admiral installation secrets
+      set_fact:
+        admiral_postgres_password: "{{ admiral_existing_postgres_password if admiral_existing_postgres_password != '' else (admiral_postgres_password_generated.stdout | default('')) }}"
+        admiral_admin_token_value: "{{ admiral_existing_admin_token if admiral_existing_admin_token != '' else (admiral_admin_token_generated.stdout | default('')) }}"
+        admiral_token_pepper_value: "{{ admiral_existing_token_pepper if admiral_existing_token_pepper != '' else (admiral_token_pepper_generated.stdout | default('')) }}"
+        admiral_secrets_key_value: "{{ admiral_existing_secrets_key if admiral_existing_secrets_key != '' else (admiral_secrets_key_generated.stdout | default('')) }}"
+        admiral_flagship_secret_key_value: "{{ admiral_existing_flagship_secret_key if admiral_existing_flagship_secret_key != '' else (admiral_flagship_secret_key_generated.stdout | default('')) }}"
+        admiral_flagship_bootstrap_user: "{{ admiral_existing_flagship_bootstrap_user if admiral_existing_flagship_bootstrap_user != '' else ('opsf_' ~ (admiral_flagship_bootstrap_user_generated.stdout | default(''))) }}"
+        admiral_flagship_bootstrap_password: "{{ admiral_existing_flagship_bootstrap_password if admiral_existing_flagship_bootstrap_password != '' else (admiral_flagship_bootstrap_password_generated.stdout | default('')) }}"
+        admiral_harbor_secret_key_value: "{{ admiral_existing_harbor_secret_key if admiral_existing_harbor_secret_key != '' else (admiral_harbor_secret_key_generated.stdout | default('')) }}"
+        admiral_harbor_encryption_key_value: "{{ admiral_existing_harbor_encryption_key if admiral_existing_harbor_encryption_key != '' else (admiral_harbor_encryption_key_generated.stdout | default('')) }}"
+        admiral_harbor_bootstrap_user: "{{ admiral_existing_harbor_bootstrap_user if admiral_existing_harbor_bootstrap_user != '' else ('opsh_' ~ (admiral_harbor_bootstrap_user_generated.stdout | default(''))) }}"
+        admiral_harbor_bootstrap_password: "{{ admiral_existing_harbor_bootstrap_password if admiral_existing_harbor_bootstrap_password != '' else (admiral_harbor_bootstrap_password_generated.stdout | default('')) }}"
+        admiral_harbor_legacy_admin_password: "{{ admiral_existing_harbor_legacy_admin_password if admiral_existing_harbor_legacy_admin_password != '' else (admiral_harbor_legacy_admin_password_generated.stdout | default('')) }}"
+        admiral_cockpit_admin_user: "{{ admiral_existing_cockpit_admin_user if admiral_existing_cockpit_admin_user != '' else ('opsc_' ~ (admiral_cockpit_admin_user_generated.stdout | default(''))) }}"
+        admiral_cockpit_admin_password: "{{ admiral_existing_cockpit_admin_password if admiral_existing_cockpit_admin_password != '' else (admiral_cockpit_admin_password_generated.stdout | default('')) }}"
+        admiral_fleet_token_value: "{{ admiral_existing_fleet_token if admiral_existing_fleet_token != '' else (admiral_fleet_token_generated.stdout | default('')) }}"
+        admiral_ed25519_private_key_value: "{{ admiral_existing_ed25519_private_key if admiral_existing_ed25519_private_key != '' else (admiral_ed25519_private_key_generated | default('')) }}"
+        admiral_task_public_key_value: "{{ admiral_existing_task_public_key if admiral_existing_task_public_key != '' else (admiral_task_public_key_generated | default('')) }}"
+        admiral_task_encryption_key_value: "{{ admiral_existing_task_encryption_key if admiral_existing_task_encryption_key != '' else (admiral_task_encryption_key_generated.stdout | default('')) }}"
+      no_log: true
+
+    - name: Persist bootstrap secret inventory
+      copy:
+        dest: /etc/admiral/secrets
+        mode: "0600"
+        owner: root
+        group: root
+        content: |
+          # Admiral bootstrap secret inventory.
+          # Back up this file securely.
+          # CRITICAL: HARBOR_ENCRYPTION_KEY protects Harbor encrypted data stored in PostgreSQL.
+          # This includes PayPal client_secret and LMS API keys.
+          # Losing this key invalidates stored PayPal credentials — you will need to
+          # re-enter them through the Harbor admin UI.
+          # CRITICAL: ADMIRAL_SECRETS_KEY protects admirald-encrypted secret material.
+          ADMIRAL_POSTGRES_USER=admiral
+          ADMIRAL_POSTGRES_PASSWORD={{ admiral_postgres_password }}
+          ADMIRAL_ADMIN_TOKEN={{ admiral_admin_token_value }}
+          ADMIRAL_TOKEN_PEPPER={{ admiral_token_pepper_value }}
+          ADMIRAL_SECRETS_KEY={{ admiral_secrets_key_value }}
+          FLAGSHIP_SECRET_KEY={{ admiral_flagship_secret_key_value }}
+          FLAGSHIP_BOOTSTRAP_USER={{ admiral_flagship_bootstrap_user }}
+          FLAGSHIP_BOOTSTRAP_PASSWORD={{ admiral_flagship_bootstrap_password }}
+          HARBOR_SECRET_KEY={{ admiral_harbor_secret_key_value }}
+          HARBOR_ENCRYPTION_KEY={{ admiral_harbor_encryption_key_value }}
+          HARBOR_BOOTSTRAP_USER={{ admiral_harbor_bootstrap_user }}
+          HARBOR_BOOTSTRAP_PASSWORD={{ admiral_harbor_bootstrap_password }}
+          HARBOR_LEGACY_ADMIN_PASSWORD={{ admiral_harbor_legacy_admin_password }}
+          COCKPIT_ADMIN_USER={{ admiral_cockpit_admin_user }}
+          COCKPIT_ADMIN_PASSWORD={{ admiral_cockpit_admin_password }}
+          ADMIRAL_FLEET_TOKEN={{ admiral_fleet_token_value }}
+          ADMIRAL_ED25519_PRIVATE_KEY={{ admiral_ed25519_private_key_value }}
+          ADMIRAL_TASK_PUBLIC_KEY={{ admiral_task_public_key_value }}
+          ADMIRAL_TASK_ENCRYPTION_KEY={{ admiral_task_encryption_key_value }}
+      no_log: true
+
+- name: Remove secrets file from non-admin nodes (safety cleanup)
+  file:
+    path: /etc/admiral/secrets
+    state: absent
+  when: admiral_install_mode in ['worker-node', 'portal-node']
 
 - name: Determine TLS SAN string including public IP and WireGuard IP
   set_fact:

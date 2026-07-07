@@ -60,7 +60,6 @@
         dest: "{{ item.dest }}"
         mode: "{{ item.mode }}"
       loop:
-        - { src: "/etc/admiral/secrets", dest: "/etc/admiral/secrets", mode: "0600" }
         - { src: "/etc/admiral/tls/ca.pem", dest: "/etc/admiral/tls/ca.pem", mode: "0644" }
         - { src: "/etc/wireguard/admiral.pub", dest: "/etc/wireguard/admiral.pub", mode: "0644" }
       when:
