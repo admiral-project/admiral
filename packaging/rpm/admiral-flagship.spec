@@ -77,6 +77,9 @@ restorecon -R %{_prefix}/lib/admiral/flagship 2>/dev/null || :
 %{python3} -m pytest tests/ -x --tb=short 2>/dev/null || echo "WARNING: tests skipped (pytest not available)"
 
 %changelog
+* Tue Jul 07 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta15-2
+- Update source commit refs to include security audit fixes
+
 * Sun Jul 05 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta14-3
 - Update submodule commit refs and bump release
 
@@ -139,9 +142,6 @@ restorecon -R %{_prefix}/lib/admiral/flagship 2>/dev/null || :
 
 * Sun Jun 14 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1alpha5-1
 - Bump to alpha5
-
-* Tue Jul 07 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta15-2
-- Update source commit refs to include security audit fixes
 
 * Sat Jun 13 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1alpha4-1
 - Bump admiral-flagship packaging to alpha3

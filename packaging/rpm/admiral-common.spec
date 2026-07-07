@@ -137,6 +137,9 @@ semanage fcontext -a -t container_file_t "/var/lib/admiral-apps/.local/share/con
 restorecon -R /var/lib/admiral-apps/.local/share/containers/storage/ 2>/dev/null || :
 
 %changelog
+* Tue Jul 07 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta15-3
+- Update source commit refs to include security audit fixes
+
 * Sun Jul 05 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta14-2
 - Update submodule commit refs and bump release
 
@@ -283,9 +286,6 @@ restorecon -R /var/lib/admiral-apps/.local/share/containers/storage/ 2>/dev/null
 
 * Sat Jun 13 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1alpha3-2
 - Add cockpit.conf with ProtocolHeader and Origins for reverse proxy support
-
-* Tue Jul 07 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta15-3
-- Update source commit refs to include security audit fixes
 
 * Sat Jun 13 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1alpha3-1
 - Bump Admiral common packaging to alpha3

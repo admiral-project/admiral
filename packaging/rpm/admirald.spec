@@ -72,6 +72,9 @@ restorecon -F %{_bindir}/admirald 2>/dev/null || :
 %systemd_postun_with_restart admirald.service
 
 %changelog
+* Tue Jul 07 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta15-2
+- Update source commit refs to include security audit fixes
+
 * Sun Jul 05 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta14-8
 - Update source commit ref to include gofmt fix
 
@@ -185,9 +188,6 @@ restorecon -F %{_bindir}/admirald 2>/dev/null || :
 
 * Sat Jun 13 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1alpha4-1
 - Add X-Forwarded-Proto header to reverse proxy routes for Cockpit compatibility
-
-* Tue Jul 07 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta15-2
-- Update source commit refs to include security audit fixes
 
 * Sat Jun 13 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1alpha3-1
 - Bump admirald packaging to alpha3

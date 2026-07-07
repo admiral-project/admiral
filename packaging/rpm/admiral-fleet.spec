@@ -73,6 +73,9 @@ loginctl enable-linger admiral-apps 2>/dev/null || :
 %systemd_postun_with_restart admiral-fleet.service
 
 %changelog
+* Tue Jul 07 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta15-2
+- Update source commit refs to include security audit fixes
+
 * Sun Jul 05 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta14-7
 - Update submodule commit refs and bump release
 
@@ -180,9 +183,6 @@ loginctl enable-linger admiral-apps 2>/dev/null || :
 
 * Sat Jun 13 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1alpha4-2
 - Bump admiral-fleet packaging to alpha3-2
-
-* Tue Jul 07 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta15-2
-- Update source commit refs to include security audit fixes
 
 * Sat Jun 13 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1alpha4-1
 - Bump admiral-fleet packaging to alpha3

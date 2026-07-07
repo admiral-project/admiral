@@ -113,6 +113,9 @@ restorecon -R %{_localstatedir}/lib/admiral/harbor 2>/dev/null || :
 %{python3} -m pytest tests/ -x --tb=short 2>/dev/null || echo "WARNING: tests skipped (pytest not available)"
 
 %changelog
+* Tue Jul 07 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta15-2
+- Update source commit refs to include security audit fixes
+
 * Sun Jul 05 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta14-5
 - Update submodule commit refs and bump release
 
@@ -231,9 +234,6 @@ restorecon -R %{_localstatedir}/lib/admiral/harbor 2>/dev/null || :
 
 * Sat Jun 13 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1alpha4-2
 - Add HARBOR_DATABASE_URL env var and python3-psycopg2 dependency
-
-* Tue Jul 07 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta15-2
-- Update source commit refs to include security audit fixes
 
 * Sat Jun 13 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1alpha4-1
 - Bump admiral-harbor packaging to alpha3
