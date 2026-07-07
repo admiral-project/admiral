@@ -1,0 +1,39 @@
+name: cacao-accounting
+display_name: Cacao Accounting
+description: Contabilidad para PyMEs — tesorería, compras, ventas, inventario, contabilidad general.
+
+services:
+  app:
+    image: quay.io/cacaoaccounting/cacaoaccounting
+    port: 8080
+    public: true
+    volume: cacao_data
+    healthcheck:
+      type: http
+      path: /
+      expected_status: 200
+    env:
+      DATABASE_URL: sqlite:////data/cacao.db
+    secrets:
+      SECRET_KEY:
+        generate: password
+        expose: true
+    backup:
+      type: volume
+
+tiers:
+  small:
+    cpu: 1
+    memory: 512M
+    storage: 1G
+    price_monthly: 5
+    backups:
+      enabled: true
+      schedule: daily
+      time: "03:00"
+      timezone: UTC
+      retention:
+        count: 3
+        days: 14
+      backup_database: false
+      backup_volumes: true

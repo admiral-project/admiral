@@ -1,0 +1,40 @@
+name: now-lms
+display_name: NOW-LMS
+description: Learning Management System — crea, entrega y certifica cursos.
+
+services:
+  app:
+    image: quay.io/bmosoluciones/now_lms
+    port: 8080
+    public: true
+    volume: lms_data
+    healthcheck:
+      type: http
+      path: /
+      expected_status: 200
+    env:
+      NOW_LMS_AUTO_MIGRATE: "1"
+      DATABASE_URL: sqlite:////data/now-lms.db
+    secrets:
+      SECRET_KEY:
+        generate: password
+        expose: true
+    backup:
+      type: volume
+
+tiers:
+  small:
+    cpu: 1
+    memory: 512M
+    storage: 1G
+    price_monthly: 5
+    backups:
+      enabled: true
+      schedule: daily
+      time: "03:00"
+      timezone: UTC
+      retention:
+        count: 3
+        days: 14
+      backup_database: false
+      backup_volumes: true
