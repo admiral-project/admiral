@@ -71,8 +71,6 @@
     name: "{{ admiral_cockpit_admin_user }}"
     password: "{{ cockpit_password_hash.stdout if mkpasswd_check.rc == 0 else (admiral_cockpit_admin_password | password_hash('sha512')) }}"
     shell: /bin/bash
-    groups: wheel
-    append: true
     create_home: true
     state: present
   no_log: true
