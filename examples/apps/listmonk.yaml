@@ -4,7 +4,7 @@ description: Gestor de newsletters y listas de correo rápido y funcional.
 
 services:
   app:
-    image: docker.io/listmonk/listmonk:v4.1.0
+    image: docker.io/listmonk/listmonk:v6.1.0
     port: 9000
     public: true
     depends_on:
@@ -15,6 +15,7 @@ services:
       type: http
       path: /health
       expected_status: 200
+    healthcheck_wait_timeout: 120
     env:
       LISTMONK_db__host: 127.0.0.1
       LISTMONK_db__port: "5432"
@@ -26,34 +27,39 @@ services:
         generate: username
       LISTMONK_db__password:
         generate: password
+      LISTMONK_ADMIN_USER:
+        generate: username
+        expose: true
+      LISTMONK_ADMIN_PASSWORD:
+        generate: password
+        expose: true
     backup:
       type: none
 
   setup:
-    image: docker.io/listmonk/listmonk:v4.1.0
+    image: docker.io/listmonk/listmonk:v6.1.0
     command: sh -c "sleep infinity"
     depends_on:
       - db
     requires:
       - db
-    setup_command: listmonk --install --yes --id admin --email $LISTMONK_ADMIN_EMAIL --password $LISTMONK_ADMIN_PASSWORD
+    setup_command: ./listmonk --install --idempotent --yes
     setup_timeout: 120
     notify_on_setup:
       - label: Correo del administrador
         value: admin@ejemplo.local
+    secrets:
+      LISTMONK_ADMIN_USER:
+        generate: username
+        expose: true
+      LISTMONK_ADMIN_PASSWORD:
+        generate: password
+        expose: true
     env:
       LISTMONK_db__host: 127.0.0.1
       LISTMONK_db__port: "5432"
       LISTMONK_db__database: listmonk
       LISTMONK_ADMIN_EMAIL: admin@ejemplo.local
-    secrets:
-      LISTMONK_db__user:
-        generate: username
-      LISTMONK_db__password:
-        generate: password
-      LISTMONK_ADMIN_PASSWORD:
-        generate: password
-        expose: true
     backup:
       type: none
 
