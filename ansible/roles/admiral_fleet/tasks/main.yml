@@ -58,6 +58,7 @@
 - name: Generate random fleet node token
   set_fact:
     fleet_node_token_value: "{{ lookup('ansible.builtin.pipe', 'openssl rand -hex 32') }}"
+  no_log: true
 
 - name: Deploy admiral-fleet configuration
   copy:
