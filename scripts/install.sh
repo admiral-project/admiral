@@ -47,6 +47,7 @@ Options:
   --admin-endpoint    Override the admin endpoint for spoke installs.
   --ssh-user          SSH user for remote spoke configuration (default: root).
   --ssh-key           SSH private key for remote spoke configuration.
+  --ssh-fingerprint   Expected SSH host key fingerprint (SHA256:...) for verification.
   -h, --help          Show this help message.
 
 Note: --worker-node and --portal-node are mutually exclusive by design.
@@ -63,6 +64,7 @@ INSTALL_WIREGUARD_IP=""
 INSTALL_ADMIN_ENDPOINT=""
 INSTALL_TARGET_SSH_USER="root"
 INSTALL_TARGET_SSH_KEY=""
+INSTALL_SSH_FINGERPRINT=""
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
@@ -116,6 +118,10 @@ while [[ $# -gt 0 ]]; do
             shift
             INSTALL_TARGET_SSH_KEY="$1"
             ;;
+        --ssh-fingerprint)
+            shift
+            INSTALL_SSH_FINGERPRINT="$1"
+            ;;
         -h|--help)
             usage
             exit 0
@@ -163,6 +169,25 @@ if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]]; t
     [[ -n "$INSTALL_TARGET_SSH_KEY" ]] || die "Spoke installs require an SSH key. Use --ssh-key or install a default root key."
 fi
 
+# --- 0c. populate known_hosts before first SSH connection ---
+# ssh-keyscan is read-only and transmits no credentials.
+# This prevents MITM attacks during spoke bootstrap.
+if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]]; then
+    info "Retrieving SSH host key for $INSTALL_PUBLIC_IP..."
+    KEYSCAN_OUTPUT=$(ssh-keyscan "$INSTALL_PUBLIC_IP" 2>/dev/null) || \
+        die "Failed to retrieve SSH host key for $INSTALL_PUBLIC_IP. Ensure SSH is running on the target host."
+    echo "$KEYSCAN_OUTPUT" >> ~/.ssh/known_hosts
+    if [[ -n "$INSTALL_SSH_FINGERPRINT" ]]; then
+        FOUND_FINGERPRINT=$(echo "$KEYSCAN_OUTPUT" | ssh-keygen -lf - 2>/dev/null | head -1)
+        info "Expected fingerprint: $INSTALL_SSH_FINGERPRINT"
+        info "Received: $FOUND_FINGERPRINT"
+        if ! echo "$FOUND_FINGERPRINT" | grep -qF "$INSTALL_SSH_FINGERPRINT"; then
+            die "SSH host key fingerprint mismatch for $INSTALL_PUBLIC_IP. Aborting."
+        fi
+        info "SSH host key fingerprint verified."
+    fi
+fi
+
 # --- 0b. worker and portal roles are mutually exclusive per host ---
 # A remote spoke host cannot run both admiral-fleet (worker) and
 # admiral-harbor (portal). Combined worker+portal support exists only
@@ -175,12 +200,12 @@ if [[ "$INSTALL_MODE" == "single-node" || "$INSTALL_MODE" == "admin-node" ]]; th
         die "Host already has admiral-fleet (worker role) running. --admin-node and --worker-node are mutually exclusive per host."
     fi
 elif [[ "$INSTALL_MODE" == "worker-node" ]]; then
-    ssh -i "$INSTALL_TARGET_SSH_KEY" -o BatchMode=yes -o StrictHostKeyChecking=accept-new \
+    ssh -i "$INSTALL_TARGET_SSH_KEY" -o BatchMode=yes -o StrictHostKeyChecking=yes \
         "${INSTALL_TARGET_SSH_USER}@${INSTALL_PUBLIC_IP}" \
         "systemctl is-active --quiet admiral-harbor" 2>/dev/null && \
         die "Target host already runs admiral-harbor (portal role). Remote worker-node and portal-node installs are mutually exclusive; use --single-node only for combined local roles."
 elif [[ "$INSTALL_MODE" == "portal-node" ]]; then
-    ssh -i "$INSTALL_TARGET_SSH_KEY" -o BatchMode=yes -o StrictHostKeyChecking=accept-new \
+    ssh -i "$INSTALL_TARGET_SSH_KEY" -o BatchMode=yes -o StrictHostKeyChecking=yes \
         "${INSTALL_TARGET_SSH_USER}@${INSTALL_PUBLIC_IP}" \
         "systemctl is-active --quiet admiral-fleet" 2>/dev/null && \
         die "Target host already runs admiral-fleet (worker role). Remote worker-node and portal-node installs are mutually exclusive; use --single-node only for combined local roles."
@@ -307,7 +332,7 @@ all:
       ansible_user: ${INSTALL_TARGET_SSH_USER}
       ansible_ssh_private_key_file: ${INSTALL_TARGET_SSH_KEY}
       ansible_python_interpreter: /usr/bin/python3
-      ansible_ssh_common_args: -o StrictHostKeyChecking=accept-new
+      ansible_ssh_common_args: -o StrictHostKeyChecking=yes
 EOF
         ANSIBLE_LOCAL_TEMP="$ANSIBLE_LOCAL_TEMP" \
         ANSIBLE_REMOTE_TEMP="$ANSIBLE_REMOTE_TEMP" \
@@ -342,8 +367,8 @@ fi
 # --- 10b. exchange WireGuard peers for spoke installs ---
 if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]]; then
     info "Exchanging WireGuard peers between hub and spoke..."
-    SPOKE_KEY=$(ssh -i "$INSTALL_TARGET_SSH_KEY" -o BatchMode=yes -o StrictHostKeyChecking=accept-new "${INSTALL_TARGET_SSH_USER}@${INSTALL_PUBLIC_IP}" "wg pubkey < /etc/wireguard/admiral.key" 2>/dev/null || true)
-    SPOKE_NODE_ID="${INSTALL_NODE_ID:-$(ssh -i "$INSTALL_TARGET_SSH_KEY" -o BatchMode=yes -o StrictHostKeyChecking=accept-new "${INSTALL_TARGET_SSH_USER}@${INSTALL_PUBLIC_IP}" "grep -hE '^(ADMIRAL_FLEET_NODE_ID|HARBOR_NODE_ID)=' /etc/admiral/*.env 2>/dev/null | tail -n1 | cut -d= -f2-" 2>/dev/null || true)}"
+    SPOKE_KEY=$(ssh -i "$INSTALL_TARGET_SSH_KEY" -o BatchMode=yes -o StrictHostKeyChecking=yes "${INSTALL_TARGET_SSH_USER}@${INSTALL_PUBLIC_IP}" "wg pubkey < /etc/wireguard/admiral.key" 2>/dev/null || true)
+    SPOKE_NODE_ID="${INSTALL_NODE_ID:-$(ssh -i "$INSTALL_TARGET_SSH_KEY" -o BatchMode=yes -o StrictHostKeyChecking=yes "${INSTALL_TARGET_SSH_USER}@${INSTALL_PUBLIC_IP}" "grep -hE '^(ADMIRAL_FLEET_NODE_ID|HARBOR_NODE_ID)=' /etc/admiral/*.env 2>/dev/null | tail -n1 | cut -d= -f2-" 2>/dev/null || true)}"
     if [[ -z "$SPOKE_KEY" ]]; then
         die "Could not read the spoke WireGuard public key after installation."
     fi
@@ -372,7 +397,7 @@ fi
 # --- 11. verify core runtime ---
 if [[ "$INSTALL_MODE" == "single-node" || "$INSTALL_MODE" == "worker-node" ]]; then
     if [[ "$INSTALL_MODE" == "worker-node" ]]; then
-        PODMAN_VER=$(ssh -i "$INSTALL_TARGET_SSH_KEY" -o BatchMode=yes -o StrictHostKeyChecking=accept-new "${INSTALL_TARGET_SSH_USER}@${INSTALL_PUBLIC_IP}" "podman version --format '{{.Version}}'" 2>/dev/null || echo "0")
+        PODMAN_VER=$(ssh -i "$INSTALL_TARGET_SSH_KEY" -o BatchMode=yes -o StrictHostKeyChecking=yes "${INSTALL_TARGET_SSH_USER}@${INSTALL_PUBLIC_IP}" "podman version --format '{{.Version}}'" 2>/dev/null || echo "0")
     else
         command -v podman >/dev/null 2>&1 || die "Podman was not installed by RPM dependencies."
         PODMAN_VER=$(podman version --format '{{.Version}}' 2>/dev/null || echo "0")
@@ -400,7 +425,7 @@ esac
 
 for service in "${REQUIRED_SERVICES[@]}"; do
     if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]]; then
-        ssh -i "$INSTALL_TARGET_SSH_KEY" -o BatchMode=yes -o StrictHostKeyChecking=accept-new "${INSTALL_TARGET_SSH_USER}@${INSTALL_PUBLIC_IP}" "systemctl is-active --quiet '$service'" || die "Service $service is not active after remote setup."
+        ssh -i "$INSTALL_TARGET_SSH_KEY" -o BatchMode=yes -o StrictHostKeyChecking=yes "${INSTALL_TARGET_SSH_USER}@${INSTALL_PUBLIC_IP}" "systemctl is-active --quiet '$service'" || die "Service $service is not active after remote setup."
     else
         systemctl is-active --quiet "$service" || die "Service $service is not active after setup."
     fi
@@ -413,7 +438,7 @@ if [[ "$INSTALL_DEV_MODE" != "true" ]]; then
     run_target_cmd() {
         local cmd="$1"
         if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]]; then
-            ssh -i "$INSTALL_TARGET_SSH_KEY" -o BatchMode=yes -o StrictHostKeyChecking=accept-new \
+            ssh -i "$INSTALL_TARGET_SSH_KEY" -o BatchMode=yes -o StrictHostKeyChecking=yes \
                 "${INSTALL_TARGET_SSH_USER}@${INSTALL_PUBLIC_IP}" "$cmd" 2>/dev/null || true
         else
             bash -lc "$cmd" 2>/dev/null || true
