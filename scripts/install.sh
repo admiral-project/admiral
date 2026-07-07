@@ -500,3 +500,16 @@ Run:
 The Admiral API is not publicly exposed.
 Internal services stay on loopback behind Caddy.
 EOF
+
+if [[ "$INSTALL_MODE" == "single-node" || "$INSTALL_MODE" == "portal-node" ]]; then
+    cat <<EOF
+
+***** REMINDER *****
+Harbor PayPal mode is 'sandbox'. To accept real payments:
+  1. Set HARBOR_PAYPAL_MODE=live in /etc/admiral/harbor.env
+  2. Set HARBOR_PAYPAL_BASE_URL=https://api-m.paypal.com
+  3. Configure HARBOR_PAYPAL_CLIENT_ID and HARBOR_PAYPAL_CLIENT_SECRET
+See https://admiral-project.github.io for PayPal setup guide.
+***** REMINDER *****
+EOF
+fi
