@@ -29,6 +29,18 @@ self-service and its own PostgreSQL database. Each role requires its own
 WireGuard IP and dedicated system resources. If your deployment needs both
 worker and portal capabilities, deploy separate physical or virtual nodes.
 
+Worker and portal modes accept the following additional flags for secure
+remote provisioning:
+
+| Flag | Description |
+|------|-------------|
+| `--public-ip <ip>` | Public IP of the target node (required) |
+| `--wireguard-ip <ip>` | WireGuard VPN IP for the target node |
+| `--admin-endpoint <ip>` | Admin node IP for API access from spoke |
+| `--ssh-user <user>` | SSH user for remote connection (default: root) |
+| `--ssh-key <path>` | SSH private key for remote authentication |
+| `--ssh-fingerprint <fingerprint>` | Expected SSH host key fingerprint for MITM verification |
+
 ### Service Map
 
 | Mode | Services started by the installer |
@@ -88,6 +100,66 @@ In multinode deployments (`--worker-node`), the use of a WireGuard VPN is **mand
   Operators should **not** set `ADMIRAL_SINGLE_NODE=true` on multi-node
   deployments (workers or portal nodes), since those nodes are expected
   to communicate over WireGuard.
+
+## Spoke Bootstrapping and SSH Host Key Verification
+
+When provisioning a remote worker or portal node (`--worker-node` or
+`--portal-node`), the installer (`admiral_install` or `scripts/install.sh`)
+transmits platform secrets including `/etc/admiral/secrets`, the CA
+certificate, and WireGuard keys to the target host over SSH.
+
+Since **Security Audit 2026-07-06**, the installer performs SSH host key
+verification before any secrets leave the admin node:
+
+1. **`ssh-keyscan` pre-flight**: Before the first SSH connection, the
+   installer runs `ssh-keyscan <public-ip>` to retrieve the target host's
+   SSH host key and adds it to the admin node's `~/.ssh/known_hosts`.
+   This is a read-only operation — no credentials are transmitted.
+
+2. **`StrictHostKeyChecking=yes`**: Every subsequent SSH connection uses
+   `StrictHostKeyChecking=yes`. If the host key does not match, the
+   connection is aborted immediately. Previously the installer used
+   `accept-new`, which accepted any unknown key on first contact.
+
+3. **Optional fingerprint verification**: The `--ssh-fingerprint` flag
+   allows the operator to provide the expected SSH host key fingerprint
+   (e.g., `SHA256:xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx`). If
+   provided, the installer compares it against the key retrieved by
+   `ssh-keyscan` and aborts on mismatch. To obtain the fingerprint
+   before installation:
+
+   ```bash
+   ssh-keyscan <spoke-public-ip> | ssh-keygen -lf -
+   ```
+
+These measures close the machine-in-the-middle window that existed during
+spoke bootstrap, where an attacker who could intercept
+`INSTALL_PUBLIC_IP` before the first connection could receive a copy of
+all platform secrets.
+
+### Example with fingerprint verification
+
+```bash
+admiral_install --worker-node \
+  --public-ip 198.51.100.20 \
+  --ssh-fingerprint SHA256:abc123... \
+  --admin-endpoint 203.0.113.10
+```
+
+If the fingerprint does not match, the installer exits with:
+
+```
+[FATAL] SSH host key fingerprint mismatch for 198.51.100.20. Aborting.
+```
+
+### Note on automation
+
+For automated deployments where interactive fingerprint verification is
+impractical, omitting `--ssh-fingerprint` still enforces
+`StrictHostKeyChecking=yes` as long as `ssh-keyscan` succeeds on the
+first run. If the spoke's SSH host key changes between runs (e.g., after
+OS reinstall), delete the stale entry from `~/.ssh/known_hosts` before
+re-running the installer.
 
 ## TLS Material
 
