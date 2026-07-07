@@ -2,11 +2,11 @@
 # SPDX-License-Identifier: Apache-2.0
 
 %global debug_package %{nil}
-%global commit 6c640776576ddda87afa230603a0176cefae7d01
+%global commit 2587f8a004c0f855db7cebf14f09ecd59569bb82
 
 Name:    admiral-fleet
 Version: 0.0.1beta15
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: Admiral Fleet Worker Agent
 
 License: Apache-2.0
@@ -180,6 +180,9 @@ loginctl enable-linger admiral-apps 2>/dev/null || :
 
 * Sat Jun 13 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1alpha4-2
 - Bump admiral-fleet packaging to alpha3-2
+
+* Tue Jul 07 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta15-2
+- Update source commit refs to include security audit fixes
 
 * Sat Jun 13 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1alpha4-1
 - Bump admiral-fleet packaging to alpha3

@@ -2,11 +2,11 @@
 # SPDX-License-Identifier: Apache-2.0
 
 %global debug_package %{nil}
-%global commit 4bc4137b917d82c45997f2017fe7e2cd9159e1e7
+%global commit b9937915a19e61b4866668b9f1ff09850774bf6f
 
 Name:    admiral-flagship
 Version: 0.0.1beta15
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: Admiral Administrative Web Console
 
 License: Apache-2.0
@@ -139,6 +139,9 @@ restorecon -R %{_prefix}/lib/admiral/flagship 2>/dev/null || :
 
 * Sun Jun 14 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1alpha5-1
 - Bump to alpha5
+
+* Tue Jul 07 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta15-2
+- Update source commit refs to include security audit fixes
 
 * Sat Jun 13 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1alpha4-1
 - Bump admiral-flagship packaging to alpha3

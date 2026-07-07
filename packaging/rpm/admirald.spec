@@ -2,11 +2,11 @@
 # SPDX-License-Identifier: Apache-2.0
 
 %global debug_package %{nil}
-%global commit 0e03f20eb09f4281ce7685a3958d3948794b5ee3
+%global commit 0667582f9a3abd1d30810f38ab2d10767ecb8155
 
 Name:    admirald
 Version: 0.0.1beta15
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: Admiral Control Plane - Core API and orchestration service
 
 License: Apache-2.0
@@ -185,6 +185,9 @@ restorecon -F %{_bindir}/admirald 2>/dev/null || :
 
 * Sat Jun 13 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1alpha4-1
 - Add X-Forwarded-Proto header to reverse proxy routes for Cockpit compatibility
+
+* Tue Jul 07 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta15-2
+- Update source commit refs to include security audit fixes
 
 * Sat Jun 13 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1alpha3-1
 - Bump admirald packaging to alpha3
