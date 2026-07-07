@@ -2,11 +2,11 @@
 # SPDX-License-Identifier: Apache-2.0
 
 %global debug_package %{nil}
-%global commit 2587f8a004c0f855db7cebf14f09ecd59569bb82
+%global commit 0d75d3c6e14c12ac750177b93da4af59190c6da8
 
 Name:    admiral-fleet
 Version: 0.0.1beta15
-Release: 2%{?dist}
+Release: 3%{?dist}
 Summary: Admiral Fleet Worker Agent
 
 License: Apache-2.0
@@ -73,6 +73,11 @@ loginctl enable-linger admiral-apps 2>/dev/null || :
 %systemd_postun_with_restart admiral-fleet.service
 
 %changelog
+* Tue Jul 07 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta15-3
+- Fix quadlet DropCapabilities key (use DropCapability singular)
+- Remove DropCapability=all that breaks MariaDB setuid
+- Document rationale in code comment
+
 * Tue Jul 07 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta15-2
 - Update source commit refs to include security audit fixes
 

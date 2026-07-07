@@ -2,11 +2,11 @@
 # SPDX-License-Identifier: Apache-2.0
 
 %global debug_package %{nil}
-%global commit 3e4bdb494c6a7314d17556080f1c1391c138625a
+%global commit 2e6059d4ec87c0bb135f5c13f65a23bcf26168b9
 
 Name:    admiralctl
 Version: 0.0.1beta15
-Release: 2%{?dist}
+Release: 3%{?dist}
 Summary: Admiral Command-Line Interface
 
 License: Apache-2.0
@@ -58,6 +58,10 @@ go test ./... || echo "WARNING: tests skipped or failed in build sandbox"
 restorecon -F %{_bindir}/admiralctl 2>/dev/null || :
 
 %changelog
+* Tue Jul 07 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta15-3
+- Fix instances list requiring customer_id when called without --customer flag
+- Add optional --customer flag for filtering by customer
+
 * Tue Jul 07 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta15-2
 - Update source commit refs to include security audit fixes
 
