@@ -313,6 +313,7 @@ SECRETS_HARBOR_POSTGRES_PASSWORD=""
 SECRETS_HARBOR_BOOTSTRAP_USER=""
 SECRETS_HARBOR_BOOTSTRAP_PASSWORD=""
 SECRETS_HARBOR_LEGACY_ADMIN_PASSWORD=""
+SECRETS_HARBOR_API_TOKEN=""
 if [[ "$INSTALL_MODE" == "worker-node" ]]; then
     SECRETS_ADMIRAL_TOKEN=$(read_admiral_secret "ADMIRAL_ADMIN_TOKEN") || true
     SECRETS_TASK_ENCRYPTION_KEY=$(read_admiral_secret "ADMIRAL_TASK_ENCRYPTION_KEY") || true
@@ -325,6 +326,7 @@ if [[ "$INSTALL_MODE" == "portal-node" ]]; then
     SECRETS_HARBOR_BOOTSTRAP_USER=$(read_admiral_secret "HARBOR_BOOTSTRAP_USER") || true
     SECRETS_HARBOR_BOOTSTRAP_PASSWORD=$(read_admiral_secret "HARBOR_BOOTSTRAP_PASSWORD") || true
     SECRETS_HARBOR_LEGACY_ADMIN_PASSWORD=$(read_admiral_secret "HARBOR_LEGACY_ADMIN_PASSWORD") || true
+    SECRETS_HARBOR_API_TOKEN=$(read_admiral_secret "ADMIRAL_HARBOR_API_TOKEN") || true
 fi
 
 # --- 8. build extra-vars as JSON (prevents injection via --node-id) ---
@@ -343,6 +345,7 @@ EXTRA_VARS_JSON=$(
     SECRETS_HARBOR_BOOTSTRAP_USER="$SECRETS_HARBOR_BOOTSTRAP_USER" \
     SECRETS_HARBOR_BOOTSTRAP_PASSWORD="$SECRETS_HARBOR_BOOTSTRAP_PASSWORD" \
     SECRETS_HARBOR_LEGACY_ADMIN_PASSWORD="$SECRETS_HARBOR_LEGACY_ADMIN_PASSWORD" \
+    SECRETS_HARBOR_API_TOKEN="$SECRETS_HARBOR_API_TOKEN" \
     python3 -c '
 import json, os
 
@@ -391,6 +394,10 @@ if hb_pass:
 hb_legacy = os.environ.get("SECRETS_HARBOR_LEGACY_ADMIN_PASSWORD", "")
 if hb_legacy:
     d["admiral_harbor_legacy_admin_password"] = hb_legacy
+
+hb_api_token = os.environ.get("SECRETS_HARBOR_API_TOKEN", "")
+if hb_api_token:
+    d["admiral_harbor_api_token_value"] = hb_api_token
 
 mode = os.environ["INSTALL_MODE"]
 if mode in ("worker-node", "portal-node"):

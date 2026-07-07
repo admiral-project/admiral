@@ -113,6 +113,7 @@
       HARBOR_OVERDUE_DEPROVISION_AFTER_DAYS=10
       HARBOR_OVERDUE_LAST_BACKUP_RETENTION_DAYS=15
       ADMIRAL_ADMIN_TOKEN={{ admiral_admin_token_value }}
+      ADMIRAL_HARBOR_API_TOKEN={{ admiral_harbor_api_token_value }}
       ADMIRAL_CA_FILE={{ '' if (admiral_dev_mode | default(false) | bool) else '/etc/admiral/tls/ca.pem' }}
       ADMIRAL_INSECURE_SKIP_VERIFY={{ '1' if (admiral_dev_mode | default(false) | bool) else '0' }}
     mode: "0640"

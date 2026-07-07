@@ -132,6 +132,7 @@
         admiral_existing_harbor_bootstrap_user: "{{ admiral_secrets_text | regex_findall('(?m)^HARBOR_BOOTSTRAP_USER=(.*)$') | first | default('') }}"
         admiral_existing_harbor_bootstrap_password: "{{ admiral_secrets_text | regex_findall('(?m)^HARBOR_BOOTSTRAP_PASSWORD=(.*)$') | first | default('') }}"
         admiral_existing_harbor_legacy_admin_password: "{{ admiral_secrets_text | regex_findall('(?m)^HARBOR_LEGACY_ADMIN_PASSWORD=(.*)$') | first | default('') }}"
+        admiral_existing_harbor_api_token: "{{ admiral_secrets_text | regex_findall('(?m)^ADMIRAL_HARBOR_API_TOKEN=(.*)$') | first | default('') }}"
         admiral_existing_cockpit_admin_user: "{{ admiral_secrets_text | regex_findall('(?m)^COCKPIT_ADMIN_USER=(.*)$') | first | default('') }}"
         admiral_existing_cockpit_admin_password: "{{ admiral_secrets_text | regex_findall('(?m)^COCKPIT_ADMIN_PASSWORD=(.*)$') | first | default('') }}"
         admiral_existing_fleet_token: "{{ admiral_secrets_text | regex_findall('(?m)^ADMIRAL_FLEET_TOKEN=(.*)$') | first | default('') }}"
@@ -236,6 +237,14 @@
       changed_when: true
       no_log: true
 
+    - name: Generate Harbor API token (scoped, not admin-level)
+      command:
+        cmd: openssl rand -hex 32
+      register: admiral_harbor_api_token_generated
+      when: admiral_existing_harbor_api_token == ''
+      changed_when: true
+      no_log: true
+
     - name: Generate Cockpit admin username suffix
       command:
         cmd: openssl rand -hex 5
@@ -301,6 +310,7 @@
         admiral_harbor_bootstrap_user: "{{ admiral_existing_harbor_bootstrap_user if admiral_existing_harbor_bootstrap_user != '' else ('opsh_' ~ (admiral_harbor_bootstrap_user_generated.stdout | default(''))) }}"
         admiral_harbor_bootstrap_password: "{{ admiral_existing_harbor_bootstrap_password if admiral_existing_harbor_bootstrap_password != '' else (admiral_harbor_bootstrap_password_generated.stdout | default('')) }}"
         admiral_harbor_legacy_admin_password: "{{ admiral_existing_harbor_legacy_admin_password if admiral_existing_harbor_legacy_admin_password != '' else (admiral_harbor_legacy_admin_password_generated.stdout | default('')) }}"
+        admiral_harbor_api_token_value: "{{ admiral_existing_harbor_api_token if admiral_existing_harbor_api_token != '' else (admiral_harbor_api_token_generated.stdout | default('')) }}"
         admiral_cockpit_admin_user: "{{ admiral_existing_cockpit_admin_user if admiral_existing_cockpit_admin_user != '' else ('opsc_' ~ (admiral_cockpit_admin_user_generated.stdout | default(''))) }}"
         admiral_cockpit_admin_password: "{{ admiral_existing_cockpit_admin_password if admiral_existing_cockpit_admin_password != '' else (admiral_cockpit_admin_password_generated.stdout | default('')) }}"
         admiral_fleet_token_value: "{{ admiral_existing_fleet_token if admiral_existing_fleet_token != '' else (admiral_fleet_token_generated.stdout | default('')) }}"
@@ -336,6 +346,7 @@
           HARBOR_BOOTSTRAP_USER={{ admiral_harbor_bootstrap_user }}
           HARBOR_BOOTSTRAP_PASSWORD={{ admiral_harbor_bootstrap_password }}
           HARBOR_LEGACY_ADMIN_PASSWORD={{ admiral_harbor_legacy_admin_password }}
+          ADMIRAL_HARBOR_API_TOKEN={{ admiral_harbor_api_token_value }}
           COCKPIT_ADMIN_USER={{ admiral_cockpit_admin_user }}
           COCKPIT_ADMIN_PASSWORD={{ admiral_cockpit_admin_password }}
           ADMIRAL_FLEET_TOKEN={{ admiral_fleet_token_value }}
