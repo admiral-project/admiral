@@ -274,6 +274,27 @@ if ! rpm -q admiral-common >/dev/null 2>&1; then
     dnf install -y admiral-common
 fi
 
+# --- 7b. resolve spoke node defaults from know_host.yaml (without copying topology) ---
+# Extract only the wireguard_ip and node_id needed for this specific spoke.
+# know_host.yaml NEVER leaves the admin node — it contains full cluster topology.
+if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]]; then
+    ROLE_KEY="worker"
+    [[ "$INSTALL_MODE" == "portal-node" ]] && ROLE_KEY="portal"
+    if [[ -z "$INSTALL_NODE_ID" || -z "$INSTALL_WIREGUARD_IP" ]]; then
+        if [[ -f /var/lib/admiral/know_host.yaml ]]; then
+            # grep -A2 after "  worker:" or "  portal:" under the "next:" section
+            if [[ -z "$INSTALL_NODE_ID" ]]; then
+                INSTALL_NODE_ID=$(grep -A2 "^  ${ROLE_KEY}:" /var/lib/admiral/know_host.yaml | grep "node_id:" | awk '{print $2}')
+                [[ -n "$INSTALL_NODE_ID" ]] && info "Resolved node ID from know_host.yaml: $INSTALL_NODE_ID"
+            fi
+            if [[ -z "$INSTALL_WIREGUARD_IP" ]]; then
+                INSTALL_WIREGUARD_IP=$(grep -A2 "^  ${ROLE_KEY}:" /var/lib/admiral/know_host.yaml | grep "wireguard_ip:" | awk '{print $2}')
+                [[ -n "$INSTALL_WIREGUARD_IP" ]] && info "Resolved WireGuard IP from know_host.yaml: $INSTALL_WIREGUARD_IP"
+            fi
+        fi
+    fi
+fi
+
 # --- 8. build extra-vars as JSON (prevents injection via --node-id) ---
 EXTRA_VARS_JSON=$(
     INSTALL_MODE="$INSTALL_MODE" \
