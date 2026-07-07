@@ -13,7 +13,7 @@
       ADMIRAL_ADMIN_TOKEN={{ admiral_admin_token_value }}
       ADMIRAL_CA_FILE=/etc/admiral/tls/ca.pem
       ADMIRAL_INSECURE_SKIP_VERIFY={{ '1' if (admiral_dev_mode | default(false) | bool) else '0' }}
-    mode: "0640"
+    mode: "0600"
     owner: root
     group: admiral
   no_log: true

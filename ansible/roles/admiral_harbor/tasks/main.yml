@@ -116,7 +116,7 @@
       ADMIRAL_HARBOR_API_TOKEN={{ admiral_harbor_api_token_value }}
       ADMIRAL_CA_FILE={{ '' if (admiral_dev_mode | default(false) | bool) else '/etc/admiral/tls/ca.pem' }}
       ADMIRAL_INSECURE_SKIP_VERIFY={{ '1' if (admiral_dev_mode | default(false) | bool) else '0' }}
-    mode: "0640"
+    mode: "0600"
     owner: root
     group: admiral
   no_log: true
@@ -137,7 +137,7 @@
       HARBOR_SMTP_USE_TLS=1
       HARBOR_SMTP_USE_SSL=0
       HARBOR_EMAIL_CONFIRMATION_TTL_HOURS=72
-    mode: "0640"
+    mode: "0600"
     owner: root
     group: admiral
   no_log: true
