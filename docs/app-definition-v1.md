@@ -109,7 +109,7 @@ Campos soportados por servicio:
 | `setup_command` | string | no | Comando de inicializacion ejecutado una sola vez tras el provision |
 | `setup_timeout` | int | no | Timeout en segundos para `setup_command` (default: 600) |
 | `notify_on_setup` | []YAMLSetupNotice | no | Datos informativos para mostrar al cliente tras completar setup |
-| `env` | map[string]string | no | Variables de entorno estaticas o referencias `${VAR}` a env/secretos disponibles |
+| `env` | map[string]string | no | Variables de entorno estaticas o referencias `${VAR}` a secretos del servicio, secretos globales u otras variables del mismo bloque |
 | `secrets` | map[string]YAMLSecret | no | Secretos generados o explicitos |
 | `healthcheck` | YAMLHealthCheck | no | Healthcheck del servicio |
 | `healthcheck_wait_timeout` | int | no | Tiempo maximo en segundos para esperar que el servicio alcance readiness (default: 120) |
@@ -489,6 +489,64 @@ servicio detectado como DB hacia secretos cliente que terminen en:
 Eso permite plantillas tipo WordPress/MariaDB donde ambas partes deben
 compartir credenciales.
 
+### Construccion de `DATABASE_URL` con `${VAR}`
+
+Cuando la aplicacion cliente (p.ej. Flask/Django) requiere una sola variable
+`DATABASE_URL` en lugar de credenciales separadas, se puede componer usando
+la sintaxis `${VAR}` en el campo `env`:
+
+```yaml
+services:
+  app:
+    image: quay.io/bmosoluciones/now_lms
+    env:
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@127.0.0.1:5432/nowlms
+    secrets:
+      POSTGRES_USER:
+        generate: username
+      POSTGRES_PASSWORD:
+        generate: password
+      SECRET_KEY:
+        generate: password
+        expose: true
+
+  db:
+    image: docker.io/library/postgres:16
+    volume: lms_db
+    env:
+      POSTGRES_DB: nowlms
+    secrets:
+      POSTGRES_USER:
+        generate: username
+        expose: true
+      POSTGRES_PASSWORD:
+        generate: password
+        expose: true
+```
+
+El flujo es:
+
+1. `admirald` genera valores para `POSTGRES_USER` y `POSTGRES_PASSWORD` en
+   cada servicio de forma independiente.
+2. `normalizeInstanceSecrets` detecta el servicio `db` (imagen postgres) y
+   propaga sus valores de `POSTGRES_USER` y `POSTGRES_PASSWORD` al servicio
+   `app` (coincidencia exacta de nombre de secreto).
+3. `resolveEnvLayer` expande `${POSTGRES_USER}` y `${POSTGRES_PASSWORD}` en
+   `DATABASE_URL` usando los secretos ya normalizados del servicio `app`.
+
+**Orden de resolucion de `${VAR}`:**
+
+| Prioridad | Fuente | Ejemplo |
+|-----------|--------|---------|
+| 1 | Secretos del propio servicio | `services.app.secrets.POSTGRES_USER` |
+| 2 | Secretos globales (`__global__`) | `secrets.MY_SECRET` en la raiz del YAML |
+| 3 | Otras variables del mismo bloque `env` | `APP_URL: http://${HOST}:${PORT}` |
+| 4 | Variables base del entorno (global + tier) | `DATABASE_URL` con fallback a `$ADMIRAL_INSTANCE_ID` |
+
+Esto permite que aplicaciones que esperan una sola cadena de conexion
+(`DATABASE_URL`, `CACAO_DATABASE_URL`, `MONGO_URI`, `REDIS_URL`)
+puedan usar PostgreSQL sin sacrificar credenciales generadas dinamicamente.
+
 ## Health checks (opcional)
 
 Aunque el contrato YAML permite definir `healthcheck` en los servicios, la
@@ -769,8 +827,8 @@ Reglas activas en `admirald/pkg/admiral/validation.go`:
   completo con Quadlet/Podman.
 - Las variables de entorno que referencien otros servicios deben usar
   `localhost` como host, no el nombre del servicio.
-- Las referencias `${VAR}` en `env` se resuelven en este orden:
-  secretos del servicio, secretos globales, entorno final mergeado.
+- Las referencias `${VAR}` en `env` se resuelven con la precedencia
+  documentada en la seccion [Construccion de `DATABASE_URL` con `${VAR}`](#construccion-de-database_url-con-var).
 - La precedencia del merge de entorno es:
   variables internas Admiral, `environment` global, `service.env`, `tier.environment`.
 - El contrato no embebe detalles de Podman ni systemd.
