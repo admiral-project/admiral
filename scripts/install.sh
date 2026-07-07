@@ -249,31 +249,45 @@ if ! rpm -q admiral-common >/dev/null 2>&1; then
     dnf install -y admiral-common
 fi
 
-# --- 8. build extra-vars ---
-EXTRA_VARS="admiral_install_mode=$INSTALL_MODE"
-if [[ "$INSTALL_DEV_MODE" == "true" ]]; then
-    EXTRA_VARS="$EXTRA_VARS admiral_dev_mode=true"
-fi
-if [[ -n "$INSTALL_NODE_ID" ]]; then
-    EXTRA_VARS="$EXTRA_VARS fleet_node_id=$INSTALL_NODE_ID"
-fi
-if [[ -n "$INSTALL_PUBLIC_IP" ]]; then
-    EXTRA_VARS="$EXTRA_VARS fleet_public_ip=$INSTALL_PUBLIC_IP"
-fi
-if [[ -n "$INSTALL_WIREGUARD_IP" ]]; then
-    EXTRA_VARS="$EXTRA_VARS admiral_wireguard_ip=$INSTALL_WIREGUARD_IP"
-fi
-# Remote spokes are role-exclusive: fleet_node_role is either 'worker' or 'portal'.
-if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]]; then
-    EXTRA_VARS="$EXTRA_VARS fleet_node_role=$( [[ "$INSTALL_MODE" == "portal-node" ]] && echo 'portal' || echo 'worker' )"
-    EXTRA_VARS="$EXTRA_VARS admiral_admin_endpoint=$INSTALL_ADMIN_ENDPOINT"
-    EXTRA_VARS="$EXTRA_VARS admiral_admin_wireguard_ip=10.99.0.1"
-    EXTRA_VARS="$EXTRA_VARS admiral_wireguard_hub_endpoint=$INSTALL_ADMIN_ENDPOINT"
-    EXTRA_VARS="$EXTRA_VARS admiral_bootstrap_from_controller=true"
-fi
-if [[ "$INSTALL_MODE" == "admin-node" || "$INSTALL_MODE" == "single-node" ]]; then
-    EXTRA_VARS="$EXTRA_VARS admiral_wireguard_ip=10.99.0.1"
-fi
+# --- 8. build extra-vars as JSON (prevents injection via --node-id) ---
+EXTRA_VARS_JSON=$(
+    INSTALL_MODE="$INSTALL_MODE" \
+    INSTALL_DEV_MODE="$INSTALL_DEV_MODE" \
+    INSTALL_NODE_ID="$INSTALL_NODE_ID" \
+    INSTALL_PUBLIC_IP="$INSTALL_PUBLIC_IP" \
+    INSTALL_WIREGUARD_IP="$INSTALL_WIREGUARD_IP" \
+    INSTALL_ADMIN_ENDPOINT="$INSTALL_ADMIN_ENDPOINT" \
+    python3 -c '
+import json, os
+
+d = {"admiral_install_mode": os.environ["INSTALL_MODE"]}
+
+if os.environ.get("INSTALL_DEV_MODE") == "true":
+    d["admiral_dev_mode"] = True
+
+if os.environ.get("INSTALL_NODE_ID"):
+    d["fleet_node_id"] = os.environ["INSTALL_NODE_ID"]
+
+if os.environ.get("INSTALL_PUBLIC_IP"):
+    d["fleet_public_ip"] = os.environ["INSTALL_PUBLIC_IP"]
+
+if os.environ.get("INSTALL_WIREGUARD_IP"):
+    d["admiral_wireguard_ip"] = os.environ["INSTALL_WIREGUARD_IP"]
+
+mode = os.environ["INSTALL_MODE"]
+if mode in ("worker-node", "portal-node"):
+    d["fleet_node_role"] = "portal" if mode == "portal-node" else "worker"
+    d["admiral_admin_endpoint"] = os.environ["INSTALL_ADMIN_ENDPOINT"]
+    d["admiral_admin_wireguard_ip"] = "10.99.0.1"
+    d["admiral_wireguard_hub_endpoint"] = os.environ["INSTALL_ADMIN_ENDPOINT"]
+    d["admiral_bootstrap_from_controller"] = True
+
+if mode in ("admin-node", "single-node"):
+    d["admiral_wireguard_ip"] = "10.99.0.1"
+
+print(json.dumps(d))
+'
+)
 
 # --- 9. run official playbook ---
 # The playbook handles the rest: packages, configuration, services
@@ -302,7 +316,7 @@ EOF
             "$ANSIBLE_DIR/site.yml" \
             -i "$TMP_INVENTORY" \
             --limit target \
-            --extra-vars "$EXTRA_VARS"
+            --extra-vars "$EXTRA_VARS_JSON"
     else
         ANSIBLE_LOCAL_TEMP="$ANSIBLE_LOCAL_TEMP" \
         ANSIBLE_REMOTE_TEMP="$ANSIBLE_REMOTE_TEMP" \
@@ -310,7 +324,7 @@ EOF
         ansible-playbook \
             "$ANSIBLE_DIR/site.yml" \
             -i "$ANSIBLE_DIR/inventory/localhost.yml" \
-            --extra-vars "$EXTRA_VARS"
+            --extra-vars "$EXTRA_VARS_JSON"
     fi
 else
     die "Ansible playbook directory not found at $ANSIBLE_DIR"
@@ -337,11 +351,12 @@ if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]]; t
         die "Could not resolve the spoke node ID from --node-id or /etc/admiral/*.env after installation."
     fi
     if [[ -n "$SPOKE_KEY" && -n "$SPOKE_NODE_ID" ]]; then
-        SPOKE_WG_IP=$(admiralctl nodes list --output json 2>/dev/null | python3 -c "
-import sys, json
+        SPOKE_WG_IP=$(SPOKE_NODE_ID="$SPOKE_NODE_ID" admiralctl nodes list --output json 2>/dev/null | python3 -c "
+import os, sys, json
+target = os.environ['SPOKE_NODE_ID']
 data = json.load(sys.stdin)
 for n in data if isinstance(data, list) else data.get('nodes', []):
-    if n.get('node_id') == '$SPOKE_NODE_ID' or n.get('id') == '$SPOKE_NODE_ID':
+    if n.get('node_id') == target or n.get('id') == target:
         sys.stdout.write(n.get('wireguard_ip', n.get('wg_ip', '')))
         break
 " 2>/dev/null || true)
