@@ -1,0 +1,40 @@
+name: vaultwarden
+display_name: Vaultwarden
+description: Ligero gestor de contraseñas compatible con clientes Bitwarden.
+
+services:
+  app:
+    image: docker.io/vaultwarden/server:1.33.2
+    port: 80
+    public: true
+    volume: vw_data
+    healthcheck:
+      type: http
+      path: /alive
+      expected_status: 200
+    env:
+      SIGNUPS_ALLOWED: "true"
+      DOMAIN: https://$ADMIRAL_INSTANCE_ID.local
+    secrets:
+      ADMIN_TOKEN:
+        generate: password
+        expose: true
+    backup:
+      type: volume
+
+tiers:
+  small:
+    cpu: 1
+    memory: 256M
+    storage: 1G
+    price_monthly: 3
+    backups:
+      enabled: true
+      schedule: daily
+      time: "03:00"
+      timezone: UTC
+      retention:
+        count: 3
+        days: 14
+      backup_database: false
+      backup_volumes: true

@@ -1,0 +1,101 @@
+name: listmonk
+display_name: Listmonk
+description: Gestor de newsletters y listas de correo rápido y funcional.
+
+services:
+  app:
+    image: docker.io/listmonk/listmonk:v4.1.0
+    port: 9000
+    public: true
+    depends_on:
+      - db
+    requires:
+      - db
+    healthcheck:
+      type: http
+      path: /health
+      expected_status: 200
+    env:
+      LISTMONK_db__host: 127.0.0.1
+      LISTMONK_db__port: "5432"
+      LISTMONK_db__database: listmonk
+      LISTMONK_app__address: 0.0.0.0
+      LISTMONK_app__port: "9000"
+    secrets:
+      LISTMONK_db__user:
+        generate: username
+      LISTMONK_db__password:
+        generate: password
+    backup:
+      type: none
+
+  setup:
+    image: docker.io/listmonk/listmonk:v4.1.0
+    command: sh -c "sleep infinity"
+    depends_on:
+      - db
+    requires:
+      - db
+    setup_command: listmonk --install --yes --id admin --email $LISTMONK_ADMIN_EMAIL --password $LISTMONK_ADMIN_PASSWORD
+    setup_timeout: 120
+    notify_on_setup:
+      - label: Correo del administrador
+        value: admin@ejemplo.local
+    env:
+      LISTMONK_db__host: 127.0.0.1
+      LISTMONK_db__port: "5432"
+      LISTMONK_db__database: listmonk
+      LISTMONK_ADMIN_EMAIL: admin@ejemplo.local
+    secrets:
+      LISTMONK_db__user:
+        generate: username
+      LISTMONK_db__password:
+        generate: password
+      LISTMONK_ADMIN_PASSWORD:
+        generate: password
+        expose: true
+    backup:
+      type: none
+
+  db:
+    image: docker.io/library/postgres:16
+    volume: lm_db
+    backup:
+      type: database
+      engine: postgresql
+      database_env: POSTGRES_DB
+      username_env: POSTGRES_USER
+      password_env: POSTGRES_PASSWORD
+    env:
+      POSTGRES_DB: listmonk
+    secrets:
+      POSTGRES_USER:
+        generate: username
+        expose: true
+      POSTGRES_PASSWORD:
+        generate: password
+        expose: true
+    healthcheck:
+      type: command
+      command:
+        - sh
+        - -c
+        - pg_isready -h 127.0.0.1 -U "$POSTGRES_USER" -d "$POSTGRES_DB"
+    healthcheck_wait_timeout: 60
+
+tiers:
+  small:
+    cpu: 1
+    memory: 512M
+    storage: 1G
+    price_monthly: 5
+    backups:
+      enabled: true
+      schedule: daily
+      time: "04:00"
+      timezone: UTC
+      retention:
+        count: 3
+        days: 14
+      backup_database: true
+      backup_volumes: false
