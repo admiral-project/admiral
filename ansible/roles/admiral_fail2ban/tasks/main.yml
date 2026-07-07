@@ -14,6 +14,30 @@
         state: directory
         mode: "0755"
 
+    - name: Ensure fail2ban filter.d exists
+      file:
+        path: /etc/fail2ban/filter.d
+        state: directory
+        mode: "0755"
+
+    - name: Deploy admiral-flagship fail2ban filter
+      copy:
+        dest: /etc/fail2ban/filter.d/admiral-flagship.conf
+        mode: "0644"
+        content: |
+          [Definition]
+          failregex = .*admin login failed.*
+          ignoreregex =
+
+    - name: Deploy admiral-harbor fail2ban filter
+      copy:
+        dest: /etc/fail2ban/filter.d/admiral-harbor.conf
+        mode: "0644"
+        content: |
+          [Definition]
+          failregex = .*(customer login failed|admin login failed).*
+          ignoreregex =
+
     - name: Configure admiral fail2ban baseline
       copy:
         dest: /etc/fail2ban/jail.d/admiral.local
@@ -28,6 +52,26 @@
           [sshd]
           enabled = true
           backend = systemd
+
+          [admiral-flagship]
+          enabled = {{ 'true' if admiral_install_mode in ['single-node', 'admin-node'] else 'false' }}
+          backend = systemd
+          journalmatch = _SYSTEMD_UNIT=admiral-flagship.service
+          filter = admiral-flagship
+          maxretry = 5
+          findtime = 10m
+          bantime = 1h
+          banaction = firewallcmd-ipset
+
+          [admiral-harbor]
+          enabled = {{ 'true' if admiral_install_mode in ['single-node', 'portal-node'] else 'false' }}
+          backend = systemd
+          journalmatch = _SYSTEMD_UNIT=admiral-harbor.service
+          filter = admiral-harbor
+          maxretry = 5
+          findtime = 10m
+          bantime = 1h
+          banaction = firewallcmd-ipset
 
     - name: Enable and start fail2ban
       systemd:
