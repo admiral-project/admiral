@@ -22,6 +22,13 @@ Harbor is part of the current product and is in active development.
 
 Single-node combines the admin, worker, and portal roles on one host.
 
+The supported shared production topology is built by installing `--admin-node`
+first and then reconciling the same host with `--portal-node`. The second run
+retains `/etc/admiral/secrets`, the admin firewall profile, and admin services;
+it does not copy or delete the central secret inventory. A dedicated
+`--portal-node` receives a separate local PostgreSQL role and password and
+reaches Admirald only through its WireGuard address.
+
 **Important**: `--worker-node` and `--portal-node` are mutually exclusive by design
 and cannot be installed on the same host. A worker node runs `admiral-fleet`
 for workload execution; a portal node runs `admiral-harbor` for customer
@@ -186,37 +193,32 @@ In multinode deployments (`--worker-node`), the use of a WireGuard VPN is **mand
 
 When provisioning a remote worker or portal node (`--worker-node` or
 `--portal-node`), the installer (`admiral_install` or `scripts/install.sh`)
-transmits platform secrets including `/etc/admiral/secrets`, the CA
-certificate, and WireGuard keys to the target host over SSH.
+transmits only the role-scoped bootstrap values, public CA certificate, and
+WireGuard public material required by that target. The central
+`/etc/admiral/secrets` inventory and CA private key never leave the admin host.
 
-Since **Security Audit 2026-07-06**, the installer performs SSH host key
-verification before any secrets leave the admin node:
+The installer performs SSH host key verification before any secrets leave the
+admin node. A fingerprint is mandatory for remote bootstrap:
 
 1. **`ssh-keyscan` pre-flight**: Before the first SSH connection, the
-   installer runs `ssh-keyscan <public-ip>` to retrieve the target host's
-   SSH host key and adds it to the admin node's `~/.ssh/known_hosts`.
-   This is a read-only operation — no credentials are transmitted.
+   installer runs `ssh-keyscan <public-ip>` into a temporary value. It does
+   not modify `known_hosts` until the operator-supplied fingerprint matches.
 
 2. **`StrictHostKeyChecking=yes`**: Every subsequent SSH connection uses
    `StrictHostKeyChecking=yes`. If the host key does not match, the
    connection is aborted immediately. Previously the installer used
    `accept-new`, which accepted any unknown key on first contact.
 
-3. **Optional fingerprint verification**: The `--ssh-fingerprint` flag
-   allows the operator to provide the expected SSH host key fingerprint
-   (e.g., `SHA256:xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx`). If
-   provided, the installer compares it against the key retrieved by
-   `ssh-keyscan` and aborts on mismatch. To obtain the fingerprint
-   before installation:
+3. **Fingerprint verification**: `--ssh-fingerprint` is required and must
+   match the key retrieved by `ssh-keyscan`. To obtain and independently
+   verify the fingerprint before installation:
 
    ```bash
    ssh-keyscan <spoke-public-ip> | ssh-keygen -lf -
    ```
 
-These measures close the machine-in-the-middle window that existed during
-spoke bootstrap, where an attacker who could intercept
-`INSTALL_PUBLIC_IP` before the first connection could receive a copy of
-all platform secrets.
+An unknown host without an independently verified fingerprint fails before
+authentication or secret transfer. A mismatch leaves `known_hosts` unchanged.
 
 ### Example with fingerprint verification
 
@@ -233,14 +235,9 @@ If the fingerprint does not match, the installer exits with:
 [FATAL] SSH host key fingerprint mismatch for 198.51.100.20. Aborting.
 ```
 
-### Note on automation
-
-For automated deployments where interactive fingerprint verification is
-impractical, omitting `--ssh-fingerprint` still enforces
-`StrictHostKeyChecking=yes` as long as `ssh-keyscan` succeeds on the
-first run. If the spoke's SSH host key changes between runs (e.g., after
-OS reinstall), delete the stale entry from `~/.ssh/known_hosts` before
-re-running the installer.
+For automation, store the verified fingerprint in the deployment secret
+store and pass it explicitly. If the spoke's SSH host key changes, stop and
+re-verify the replacement key before retrying.
 
 ## TLS Material
 
@@ -295,7 +292,7 @@ For backup storage, use `admiralctl` after the platform is up. The installer doe
 
 The official installer assumes a **fresh VPS** with no unrelated public services already running.
 
-For normal modes (`--single-node`, `--admin-node`, `--worker-node`, `--portal-node`), the installer applies a secure-by-default baseline including firewall policy, SELinux settings, and login hardening. It may print non-blocking warnings if the host diverges from expected baseline values.
+For normal modes (`--single-node`, `--admin-node`, `--worker-node`, `--portal-node`), the installer applies a secure-by-default baseline including firewall policy, SELinux settings, login hardening, auditd, and fail2ban. Blocking security checks cause installation to fail; they are not advisory warnings.
 
 `--dev-node` is explicitly an evaluation mode and does **not** apply all production hardening controls. In dev-node mode:
 
