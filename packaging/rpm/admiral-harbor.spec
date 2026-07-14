@@ -2,8 +2,8 @@
 %global commit 32ff76d746a8b14fc334c6c08aa8a03fa0275150
 
 Name:    admiral-harbor
-Version: 0.0.1beta15
-Release: 2%{?dist}
+Version: 0.0.1beta16
+Release: 1%{?dist}
 Summary: Admiral Customer Portal - Web UI for end users
 
 License: Apache-2.0
@@ -114,6 +114,9 @@ restorecon -R %{_localstatedir}/lib/admiral/harbor 2>/dev/null || :
 %{python3} -m pytest tests/ -x --tb=short
 
 %changelog
+* Tue Jul 14 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta16-1
+- chore(release): bump to 0.0.1beta16
+
 * Tue Jul 07 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta15-2
 - Update source commit refs to include security audit fixes
 

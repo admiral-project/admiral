@@ -5,8 +5,8 @@
 %global commit 0d75d3c6e14c12ac750177b93da4af59190c6da8
 
 Name:    admiral-fleet
-Version: 0.0.1beta15
-Release: 3%{?dist}
+Version: 0.0.1beta16
+Release: 1%{?dist}
 Summary: Admiral Fleet Worker Agent
 
 License: Apache-2.0
@@ -73,6 +73,9 @@ loginctl enable-linger admiral-apps 2>/dev/null || :
 %systemd_postun_with_restart admiral-fleet.service
 
 %changelog
+* Tue Jul 14 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta16-1
+- chore(release): bump to 0.0.1beta16
+
 * Tue Jul 07 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta15-3
 - Fix quadlet DropCapabilities key (use DropCapability singular)
 - Remove DropCapability=all that breaks MariaDB setuid

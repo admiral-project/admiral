@@ -5,8 +5,8 @@
 %global commit b9937915a19e61b4866668b9f1ff09850774bf6f
 
 Name:    admiral-flagship
-Version: 0.0.1beta15
-Release: 2%{?dist}
+Version: 0.0.1beta16
+Release: 1%{?dist}
 Summary: Admiral Administrative Web Console
 
 License: Apache-2.0
@@ -78,6 +78,9 @@ restorecon -R %{_prefix}/lib/admiral/flagship 2>/dev/null || :
 %{python3} -m pytest tests/ -x --tb=short
 
 %changelog
+* Tue Jul 14 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta16-1
+- chore(release): bump to 0.0.1beta16
+
 * Tue Jul 07 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta15-2
 - Update source commit refs to include security audit fixes
 

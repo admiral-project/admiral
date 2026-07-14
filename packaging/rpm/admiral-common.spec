@@ -4,8 +4,8 @@
 %global commit a6f99c03b63f8cea8bfa51c7a7e644821dec802e
 
 Name:    admiral-common
-Version: 0.0.1beta15
-Release: 3%{?dist}
+Version: 0.0.1beta16
+Release: 1%{?dist}
 Summary: Common files and utilities for Admiral PaaS
 
 License: Apache-2.0
@@ -137,6 +137,9 @@ semanage fcontext -a -t container_file_t "/var/lib/admiral-apps/.local/share/con
 restorecon -R /var/lib/admiral-apps/.local/share/containers/storage/ 2>/dev/null || :
 
 %changelog
+* Tue Jul 14 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta16-1
+- chore(release): bump to 0.0.1beta16
+
 * Tue Jul 07 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta15-3
 - Update source commit refs to include security audit fixes
 

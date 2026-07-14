@@ -5,8 +5,8 @@
 %global commit 2e6059d4ec87c0bb135f5c13f65a23bcf26168b9
 
 Name:    admiralctl
-Version: 0.0.1beta15
-Release: 3%{?dist}
+Version: 0.0.1beta16
+Release: 1%{?dist}
 Summary: Admiral Command-Line Interface
 
 License: Apache-2.0
@@ -58,6 +58,9 @@ mkdir -p "$GOCACHE"
 restorecon -F %{_bindir}/admiralctl 2>/dev/null || :
 
 %changelog
+* Tue Jul 14 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta16-1
+- chore(release): bump to 0.0.1beta16
+
 * Tue Jul 07 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta15-3
 - Fix instances list requiring customer_id when called without --customer flag
 - Add optional --customer flag for filtering by customer
