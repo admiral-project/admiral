@@ -177,6 +177,32 @@ if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]]; t
     [[ -n "$INSTALL_TARGET_SSH_KEY" ]] || die "Spoke installs require an SSH key. Use --ssh-key or install a default root key."
 fi
 
+# --- 0b1. detect SSH public key for admin user creation ---
+# The public key is needed to set up the non-root SSH admin user on every node.
+# For admin/single-node: detect from --ssh-key, id_ed25519.pub, id_rsa.pub, or authorized_keys.
+# For worker/portal: extract from the private key used to connect to the spoke.
+INSTALL_SSH_PUB_KEY=""
+if [[ "$INSTALL_MODE" == "single-node" || "$INSTALL_MODE" == "admin-node" ]]; then
+    if [[ -n "$INSTALL_TARGET_SSH_KEY" && -f "$INSTALL_TARGET_SSH_KEY" ]]; then
+        INSTALL_SSH_PUB_KEY=$(ssh-keygen -y -f "$INSTALL_TARGET_SSH_KEY" 2>/dev/null || true)
+    fi
+    if [[ -z "$INSTALL_SSH_PUB_KEY" ]]; then
+        if [[ -f /root/.ssh/id_ed25519.pub ]]; then
+            INSTALL_SSH_PUB_KEY=$(cat /root/.ssh/id_ed25519.pub)
+        elif [[ -f /root/.ssh/id_rsa.pub ]]; then
+            INSTALL_SSH_PUB_KEY=$(cat /root/.ssh/id_rsa.pub)
+        fi
+    fi
+    if [[ -z "$INSTALL_SSH_PUB_KEY" ]]; then
+        INSTALL_SSH_PUB_KEY=$(head -1 /root/.ssh/authorized_keys 2>/dev/null || true)
+    fi
+    [[ -n "$INSTALL_SSH_PUB_KEY" ]] || die "No SSH public key found for admin user setup. Use --ssh-key or install a key at ~/.ssh/id_ed25519.pub."
+fi
+if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]]; then
+    INSTALL_SSH_PUB_KEY=$(ssh-keygen -y -f "$INSTALL_TARGET_SSH_KEY" 2>/dev/null || true)
+    [[ -n "$INSTALL_SSH_PUB_KEY" ]] || die "Could not extract public key from $INSTALL_TARGET_SSH_KEY."
+fi
+
 # --- 0c. populate known_hosts before first SSH connection ---
 # ssh-keyscan is read-only and transmits no credentials.
 # This prevents MITM attacks during spoke bootstrap.
@@ -346,6 +372,7 @@ EXTRA_VARS_JSON=$(
     SECRETS_HARBOR_BOOTSTRAP_PASSWORD="$SECRETS_HARBOR_BOOTSTRAP_PASSWORD" \
     SECRETS_HARBOR_LEGACY_ADMIN_PASSWORD="$SECRETS_HARBOR_LEGACY_ADMIN_PASSWORD" \
     SECRETS_HARBOR_API_TOKEN="$SECRETS_HARBOR_API_TOKEN" \
+    INSTALL_SSH_PUB_KEY="$INSTALL_SSH_PUB_KEY" \
     python3 -c '
 import json, os
 
@@ -398,6 +425,10 @@ if hb_legacy:
 hb_api_token = os.environ.get("SECRETS_HARBOR_API_TOKEN", "")
 if hb_api_token:
     d["admiral_harbor_api_token_value"] = hb_api_token
+
+ssh_pub_key = os.environ.get("INSTALL_SSH_PUB_KEY", "")
+if ssh_pub_key:
+    d["admiral_ssh_pub_key"] = ssh_pub_key
 
 mode = os.environ["INSTALL_MODE"]
 if mode in ("worker-node", "portal-node"):
@@ -559,6 +590,9 @@ if [[ "$INSTALL_DEV_MODE" != "true" ]]; then
     fi
 
     SSHD_EFFECTIVE="$(run_target_cmd "sshd -T")"
+    if [[ "$SSHD_EFFECTIVE" != *"permitrootlogin prohibit-password"* ]]; then
+        SECURITY_WARNINGS+=("sshd PermitRootLogin is not set to prohibit-password.")
+    fi
     if [[ "$SSHD_EFFECTIVE" != *"passwordauthentication no"* ]]; then
         SECURITY_WARNINGS+=("sshd password authentication is not disabled.")
     fi
@@ -640,6 +674,22 @@ Run:
 The Admiral API is not publicly exposed.
 Internal services stay on loopback behind Caddy.
 EOF
+
+# --- 12b. SSH admin user access info ---
+if [[ "$INSTALL_MODE" == "single-node" || "$INSTALL_MODE" == "admin-node" ]]; then
+    ADMIRAL_SSH_USER_VAL=$(read_admiral_secret "ADMIRAL_SSH_USER" 2>/dev/null || true)
+    if [[ -n "$ADMIRAL_SSH_USER_VAL" ]]; then
+        DISPLAY_HOST=$( [[ "$INSTALL_PUBLIC_IP" == "127.0.0.1" ]] && echo "localhost" || echo "$INSTALL_PUBLIC_IP" )
+        cat <<EOF
+
+SSH access (recommended, non-root):
+  ssh ${ADMIRAL_SSH_USER_VAL}@${DISPLAY_HOST}
+
+This user has sudo NOPASSWD access.
+Root login is restricted to key-based authentication only.
+EOF
+    fi
+fi
 
 if [[ "$INSTALL_MODE" == "single-node" || "$INSTALL_MODE" == "portal-node" ]]; then
     cat <<EOF
