@@ -57,6 +57,7 @@ Usage:
   admiral_install --single-node [--public-ip <public-ip>]
   admiral_install --dev-node [--public-ip <public-ip>]
   admiral_install --admin-node [--public-ip <public-ip>]
+  admiral_install --admin-portal-node [--public-ip <public-ip>]
   admiral_install --worker-node --public-ip <public-ip> [--wireguard-ip <wireguard-ip>]
   admiral_install --portal-node --public-ip <public-ip> [--wireguard-ip <wireguard-ip>]
 
@@ -64,6 +65,7 @@ Options:
   --single-node       Install all single-node components on one host.
   --dev-node          Evaluation mode: single-node with relaxed firewall/bindings.
   --admin-node        Install control plane components only.
+  --admin-portal-node Install control plane and Harbor on one host.
   --worker-node       Install worker components only.
   --portal-node       Install portal components only.
   --node-id           Set a custom node ID (default: hostname).
@@ -111,6 +113,10 @@ while [[ $# -gt 0 ]]; do
         --admin-node)
             [[ -z "$INSTALL_MODE" ]] || die "Only one installation mode may be selected."
             INSTALL_MODE="admin-node"
+            ;;
+        --admin-portal-node)
+            [[ -z "$INSTALL_MODE" ]] || die "Only one installation mode may be selected."
+            INSTALL_MODE="admin-portal-node"
             ;;
         --worker-node)
             [[ -z "$INSTALL_MODE" ]] || die "Only one installation mode may be selected."
@@ -160,11 +166,11 @@ while [[ $# -gt 0 ]]; do
     shift
 done
 
-[[ -n "$INSTALL_MODE" ]] || die "An installation mode is required. Use --single-node, --dev-node, --admin-node, --worker-node or --portal-node."
+[[ -n "$INSTALL_MODE" ]] || die "An installation mode is required. Use --single-node, --dev-node, --admin-node, --admin-portal-node, --worker-node or --portal-node."
 if [[ "$INSTALL_MODE" == "single-node" && -z "$INSTALL_PUBLIC_IP" ]]; then
     INSTALL_PUBLIC_IP="127.0.0.1"
 fi
-if [[ "$INSTALL_MODE" == "admin-node" && -z "$INSTALL_PUBLIC_IP" ]]; then
+if [[ "$INSTALL_MODE" == "admin-node" || "$INSTALL_MODE" == "admin-portal-node" ]] && -z "$INSTALL_PUBLIC_IP"; then
     INSTALL_PUBLIC_IP="$(detect_non_loopback_ip || true)"
     if [[ -z "$INSTALL_PUBLIC_IP" ]]; then
         die "Could not detect a non-loopback admin public IP. Use --public-ip."
@@ -239,7 +245,7 @@ fi
 # For admin/single-node: detect from --ssh-key, id_ed25519.pub, id_rsa.pub, or authorized_keys.
 # For worker/portal: extract from the private key used to connect to the spoke.
 INSTALL_SSH_PUB_KEY=""
-if [[ "$INSTALL_MODE" == "single-node" || "$INSTALL_MODE" == "admin-node" ]]; then
+if [[ "$INSTALL_MODE" == "single-node" || "$INSTALL_MODE" == "admin-node" || "$INSTALL_MODE" == "admin-portal-node" ]]; then
     if [[ -n "$INSTALL_TARGET_SSH_KEY" && -f "$INSTALL_TARGET_SSH_KEY" ]]; then
         INSTALL_SSH_PUB_KEY=$(ssh-keygen -y -f "$INSTALL_TARGET_SSH_KEY" 2>/dev/null || true)
     fi
@@ -295,26 +301,6 @@ if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]]; t
             info "Using persisted non-root SSH user: $INSTALL_TARGET_SSH_USER"
         fi
     fi
-fi
-
-# --- 0b. worker and portal roles are mutually exclusive per host ---
-# A remote spoke host cannot run both admiral-fleet (worker) and
-# admiral-harbor (portal). Combined worker+portal support exists only
-# in --single-node on the local host.
-if [[ "$INSTALL_MODE" == "single-node" || "$INSTALL_MODE" == "admin-node" ]]; then
-    if systemctl is-active --quiet admiral-fleet 2>/dev/null && [[ "$INSTALL_MODE" == "admin-node" ]]; then
-        die "Host already has admiral-fleet (worker role) running. --admin-node and --worker-node are mutually exclusive per host."
-    fi
-elif [[ "$INSTALL_MODE" == "worker-node" ]]; then
-    ssh -i "$INSTALL_TARGET_SSH_KEY" -o BatchMode=yes -o StrictHostKeyChecking=yes \
-        "${INSTALL_TARGET_SSH_USER}@${INSTALL_PUBLIC_IP}" \
-        "systemctl is-active --quiet admiral-harbor" 2>/dev/null && \
-        die "Target host already runs admiral-harbor (portal role). Remote worker-node and portal-node installs are mutually exclusive; use --single-node only for combined local roles."
-elif [[ "$INSTALL_MODE" == "portal-node" ]]; then
-    ssh -i "$INSTALL_TARGET_SSH_KEY" -o BatchMode=yes -o StrictHostKeyChecking=yes \
-        "${INSTALL_TARGET_SSH_USER}@${INSTALL_PUBLIC_IP}" \
-        "systemctl is-active --quiet admiral-fleet" 2>/dev/null && \
-        die "Target host already runs admiral-fleet (worker role). Remote worker-node and portal-node installs are mutually exclusive; use --single-node only for combined local roles."
 fi
 
 # --- 1. root check ---
@@ -533,7 +519,7 @@ if mode in ("worker-node", "portal-node"):
     d["admiral_wireguard_hub_endpoint"] = os.environ["INSTALL_ADMIN_ENDPOINT"]
     d["admiral_bootstrap_from_controller"] = True
 
-if mode in ("admin-node", "single-node"):
+if mode in ("admin-node", "admin-portal-node", "single-node"):
     d["admiral_wireguard_ip"] = "10.99.0.1"
 
 print(json.dumps(d))
@@ -609,7 +595,7 @@ if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]]; t
 fi
 
 # --- 10. persist local installer state for future spoke bootstraps ---
-if [[ "$INSTALL_MODE" == "single-node" || "$INSTALL_MODE" == "admin-node" ]]; then
+if [[ "$INSTALL_MODE" == "single-node" || "$INSTALL_MODE" == "admin-node" || "$INSTALL_MODE" == "admin-portal-node" ]]; then
     install -d -m 0750 /etc/admiral
     state_tmp="$(mktemp /etc/admiral/install.env.XXXXXX)"
     chmod 0640 "$state_tmp"
@@ -685,6 +671,9 @@ case "$INSTALL_MODE" in
     admin-node)
         REQUIRED_SERVICES=(postgresql caddy admirald admiral-flagship cockpit.socket firewalld auditd fail2ban wg-quick@wg-admiral)
         ;;
+    admin-portal-node)
+        REQUIRED_SERVICES=(postgresql caddy admirald admiral-flagship admiral-harbor admiral-harbor-worker.timer admiral-harbor-catalog-sync.timer cockpit.socket firewalld auditd fail2ban wg-quick@wg-admiral)
+        ;;
     worker-node)
         REQUIRED_SERVICES=(admiral-fleet firewalld auditd fail2ban wg-quick@wg-admiral)
         ;;
@@ -747,7 +736,7 @@ if [[ "$INSTALL_DEV_MODE" != "true" ]]; then
 
     FW_SERVICES="$(run_target_cmd "firewall-cmd --zone=public --list-services")"
     case "$INSTALL_MODE" in
-        single-node|admin-node)
+        single-node|admin-node|admin-portal-node)
             if [[ "$FW_SERVICES" != *"ssh"* || "$FW_SERVICES" != *"http"* || "$FW_SERVICES" != *"https"* ]]; then
                 SECURITY_WARNINGS+=("Expected public services ssh/http/https for admin profile not fully present.")
             fi
@@ -815,7 +804,7 @@ Internal services stay on loopback behind Caddy.
 EOF
 
 # --- 12b. SSH admin user access info ---
-if [[ "$INSTALL_MODE" == "single-node" || "$INSTALL_MODE" == "admin-node" ]]; then
+if [[ "$INSTALL_MODE" == "single-node" || "$INSTALL_MODE" == "admin-node" || "$INSTALL_MODE" == "admin-portal-node" ]]; then
     ADMIRAL_SSH_USER_VAL=$(read_admiral_secret "ADMIRAL_SSH_USER" 2>/dev/null || true)
     if [[ -n "$ADMIRAL_SSH_USER_VAL" ]]; then
         DISPLAY_HOST=$( [[ "$INSTALL_PUBLIC_IP" == "127.0.0.1" ]] && echo "localhost" || echo "$INSTALL_PUBLIC_IP" )

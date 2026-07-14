@@ -13,21 +13,32 @@ Harbor is part of the current product and is in active development.
 
 ## Deployment Modes
 
-`admiral_install` supports four modes:
+`admiral_install` supports six modes:
 
 - `--single-node`
 - `--admin-node`
+- `--admin-portal-node`
 - `--worker-node`
 - `--portal-node`
+- `--dev-node`
 
 Single-node combines the admin, worker, and portal roles on one host.
 
-The supported shared production topology is built by installing `--admin-node`
-first and then reconciling the same host with `--portal-node`. The second run
-retains `/etc/admiral/secrets`, the admin firewall profile, and admin services;
-it does not copy or delete the central secret inventory. A dedicated
-`--portal-node` receives a separate local PostgreSQL role and password and
-reaches Admirald only through its WireGuard address.
+The supported shared production topology uses `--admin-portal-node` from the
+first installation. It installs the Admin services and Harbor on one host;
+Workers remain dedicated nodes. Installing `--admin-node` and then running
+`--portal-node` on the same host is not supported.
+
+The other supported production topology uses `--admin-node` with a dedicated
+`--portal-node` and dedicated Workers. A dedicated portal receives a separate
+local PostgreSQL role and password and reaches Admirald only through its
+WireGuard address.
+
+The installer persists the selected role in `/etc/admiral/role`. Re-running
+the same mode reconciles that host idempotently. Selecting a different role
+fails before the installer changes the host. The only automatic role transition
+is `--dev-node` to `--single-node`, which restores the secure single-node
+profile.
 
 **Important**: `--worker-node` and `--portal-node` are mutually exclusive by design
 and cannot be installed on the same host. A worker node runs `admiral-fleet`
@@ -35,6 +46,19 @@ for workload execution; a portal node runs `admiral-harbor` for customer
 self-service and its own PostgreSQL database. Each role requires its own
 WireGuard IP and dedicated system resources. If your deployment needs both
 worker and portal capabilities, deploy separate physical or virtual nodes.
+
+### Manual migration from Admin+Portal to dedicated Portal
+
+An `admin-portal` host may become an `admin` host only after the operator has
+manually moved Harbor to a dedicated `--portal-node` and stopped Harbor on the
+original host. This is a manual operational change; the installer does not
+migrate or validate Harbor data.
+
+After completing and validating that manual migration, stop and disable
+`admiral-harbor`, `admiral-harbor-worker.timer`, and
+`admiral-harbor-catalog-sync.timer` on the original host. The operator may then
+change the content of `/etc/admiral/role` from `admin-portal` to `admin`.
+Do not change this file before Harbor has been moved and stopped.
 
 ### SSH Admin User
 
@@ -67,7 +91,7 @@ The installer auto-detects the SSH private key in the following order:
 
 | Mode | Detection order |
 |------|----------------|
-| `--single-node`, `--admin-node` | 1. `--ssh-key <path>` flag if provided |
+| `--single-node`, `--admin-node`, `--admin-portal-node` | 1. `--ssh-key <path>` flag if provided |
 | | 2. `~/.ssh/id_ed25519` |
 | | 3. `~/.ssh/id_rsa` |
 | `--worker-node`, `--portal-node` | 1. `--ssh-key <path>` flag if provided |
@@ -318,7 +342,7 @@ inventario ni la clave privada de la CA. Tras una transición de topología debe
 repetirse las comprobaciones bloqueantes de servicios, listeners, firewall y
 registros antes de declarar la instalación terminada.
 
-For normal modes (`--single-node`, `--admin-node`, `--worker-node`, `--portal-node`), the installer applies a secure-by-default baseline including firewall policy, SELinux settings, login hardening, auditd, and fail2ban. Blocking security checks cause installation to fail; they are not advisory warnings.
+For normal modes (`--single-node`, `--admin-node`, `--admin-portal-node`, `--worker-node`, `--portal-node`), the installer applies a secure-by-default baseline including firewall policy, SELinux settings, login hardening, auditd, and fail2ban. Blocking security checks cause installation to fail; they are not advisory warnings.
 
 `--dev-node` is explicitly an evaluation mode and does **not** apply all production hardening controls. In dev-node mode:
 

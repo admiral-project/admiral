@@ -54,7 +54,7 @@
           backend = systemd
 
           [admiral-flagship]
-          enabled = {{ 'true' if admiral_install_mode in ['single-node', 'admin-node'] else 'false' }}
+          enabled = {{ 'true' if admiral_install_mode in ['single-node', 'admin-node', 'admin-portal-node'] else 'false' }}
           backend = systemd
           journalmatch = _SYSTEMD_UNIT=admiral-flagship.service
           filter = admiral-flagship
@@ -64,7 +64,7 @@
           banaction = firewallcmd-ipset
 
           [admiral-harbor]
-          enabled = {{ 'true' if admiral_install_mode in ['single-node', 'portal-node'] else 'false' }}
+          enabled = {{ 'true' if admiral_install_mode in ['single-node', 'admin-portal-node', 'portal-node'] else 'false' }}
           backend = systemd
           journalmatch = _SYSTEMD_UNIT=admiral-harbor.service
           filter = admiral-harbor

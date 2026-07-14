@@ -5,68 +5,90 @@
   become: true
 
   pre_tasks:
-    - name: Check active admin services for portal-node
-      command:
-        cmd: systemctl is-active --quiet {{ item }}
-      register: admiral_portal_admin_service_state
-      changed_when: false
-      failed_when: false
-      loop:
-        - caddy
-        - admirald
-      when: admiral_install_mode == 'portal-node'
-
-    - name: Determine whether portal-node shares a running admin host
+    - name: Map installer mode to persistent node role
       set_fact:
-        admiral_portal_shares_admin_host: >-
+        admiral_node_role: >-
           {{
-            (
-              admiral_portal_admin_service_state.results
-              | selectattr('item', 'equalto', 'caddy')
-              | map(attribute='rc')
-              | first
-              | default(1)
-            ) == 0 and
-            (
-              admiral_portal_admin_service_state.results
-              | selectattr('item', 'equalto', 'admirald')
-              | map(attribute='rc')
-              | first
-              | default(1)
-            ) == 0
+            'dev'
+            if (admiral_dev_mode | default(false) | bool)
+            else {
+              'admin-node': 'admin',
+              'admin-portal-node': 'admin-portal',
+              'worker-node': 'worker',
+              'portal-node': 'portal',
+              'single-node': 'single'
+            }[admiral_install_mode]
           }}
-      when: admiral_install_mode == 'portal-node'
 
-    - name: Require the controller secret inventory for a shared portal
+    - name: Check persistent Admiral node role
       stat:
-        path: /etc/admiral/secrets
-      register: admiral_shared_portal_secrets
-      when:
-        - admiral_install_mode == 'portal-node'
-        - admiral_portal_shares_admin_host | default(false) | bool
+        path: /etc/admiral/role
+      register: admiral_node_role_file
 
-    - name: Protect controller secrets before shared portal configuration
+    - name: Read persistent Admiral node role
+      slurp:
+        src: /etc/admiral/role
+      register: admiral_node_role_contents
+      when: admiral_node_role_file.stat.exists
+
+    - name: Decode persistent Admiral node role
+      set_fact:
+        admiral_persisted_node_role: "{{ admiral_node_role_contents.content | b64decode | trim }}"
+      when: admiral_node_role_file.stat.exists
+
+    - name: Check for legacy Admiral installation state
+      stat:
+        path: "{{ item }}"
+      loop:
+        - /etc/admiral/secrets
+        - /etc/admiral/harbor.env
+        - /etc/admiral/fleet.env
+        - /etc/admirald.ini
+      register: admiral_legacy_state
+      when: not admiral_node_role_file.stat.exists
+
+    - name: Reject unprofiled legacy Admiral installations
       assert:
         that:
-          - admiral_shared_portal_secrets.stat.exists
-          - admiral_shared_portal_secrets.stat.mode == '0600'
+          - (admiral_legacy_state.results | selectattr('stat.exists') | list | length) == 0
         fail_msg: >-
-          Shared admin+portal installation requires a root-owned 0600
-          /etc/admiral/secrets inventory and will not continue without it.
-      when:
-        - admiral_install_mode == 'portal-node'
-        - admiral_portal_shares_admin_host | default(false) | bool
+          This host has an Admiral installation without /etc/admiral/role.
+          Reprovision the host or complete the documented manual migration
+          before running the installer.
+      when: not admiral_node_role_file.stat.exists
+
+    - name: Reject incompatible persistent node role
+      assert:
+        that:
+          - admiral_persisted_node_role in ['admin', 'admin-portal', 'worker', 'portal', 'single', 'dev']
+          - admiral_persisted_node_role == admiral_node_role or
+            (admiral_persisted_node_role == 'dev' and admiral_node_role == 'single')
+        fail_msg: >-
+          This host is provisioned as '{{ admiral_persisted_node_role }}' and
+          cannot be provisioned as '{{ admiral_node_role }}'. Re-run the same
+          role, or use the documented manual migration for admin-portal.
+      when: admiral_node_role_file.stat.exists
+
+    - name: Persist Admiral node role
+      copy:
+        dest: /etc/admiral/role
+        content: "{{ admiral_node_role }}\n"
+        owner: root
+        group: root
+        mode: "0644"
+      when: >-
+        not admiral_node_role_file.stat.exists or
+        (admiral_persisted_node_role == 'dev' and admiral_node_role == 'single')
 
     - name: Determine WireGuard role
       set_fact:
-        admiral_wireguard_role: "{{ 'hub' if admiral_install_mode in ['single-node', 'admin-node'] or (admiral_install_mode == 'portal-node' and (admiral_portal_shares_admin_host | default(false) | bool)) else 'spoke' }}"
+        admiral_wireguard_role: "{{ 'hub' if admiral_install_mode in ['single-node', 'admin-node', 'admin-portal-node'] else 'spoke' }}"
 
     - name: Determine effective host security profile
       set_fact:
         admiral_effective_host_profile: >-
           {{ 'single-node' if admiral_install_mode == 'single-node' else
-             ('admin' if admiral_install_mode == 'admin-node' or
-              (admiral_install_mode == 'portal-node' and (admiral_portal_shares_admin_host | default(false) | bool))
+             ('admin' if admiral_install_mode in ['admin-node', 'admin-portal-node']
               else ('worker' if admiral_install_mode == 'worker-node' else 'portal')) }}
 
     - name: Determine control-plane runtime address
@@ -127,21 +149,20 @@
         admiral_wireguard_role: "{{ admiral_wireguard_role }}"
       when:
         - not (admiral_install_mode == 'single-node')
-        - not (admiral_install_mode == 'portal-node' and (admiral_portal_shares_admin_host | default(false) | bool))
     - role: admirald
-      when: admiral_install_mode in ['single-node', 'admin-node']
+      when: admiral_install_mode in ['single-node', 'admin-node', 'admin-portal-node']
     # Remote spoke hosts are role-exclusive: a worker spoke cannot also be a
     # portal spoke. --single-node is the only supported mode that combines both.
     # In --single-node, harbor uses a "-portal" node ID suffix while fleet uses
     # the bare hostname, so both register without colliding.
     - role: admiral_harbor
-      when: admiral_install_mode in ['single-node', 'portal-node']
+      when: admiral_install_mode in ['single-node', 'portal-node', 'admin-portal-node']
     - role: admiral_flagship
-      when: admiral_install_mode in ['single-node', 'admin-node']
+      when: admiral_install_mode in ['single-node', 'admin-node', 'admin-portal-node']
     - role: admiral_fleet
       when: admiral_install_mode in ['single-node', 'worker-node']
     - role: admiral_cockpit
-      when: admiral_install_mode in ['single-node', 'admin-node']
+      when: admiral_install_mode in ['single-node', 'admin-node', 'admin-portal-node']
     - role: admiral_ssh_tunnel
       when:
         - admiral_install_mode == 'worker-node'

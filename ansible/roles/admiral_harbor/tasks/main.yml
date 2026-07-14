@@ -1,7 +1,7 @@
 ---
-# Harbor runs on --single-node and on dedicated --portal-node spoke hosts.
-# A remote spoke host cannot run both harbor and fleet. --single-node is the
-# only supported mode that combines worker and portal roles on one machine.
+# Harbor runs locally on --single-node and --admin-portal-node, or on a
+# dedicated --portal-node spoke. A remote spoke cannot run both Harbor and
+# Fleet.
 
 - name: Check for Admirald-managed known host inventory
   stat:
@@ -29,7 +29,7 @@
     harbor_node_id_effective: >-
       {{
         (ansible_hostname ~ '-portal')
-        if admiral_install_mode == 'single-node'
+        if admiral_install_mode in ['single-node', 'admin-portal-node']
         else (
           fleet_node_id
           | default((admiral_known_hosts_inventory.next.portal.node_id | default('')), true)
@@ -42,11 +42,6 @@
     admiral_api_url_for_harbor: "https://{{ admiral_admin_wireguard_ip | default(admiral_admin_endpoint | default('10.99.0.1')) }}:8080"
   when: admiral_install_mode == 'portal-node'
 
-- name: Determine whether portal-node shares the admin host
-  set_fact:
-    harbor_portal_shares_admin_host: "{{ admiral_portal_shares_admin_host | default(false) | bool }}"
-  when: admiral_install_mode == 'portal-node'
-
 - name: Determine admiral-harbor bind address
   set_fact:
     harbor_bind_address: >-
@@ -55,7 +50,7 @@
         if (admiral_dev_mode | default(false) | bool)
         else (
           '127.0.0.1'
-          if admiral_install_mode == 'single-node' or (harbor_portal_shares_admin_host | default(false) | bool)
+          if admiral_install_mode in ['single-node', 'admin-portal-node']
           else (admiral_wireguard_ip | default(''))
         )
       }}
@@ -72,7 +67,6 @@
     fail_msg: "Dedicated portal-node installs require admiral_wireguard_ip so Harbor can bind to the VPN address."
   when:
     - admiral_install_mode == 'portal-node'
-    - not (harbor_portal_shares_admin_host | default(false) | bool)
     - not (admiral_dev_mode | default(false) | bool)
 
 - name: Check for existing Harbor node token
@@ -220,7 +214,7 @@
     state: directory
     mode: "0755"
   delegate_to: localhost
-  when: admiral_install_mode == 'portal-node'
+  when: admiral_install_mode in ['portal-node', 'admin-portal-node']
 
 - name: Configure admin portal route target for this portal node
   copy:
@@ -230,7 +224,7 @@
       Environment=ADMIRAL_NETWORKING_PORTAL_TARGET={{ harbor_route_target }}
     mode: "0644"
   delegate_to: localhost
-  when: admiral_install_mode == 'portal-node'
+  when: admiral_install_mode in ['portal-node', 'admin-portal-node']
 
 - name: Restart admirald after portal route target change
   systemd:
@@ -238,7 +232,7 @@
     state: restarted
     daemon_reload: true
   delegate_to: localhost
-  when: admiral_install_mode == 'portal-node'
+  when: admiral_install_mode in ['portal-node', 'admin-portal-node']
 
 - name: Wait for admirald after portal route target change
   wait_for:
@@ -246,7 +240,7 @@
     port: 8080
     timeout: 30
   delegate_to: localhost
-  when: admiral_install_mode == 'portal-node'
+  when: admiral_install_mode in ['portal-node', 'admin-portal-node']
 
 - name: Synchronize public routes after portal registration
   command:
@@ -257,7 +251,7 @@
     ADMIRAL_ADMIN_TOKEN: "{{ admiral_admin_token_value }}"
     ADMIRAL_SERVER_URL: "{{ admiral_control_plane_url }}"
     ADMIRAL_TLS_CA_FILE: /etc/admiral/tls/ca.pem
-  when: admiral_install_mode == 'portal-node'
+  when: admiral_install_mode in ['portal-node', 'admin-portal-node']
 
 - name: Remind operator to configure SMTP
   debug:
