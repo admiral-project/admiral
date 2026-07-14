@@ -45,17 +45,66 @@ SSH access (recommended, non-root):
   ssh opsa_a1b2c3d4e5@203.0.113.10
 ```
 
-**Prerequisite**: Before running the installer, you must have SSH key-based
-access to the target node. The installer uses this key to:
+### SSH Key Requirements
+
+Before running the installer, you must have SSH key-based access to the
+target node. The installer uses this key to:
 
 1. Connect to the node during installation
 2. Extract the public key for the new admin user
 3. Deploy the public key to the admin user's `authorized_keys`
 
-For spoke nodes (`--worker-node`, `--portal-node`), the installer connects
-as root via SSH using the key specified with `--ssh-key` or auto-detected
-from `~/.ssh/id_ed25519` / `~/.ssh/id_rsa`. The public key is extracted
-from the private key and deployed to the same user on the spoke.
+#### Private key location
+
+The installer auto-detects the SSH private key in the following order:
+
+| Mode | Detection order |
+|------|----------------|
+| `--single-node`, `--admin-node` | 1. `--ssh-key <path>` flag if provided |
+| | 2. `~/.ssh/id_ed25519` |
+| | 3. `~/.ssh/id_rsa` |
+| `--worker-node`, `--portal-node` | 1. `--ssh-key <path>` flag if provided |
+| | 2. `/root/.ssh/id_ed25519` |
+| | 3. `/root/.ssh/id_rsa` |
+
+**Important**: The installer runs as root. For spoke nodes, the key path
+must be accessible by root. If your key is in a non-standard location,
+use `--ssh-key` explicitly:
+
+```bash
+# Example: key in a custom location
+admiral_install --worker-node \
+  --public-ip 198.51.100.20 \
+  --ssh-key /opt/keys/admin_id_ed25519 \
+  --admin-endpoint 203.0.113.10
+
+# Example: same key for local setup
+admiral_install --single-node \
+  --ssh-key /home/admin/.ssh/id_ed25519
+```
+
+#### Public key extraction
+
+The public key is automatically extracted from the private key using
+`ssh-keygen -y -f <private_key>`. This means:
+
+- The private key file must exist on disk
+- The private key must not be passphrase-protected (the installer
+  uses `BatchMode=yes` for non-interactive SSH)
+- The corresponding `.pub` file is not required
+
+#### Spoke node flow
+
+For `--worker-node` and `--portal-node`:
+
+1. The installer connects as **root** to the spoke using the SSH key
+2. Ansible creates the `opsa_<random>` user on the spoke
+3. The public key is extracted from the private key and deployed to
+   the new user's `authorized_keys`
+4. After installation, you can SSH as the admin user:
+   ```bash
+   ssh opsa_a1b2c3d4e5@198.51.100.20
+   ```
 
 **Root login** is restricted to key-based authentication only
 (`PermitRootLogin prohibit-password`). Password-based root login is
