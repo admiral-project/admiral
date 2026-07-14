@@ -21,14 +21,16 @@ Usage:
 import argparse
 import grp
 import os
-import pwd
+from pathlib import Path
 import re
 import shutil
 import socket
 import subprocess
 import sys
 import time
+import urllib.error
 import urllib.parse
+import urllib.request
 
 
 def fail(msg):
@@ -278,45 +280,82 @@ def _read_ini(key):
     return None
 
 
-def _ensure_caddy_can_read_letsencrypt_paths(cert_file, key_file):
-    caddy_user = pwd.getpwnam("caddy")
+def _validate_certificate_pair(cert_file, key_file):
+    cert_pub = subprocess.check_output(
+        ["openssl", "x509", "-in", cert_file, "-pubkey", "-noout"], text=True
+    )
+    key_pub = subprocess.check_output(
+        ["openssl", "pkey", "-in", key_file, "-pubout"], text=True
+    )
+    if cert_pub != key_pub:
+        fail("Certificate and private key do not contain the same public key.")
+
+
+def _validate_certificate_names(cert_file, apps_domain):
+    for hostname in (apps_domain, f"probe.{apps_domain}"):
+        result = subprocess.run(
+            ["openssl", "x509", "-in", cert_file, "-noout", "-checkhost", hostname],
+            capture_output=True,
+            text=True,
+        )
+        if result.returncode != 0:
+            fail(f"Certificate does not cover required hostname {hostname}.")
+
+
+def _deploy_readonly_certificate(cert_file, key_file, deploy_dir="/etc/admiral/tls/letsencrypt"):
     caddy_group = grp.getgrnam("caddy")
-    letsencrypt_root = "/etc/letsencrypt"
+    os.makedirs(deploy_dir, mode=0o750, exist_ok=True)
+    os.chown(deploy_dir, 0, caddy_group.gr_gid)
+    os.chmod(deploy_dir, 0o750)
+    for source, name, mode in ((cert_file, "fullchain.pem", 0o644), (key_file, "privkey.pem", 0o640)):
+        destination = os.path.join(deploy_dir, name)
+        temporary = f"{destination}.tmp"
+        shutil.copyfile(source, temporary)
+        os.chown(temporary, 0, caddy_group.gr_gid)
+        os.chmod(temporary, mode)
+        os.replace(temporary, destination)
+    return (
+        os.path.join(deploy_dir, "fullchain.pem"),
+        os.path.join(deploy_dir, "privkey.pem"),
+    )
 
-    managed_dirs = set()
-    managed_files = set()
 
-    def collect_dirs(path):
-        current = os.path.dirname(path)
-        while current.startswith(letsencrypt_root) and current != letsencrypt_root:
-            managed_dirs.add(current)
-            current = os.path.dirname(current)
+def _validate_target(name, value):
+    if not value or any(char in value for char in "\r\n"):
+        fail(f"{name} must be a non-empty URL without newlines")
+    parsed = urllib.parse.urlparse(value)
+    if parsed.scheme not in ("http", "https") or not parsed.hostname:
+        fail(f"{name} must be an http(s) URL with a hostname")
+    try:
+        parsed.port
+    except ValueError:
+        fail(f"{name} contains an invalid port")
 
-    for path in (cert_file, key_file):
-        real_path = os.path.realpath(path)
-        managed_files.add(real_path)
-        collect_dirs(path)
-        collect_dirs(real_path)
 
-    for directory in sorted(managed_dirs):
-        st = os.stat(directory)
-        if st.st_uid == 0:
-            os.chown(directory, caddy_user.pw_uid, caddy_group.gr_gid)
-            info(f"Changed owner to caddy: {directory}")
-        current_mode = st.st_mode & 0o777
-        if current_mode != 0o750:
-            os.chmod(directory, 0o750)
-            info(f"Corrected permissions to 750: {directory}")
-
-    for path in sorted(managed_files):
-        st = os.stat(path)
-        if st.st_uid == 0:
-            os.chown(path, caddy_user.pw_uid, caddy_group.gr_gid)
-            info(f"Changed owner to caddy: {path}")
-        current_mode = st.st_mode & 0o777
-        if current_mode != 0o640:
-            os.chmod(path, 0o640)
-            info(f"Corrected permissions to 640: {path}")
+def _verify_public_https(domain):
+    failures = []
+    for service, path in (("portal", "/health"), ("flagship", "/health"), ("cockpit", "/")):
+        url = f"https://{service}.{domain}{path}"
+        last_error = "unknown error"
+        for _ in range(6):
+            try:
+                with urllib.request.urlopen(url, timeout=10) as response:
+                    if response.status < 500:
+                        last_error = ""
+                        break
+                    last_error = f"HTTP {response.status}"
+            except urllib.error.HTTPError as exc:
+                if exc.code < 500:
+                    last_error = ""
+                    break
+                last_error = f"HTTP {exc.code}"
+            except (urllib.error.URLError, TimeoutError, OSError) as exc:
+                last_error = str(exc)
+            time.sleep(5)
+        if last_error:
+            failures.append(f"{url}: {last_error}")
+    if failures:
+        raise RuntimeError("public HTTPS health checks failed: " + "; ".join(failures))
 
 
 def configure_admirald(domain, apps_domain, cert_dir):
@@ -327,10 +366,8 @@ def configure_admirald(domain, apps_domain, cert_dir):
         if not os.path.isfile(f):
             fail(f"Missing: {f}")
 
-    # Certbot often leaves live/archive entries owned by root or with modes that
-    # prevent Caddy from traversing the directory chain and reading the resolved
-    # certificate files.
-    _ensure_caddy_can_read_letsencrypt_paths(cert_file, key_file)
+    _validate_certificate_pair(cert_file, key_file)
+    _validate_certificate_names(cert_file, apps_domain)
     override_dir = "/etc/systemd/system/admirald.service.d"
     os.makedirs(override_dir, exist_ok=True)
 
@@ -349,6 +386,16 @@ def configure_admirald(domain, apps_domain, cert_dir):
         "ADMIRAL_NETWORKING_COCKPIT_TARGET",
         _read_ini("networking_cockpit_target") or "http://127.0.0.1:9090",
     )
+    for target_name, target in (("portal target", portal_target), ("Flagship target", flagship_target), ("Cockpit target", cockpit_target)):
+        _validate_target(target_name, target)
+
+    deploy_dir = "/etc/admiral/tls/letsencrypt"
+    deployed_paths = (os.path.join(deploy_dir, "fullchain.pem"), os.path.join(deploy_dir, "privkey.pem"))
+    previous_certificates = {
+        path: Path(path).read_bytes() if os.path.exists(path) else None
+        for path in deployed_paths
+    }
+    deployed_cert_file, deployed_key_file = _deploy_readonly_certificate(cert_file, key_file, deploy_dir)
 
     override_content = f"""[Service]
 Environment=ADMIRAL_NETWORKING_BASE_DOMAIN={domain}
@@ -356,18 +403,46 @@ Environment=ADMIRAL_NETWORKING_APPS_DOMAIN={apps_domain}
 Environment=ADMIRAL_NETWORKING_PORTAL_TARGET={portal_target}
 Environment=ADMIRAL_NETWORKING_FLAGSHIP_TARGET={flagship_target}
 Environment=ADMIRAL_NETWORKING_COCKPIT_TARGET={cockpit_target}
-Environment=ADMIRAL_NETWORKING_TLS_CERT_FILE={cert_file}
-Environment=ADMIRAL_NETWORKING_TLS_KEY_FILE={key_file}
+Environment=ADMIRAL_NETWORKING_TLS_CERT_FILE={deployed_cert_file}
+Environment=ADMIRAL_NETWORKING_TLS_KEY_FILE={deployed_key_file}
 """
     override_path = os.path.join(override_dir, "10-https.conf")
-    with open(override_path, "w") as f:
+    previous = None
+    if os.path.exists(override_path):
+        with open(override_path, "rb") as f:
+            previous = f.read()
+    temporary_override = f"{override_path}.tmp"
+    with open(temporary_override, "w") as f:
         f.write(override_content)
+    os.chmod(temporary_override, 0o644)
+    os.replace(temporary_override, override_path)
     ok(f"Wrote {override_path}")
 
-    subprocess.run(["systemctl", "daemon-reload"], capture_output=True, check=True)
-    subprocess.run(["systemctl", "restart", "cockpit.socket"], capture_output=True, check=True)
-    subprocess.run(["systemctl", "restart", "caddy"], capture_output=True, check=True)
-    subprocess.run(["systemctl", "restart", "admirald"], capture_output=True, check=True)
+    try:
+        subprocess.run(["systemctl", "daemon-reload"], capture_output=True, check=True)
+        subprocess.run(["systemd-analyze", "verify", "admirald.service"], check=True, capture_output=True, text=True)
+        for service in ("cockpit.socket", "caddy", "admirald"):
+            subprocess.run(["systemctl", "restart", service], capture_output=True, check=True)
+            subprocess.run(["systemctl", "is-active", "--quiet", service], check=True)
+        _verify_public_https(domain)
+    except (subprocess.CalledProcessError, OSError, RuntimeError) as exc:
+        if previous is None:
+            os.unlink(override_path)
+        else:
+            with open(override_path, "wb") as f:
+                f.write(previous)
+        subprocess.run(["systemctl", "daemon-reload"], capture_output=True)
+        for path, content in previous_certificates.items():
+            if content is None:
+                if os.path.exists(path):
+                    os.unlink(path)
+            else:
+                with open(path, "wb") as f:
+                    f.write(content)
+                os.chmod(path, 0o640 if path.endswith("privkey.pem") else 0o644)
+        for service in ("cockpit.socket", "caddy", "admirald"):
+            subprocess.run(["systemctl", "restart", service], capture_output=True)
+        fail(f"HTTPS activation failed and previous configuration was restored: {exc}")
 
     # admirald will push the full config including TLS cert to Caddy Admin API
     ok("cockpit.socket, caddy, and admirald restarted — routes and TLS will resync automatically")
@@ -395,7 +470,8 @@ def print_summary(domain, apps_domain):
     print("For automated renewal, install a certbot DNS plugin or use")
     print("a systemd timer calling certbot renew.")
     print()
-    info("The Admiral API stays on 127.0.0.1:8080 — NOT publicly exposed.")
+    listener = _read_ini("listen_address") or "unknown"
+    info(f"Effective Admirald listen address from /etc/admirald.ini: {listener}:8080")
     print("=" * 60)
 
 
