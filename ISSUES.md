@@ -1,7 +1,7 @@
 # Admiral installer security findings
 
 Status: open findings from the July 2026 review of `scripts/install.sh`, the
-Ansible roles, systemd units, and RPM specifications.
+Ansible roles, systemd units, and RPM specifications. Updated 2026-07-14.
 
 This document tracks product defects and hardening gaps. It intentionally does
 not record host-specific configuration drift or any real credentials, node
@@ -54,6 +54,33 @@ general interface address.
   security control ineffective.
 - **Medium**: weakens defense in depth, idempotence, or release assurance.
 - **Low**: primarily affects clarity, cleanup, or operator safety.
+
+## Resolved findings
+
+### ADM-SEC-028 — Root login permitted with password authentication
+
+- **Severity:** Critical
+- **Affected modes:** all modes
+- **Evidence:** SSH hardening baseline (`50-admiral-hardening.conf`) did not
+  set `PermitRootLogin`. Default sshd behavior allowed password-based root
+  login.
+- **Resolution:** Added `PermitRootLogin prohibit-password` to the SSH
+  hardening baseline in `ansible/roles/admiral_common/tasks/main.yml`.
+  The security checklist in `scripts/install.sh` now verifies this setting.
+- **Resolved in:** `eb62851` (2026-07-14)
+
+### ADM-SEC-029 — No non-root SSH admin user created during installation
+
+- **Severity:** High
+- **Affected modes:** all modes
+- **Evidence:** The installer created no system user for SSH access. Operators
+  had to rely on root or manually created users.
+- **Resolution:** The installer now creates a non-root SSH admin user
+  (`opsa_<random>`) with wheel group membership and NOPASSWD sudo on every
+  node. The username is stored in `/etc/admiral/secrets` as `ADMIRAL_SSH_USER`
+  and is consistent across cluster nodes. SSH public key is auto-detected or
+  extracted from `--ssh-key` and deployed via `authorized_key` module.
+- **Resolved in:** `8845c78`, `fcf31a3`, `bac509d` (2026-07-14)
 
 ## Findings
 
@@ -659,6 +686,56 @@ general interface address.
   - The final report is derived from effective systemd, socket, firewall, and
     route state.
 
+### ADM-SEC-030 — InsecureSkipVerify hardcoded in Go TLS clients
+
+- **Severity:** Medium
+- **Affected modes:** all modes using HTTPS internal connections
+- **Evidence:** `InsecureSkipVerify: true` appears in:
+  - `admirald/internal/api/api.go:303`
+  - `admirald/internal/api/handlers_nodes.go:531`
+- **Impact:** TLS certificate verification is bypassed for outbound
+  connections. A MITM attacker on the WireGuard network could intercept
+  internal traffic between admirald and portal/harbor.
+- **Recommendation:** Configure Go TLS clients with Admiral's CA certificate
+  (`/etc/admiral/tls/ca.pem`). Reserve `InsecureSkipVerify` for dev-node
+  only. Add a production-mode guard in Go code.
+- **Acceptance criteria:**
+  - Production Go TLS clients verify against Admiral CA.
+  - dev-node retains insecure skip verify for local self-signed certs.
+  - No `InsecureSkipVerify` in production code paths.
+
+### ADM-SEC-031 — panic() in secrets manager on HKDF failure
+
+- **Severity:** Medium
+- **Affected modes:** all modes
+- **Evidence:** `admirald/internal/secrets/secrets.go:36` calls `panic()`
+  when HKDF key derivation fails.
+- **Impact:** A panic in a library function crashes the entire process
+  without graceful error handling.
+- **Recommendation:** Propagate the error instead of panicking. Return
+  `fmt.Errorf("derive key: %w", err)` to the caller.
+- **Acceptance criteria:**
+  - HKDF failure returns an error, not a panic.
+  - Caller handles the error gracefully.
+  - No `panic()` calls remain in library code.
+
+### ADM-SEC-032 — Session HMAC key is ephemeral and lost on restart
+
+- **Severity:** Medium
+- **Affected modes:** all modes
+- **Evidence:** `admirald/internal/api/api.go:49-53` generates a random
+  HMAC key at startup. Logs warning: "Using volatile ephemeral session
+  HMAC key. Admin sessions will not survive a restart."
+- **Impact:** All admin sessions are invalidated when admirald restarts.
+  Operators must re-login after any service restart.
+- **Recommendation:** Generate a persistent HMAC key during installation
+  and store it in `/etc/admiral/secrets` as `ADMIRAL_SESSION_HMAC_KEY`.
+  Load from config at startup.
+- **Acceptance criteria:**
+  - Sessions survive admirald restart.
+  - HMAC key is persisted and loaded from config.
+  - Missing key triggers a warning, not a failure.
+
 ## Required validation matrix
 
 Closing the findings above requires tests against the exact RPM artifacts, not
@@ -696,5 +773,7 @@ may be supplementary, but cannot replace the EL10 acceptance gate.
    (ADM-SEC-011, 013, 014).
 6. Repair fail2ban and make release tests authoritative (ADM-SEC-012, 015,
    016).
-7. Update operator documentation only after the artifact-level matrix passes
+7. Fix Go code issues: InsecureSkipVerify, panic in secrets, session HMAC
+   persistence (ADM-SEC-030, 031, 032).
+8. Update operator documentation only after the artifact-level matrix passes
    (ADM-SEC-020, 026, 027).
