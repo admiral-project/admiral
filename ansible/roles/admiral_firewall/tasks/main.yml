@@ -45,13 +45,9 @@
         state: restarted
   when: firewall_state_check.rc != 0
 
-- name: Set fact for distributions needing nftables egress
+- name: Use one dual-stack nftables egress policy on every supported distribution
   set_fact:
-    admiral_use_nftables_egress: >-
-      {{
-        (ansible_distribution == 'AlmaLinux' and ansible_distribution_major_version == '10') or
-        (ansible_distribution == 'Rocky' and ansible_distribution_major_version == '10')
-      }}
+    admiral_use_nftables_egress: true
 
 - name: Set default firewalld zone to public
   command:
@@ -224,11 +220,17 @@
     cmd: firewall-cmd --reload
   changed_when: false
 
-- name: Apply egress controls via nftables (AlmaLinux 10)
+- name: Apply dual-stack egress controls via nftables
   block:
     - name: Remove previous egress nftables table if present
       command: nft delete table inet admiral_egress
       failed_when: false
+
+    - name: Ensure nftables configuration directory exists
+      file:
+        path: /etc/nftables
+        state: directory
+        mode: "0755"
 
     - name: Write egress nftables ruleset
       template:
@@ -254,6 +256,21 @@
   when:
     - not (admiral_dev_mode | default(false) | bool)
     - admiral_use_nftables_egress
+
+- name: Remove secure egress policy in explicit dev mode
+  block:
+    - name: Delete active Admiral egress table in dev mode
+      command: nft delete table inet admiral_egress
+      failed_when: false
+      changed_when: false
+
+    - name: Disable persistent Admiral egress policy in dev mode
+      systemd:
+        name: admiral-egress
+        enabled: false
+        state: stopped
+      failed_when: false
+  when: admiral_dev_mode | default(false) | bool
 
 - name: Verify effective public services
   command:
@@ -346,7 +363,7 @@
     - not (admiral_dev_mode | default(false) | bool)
     - not admiral_use_nftables_egress
 
-- name: Query egress nftables rules (AlmaLinux 10)
+- name: Query dual-stack egress nftables rules
   command:
     cmd: nft list chain inet admiral_egress output
   register: firewall_nft_rules
@@ -364,7 +381,7 @@
     - not (admiral_dev_mode | default(false) | bool)
     - not admiral_use_nftables_egress
 
-- name: Assert managed egress reject rule is active (AlmaLinux 10)
+- name: Assert managed dual-stack egress reject rule is active
   assert:
     that:
       - "'reject' in firewall_nft_rules.stdout"
