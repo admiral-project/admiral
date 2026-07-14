@@ -74,7 +74,10 @@ loginctl enable-linger admiral-apps 2>/dev/null || :
 
 %changelog
 * Tue Jul 14 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta16-1
-- chore(release): bump to 0.0.1beta16
+- Run rootless Podman exec through the persistent user bus
+- Keep transient env files visible across PrivateTmp namespaces
+- Record restorable local backup keys
+- Harden the Fleet systemd service with the EL10-validated profile
 
 * Tue Jul 07 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta15-3
 - Fix quadlet DropCapabilities key (use DropCapability singular)

@@ -15,7 +15,7 @@ EnvironmentFile=/etc/admiral/fleet.env
 Environment=ADMIRAL_SYSTEMD_TIMEOUT=300
 
 # Runtime directories
-ReadWritePaths=/etc/containers/systemd/admiral /var/lib/admiral /etc/containers/systemd/users /run/user
+ReadWritePaths=/etc/containers/systemd/admiral /var/lib/admiral /etc/containers/systemd/users /var/lib/admiral-apps /run/user
 
 # Hardening
 # Fleet must manage rootless users and Podman/systemd state, so it needs the
@@ -23,13 +23,16 @@ ReadWritePaths=/etc/containers/systemd/admiral /var/lib/admiral /etc/containers/
 NoNewPrivileges=false
 PrivateTmp=true
 ProtectHome=read-only
-ProtectSystem=full
-CapabilityBoundingSet=CAP_CHOWN CAP_DAC_OVERRIDE CAP_FOWNER CAP_SETUID CAP_SETGID CAP_NET_BIND_SERVICE CAP_NET_ADMIN CAP_NET_RAW
+ProtectSystem=strict
+CapabilityBoundingSet=CAP_CHOWN CAP_DAC_OVERRIDE CAP_FOWNER CAP_SETUID CAP_SETGID
 SystemCallArchitectures=native
 PrivateDevices=true
+DevicePolicy=closed
 ProtectKernelModules=true
 ProtectKernelTunables=true
 ProtectControlGroups=true
+LockPersonality=true
+RestrictSUIDSGID=true
 RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6 AF_NETLINK
 
 [Install]
