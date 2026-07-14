@@ -83,37 +83,19 @@ general interface address.
   extracted from `--ssh-key` and deployed via `authorized_key` module.
 - **Resolved in:** `8845c78`, `fcf31a3`, `bac509d` (2026-07-14)
 
-## Findings
-
 ### ADM-SEC-001 — Shared admin and portal installation can delete the secret inventory
 
-- **GitHub issue:** https://github.com/admiral-project/admiral/issues/30
-
 - **Severity:** Critical
-- **Affected modes:** `--admin-node` followed by `--portal-node` on the same
-  host
-- **Evidence:** `ansible/site.yml` detects that Portal shares the admin host,
-  but `ansible/roles/admiral_common/tasks/main.yml` unconditionally removes
-  `/etc/admiral/secrets` for every `portal-node` and `worker-node` run.
-- **Current behavior:** A portal run targeting the existing admin host enters
-  the non-admin cleanup path. With the current local SSH-user work it can then
-  fail on an undefined variable after the secret file has already been
-  removed.
-- **Impact:** `/etc/admiral/secrets` is the documented recovery source for
-  encryption keys, signing material, bootstrap credentials, and database
-  credentials. Its removal can make the installation unrecoverable.
-- **Recommendation:** Define an explicit effective host profile before roles
-  execute. A portal sharing the admin host must retain admin-owned secrets, CA
-  material, firewall policy, and services. Move destructive cleanup behind an
-  assertion that the target is a dedicated spoke. Back up the secret inventory
-  atomically before any role transition.
-- **Acceptance criteria:**
-  - Installing Portal onto an admin host preserves the inode contents, owner,
-    mode, and checksum of `/etc/admiral/secrets`.
-  - A forced failure at every later playbook stage also preserves the file.
-  - Dedicated portal and worker nodes finish without a central secret
-    inventory or CA private key.
-  - Re-running both admin and portal reconciliation succeeds.
+- **Resolution:** Replaced service-based shared-host detection with an explicit,
+  persistent `admin-portal` host profile. The supported shared topology now
+  starts with `--admin-portal-node`; it retains admin-owned secrets, CA
+  material, services, and the admin security profile. Dedicated `portal-node`
+  and `worker-node` runs remain the only profiles that remove the central
+  secret inventory. The unsupported historical `--admin-node` followed by
+  `--portal-node` transition is rejected before the play changes host state.
+- **Resolved in:** `daf5b64` (2026-07-14)
+
+## Findings
 
 ### ADM-SEC-002 — Shared admin and portal receives the wrong firewall and egress profile
 
