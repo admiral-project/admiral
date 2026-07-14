@@ -292,6 +292,32 @@ For backup storage, use `admiralctl` after the platform is up. The installer doe
 
 The official installer assumes a **fresh VPS** with no unrelated public services already running.
 
+### Alcance de las garantías
+
+Esta guía describe transiciones soportadas y comprobaciones bloqueantes; no
+considera suficiente que una unidad esté habilitada o que un archivo exista en
+disco. Después de cada reconciliación se deben comprobar las unidades efectivas,
+los listeners, SELinux, WireGuard en spokes y el conjunto de servicios requerido.
+
+La identidad de bootstrap y la identidad operativa son distintas:
+
+- el acceso SSH inicial usa el `--ssh-user` y la clave suministrados;
+- el bootstrap remoto exige `--ssh-fingerprint` y `StrictHostKeyChecking=yes`
+  antes de transferir secretos;
+- las operaciones rutinarias usan la cuenta no root generada `opsa_*` y su
+  política `sudo` restringida;
+- la recuperación break-glass depende de la ruta SSH externa del operador y no
+  se infiere del inventario generado.
+
+Las topologías también son explícitas: `--single-node` combina admin, worker y
+portal localmente; `--admin-node` instala el plano de control; `--worker-node`
+instala un spoke rootless dedicado; y `--portal-node` instala un portal dedicado.
+Un portal compartido con el admin debe declararse como topología compartida y
+preserva el inventario de secretos del admin. Un portal dedicado no recibe ese
+inventario ni la clave privada de la CA. Tras una transición de topología deben
+repetirse las comprobaciones bloqueantes de servicios, listeners, firewall y
+registros antes de declarar la instalación terminada.
+
 For normal modes (`--single-node`, `--admin-node`, `--worker-node`, `--portal-node`), the installer applies a secure-by-default baseline including firewall policy, SELinux settings, login hardening, auditd, and fail2ban. Blocking security checks cause installation to fail; they are not advisory warnings.
 
 `--dev-node` is explicitly an evaluation mode and does **not** apply all production hardening controls. In dev-node mode:

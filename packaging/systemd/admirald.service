@@ -24,7 +24,7 @@ Group=admiral
 NoNewPrivileges=true
 PrivateTmp=true
 ProtectHome=true
-ProtectSystem=full
+ProtectSystem=strict
 CapabilityBoundingSet=
 SystemCallArchitectures=native
 PrivateDevices=true
@@ -34,6 +34,9 @@ ProtectControlGroups=true
 RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6 AF_NETLINK
 MemoryDenyWriteExecute=true
 RestrictRealtime=true
+DevicePolicy=closed
+LockPersonality=true
+RestrictSUIDSGID=true
 
 [Install]
 WantedBy=multi-user.target

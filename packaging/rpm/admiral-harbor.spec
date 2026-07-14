@@ -115,6 +115,9 @@ restorecon -R %{_localstatedir}/lib/admiral/harbor 2>/dev/null || :
 
 %changelog
 * Tue Jul 14 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta16-1
+- Harden Harbor services with strict filesystem and device policy
+
+* Tue Jul 14 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta16-1
 - chore(release): bump to 0.0.1beta16
 
 * Tue Jul 07 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta15-2

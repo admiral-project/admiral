@@ -19,7 +19,8 @@ Group=admiral
 NoNewPrivileges=true
 PrivateTmp=true
 ProtectHome=true
-ProtectSystem=full
+ProtectSystem=strict
+ReadWritePaths=/var/lib/admiral/harbor/uploads
 CapabilityBoundingSet=
 SystemCallArchitectures=native
 PrivateDevices=true
@@ -27,6 +28,9 @@ ProtectKernelModules=true
 ProtectKernelTunables=true
 ProtectControlGroups=true
 RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+DevicePolicy=closed
+LockPersonality=true
+RestrictSUIDSGID=true
 
 [Install]
 WantedBy=multi-user.target
