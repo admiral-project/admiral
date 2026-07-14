@@ -69,6 +69,11 @@
               (admiral_install_mode == 'portal-node' and (admiral_portal_shares_admin_host | default(false) | bool))
               else ('worker' if admiral_install_mode == 'worker-node' else 'portal')) }}
 
+    - name: Determine control-plane runtime address
+      set_fact:
+        admiral_control_plane_host: "{{ '127.0.0.1' if admiral_install_mode == 'single-node' else '10.99.0.1' }}"
+        admiral_control_plane_url: "https://{{ '127.0.0.1' if admiral_install_mode == 'single-node' else '10.99.0.1' }}:8080"
+
     - name: Create Admiral bootstrap directories on remote spokes
       file:
         path: "{{ item }}"
@@ -81,6 +86,22 @@
       when:
         - admiral_install_mode in ['worker-node', 'portal-node']
         - admiral_bootstrap_from_controller | default(false) | bool
+
+    - name: Remove WireGuard from standalone secure single-node
+      block:
+        - name: Stop standalone WireGuard service
+          systemd:
+            name: wg-quick@wg-admiral
+            state: stopped
+            enabled: false
+          failed_when: false
+        - name: Remove standalone WireGuard configuration
+          file:
+            path: /etc/wireguard/wg-admiral.conf
+            state: absent
+      when:
+        - admiral_install_mode == 'single-node'
+        - not (admiral_dev_mode | default(false) | bool)
 
     - name: Copy admin bootstrap materials to remote spokes
       copy:
@@ -104,7 +125,9 @@
     - role: admiral_wireguard
       vars:
         admiral_wireguard_role: "{{ admiral_wireguard_role }}"
-      when: not (admiral_install_mode == 'portal-node' and (admiral_portal_shares_admin_host | default(false) | bool))
+      when:
+        - not (admiral_install_mode == 'single-node')
+        - not (admiral_install_mode == 'portal-node' and (admiral_portal_shares_admin_host | default(false) | bool))
     - role: admirald
       when: admiral_install_mode in ['single-node', 'admin-node']
     # Remote spoke hosts are role-exclusive: a worker spoke cannot also be a
@@ -132,7 +155,7 @@
       changed_when: false
       environment:
         ADMIRAL_ADMIN_TOKEN: "{{ admiral_admin_token_value }}"
-        ADMIRAL_SERVER_URL: "https://127.0.0.1:8080"
+        ADMIRAL_SERVER_URL: "{{ admiral_control_plane_url }}"
         ADMIRAL_TLS_CA_FILE: /etc/admiral/tls/ca.pem
       when: admiral_install_mode == 'single-node'
 

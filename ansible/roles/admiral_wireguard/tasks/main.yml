@@ -149,13 +149,88 @@
     state: started
     daemon_reload: true
 
-- name: Assign WireGuard interface to trusted zone
+- name: Query permanent firewalld zones
   command:
-    cmd: firewall-cmd --permanent --zone=trusted --change-interface=wg-admiral
-  register: firewall_wg_trusted
-  changed_when: "'success' in firewall_wg_trusted.stdout"
+    cmd: firewall-cmd --permanent --get-zones
+  register: firewall_permanent_zones
+  changed_when: false
+
+- name: Create restricted Admiral WireGuard firewalld zone
+  command:
+    cmd: firewall-cmd --permanent --new-zone=admiral
+  register: firewall_admiral_zone
+  when: "'admiral' not in firewall_permanent_zones.stdout.split()"
+  changed_when: true
+
+- name: Set restricted Admiral zone target
+  command:
+    cmd: firewall-cmd --permanent --zone=admiral --set-target=DROP
+  register: firewall_admiral_target
+  changed_when: false
+
+- name: Remove WireGuard interface from trusted zone
+  command:
+    cmd: firewall-cmd --permanent --zone=trusted --remove-interface=wg-admiral
+  register: firewall_wg_untrusted
+  changed_when: "'success' in firewall_wg_untrusted.stdout"
+  failed_when: false
+
+- name: Assign WireGuard interface to restricted Admiral zone
+  command:
+    cmd: firewall-cmd --permanent --zone=admiral --change-interface=wg-admiral
+  register: firewall_wg_admiral
+  changed_when: "'success' in firewall_wg_admiral.stdout"
+
+- name: Permit admin API from WireGuard peers on admin hosts
+  command:
+    argv:
+      - firewall-cmd
+      - --permanent
+      - --zone=admiral
+      - >-
+        --add-rich-rule=rule family="ipv4" source address="10.99.0.0/24"
+        port port="8080" protocol="tcp" accept
+  when: admiral_effective_host_profile == 'admin'
+  register: firewall_admiral_admin_rule
+  changed_when: "'ALREADY_ENABLED' not in firewall_admiral_admin_rule.stderr"
+
+- name: Permit admin-to-worker Fleet and workload traffic
+  command:
+    argv:
+      - firewall-cmd
+      - --permanent
+      - --zone=admiral
+      - >-
+        --add-rich-rule=rule family="ipv4" source address="10.99.0.1"
+        port port="{{ item }}" protocol="tcp" accept
+  loop:
+    - 9099
+    - 40000-49999
+  when: admiral_effective_host_profile == 'worker'
+  register: firewall_admiral_worker_rules
+  changed_when: "'ALREADY_ENABLED' not in firewall_admiral_worker_rules.stderr"
+
+- name: Permit admin-to-portal traffic
+  command:
+    argv:
+      - firewall-cmd
+      - --permanent
+      - --zone=admiral
+      - >-
+        --add-rich-rule=rule family="ipv4" source address="10.99.0.1"
+        port port="5001" protocol="tcp" accept
+  when: admiral_effective_host_profile == 'portal'
+  register: firewall_admiral_portal_rule
+  changed_when: "'ALREADY_ENABLED' not in firewall_admiral_portal_rule.stderr"
 
 - name: Reload firewall to apply zone changes
   command:
     cmd: firewall-cmd --reload
-  when: firewall_wg_trusted.changed
+  when: >-
+    firewall_wg_admiral.changed or
+    firewall_wg_untrusted.changed or
+    firewall_admiral_zone.changed | default(false) or
+    firewall_admiral_target.changed or
+    firewall_admiral_admin_rule.changed | default(false) or
+    firewall_admiral_worker_rules.changed | default(false) or
+    firewall_admiral_portal_rule.changed | default(false)

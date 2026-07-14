@@ -377,6 +377,42 @@
     - admiral_install_mode in ['worker-node', 'portal-node']
     - not (admiral_portal_shares_admin_host | default(false) | bool)
 
+- name: Manage dedicated portal-local PostgreSQL credential
+  when:
+    - admiral_install_mode == 'portal-node'
+    - not (admiral_portal_shares_admin_host | default(false) | bool)
+  block:
+    - name: Read existing Harbor environment for database credential
+      slurp:
+        src: /etc/admiral/harbor.env
+      register: admiral_existing_harbor_env
+      failed_when: false
+      no_log: true
+
+    - name: Extract existing portal PostgreSQL credential
+      set_fact:
+        admiral_existing_portal_postgres_password: >-
+          {{ (admiral_existing_harbor_env.content | default('') | b64decode
+              | regex_search('(?m)^HARBOR_DATABASE_URL=postgresql://admiral_portal:([^@]+)@', '\1')
+              | first | default('')) }}
+      no_log: true
+
+    - name: Generate portal-local PostgreSQL credential
+      command: openssl rand -hex 32
+      register: admiral_portal_postgres_password_generated
+      when: admiral_existing_portal_postgres_password == ''
+      changed_when: true
+      no_log: true
+
+    - name: Set dedicated portal PostgreSQL identity
+      set_fact:
+        admiral_postgres_user: admiral_portal
+        admiral_postgres_password: >-
+          {{ admiral_existing_portal_postgres_password
+             if admiral_existing_portal_postgres_password != ''
+             else (admiral_portal_postgres_password_generated.stdout | trim) }}
+      no_log: true
+
 - name: Create Admiral SSH admin user
   user:
     name: "{{ admiral_ssh_admin_user }}"
@@ -695,7 +731,7 @@
 
 - name: Include WireGuard subnet in PostgreSQL listen_addresses for multi-node
   set_fact:
-    admiral_pg_listen_addresses: "{{ '127.0.0.1,10.99.0.1' if (fleet_public_ip is defined and fleet_public_ip != '' and fleet_public_ip != '127.0.0.1') else '127.0.0.1' }}"
+    admiral_pg_listen_addresses: "127.0.0.1"
   when: admiral_install_mode in ['single-node', 'admin-node']
 
 - name: Update PostgreSQL listen_addresses
@@ -704,14 +740,6 @@
     regexp: "^#?listen_addresses\\s*="
     line: "listen_addresses = '{{ admiral_pg_listen_addresses | default('127.0.0.1') }}'"
   when: admiral_install_mode in ['single-node', 'admin-node']
-
-- name: Allow WireGuard subnet in PostgreSQL client auth
-  lineinfile:
-    path: /var/lib/pgsql/data/pg_hba.conf
-    line: "host    all             admiral             10.99.0.0/24            scram-sha-256"
-  when:
-    - admiral_install_mode in ['single-node', 'admin-node']
-    - fleet_public_ip is defined and fleet_public_ip != '' and fleet_public_ip != '127.0.0.1'
 
 - name: Require password authentication for localhost PostgreSQL
   lineinfile:
@@ -768,9 +796,9 @@
   become: false
   ansible.builtin.shell:
     cmd: |
-      sudo -u postgres psql -c "SELECT 1 FROM pg_roles WHERE rolname = 'admiral'" | grep -q 1 && \
-        sudo -u postgres psql -c "ALTER ROLE admiral WITH LOGIN PASSWORD '{{ admiral_postgres_password }}'" || \
-        sudo -u postgres psql -c "CREATE ROLE admiral LOGIN PASSWORD '{{ admiral_postgres_password }}'"
+      sudo -u postgres psql -c "SELECT 1 FROM pg_roles WHERE rolname = '{{ admiral_postgres_user | default('admiral') }}'" | grep -q 1 && \
+        sudo -u postgres psql -c "ALTER ROLE {{ admiral_postgres_user | default('admiral') }} WITH LOGIN PASSWORD '{{ admiral_postgres_password }}'" || \
+        sudo -u postgres psql -c "CREATE ROLE {{ admiral_postgres_user | default('admiral') }} LOGIN PASSWORD '{{ admiral_postgres_password }}'"
   changed_when: false
   when: admiral_install_mode in ['single-node', 'admin-node', 'portal-node']
 
@@ -781,7 +809,7 @@
   ansible.builtin.shell:
     cmd: |
       sudo -u postgres psql -tAc "SELECT 1 FROM pg_database WHERE datname='{{ item }}'" | grep -q 1 || \
-      sudo -u postgres psql -v ON_ERROR_STOP=1 -c "CREATE DATABASE {{ item }} OWNER admiral"
+      sudo -u postgres psql -v ON_ERROR_STOP=1 -c "CREATE DATABASE {{ item }} OWNER {{ admiral_postgres_user | default('admiral') }}"
   loop:
     - admiral
     - admiral_queue
@@ -793,6 +821,6 @@
   ansible.builtin.shell:
     cmd: |
       sudo -u postgres psql -tAc "SELECT 1 FROM pg_database WHERE datname='admiral_harbor'" | grep -q 1 || \
-      sudo -u postgres psql -v ON_ERROR_STOP=1 -c "CREATE DATABASE admiral_harbor OWNER admiral"
+      sudo -u postgres psql -v ON_ERROR_STOP=1 -c "CREATE DATABASE admiral_harbor OWNER {{ admiral_postgres_user | default('admiral') }}"
   when: admiral_install_mode in ['single-node', 'admin-node', 'portal-node']
   changed_when: false

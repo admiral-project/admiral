@@ -75,9 +75,23 @@
     - not (harbor_portal_shares_admin_host | default(false) | bool)
     - not (admiral_dev_mode | default(false) | bool)
 
-- name: Generate random harbor node token
+- name: Check for existing Harbor node token
+  slurp:
+    src: /etc/admiral/harbor.env
+  register: harbor_existing_env
+  failed_when: false
+  no_log: true
+
+- name: Extract existing Harbor node token
   set_fact:
-    harbor_node_token_value: "{{ lookup('ansible.builtin.pipe', 'openssl rand -hex 32') }}"
+    harbor_existing_node_token: >-
+      {{ (harbor_existing_env.content | default('') | b64decode
+          | regex_findall('(?m)^HARBOR_NODE_TOKEN=(.*)$') | first | default('')) }}
+  no_log: true
+
+- name: Generate random Harbor node token
+  set_fact:
+    harbor_node_token_value: "{{ harbor_existing_node_token if harbor_existing_node_token else lookup('ansible.builtin.pipe', 'openssl rand -hex 32') }}"
   no_log: true
 
 - name: Install admiral-harbor
@@ -96,9 +110,10 @@
       HARBOR_BOOTSTRAP_ADMIN_DISPLAY_NAME=Harbor Bootstrap Admin
       HARBOR_MAX_BACKUP_UPLOAD_BYTES=536870912
       HARBOR_ENCRYPTION_KEY={{ admiral_harbor_encryption_key_value }}
-      HARBOR_DATABASE_URL=postgresql://admiral:{{ admiral_postgres_password }}@127.0.0.1:5432/admiral_harbor?sslmode={{ 'require' if admiral_wireguard_role == 'hub' else 'disable' }}
+      HARBOR_DATABASE_URL=postgresql://{{ admiral_postgres_user | default('admiral') }}:{{ admiral_postgres_password }}@127.0.0.1:5432/admiral_harbor?sslmode=disable
       HARBOR_NODE_ID={{ harbor_node_id_effective }}
-      ADMIRAL_API_URL={{ admiral_api_url_for_harbor | default('https://127.0.0.1:8080') }}
+      HARBOR_NODE_TOKEN={{ harbor_node_token_value }}
+      ADMIRAL_API_URL={{ admiral_api_url_for_harbor | default(admiral_control_plane_url) }}
       HARBOR_PAYPAL_CLIENT_ID=
       HARBOR_PAYPAL_CLIENT_SECRET=
       HARBOR_PAYPAL_WEBHOOK_ID=
@@ -119,6 +134,7 @@
     owner: root
     group: admiral
   no_log: true
+  notify: restart admiral-harbor
 
 - name: Check if admiral-harbor SMTP environment exists
   stat:
@@ -194,7 +210,7 @@
   delegate_to: localhost
   environment:
     ADMIRAL_ADMIN_TOKEN: "{{ admiral_admin_token_value }}"
-    ADMIRAL_SERVER_URL: "https://127.0.0.1:8080"
+    ADMIRAL_SERVER_URL: "{{ admiral_control_plane_url }}"
     ADMIRAL_TLS_CA_FILE: /etc/admiral/tls/ca.pem
   no_log: true
 
@@ -226,7 +242,7 @@
 
 - name: Wait for admirald after portal route target change
   wait_for:
-    host: 127.0.0.1
+    host: "{{ admiral_control_plane_host }}"
     port: 8080
     timeout: 30
   delegate_to: localhost
@@ -239,7 +255,7 @@
   changed_when: false
   environment:
     ADMIRAL_ADMIN_TOKEN: "{{ admiral_admin_token_value }}"
-    ADMIRAL_SERVER_URL: "https://127.0.0.1:8080"
+    ADMIRAL_SERVER_URL: "{{ admiral_control_plane_url }}"
     ADMIRAL_TLS_CA_FILE: /etc/admiral/tls/ca.pem
   when: admiral_install_mode == 'portal-node'
 

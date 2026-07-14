@@ -88,6 +88,7 @@ INSTALL_PUBLIC_IP=""
 INSTALL_WIREGUARD_IP=""
 INSTALL_ADMIN_ENDPOINT=""
 INSTALL_TARGET_SSH_USER="root"
+INSTALL_TARGET_SSH_USER_EXPLICIT="false"
 INSTALL_TARGET_SSH_KEY=""
 INSTALL_SSH_FINGERPRINT=""
 
@@ -138,6 +139,7 @@ while [[ $# -gt 0 ]]; do
         --ssh-user|--admin-ssh-user)
             shift
             INSTALL_TARGET_SSH_USER="$1"
+            INSTALL_TARGET_SSH_USER_EXPLICIT="true"
             ;;
         --ssh-key|--admin-ssh-key)
             shift
@@ -267,16 +269,32 @@ if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]]; t
         die "Failed to retrieve SSH host key for $INSTALL_PUBLIC_IP. Ensure SSH is running on the target host."
     [[ -n "$INSTALL_SSH_FINGERPRINT" ]] || die "--ssh-fingerprint is required for remote spoke bootstrap."
     if [[ -n "$INSTALL_SSH_FINGERPRINT" ]]; then
-        FOUND_FINGERPRINT=$(echo "$KEYSCAN_OUTPUT" | ssh-keygen -lf - 2>/dev/null | head -1)
+        FOUND_FINGERPRINTS=$(printf '%s\n' "$KEYSCAN_OUTPUT" | ssh-keygen -lf - 2>/dev/null) || \
+            die "Could not parse SSH host keys returned by $INSTALL_PUBLIC_IP."
         info "Expected fingerprint: $INSTALL_SSH_FINGERPRINT"
-        info "Received: $FOUND_FINGERPRINT"
-        if [[ "$FOUND_FINGERPRINT" != *"$INSTALL_SSH_FINGERPRINT"* ]]; then
+        info "Received fingerprints: $FOUND_FINGERPRINTS"
+        if ! grep -Fq -- "$INSTALL_SSH_FINGERPRINT" <<<"$FOUND_FINGERPRINTS"; then
             die "SSH host key fingerprint mismatch for $INSTALL_PUBLIC_IP. Aborting."
         fi
         info "SSH host key fingerprint verified."
     fi
     install -d -m 0700 "$HOME/.ssh"
-    printf '%s\n' "$KEYSCAN_OUTPUT" >> "$HOME/.ssh/known_hosts"
+    KNOWN_HOSTS_FILE="$HOME/.ssh/known_hosts"
+    touch "$KNOWN_HOSTS_FILE"
+    chmod 0600 "$KNOWN_HOSTS_FILE"
+    if ! ssh-keygen -F "$INSTALL_PUBLIC_IP" -f "$KNOWN_HOSTS_FILE" >/dev/null 2>&1; then
+        printf '%s\n' "$KEYSCAN_OUTPUT" >> "$KNOWN_HOSTS_FILE"
+    fi
+
+    if [[ "$INSTALL_TARGET_SSH_USER_EXPLICIT" != "true" ]]; then
+        PERSISTED_SSH_USER="$(read_admiral_secret ADMIRAL_SSH_USER || true)"
+        if [[ -n "$PERSISTED_SSH_USER" ]] &&
+            ssh -i "$INSTALL_TARGET_SSH_KEY" -o BatchMode=yes -o StrictHostKeyChecking=yes \
+                "${PERSISTED_SSH_USER}@${INSTALL_PUBLIC_IP}" true >/dev/null 2>&1; then
+            INSTALL_TARGET_SSH_USER="$PERSISTED_SSH_USER"
+            info "Using persisted non-root SSH user: $INSTALL_TARGET_SSH_USER"
+        fi
+    fi
 fi
 
 # --- 0b. worker and portal roles are mutually exclusive per host ---
@@ -394,6 +412,7 @@ SECRETS_HARBOR_BOOTSTRAP_USER=""
 SECRETS_HARBOR_BOOTSTRAP_PASSWORD=""
 SECRETS_HARBOR_LEGACY_ADMIN_PASSWORD=""
 SECRETS_HARBOR_API_TOKEN=""
+SECRETS_HARBOR_POSTGRES_USER="admiral"
 SECRETS_SSH_USER=""
 if [[ "$INSTALL_MODE" == "worker-node" ]]; then
     SECRETS_ADMIRAL_TOKEN=$(read_admiral_secret "ADMIRAL_ADMIN_TOKEN") || true
@@ -403,7 +422,15 @@ if [[ "$INSTALL_MODE" == "portal-node" ]]; then
     SECRETS_ADMIRAL_TOKEN=$(read_admiral_secret "ADMIRAL_ADMIN_TOKEN") || true
     SECRETS_HARBOR_SECRET_KEY=$(read_admiral_secret "HARBOR_SECRET_KEY") || true
     SECRETS_HARBOR_ENCRYPTION_KEY=$(read_admiral_secret "HARBOR_ENCRYPTION_KEY") || true
-    SECRETS_HARBOR_POSTGRES_PASSWORD=$(read_admiral_secret "ADMIRAL_POSTGRES_PASSWORD") || true
+    if systemctl is-active --quiet caddy 2>/dev/null && systemctl is-active --quiet admirald 2>/dev/null; then
+        # A portal installed on the admin host uses the existing local role.
+        SECRETS_HARBOR_POSTGRES_PASSWORD=$(read_admiral_secret "ADMIRAL_POSTGRES_PASSWORD") || true
+    else
+        # Dedicated portals generate and preserve their database credential on
+        # the target host; the controller never receives or supplies it.
+        SECRETS_HARBOR_POSTGRES_USER="admiral_portal"
+        SECRETS_HARBOR_POSTGRES_PASSWORD=""
+    fi
     SECRETS_HARBOR_BOOTSTRAP_USER=$(read_admiral_secret "HARBOR_BOOTSTRAP_USER") || true
     SECRETS_HARBOR_BOOTSTRAP_PASSWORD=$(read_admiral_secret "HARBOR_BOOTSTRAP_PASSWORD") || true
     SECRETS_HARBOR_LEGACY_ADMIN_PASSWORD=$(read_admiral_secret "HARBOR_LEGACY_ADMIN_PASSWORD") || true
@@ -426,6 +453,7 @@ EXTRA_VARS_JSON=$(
     SECRETS_HARBOR_SECRET_KEY="$SECRETS_HARBOR_SECRET_KEY" \
     SECRETS_HARBOR_ENCRYPTION_KEY="$SECRETS_HARBOR_ENCRYPTION_KEY" \
     SECRETS_HARBOR_POSTGRES_PASSWORD="$SECRETS_HARBOR_POSTGRES_PASSWORD" \
+    SECRETS_HARBOR_POSTGRES_USER="$SECRETS_HARBOR_POSTGRES_USER" \
     SECRETS_HARBOR_BOOTSTRAP_USER="$SECRETS_HARBOR_BOOTSTRAP_USER" \
     SECRETS_HARBOR_BOOTSTRAP_PASSWORD="$SECRETS_HARBOR_BOOTSTRAP_PASSWORD" \
     SECRETS_HARBOR_LEGACY_ADMIN_PASSWORD="$SECRETS_HARBOR_LEGACY_ADMIN_PASSWORD" \
@@ -468,6 +496,10 @@ if harbor_enc:
 pg_pass = os.environ.get("SECRETS_HARBOR_POSTGRES_PASSWORD", "")
 if pg_pass:
     d["admiral_postgres_password"] = pg_pass
+
+pg_user = os.environ.get("SECRETS_HARBOR_POSTGRES_USER", "admiral")
+if pg_user:
+    d["admiral_postgres_user"] = pg_user
 
 hb_user = os.environ.get("SECRETS_HARBOR_BOOTSTRAP_USER", "")
 if hb_user:
@@ -560,6 +592,22 @@ else
     die "Ansible playbook directory not found at $ANSIBLE_DIR"
 fi
 
+# --- 9b. verify non-root recovery before disabling root SSH ---
+if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]]; then
+    REMOTE_SSH_USER="$(read_admiral_secret ADMIRAL_SSH_USER || true)"
+    [[ "$REMOTE_SSH_USER" =~ ^[a-z_][a-z0-9_-]{0,31}$ ]] || die "Remote installation did not produce a valid non-root SSH user. Root login remains available for recovery."
+    if ! ssh -i "$INSTALL_TARGET_SSH_KEY" -o BatchMode=yes -o StrictHostKeyChecking=yes \
+        "${REMOTE_SSH_USER}@${INSTALL_PUBLIC_IP}" true >/dev/null 2>&1; then
+        die "Non-root SSH login verification failed for ${REMOTE_SSH_USER}; root login was not disabled."
+    fi
+    ssh -i "$INSTALL_TARGET_SSH_KEY" -o BatchMode=yes -o StrictHostKeyChecking=yes \
+        "${REMOTE_SSH_USER}@${INSTALL_PUBLIC_IP}" \
+        "sudo sh -c 'tmp=/etc/ssh/sshd_config.d/.60-admiral-root-lockdown.conf.tmp; install -m 0644 /dev/stdin \"\$tmp\" && mv \"\$tmp\" /etc/ssh/sshd_config.d/60-admiral-root-lockdown.conf && { sshd -t && systemctl reload sshd || { rm -f /etc/ssh/sshd_config.d/60-admiral-root-lockdown.conf; exit 1; }; }'" \
+        <<<"PermitRootLogin no" \
+        || die "Could not validate and apply PermitRootLogin no; root login remains available for recovery."
+    INSTALL_TARGET_SSH_USER="$REMOTE_SSH_USER"
+fi
+
 # --- 10. persist local installer state for future spoke bootstraps ---
 if [[ "$INSTALL_MODE" == "single-node" || "$INSTALL_MODE" == "admin-node" ]]; then
     install -d -m 0750 /etc/admiral
@@ -602,6 +650,17 @@ for n in data if isinstance(data, list) else data.get('nodes', []):
         wg set wg-admiral peer "$SPOKE_KEY" allowed-ips "${SPOKE_WG_IP}/32" persistent-keepalive 25
         wg-quick save wg-admiral
         info "WireGuard peer added for spoke node ($SPOKE_WG_IP) on hub."
+        handshake_ok=false
+        for _ in {1..12}; do
+            if wg show wg-admiral latest-handshakes | awk -v now="$(date +%s)" -v key="$SPOKE_KEY" '$1 == key && $2 > now-120 { found=1 } END { exit(found ? 0 : 1) }'; then
+                handshake_ok=true
+                break
+            fi
+            sleep 2
+        done
+        if [[ "$handshake_ok" != true ]]; then
+            die "WireGuard handshake with ${SPOKE_WG_IP} failed; check DNS/public UDP 51820, firewall, keys, and routes."
+        fi
     fi
 fi
 
@@ -621,16 +680,16 @@ fi
 
 case "$INSTALL_MODE" in
     single-node)
-        REQUIRED_SERVICES=(postgresql caddy admirald admiral-fleet admiral-flagship admiral-harbor cockpit.socket)
+        REQUIRED_SERVICES=(postgresql caddy admirald admiral-fleet admiral-flagship admiral-harbor cockpit.socket firewalld auditd fail2ban)
         ;;
     admin-node)
-        REQUIRED_SERVICES=(postgresql caddy admirald admiral-flagship cockpit.socket)
+        REQUIRED_SERVICES=(postgresql caddy admirald admiral-flagship cockpit.socket firewalld auditd fail2ban wg-quick@wg-admiral)
         ;;
     worker-node)
-        REQUIRED_SERVICES=(admiral-fleet)
+        REQUIRED_SERVICES=(admiral-fleet firewalld auditd fail2ban wg-quick@wg-admiral)
         ;;
     portal-node)
-        REQUIRED_SERVICES=(postgresql admiral-harbor admiral-harbor-worker.timer admiral-harbor-catalog-sync.timer)
+        REQUIRED_SERVICES=(postgresql admiral-harbor admiral-harbor-worker.timer admiral-harbor-catalog-sync.timer firewalld auditd fail2ban wg-quick@wg-admiral)
         ;;
 esac
 
@@ -642,15 +701,17 @@ for service in "${REQUIRED_SERVICES[@]}"; do
     fi
 done
 
-# --- 11b. security checklist (warning-only, skipped in dev mode) ---
+# --- 11b. security checklist (blocking in secure modes) ---
 if [[ "$INSTALL_DEV_MODE" != "true" ]]; then
     SECURITY_WARNINGS=()
 
     run_target_cmd() {
         local cmd="$1"
         if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]]; then
+            local quoted_cmd
+            printf -v quoted_cmd '%q' "$cmd"
             ssh -i "$INSTALL_TARGET_SSH_KEY" -o BatchMode=yes -o StrictHostKeyChecking=yes \
-                "${INSTALL_TARGET_SSH_USER}@${INSTALL_PUBLIC_IP}" "$cmd" 2>/dev/null || true
+                "${INSTALL_TARGET_SSH_USER}@${INSTALL_PUBLIC_IP}" "sudo bash -lc $quoted_cmd" 2>/dev/null || true
         else
             bash -lc "$cmd" 2>/dev/null || true
         fi
@@ -670,8 +731,12 @@ if [[ "$INSTALL_DEV_MODE" != "true" ]]; then
     fi
 
     SSHD_EFFECTIVE="$(run_target_cmd "sshd -T")"
-    if [[ "$SSHD_EFFECTIVE" != *"permitrootlogin prohibit-password"* ]]; then
-        SECURITY_WARNINGS+=("sshd PermitRootLogin is not set to prohibit-password.")
+    EXPECTED_ROOT_LOGIN="prohibit-password"
+    if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]]; then
+        EXPECTED_ROOT_LOGIN="no"
+    fi
+    if [[ "$SSHD_EFFECTIVE" != *"permitrootlogin $EXPECTED_ROOT_LOGIN"* ]]; then
+        SECURITY_WARNINGS+=("sshd PermitRootLogin is not set to $EXPECTED_ROOT_LOGIN.")
     fi
     if [[ "$SSHD_EFFECTIVE" != *"passwordauthentication no"* ]]; then
         SECURITY_WARNINGS+=("sshd password authentication is not disabled.")
@@ -699,13 +764,7 @@ if [[ "$INSTALL_DEV_MODE" != "true" ]]; then
 
     if [[ ${#SECURITY_WARNINGS[@]} -gt 0 ]]; then
         warn "----------------------------------------------------------------"
-        warn "SECURITY CHECKLIST WARNINGS (non-blocking)"
-        warn "Installer assumes a fresh VPS with no unrelated services."
-        for warning_item in "${SECURITY_WARNINGS[@]}"; do
-            warn "- $warning_item"
-        done
-        warn "Address these warnings before production deployment."
-        warn "----------------------------------------------------------------"
+        die "Security checklist failed: ${SECURITY_WARNINGS[*]}"
     fi
 fi
 

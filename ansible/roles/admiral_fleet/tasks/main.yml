@@ -49,15 +49,39 @@
     fail_msg: "worker-node installs require an admin endpoint or explicit fleet_api_url."
   when: admiral_install_mode == 'worker-node'
 
+- name: Require VPN addresses for secure worker installs
+  assert:
+    that:
+      - (admiral_wireguard_ip | default('')) != ''
+      - (admiral_admin_wireguard_ip | default('')) != ''
+    fail_msg: "Secure worker installs require both worker and admin WireGuard addresses."
+  when:
+    - admiral_install_mode == 'worker-node'
+    - not (admiral_dev_mode | default(false) | bool)
+
 - name: Derive remote control-plane URLs for worker-node installs
   set_fact:
     admiral_admin_api_host: "{{ admiral_admin_wireguard_ip | default(admiral_admin_endpoint) }}"
     admiral_fleet_api_url: "{{ fleet_api_url | default('https://' ~ (admiral_admin_wireguard_ip | default(admiral_admin_endpoint)) ~ ':8080') }}"
   when: admiral_install_mode == 'worker-node'
 
-- name: Generate random fleet node token
+- name: Check for existing Fleet node token
+  slurp:
+    src: /etc/admiral/fleet.env
+  register: fleet_existing_env
+  failed_when: false
+  no_log: true
+
+- name: Extract existing Fleet node token
   set_fact:
-    fleet_node_token_value: "{{ lookup('ansible.builtin.pipe', 'openssl rand -hex 32') }}"
+    fleet_existing_node_token: >-
+      {{ (fleet_existing_env.content | default('') | b64decode
+          | regex_findall('(?m)^ADMIRAL_FLEET_TOKEN=(.*)$') | first | default('')) }}
+  no_log: true
+
+- name: Generate random Fleet node token
+  set_fact:
+    fleet_node_token_value: "{{ fleet_existing_node_token if fleet_existing_node_token else lookup('ansible.builtin.pipe', 'openssl rand -hex 32') }}"
   no_log: true
 
 - name: Deploy admiral-fleet configuration
@@ -66,7 +90,7 @@
     content: |
       ADMIRAL_FLEET_NODE_ID={{ ansible_hostname if admiral_install_mode == 'single-node' else (fleet_node_id_effective | default(fleet_node_id | default(ansible_hostname))) }}
       ADMIRAL_FLEET_TOKEN={{ fleet_node_token_value }}
-      ADMIRAL_API_URL={{ admiral_fleet_api_url | default('https://127.0.0.1:8080') }}
+      ADMIRAL_API_URL={{ admiral_fleet_api_url | default(admiral_control_plane_url) }}
       ADMIRAL_API_CA_FILE=/etc/admiral/tls/ca.pem
       ADMIRAL_FLEET_EXECUTOR={{ fleet_executor | default('systemd-podman') }}
       ADMIRAL_FLEET_DATA_DIR=/var/lib/admiral
@@ -80,6 +104,7 @@
     owner: root
     group: admiral
   no_log: true
+  notify: restart admiral-fleet
 
 - name: Enable and start admiral-fleet
   systemd:
@@ -105,5 +130,5 @@
   delegate_to: localhost
   environment:
     ADMIRAL_ADMIN_TOKEN: "{{ admiral_admin_token_value }}"
-    ADMIRAL_SERVER_URL: "https://127.0.0.1:8080"
+    ADMIRAL_SERVER_URL: "{{ admiral_control_plane_url }}"
     ADMIRAL_TLS_CA_FILE: /etc/admiral/tls/ca.pem

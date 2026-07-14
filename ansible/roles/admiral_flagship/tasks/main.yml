@@ -9,7 +9,7 @@
     dest: /etc/admiral/flagship.env
     content: |
       FLAGSHIP_SECRET_KEY={{ admiral_flagship_secret_key_value }}
-      ADMIRAL_API_URL=https://127.0.0.1:8080
+      ADMIRAL_API_URL={{ admiral_control_plane_url }}
       ADMIRAL_ADMIN_TOKEN={{ admiral_admin_token_value }}
       ADMIRAL_CA_FILE=/etc/admiral/tls/ca.pem
       ADMIRAL_INSECURE_SKIP_VERIFY={{ '1' if (admiral_dev_mode | default(false) | bool) else '0' }}
@@ -17,6 +17,7 @@
     owner: root
     group: admiral
   no_log: true
+  notify: restart admiral-flagship
 
 - name: Ensure admiral-flagship systemd override directory exists
   file:

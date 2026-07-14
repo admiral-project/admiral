@@ -9,6 +9,7 @@ Type=simple
 ExecStart=/usr/bin/admirald
 Restart=on-failure
 RestartSec=10
+Environment=ADMIRAL_TLS_CA_FILE=/etc/admiral/tls/ca.pem
 StandardOutput=journal
 StandardError=journal
 
