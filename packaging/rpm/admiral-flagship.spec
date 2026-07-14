@@ -18,6 +18,7 @@ Source2: flagship.env
 BuildArch: noarch
 
 BuildRequires: python3
+BuildRequires: python3-pytest
 BuildRequires: systemd
 
 Requires: admiral-common
@@ -74,7 +75,7 @@ restorecon -R %{_prefix}/lib/admiral/flagship 2>/dev/null || :
 %systemd_postun_with_restart admiral-flagship.service
 
 %check
-%{python3} -m pytest tests/ -x --tb=short 2>/dev/null || echo "WARNING: tests skipped (pytest not available)"
+%{python3} -m pytest tests/ -x --tb=short
 
 %changelog
 * Tue Jul 07 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta15-2

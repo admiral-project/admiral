@@ -4,9 +4,12 @@ table inet admiral_egress {
         oif lo accept
         ct state { established, related } accept
         ip daddr 10.99.0.0/24 accept
-{% if admiral_install_mode in ['single-node', 'admin-node'] %}
+{% if admiral_effective_host_profile in ['single-node', 'admin'] %}
         tcp dport { 22, 80, 443, 53 } accept
         udp dport 53 accept
+{% else %}
+        tcp dport 22 accept
+        udp dport 51820 accept
 {% endif %}
         reject
     }

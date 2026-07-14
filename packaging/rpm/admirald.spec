@@ -52,7 +52,7 @@ install -d %{buildroot}/etc/systemd/system/admirald.service.d
 cd admirald
 export GOCACHE=%{_tmppath}/go-cache
 mkdir -p "$GOCACHE"
-go test ./... || echo "WARNING: tests skipped or failed in build sandbox"
+    go test ./...
 
 %files
 %license admirald/LICENSE

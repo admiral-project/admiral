@@ -53,7 +53,7 @@ install -Dm0644 %{SOURCE2} %{buildroot}%{_sysconfdir}/admiral/fleet.env
 cd admiral-fleet
 export GOCACHE=%{_tmppath}/go-cache
 mkdir -p "$GOCACHE"
-go test ./... || echo "WARNING: tests skipped or failed in build sandbox"
+    go test ./...
 
 %files
 %license admiral-fleet/LICENSE

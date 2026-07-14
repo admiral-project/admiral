@@ -93,7 +93,9 @@
     - /etc/admiral/tls
 
 - name: Manage secrets inventory (admin/single-node only)
-  when: admiral_install_mode in ['single-node', 'admin-node']
+  when: >-
+    admiral_install_mode in ['single-node', 'admin-node'] or
+    (admiral_install_mode == 'portal-node' and (admiral_portal_shares_admin_host | default(false) | bool))
   block:
     - name: Check whether Admiral secret inventory already exists
       stat:
@@ -371,7 +373,9 @@
   file:
     path: /etc/admiral/secrets
     state: absent
-  when: admiral_install_mode in ['worker-node', 'portal-node']
+  when:
+    - admiral_install_mode in ['worker-node', 'portal-node']
+    - not (admiral_portal_shares_admin_host | default(false) | bool)
 
 - name: Create Admiral SSH admin user
   user:

@@ -26,7 +26,7 @@
         mode: "0644"
         content: |
           [Definition]
-          failregex = .*admin login failed.*
+          failregex = ^.*\[client <HOST>\].*admin login failed.*$
           ignoreregex =
 
     - name: Deploy admiral-harbor fail2ban filter
@@ -35,7 +35,7 @@
         mode: "0644"
         content: |
           [Definition]
-          failregex = .*(customer login failed|admin login failed).*
+          failregex = ^.*\[client <HOST>\].*(customer login failed|admin login failed).*$
           ignoreregex =
 
     - name: Configure admiral fail2ban baseline
@@ -74,16 +74,12 @@
           banaction = firewallcmd-ipset
 
     - name: Enable and start fail2ban
+      command: fail2ban-client -t
+      changed_when: false
+
+    - name: Enable and start fail2ban service
       systemd:
         name: fail2ban
         enabled: true
         state: started
         daemon_reload: true
-
-  rescue:
-    - name: Warn when fail2ban setup fails
-      debug:
-        msg: >-
-          WARNING: fail2ban setup failed. Continuing installation in fail-safe mode
-          without blocking. Keep firewalld policy enforced and remediate fail2ban
-          after install.

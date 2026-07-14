@@ -24,6 +24,23 @@ read_admiral_secret() {
     [[ -f "$file" ]] || { echo ""; return 1; }
     grep "^${key}=" "$file" 2>/dev/null | head -1 | cut -d= -f2-
 }
+read_install_state_value() {
+    local key="$1"
+    local file="/etc/admiral/install.env"
+    [[ -f "$file" ]] || return 1
+    python3 - "$file" "$key" <<'PY'
+import json, sys
+try:
+    with open(sys.argv[1], encoding="utf-8") as stream:
+        state = json.load(stream)
+except (OSError, json.JSONDecodeError):
+    raise SystemExit(1)
+value = state.get(sys.argv[2])
+if not isinstance(value, str) or not value:
+    raise SystemExit(1)
+print(value)
+PY
+}
 detect_non_loopback_ip() {
     local ip=""
     if command -v ip >/dev/null 2>&1; then
@@ -53,7 +70,7 @@ Options:
   --public-ip         Set the public IP address of the node being configured.
   --wireguard-ip      Set the WireGuard IP address for a spoke node.
   --admin-endpoint    Override the admin endpoint for spoke installs.
-  --ssh-user          SSH user for remote spoke configuration (default: root).
+  --ssh-user          SSH user for remote spoke configuration (default: root for bootstrap).
   --ssh-key           SSH private key for remote spoke configuration.
   --ssh-fingerprint   Expected SSH host key fingerprint (SHA256:...) for verification.
   -h, --help          Show this help message.
@@ -164,10 +181,9 @@ if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]]; t
         fi
     fi
     if [[ -z "$INSTALL_ADMIN_ENDPOINT" && -f /etc/admiral/install.env ]]; then
-        # shellcheck disable=SC1091
-        source /etc/admiral/install.env
-        if ! is_loopback_host "${ADMIRAL_PUBLIC_IP:-}"; then
-            INSTALL_ADMIN_ENDPOINT="${ADMIRAL_PUBLIC_IP:-}"
+        INSTALL_ADMIN_ENDPOINT="$(read_install_state_value ADMIRAL_PUBLIC_IP || true)"
+        if is_loopback_host "$INSTALL_ADMIN_ENDPOINT"; then
+            INSTALL_ADMIN_ENDPOINT=""
         fi
     fi
     [[ -n "$INSTALL_ADMIN_ENDPOINT" ]] || die "Worker and portal nodes require an admin endpoint from /etc/admiral/install.env or --admin-endpoint."
@@ -175,6 +191,45 @@ if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]]; t
     [[ -f /etc/admiral/tls/ca.pem ]] || die "Spoke installs must run from an admin host with /etc/admiral/tls/ca.pem available."
     [[ -f /var/lib/admiral/know_host.yaml ]] || die "Spoke installs must run from an admin host with /var/lib/admiral/know_host.yaml available."
     [[ -n "$INSTALL_TARGET_SSH_KEY" ]] || die "Spoke installs require an SSH key. Use --ssh-key or install a default root key."
+fi
+
+validate_ipv4_or_hostname() {
+    local value="$1"
+    [[ -n "$value" && "$value" != *[$'\n\r']* && "$value" != *[[:space:]]* ]] || return 1
+    python3 - "$value" <<'PY'
+import ipaddress, sys
+value = sys.argv[1]
+try:
+    ipaddress.ip_address(value)
+except ValueError:
+    import re
+    if not re.fullmatch(r"[A-Za-z0-9](?:[A-Za-z0-9.-]*[A-Za-z0-9])?", value):
+        raise SystemExit(1)
+PY
+}
+
+validate_ipv4_or_hostname "$INSTALL_PUBLIC_IP" || die "Invalid public IP or hostname: $INSTALL_PUBLIC_IP"
+if [[ -n "$INSTALL_ADMIN_ENDPOINT" ]]; then
+    validate_ipv4_or_hostname "$INSTALL_ADMIN_ENDPOINT" || die "Invalid admin endpoint: $INSTALL_ADMIN_ENDPOINT"
+fi
+if [[ -n "$INSTALL_WIREGUARD_IP" ]]; then
+    if ! python3 - "$INSTALL_WIREGUARD_IP" <<'PY'
+import ipaddress, sys
+ip = ipaddress.ip_address(sys.argv[1])
+raise SystemExit(0 if ip.version == 4 and ip in ipaddress.ip_network("10.99.0.0/24") else 1)
+PY
+    then
+        die "WireGuard IP must be inside 10.99.0.0/24"
+    fi
+fi
+if [[ -n "$INSTALL_SSH_FINGERPRINT" && ! "$INSTALL_SSH_FINGERPRINT" =~ ^SHA256:[A-Za-z0-9+/]+={0,2}$ ]]; then
+    die "Invalid SSH fingerprint; expected SHA256:<base64>"
+fi
+if [[ -n "$INSTALL_NODE_ID" && ! "$INSTALL_NODE_ID" =~ ^[A-Za-z0-9][A-Za-z0-9_.-]{0,62}$ ]]; then
+    die "Invalid node ID; use 1-63 letters, numbers, dot, underscore, or hyphen"
+fi
+if [[ -n "$INSTALL_TARGET_SSH_USER" && ! "$INSTALL_TARGET_SSH_USER" =~ ^[a-z_][a-z0-9_-]{0,31}$ ]]; then
+    die "Invalid SSH username"
 fi
 
 # --- 0b1. detect SSH public key for admin user creation ---
@@ -210,16 +265,18 @@ if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]]; t
     info "Retrieving SSH host key for $INSTALL_PUBLIC_IP..."
     KEYSCAN_OUTPUT=$(ssh-keyscan "$INSTALL_PUBLIC_IP" 2>/dev/null) || \
         die "Failed to retrieve SSH host key for $INSTALL_PUBLIC_IP. Ensure SSH is running on the target host."
-    echo "$KEYSCAN_OUTPUT" >> ~/.ssh/known_hosts
+    [[ -n "$INSTALL_SSH_FINGERPRINT" ]] || die "--ssh-fingerprint is required for remote spoke bootstrap."
     if [[ -n "$INSTALL_SSH_FINGERPRINT" ]]; then
         FOUND_FINGERPRINT=$(echo "$KEYSCAN_OUTPUT" | ssh-keygen -lf - 2>/dev/null | head -1)
         info "Expected fingerprint: $INSTALL_SSH_FINGERPRINT"
         info "Received: $FOUND_FINGERPRINT"
-        if ! echo "$FOUND_FINGERPRINT" | grep -qF "$INSTALL_SSH_FINGERPRINT"; then
+        if [[ "$FOUND_FINGERPRINT" != *"$INSTALL_SSH_FINGERPRINT"* ]]; then
             die "SSH host key fingerprint mismatch for $INSTALL_PUBLIC_IP. Aborting."
         fi
         info "SSH host key fingerprint verified."
     fi
+    install -d -m 0700 "$HOME/.ssh"
+    printf '%s\n' "$KEYSCAN_OUTPUT" >> "$HOME/.ssh/known_hosts"
 fi
 
 # --- 0b. worker and portal roles are mutually exclusive per host ---
@@ -227,9 +284,6 @@ fi
 # admiral-harbor (portal). Combined worker+portal support exists only
 # in --single-node on the local host.
 if [[ "$INSTALL_MODE" == "single-node" || "$INSTALL_MODE" == "admin-node" ]]; then
-    if systemctl is-active --quiet admiral-harbor 2>/dev/null && [[ "$INSTALL_MODE" == "admin-node" ]]; then
-        die "Host already has admiral-harbor (portal role) running. --admin-node and --portal-node are mutually exclusive per host."
-    fi
     if systemctl is-active --quiet admiral-fleet 2>/dev/null && [[ "$INSTALL_MODE" == "admin-node" ]]; then
         die "Host already has admiral-fleet (worker role) running. --admin-node and --worker-node are mutually exclusive per host."
     fi
@@ -340,6 +394,7 @@ SECRETS_HARBOR_BOOTSTRAP_USER=""
 SECRETS_HARBOR_BOOTSTRAP_PASSWORD=""
 SECRETS_HARBOR_LEGACY_ADMIN_PASSWORD=""
 SECRETS_HARBOR_API_TOKEN=""
+SECRETS_SSH_USER=""
 if [[ "$INSTALL_MODE" == "worker-node" ]]; then
     SECRETS_ADMIRAL_TOKEN=$(read_admiral_secret "ADMIRAL_ADMIN_TOKEN") || true
     SECRETS_TASK_ENCRYPTION_KEY=$(read_admiral_secret "ADMIRAL_TASK_ENCRYPTION_KEY") || true
@@ -353,6 +408,9 @@ if [[ "$INSTALL_MODE" == "portal-node" ]]; then
     SECRETS_HARBOR_BOOTSTRAP_PASSWORD=$(read_admiral_secret "HARBOR_BOOTSTRAP_PASSWORD") || true
     SECRETS_HARBOR_LEGACY_ADMIN_PASSWORD=$(read_admiral_secret "HARBOR_LEGACY_ADMIN_PASSWORD") || true
     SECRETS_HARBOR_API_TOKEN=$(read_admiral_secret "ADMIRAL_HARBOR_API_TOKEN") || true
+fi
+if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]]; then
+    SECRETS_SSH_USER=$(read_admiral_secret "ADMIRAL_SSH_USER") || true
 fi
 
 # --- 8. build extra-vars as JSON (prevents injection via --node-id) ---
@@ -372,6 +430,7 @@ EXTRA_VARS_JSON=$(
     SECRETS_HARBOR_BOOTSTRAP_PASSWORD="$SECRETS_HARBOR_BOOTSTRAP_PASSWORD" \
     SECRETS_HARBOR_LEGACY_ADMIN_PASSWORD="$SECRETS_HARBOR_LEGACY_ADMIN_PASSWORD" \
     SECRETS_HARBOR_API_TOKEN="$SECRETS_HARBOR_API_TOKEN" \
+    SECRETS_SSH_USER="$SECRETS_SSH_USER" \
     INSTALL_SSH_PUB_KEY="$INSTALL_SSH_PUB_KEY" \
     python3 -c '
 import json, os
@@ -426,6 +485,10 @@ hb_api_token = os.environ.get("SECRETS_HARBOR_API_TOKEN", "")
 if hb_api_token:
     d["admiral_harbor_api_token_value"] = hb_api_token
 
+ssh_user = os.environ.get("SECRETS_SSH_USER", "")
+if ssh_user:
+    d["admiral_ssh_admin_user"] = ssh_user
+
 ssh_pub_key = os.environ.get("INSTALL_SSH_PUB_KEY", "")
 if ssh_pub_key:
     d["admiral_ssh_pub_key"] = ssh_pub_key
@@ -445,6 +508,17 @@ print(json.dumps(d))
 '
 )
 
+umask 077
+EXTRA_VARS_FILE="$(mktemp /tmp/admiral-extra-vars.XXXXXX.json)"
+printf '%s\n' "$EXTRA_VARS_JSON" > "$EXTRA_VARS_FILE"
+unset EXTRA_VARS_JSON
+TMP_INVENTORY=""
+cleanup_installer_temps() {
+    [[ -z "$TMP_INVENTORY" ]] || rm -f -- "$TMP_INVENTORY"
+    [[ -z "${EXTRA_VARS_FILE:-}" ]] || rm -f -- "$EXTRA_VARS_FILE"
+}
+trap cleanup_installer_temps EXIT HUP INT TERM
+
 # --- 9. run official playbook ---
 # The playbook handles the rest: packages, configuration, services
 info "Running Admiral configuration playbook for mode: $INSTALL_MODE"
@@ -454,7 +528,7 @@ if [[ -d "$ANSIBLE_DIR" ]]; then
     ANSIBLE_REMOTE_TEMP=/tmp/ansible-remote
     ANSIBLE_GALAXY_CACHE_DIR=/tmp/ansible-galaxy-cache
     if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]]; then
-        TMP_INVENTORY="$(mktemp).yml"
+        TMP_INVENTORY="$(mktemp /tmp/admiral-inventory.XXXXXX.yml)"
         cat > "$TMP_INVENTORY" <<EOF
 all:
   hosts:
@@ -472,7 +546,7 @@ EOF
             "$ANSIBLE_DIR/site.yml" \
             -i "$TMP_INVENTORY" \
             --limit target \
-            --extra-vars "$EXTRA_VARS_JSON"
+            --extra-vars "@$EXTRA_VARS_FILE"
     else
         ANSIBLE_LOCAL_TEMP="$ANSIBLE_LOCAL_TEMP" \
         ANSIBLE_REMOTE_TEMP="$ANSIBLE_REMOTE_TEMP" \
@@ -480,7 +554,7 @@ EOF
         ansible-playbook \
             "$ANSIBLE_DIR/site.yml" \
             -i "$ANSIBLE_DIR/inventory/localhost.yml" \
-            --extra-vars "$EXTRA_VARS_JSON"
+            --extra-vars "@$EXTRA_VARS_FILE"
     fi
 else
     die "Ansible playbook directory not found at $ANSIBLE_DIR"
@@ -489,17 +563,23 @@ fi
 # --- 10. persist local installer state for future spoke bootstraps ---
 if [[ "$INSTALL_MODE" == "single-node" || "$INSTALL_MODE" == "admin-node" ]]; then
     install -d -m 0750 /etc/admiral
-    cat > /etc/admiral/install.env <<EOF
-ADMIRAL_PUBLIC_IP=${INSTALL_PUBLIC_IP}
-EOF
-    chmod 0640 /etc/admiral/install.env
+    state_tmp="$(mktemp /etc/admiral/install.env.XXXXXX)"
+    chmod 0640 "$state_tmp"
+    INSTALL_STATE_PUBLIC_IP="$INSTALL_PUBLIC_IP" python3 - "$state_tmp" <<'PY'
+import json, os, sys
+with open(sys.argv[1], "w", encoding="utf-8") as stream:
+    json.dump({"version": 1, "ADMIRAL_PUBLIC_IP": os.environ["INSTALL_STATE_PUBLIC_IP"]}, stream)
+    stream.write("\n")
+PY
+    chown root:root "$state_tmp"
+    mv -f "$state_tmp" /etc/admiral/install.env
 fi
 
 # --- 10b. exchange WireGuard peers for spoke installs ---
 if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]]; then
     info "Exchanging WireGuard peers between hub and spoke..."
-    SPOKE_KEY=$(ssh -i "$INSTALL_TARGET_SSH_KEY" -o BatchMode=yes -o StrictHostKeyChecking=yes "${INSTALL_TARGET_SSH_USER}@${INSTALL_PUBLIC_IP}" "wg pubkey < /etc/wireguard/admiral.key" 2>/dev/null || true)
-    SPOKE_NODE_ID="${INSTALL_NODE_ID:-$(ssh -i "$INSTALL_TARGET_SSH_KEY" -o BatchMode=yes -o StrictHostKeyChecking=yes "${INSTALL_TARGET_SSH_USER}@${INSTALL_PUBLIC_IP}" "grep -hE '^(ADMIRAL_FLEET_NODE_ID|HARBOR_NODE_ID)=' /etc/admiral/*.env 2>/dev/null | tail -n1 | cut -d= -f2-" 2>/dev/null || true)}"
+    SPOKE_KEY=$(ssh -i "$INSTALL_TARGET_SSH_KEY" -o BatchMode=yes -o StrictHostKeyChecking=yes "${INSTALL_TARGET_SSH_USER}@${INSTALL_PUBLIC_IP}" "sudo sh -c 'wg pubkey < /etc/wireguard/admiral.key'" 2>/dev/null || true)
+    SPOKE_NODE_ID="${INSTALL_NODE_ID:-$(ssh -i "$INSTALL_TARGET_SSH_KEY" -o BatchMode=yes -o StrictHostKeyChecking=yes "${INSTALL_TARGET_SSH_USER}@${INSTALL_PUBLIC_IP}" "sudo sh -c \"grep -hE '^(ADMIRAL_FLEET_NODE_ID|HARBOR_NODE_ID)=' /etc/admiral/*.env 2>/dev/null | tail -n1 | cut -d= -f2-\"" 2>/dev/null || true)}"
     if [[ -z "$SPOKE_KEY" ]]; then
         die "Could not read the spoke WireGuard public key after installation."
     fi
@@ -528,7 +608,7 @@ fi
 # --- 11. verify core runtime ---
 if [[ "$INSTALL_MODE" == "single-node" || "$INSTALL_MODE" == "worker-node" ]]; then
     if [[ "$INSTALL_MODE" == "worker-node" ]]; then
-        PODMAN_VER=$(ssh -i "$INSTALL_TARGET_SSH_KEY" -o BatchMode=yes -o StrictHostKeyChecking=yes "${INSTALL_TARGET_SSH_USER}@${INSTALL_PUBLIC_IP}" "podman version --format '{{.Version}}'" 2>/dev/null || echo "0")
+        PODMAN_VER=$(ssh -i "$INSTALL_TARGET_SSH_KEY" -o BatchMode=yes -o StrictHostKeyChecking=yes "${INSTALL_TARGET_SSH_USER}@${INSTALL_PUBLIC_IP}" "sudo podman version --format '{{.Version}}'" 2>/dev/null || echo "0")
     else
         command -v podman >/dev/null 2>&1 || die "Podman was not installed by RPM dependencies."
         PODMAN_VER=$(podman version --format '{{.Version}}' 2>/dev/null || echo "0")

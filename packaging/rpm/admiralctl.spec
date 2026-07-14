@@ -45,7 +45,7 @@ install -Dm0644 docs/admiralctl.1 %{buildroot}%{_mandir}/man1/admiralctl.1
 cd admiralctl
 export GOCACHE=%{_tmppath}/go-cache
 mkdir -p "$GOCACHE"
-go test ./... || echo "WARNING: tests skipped or failed in build sandbox"
+    go test ./...
 
 %files
 %license admiralctl/LICENSE

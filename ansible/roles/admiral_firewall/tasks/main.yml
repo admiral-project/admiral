@@ -92,6 +92,7 @@
     - 2019/tcp
     - 5000/tcp
     - 5001/tcp
+    - 40000-49999/tcp
     - 5432/tcp
     - 6379/tcp
     - 5671/tcp
@@ -113,13 +114,14 @@
   loop:
     - http
     - https
-  when: admiral_install_mode in ['single-node', 'admin-node']
+  when: admiral_effective_host_profile in ['single-node', 'admin']
 
-- name: Allow WireGuard UDP port on all modes
+- name: Allow WireGuard UDP port on multinode profiles
   command:
     cmd: firewall-cmd --permanent --zone=public --add-port=51820/udp
   register: firewall_wg
   changed_when: "'success' in firewall_wg.stdout"
+  when: admiral_effective_host_profile in ['admin', 'worker', 'portal']
 
 - name: Remove managed egress direct rules (admin profile)
   command:
@@ -138,7 +140,7 @@
   failed_when: false
   when:
     - not (admiral_dev_mode | default(false) | bool)
-    - admiral_install_mode in ['single-node', 'admin-node']
+    - admiral_effective_host_profile in ['single-node', 'admin']
     - not admiral_use_nftables_egress
 
 - name: Remove managed egress direct rules (spoke profile)
@@ -149,12 +151,13 @@
     - { priority: 20, rule: "-m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT" }
     - { priority: 30, rule: "-d 10.99.0.0/24 -j ACCEPT" }
     - { priority: 35, rule: "-p tcp --dport 22 -j ACCEPT" }
+    - { priority: 36, rule: "-p udp --dport 51820 -j ACCEPT" }
     - { priority: 200, rule: "-j REJECT" }
   changed_when: false
   failed_when: false
   when:
     - not (admiral_dev_mode | default(false) | bool)
-    - admiral_install_mode in ['worker-node', 'portal-node']
+    - admiral_effective_host_profile in ['worker', 'portal']
     - not admiral_use_nftables_egress
 
 - name: Apply egress controls for admin and single nodes
@@ -175,7 +178,7 @@
     - { priority: 200, rule: "-j REJECT" }
   when:
     - not (admiral_dev_mode | default(false) | bool)
-    - admiral_install_mode in ['single-node', 'admin-node']
+    - admiral_effective_host_profile in ['single-node', 'admin']
     - not admiral_use_nftables_egress
 
 - name: Apply egress controls for worker and portal spokes
@@ -189,10 +192,11 @@
     - { priority: 20, rule: "-m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT" }
     - { priority: 30, rule: "-d 10.99.0.0/24 -j ACCEPT" }
     - { priority: 35, rule: "-p tcp --dport 22 -j ACCEPT" }
+    - { priority: 36, rule: "-p udp --dport 51820 -j ACCEPT" }
     - { priority: 200, rule: "-j REJECT" }
   when:
     - not (admiral_dev_mode | default(false) | bool)
-    - admiral_install_mode in ['worker-node', 'portal-node']
+    - admiral_effective_host_profile in ['worker', 'portal']
     - not admiral_use_nftables_egress
 
 - name: Allow dev mode services
@@ -300,14 +304,14 @@
     that:
       - (firewall_public_services.stdout.split() | difference(['ssh', 'http', 'https'] + (['cockpit'] if (admiral_dev_mode | default(false) | bool) else [])) | length) == 0
     fail_msg: "Unexpected public firewalld services remain enabled: {{ firewall_public_services.stdout }}"
-  when: admiral_install_mode in ['single-node', 'admin-node']
+  when: admiral_effective_host_profile in ['single-node', 'admin']
 
 - name: Assert only ssh remains exposed (worker)
   assert:
     that:
       - (firewall_public_services.stdout.split() | difference(['ssh']) | length) == 0
     fail_msg: "Unexpected public firewalld services remain enabled: {{ firewall_public_services.stdout }}"
-  when: admiral_install_mode == 'worker-node'
+  when: admiral_effective_host_profile == 'worker'
 
 - name: Assert admin ingress services remain exposed when portal-node shares the admin host
   assert:
@@ -330,7 +334,7 @@
 - name: Assert only expected public ports remain exposed
   assert:
     that:
-      - (firewall_public_ports.stdout.split() | difference(['51820/udp'] + (['5000/tcp', '5001/tcp', '40000-49999/tcp'] if (admiral_dev_mode | default(false) | bool) else [])) | length) == 0
+      - (firewall_public_ports.stdout.split() | difference((['51820/udp'] if admiral_effective_host_profile in ['admin', 'worker', 'portal'] else []) + (['5000/tcp', '5001/tcp', '40000-49999/tcp'] if (admiral_dev_mode | default(false) | bool) else [])) | length) == 0
     fail_msg: "Unexpected direct public firewalld ports remain enabled: {{ firewall_public_ports.stdout }}"
 
 - name: Query egress direct rules (non-AlmaLinux)
