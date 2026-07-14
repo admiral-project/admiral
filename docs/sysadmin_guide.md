@@ -29,6 +29,38 @@ self-service and its own PostgreSQL database. Each role requires its own
 WireGuard IP and dedicated system resources. If your deployment needs both
 worker and portal capabilities, deploy separate physical or virtual nodes.
 
+### SSH Admin User
+
+The installer creates a non-root SSH admin user on every node. This user:
+
+- Has a generated username (prefixed `opsa_`) stored in `/etc/admiral/secrets`
+- Belongs to the `wheel` group with NOPASSWD sudo access
+- Authenticates via SSH key only (password authentication is disabled)
+- Is the recommended access method for ongoing administration
+
+The username is printed at the end of a successful installation:
+
+```
+SSH access (recommended, non-root):
+  ssh opsa_a1b2c3d4e5@203.0.113.10
+```
+
+**Prerequisite**: Before running the installer, you must have SSH key-based
+access to the target node. The installer uses this key to:
+
+1. Connect to the node during installation
+2. Extract the public key for the new admin user
+3. Deploy the public key to the admin user's `authorized_keys`
+
+For spoke nodes (`--worker-node`, `--portal-node`), the installer connects
+as root via SSH using the key specified with `--ssh-key` or auto-detected
+from `~/.ssh/id_ed25519` / `~/.ssh/id_rsa`. The public key is extracted
+from the private key and deployed to the same user on the spoke.
+
+**Root login** is restricted to key-based authentication only
+(`PermitRootLogin prohibit-password`). Password-based root login is
+disabled by the SSH hardening baseline.
+
 Worker and portal modes accept the following additional flags for secure
 remote provisioning:
 
@@ -189,6 +221,8 @@ The installer and Ansible bootstrap:
 - configure the services
 - generate the platform secrets
 - install the local CA bundle
+- create a non-root SSH admin user with sudo access
+- apply SSH hardening (key-only root login, password auth disabled)
 - start the selected systemd units
 
 ## What the Installer Does Not Do
@@ -357,6 +391,7 @@ verification failed and the backup may not be recoverable.
 - If it is lost, encrypted data and bootstrap secrets cannot be recovered.
 - The file must survive node loss and reinstall scenarios.
 - It contains the keys used to encrypt stored secrets, including `ADMIRAL_SECRETS_KEY` and `HARBOR_ENCRYPTION_KEY`.
+- It contains `ADMIRAL_SSH_USER`, the non-root SSH admin username for all nodes.
 
 ## Common Checks
 
