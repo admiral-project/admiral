@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 %global debug_package %{nil}
-%global commit b9937915a19e61b4866668b9f1ff09850774bf6f
+%global commit 7d476a68dcdd8618504797088397bbec04ff129a
 
 Name:    admiral-flagship
 Version: 0.0.1beta16

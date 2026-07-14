@@ -1,10 +1,10 @@
 SHELL := /bin/bash
 VERSION := 0.0.1beta16
-ADMIRALD_COMMIT := 0667582f9a3abd1d30810f38ab2d10767ecb8155
-FLEET_COMMIT := 0d75d3c6e14c12ac750177b93da4af59190c6da8
-ADMIRALCTL_COMMIT := 2e6059d4ec87c0bb135f5c13f65a23bcf26168b9
-FLAGSHIP_COMMIT := b9937915a19e61b4866668b9f1ff09850774bf6f
-HARBOR_COMMIT := 32ff76d746a8b14fc334c6c08aa8a03fa0275150
+ADMIRALD_COMMIT := c2e74b330b1ae2df538e177cbf91adecdb087b1c
+FLEET_COMMIT := 874391ba353f57120a412416154322bb16652989
+ADMIRALCTL_COMMIT := 93004b4bde0e7157b15e1597b86ec60769629c97
+FLAGSHIP_COMMIT := 7d476a68dcdd8618504797088397bbec04ff129a
+HARBOR_COMMIT := 0fd5b372ea9d2c38ce8772be154d89072859a848
 RPMDIR := $(CURDIR)/packaging/build
 RPMTOPDIR := $(RPMDIR)
 SPECSDIR := $(CURDIR)/packaging/rpm
@@ -22,7 +22,7 @@ FLASK_ALEMBIC_VERSION := 3.1.1
 FLASK_LOGIN_VERSION := 0.6.3
 MISTUNE_VERSION := 3.2.1
 
-.PHONY: all clean rpm rpm-admiral rpmlint all-sources \
+.PHONY: all clean rpm rpm-admiral rpmlint validate-release-refs all-sources \
 	srpm srpms \
 	rpm-admiral-common rpm-admirald rpm-admiral-fleet \
 	rpm-admiralctl rpm-admiral-flagship rpm-admiral-harbor \
@@ -32,6 +32,9 @@ MISTUNE_VERSION := 3.2.1
 	rpm-python-mistune srpm-python-mistune
 
 all: rpm
+
+validate-release-refs:
+	python3 scripts/validate-release-refs.py
 
 clean:
 	rm -rf $(RPMDIR)
@@ -247,7 +250,7 @@ srpm-python-mistune: source-python-mistune
 
 # -- Build all RPMs in dependency order ----------------------------------
 
-rpm: all-sources source-support-files
+rpm: validate-release-refs all-sources source-support-files
 	@echo "=== Building admiral-common ==="
 	$(MAKE) rpm-admiral-common
 	@echo "=== Building admirald ==="
@@ -275,7 +278,7 @@ rpm: all-sources source-support-files
 	@echo "=== All RPMs built ==="
 	@find $(RPMDIR)/RPMS -name '*.rpm' -exec basename {} \;
 
-rpm-admiral: all-sources source-support-files
+rpm-admiral: validate-release-refs all-sources source-support-files
 	@echo "=== Building admiral-common ==="
 	$(MAKE) rpm-admiral-common
 	@echo "=== Building admirald ==="
