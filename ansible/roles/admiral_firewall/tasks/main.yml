@@ -64,37 +64,58 @@
   register: firewall_public_target
   changed_when: "'success' in firewall_public_target.stdout"
 
-- name: Remove broad public services from public zone
+- name: Define allowed public firewall rules for the host profile
+  set_fact:
+    admiral_allowed_public_services: >-
+      {{
+        ['ssh'] +
+        (['http', 'https'] if admiral_effective_host_profile in ['single-node', 'admin'] else []) +
+        (['cockpit'] if (admiral_dev_mode | default(false) | bool) else [])
+      }}
+    admiral_allowed_public_ports: >-
+      {{
+        (['51820/udp'] if admiral_effective_host_profile in ['admin', 'worker', 'portal'] else []) +
+        (['5000/tcp', '5001/tcp', '40000-49999/tcp'] if (admiral_dev_mode | default(false) | bool) else [])
+      }}
+
+- name: Read configured public services and ports
+  command:
+    cmd: firewall-cmd --permanent --zone=public --list-{{ item }}
+  loop:
+    - services
+    - ports
+  register: firewall_public_configuration
+  changed_when: false
+
+- name: Remove public services outside the declared host profile
   command:
     cmd: firewall-cmd --permanent --zone=public --remove-service={{ item }}
+  loop: >-
+    {{
+      (firewall_public_configuration.results
+      | selectattr('item', 'equalto', 'services')
+      | map(attribute='stdout')
+      | first
+      | default('')).split()
+      | difference(admiral_allowed_public_services)
+    }}
   register: firewall_removed_service
   changed_when: "'success' in firewall_removed_service.stdout"
-  failed_when: false
-  loop:
-    - cockpit
-    - dhcpv6-client
-    - mdns
 
-- name: Remove direct public Admiral ports from public zone
+- name: Remove public ports outside the declared host profile
   command:
     cmd: firewall-cmd --permanent --zone=public --remove-port={{ item }}
+  loop: >-
+    {{
+      (firewall_public_configuration.results
+      | selectattr('item', 'equalto', 'ports')
+      | map(attribute='stdout')
+      | first
+      | default('')).split()
+      | difference(admiral_allowed_public_ports)
+    }}
   register: firewall_removed_port
   changed_when: "'success' in firewall_removed_port.stdout"
-  failed_when: false
-  loop:
-    - 8080/tcp
-    - 8443/tcp
-    - 9099/tcp
-    - 2019/tcp
-    - 5000/tcp
-    - 5001/tcp
-    - 40000-49999/tcp
-    - 5432/tcp
-    - 6379/tcp
-    - 5671/tcp
-    - 15672/tcp
-    - 50051/tcp
-    - 9000/tcp
 
 - name: Allow public services for all modes
   command:

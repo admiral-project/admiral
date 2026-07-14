@@ -11,6 +11,7 @@ import unittest
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 INSTALLER = ROOT / "scripts" / "install.sh"
 PLAYBOOK = ROOT / "ansible" / "site.yml"
+FIREWALL_TASKS = ROOT / "ansible" / "roles" / "admiral_firewall" / "tasks" / "main.yml"
 
 
 class InstallerModeTests(unittest.TestCase):
@@ -37,6 +38,15 @@ class InstallerModeTests(unittest.TestCase):
 
         self.assertIn("admiral_persisted_node_role == admiral_node_role", content)
         self.assertIn("admiral_persisted_node_role == 'dev' and admiral_node_role == 'single'", content)
+
+    def test_firewall_converges_to_the_declared_host_profile(self) -> None:
+        content = FIREWALL_TASKS.read_text(encoding="utf-8")
+
+        self.assertIn("Define allowed public firewall rules for the host profile", content)
+        self.assertIn("Remove public services outside the declared host profile", content)
+        self.assertIn("Remove public ports outside the declared host profile", content)
+        self.assertIn("difference(admiral_allowed_public_services)", content)
+        self.assertIn("difference(admiral_allowed_public_ports)", content)
 
 
 if __name__ == "__main__":
