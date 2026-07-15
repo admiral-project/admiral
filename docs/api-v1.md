@@ -235,6 +235,9 @@ al cliente autenticado sin exponer el listado global completo.
 
 Crea una instancia y encola `provision_app`.
 
+Requiere el encabezado `X-Admiral-Customer-ID`. Debe coincidir con el
+`customer_id` del cuerpo; de otro modo responde `403 Forbidden`.
+
 Request:
 
 ```json
@@ -266,6 +269,9 @@ Respuesta `202 Accepted`:
 ### `POST /api/v1/customer-apps/action`
 
 Encola una accion sobre una instancia existente.
+
+Requiere el encabezado `X-Admiral-Customer-ID`. Debe coincidir con el
+propietario de `instance_id`; de otro modo responde `403 Forbidden`.
 
 Request:
 
