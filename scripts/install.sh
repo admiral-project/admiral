@@ -274,22 +274,27 @@ if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]]; t
     KEYSCAN_OUTPUT=$(ssh-keyscan "$INSTALL_PUBLIC_IP" 2>/dev/null) || \
         die "Failed to retrieve SSH host key for $INSTALL_PUBLIC_IP. Ensure SSH is running on the target host."
     [[ -n "$INSTALL_SSH_FINGERPRINT" ]] || die "--ssh-fingerprint is required for remote spoke bootstrap."
-    if [[ -n "$INSTALL_SSH_FINGERPRINT" ]]; then
-        FOUND_FINGERPRINTS=$(printf '%s\n' "$KEYSCAN_OUTPUT" | ssh-keygen -lf - 2>/dev/null) || \
-            die "Could not parse SSH host keys returned by $INSTALL_PUBLIC_IP."
-        info "Expected fingerprint: $INSTALL_SSH_FINGERPRINT"
-        info "Received fingerprints: $FOUND_FINGERPRINTS"
-        if ! grep -Fq -- "$INSTALL_SSH_FINGERPRINT" <<<"$FOUND_FINGERPRINTS"; then
-            die "SSH host key fingerprint mismatch for $INSTALL_PUBLIC_IP. Aborting."
+    MATCHING_HOST_KEY=""
+    FOUND_FINGERPRINTS=""
+    while IFS= read -r HOST_KEY; do
+        [[ -n "$HOST_KEY" ]] || continue
+        HOST_FINGERPRINT=$(printf '%s\n' "$HOST_KEY" | ssh-keygen -lf - -E sha256 2>/dev/null | awk '{print $2}' || true)
+        [[ -n "$HOST_FINGERPRINT" ]] || die "Could not parse SSH host keys returned by $INSTALL_PUBLIC_IP."
+        FOUND_FINGERPRINTS+="${HOST_FINGERPRINT}"$'\n'
+        if [[ "$HOST_FINGERPRINT" == "$INSTALL_SSH_FINGERPRINT" ]]; then
+            MATCHING_HOST_KEY="$HOST_KEY"
         fi
-        info "SSH host key fingerprint verified."
-    fi
+    done <<< "$KEYSCAN_OUTPUT"
+    info "Expected fingerprint: $INSTALL_SSH_FINGERPRINT"
+    info "Received fingerprints: $FOUND_FINGERPRINTS"
+    [[ -n "$MATCHING_HOST_KEY" ]] || die "SSH host key fingerprint mismatch for $INSTALL_PUBLIC_IP. Aborting."
+    info "SSH host key fingerprint verified."
     install -d -m 0700 "$HOME/.ssh"
     KNOWN_HOSTS_FILE="$HOME/.ssh/known_hosts"
     touch "$KNOWN_HOSTS_FILE"
     chmod 0600 "$KNOWN_HOSTS_FILE"
     if ! ssh-keygen -F "$INSTALL_PUBLIC_IP" -f "$KNOWN_HOSTS_FILE" >/dev/null 2>&1; then
-        printf '%s\n' "$KEYSCAN_OUTPUT" >> "$KNOWN_HOSTS_FILE"
+        printf '%s\n' "$MATCHING_HOST_KEY" >> "$KNOWN_HOSTS_FILE"
     fi
 
     if [[ "$INSTALL_TARGET_SSH_USER_EXPLICIT" != "true" ]]; then
