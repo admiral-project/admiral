@@ -107,6 +107,8 @@ class InstallerModeTests(unittest.TestCase):
         harbor = HARBOR_TASKS.read_text(encoding="utf-8")
 
         self.assertNotIn("SECRETS_ADMIRAL_TOKEN", installer)
+        self.assertNotIn('read_admiral_secret "ADMIRAL_POSTGRES_PASSWORD"', installer)
+        self.assertIn('SECRETS_HARBOR_POSTGRES_USER="admiral_portal"', installer)
         self.assertNotIn("ADMIRAL_ADMIN_TOKEN", fleet)
         self.assertNotIn("ADMIRAL_ADMIN_TOKEN", harbor)
         self.assertIn("no_log: true", fleet)

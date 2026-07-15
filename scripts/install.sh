@@ -454,15 +454,11 @@ fi
 if [[ "$INSTALL_MODE" == "portal-node" ]]; then
     SECRETS_HARBOR_SECRET_KEY=$(read_admiral_secret "HARBOR_SECRET_KEY") || true
     SECRETS_HARBOR_ENCRYPTION_KEY=$(read_admiral_secret "HARBOR_ENCRYPTION_KEY") || true
-    if systemctl is-active --quiet caddy 2>/dev/null && systemctl is-active --quiet admirald 2>/dev/null; then
-        # A portal installed on the admin host uses the existing local role.
-        SECRETS_HARBOR_POSTGRES_PASSWORD=$(read_admiral_secret "ADMIRAL_POSTGRES_PASSWORD") || true
-    else
-        # Dedicated portals generate and preserve their database credential on
-        # the target host; the controller never receives or supplies it.
-        SECRETS_HARBOR_POSTGRES_USER="admiral_portal"
-        SECRETS_HARBOR_POSTGRES_PASSWORD=""
-    fi
+    # --portal-node always targets a dedicated portal. Its local play creates
+    # and preserves a separate PostgreSQL role and password; never transmit
+    # the control-plane database credential from the controller.
+    SECRETS_HARBOR_POSTGRES_USER="admiral_portal"
+    SECRETS_HARBOR_POSTGRES_PASSWORD=""
     SECRETS_HARBOR_BOOTSTRAP_USER=$(read_admiral_secret "HARBOR_BOOTSTRAP_USER") || true
     SECRETS_HARBOR_BOOTSTRAP_PASSWORD=$(read_admiral_secret "HARBOR_BOOTSTRAP_PASSWORD") || true
     SECRETS_HARBOR_LEGACY_ADMIN_PASSWORD=$(read_admiral_secret "HARBOR_LEGACY_ADMIN_PASSWORD") || true
