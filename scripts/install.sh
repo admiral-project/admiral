@@ -8,6 +8,11 @@ set -euo pipefail
 die() { echo "[FATAL] $*" >&2; exit 1; }
 info() { echo "[INFO] $*"; }
 warn() { echo "[WARN] $*"; }
+require_option_value() {
+    local opt="$1"
+    local val="${2-}"
+    [[ -n "$val" && "$val" != --* ]] || die "$opt requires a value."
+}
 is_loopback_host() {
     case "$1" in
         ""|127.0.0.1|localhost|::1)
@@ -93,6 +98,20 @@ INSTALL_TARGET_SSH_USER="root"
 INSTALL_TARGET_SSH_USER_EXPLICIT="false"
 INSTALL_TARGET_SSH_KEY=""
 INSTALL_SSH_FINGERPRINT=""
+EXTRA_VARS_FILE=""
+TMP_INVENTORY=""
+TMP_KNOWN_HOSTS=""
+SSH_OPTIONS=()
+
+cleanup_installer_temps() {
+    [[ -z "$TMP_INVENTORY" ]] || rm -f -- "$TMP_INVENTORY"
+    [[ -z "$TMP_KNOWN_HOSTS" ]] || rm -f -- "$TMP_KNOWN_HOSTS"
+    [[ -z "$EXTRA_VARS_FILE" ]] || rm -f -- "$EXTRA_VARS_FILE"
+}
+trap cleanup_installer_temps EXIT
+trap 'exit 129' HUP
+trap 'exit 130' INT
+trap 'exit 143' TERM
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
@@ -128,31 +147,38 @@ while [[ $# -gt 0 ]]; do
             ;;
         --node-id)
             shift
+            require_option_value "--node-id" "${1-}"
             INSTALL_NODE_ID="$1"
             ;;
         --public-ip)
             shift
+            require_option_value "--public-ip" "${1-}"
             INSTALL_PUBLIC_IP="$1"
             ;;
         --wireguard-ip)
             shift
+            require_option_value "--wireguard-ip" "${1-}"
             INSTALL_WIREGUARD_IP="$1"
             ;;
         --admin-endpoint)
             shift
+            require_option_value "--admin-endpoint" "${1-}"
             INSTALL_ADMIN_ENDPOINT="$1"
             ;;
         --ssh-user|--admin-ssh-user)
             shift
+            require_option_value "--ssh-user" "${1-}"
             INSTALL_TARGET_SSH_USER="$1"
             INSTALL_TARGET_SSH_USER_EXPLICIT="true"
             ;;
         --ssh-key|--admin-ssh-key)
             shift
+            require_option_value "--ssh-key" "${1-}"
             INSTALL_TARGET_SSH_KEY="$1"
             ;;
         --ssh-fingerprint)
             shift
+            require_option_value "--ssh-fingerprint" "${1-}"
             INSTALL_SSH_FINGERPRINT="$1"
             ;;
         -h|--help)
@@ -170,7 +196,7 @@ done
 if [[ "$INSTALL_MODE" == "single-node" && -z "$INSTALL_PUBLIC_IP" ]]; then
     INSTALL_PUBLIC_IP="127.0.0.1"
 fi
-if [[ "$INSTALL_MODE" == "admin-node" || "$INSTALL_MODE" == "admin-portal-node" ]] && -z "$INSTALL_PUBLIC_IP"; then
+if [[ "$INSTALL_MODE" == "admin-node" || "$INSTALL_MODE" == "admin-portal-node" ]] && [[ -z "$INSTALL_PUBLIC_IP" ]]; then
     INSTALL_PUBLIC_IP="$(detect_non_loopback_ip || true)"
     if [[ -z "$INSTALL_PUBLIC_IP" ]]; then
         die "Could not detect a non-loopback admin public IP. Use --public-ip."
@@ -230,8 +256,8 @@ PY
         die "WireGuard IP must be inside 10.99.0.0/24"
     fi
 fi
-if [[ -n "$INSTALL_SSH_FINGERPRINT" && ! "$INSTALL_SSH_FINGERPRINT" =~ ^SHA256:[A-Za-z0-9+/]+={0,2}$ ]]; then
-    die "Invalid SSH fingerprint; expected SHA256:<base64>"
+if [[ -n "$INSTALL_SSH_FINGERPRINT" && ! "$INSTALL_SSH_FINGERPRINT" =~ ^SHA256:[A-Za-z0-9+/]{43}$ ]]; then
+    die "Invalid SSH fingerprint; expected the complete OpenSSH SHA256 fingerprint"
 fi
 if [[ -n "$INSTALL_NODE_ID" && ! "$INSTALL_NODE_ID" =~ ^[A-Za-z0-9][A-Za-z0-9_.-]{0,62}$ ]]; then
     die "Invalid node ID; use 1-63 letters, numbers, dot, underscore, or hyphen"
@@ -268,13 +294,13 @@ fi
 
 # --- 0c. populate known_hosts before first SSH connection ---
 # ssh-keyscan is read-only and transmits no credentials.
-# This prevents MITM attacks during spoke bootstrap.
+# The scanned key is trusted only after it matches the operator-provided fingerprint.
 if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]]; then
+    [[ -n "$INSTALL_SSH_FINGERPRINT" ]] || die "--ssh-fingerprint is required for remote spoke bootstrap."
     info "Retrieving SSH host key for $INSTALL_PUBLIC_IP..."
     KEYSCAN_OUTPUT=$(ssh-keyscan "$INSTALL_PUBLIC_IP" 2>/dev/null) || \
         die "Failed to retrieve SSH host key for $INSTALL_PUBLIC_IP. Ensure SSH is running on the target host."
-    [[ -n "$INSTALL_SSH_FINGERPRINT" ]] || die "--ssh-fingerprint is required for remote spoke bootstrap."
-    MATCHING_HOST_KEY=""
+    MATCHING_HOST_KEYS=""
     FOUND_FINGERPRINTS=""
     while IFS= read -r HOST_KEY; do
         [[ -n "$HOST_KEY" ]] || continue
@@ -282,25 +308,27 @@ if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]]; t
         [[ -n "$HOST_FINGERPRINT" ]] || die "Could not parse SSH host keys returned by $INSTALL_PUBLIC_IP."
         FOUND_FINGERPRINTS+="${HOST_FINGERPRINT}"$'\n'
         if [[ "$HOST_FINGERPRINT" == "$INSTALL_SSH_FINGERPRINT" ]]; then
-            MATCHING_HOST_KEY="$HOST_KEY"
+            MATCHING_HOST_KEYS+="${HOST_KEY}"$'\n'
         fi
     done <<< "$KEYSCAN_OUTPUT"
     info "Expected fingerprint: $INSTALL_SSH_FINGERPRINT"
     info "Received fingerprints: $FOUND_FINGERPRINTS"
-    [[ -n "$MATCHING_HOST_KEY" ]] || die "SSH host key fingerprint mismatch for $INSTALL_PUBLIC_IP. Aborting."
+    [[ -n "$MATCHING_HOST_KEYS" ]] || die "SSH host key fingerprint mismatch for $INSTALL_PUBLIC_IP. Aborting."
     info "SSH host key fingerprint verified."
-    install -d -m 0700 "$HOME/.ssh"
-    KNOWN_HOSTS_FILE="$HOME/.ssh/known_hosts"
-    touch "$KNOWN_HOSTS_FILE"
-    chmod 0600 "$KNOWN_HOSTS_FILE"
-    if ! ssh-keygen -F "$INSTALL_PUBLIC_IP" -f "$KNOWN_HOSTS_FILE" >/dev/null 2>&1; then
-        printf '%s\n' "$MATCHING_HOST_KEY" >> "$KNOWN_HOSTS_FILE"
-    fi
+    umask 077
+    TMP_KNOWN_HOSTS="$(mktemp /tmp/admiral-known-hosts.XXXXXX)"
+    printf '%s' "$MATCHING_HOST_KEYS" > "$TMP_KNOWN_HOSTS"
+    SSH_OPTIONS=(
+        -i "$INSTALL_TARGET_SSH_KEY"
+        -o BatchMode=yes
+        -o StrictHostKeyChecking=yes
+        -o "UserKnownHostsFile=$TMP_KNOWN_HOSTS"
+    )
 
     if [[ "$INSTALL_TARGET_SSH_USER_EXPLICIT" != "true" ]]; then
         PERSISTED_SSH_USER="$(read_admiral_secret ADMIRAL_SSH_USER || true)"
         if [[ -n "$PERSISTED_SSH_USER" ]] &&
-            ssh -i "$INSTALL_TARGET_SSH_KEY" -o BatchMode=yes -o StrictHostKeyChecking=yes \
+            ssh "${SSH_OPTIONS[@]}" \
                 "${PERSISTED_SSH_USER}@${INSTALL_PUBLIC_IP}" true >/dev/null 2>&1; then
             INSTALL_TARGET_SSH_USER="$PERSISTED_SSH_USER"
             info "Using persisted non-root SSH user: $INSTALL_TARGET_SSH_USER"
@@ -392,9 +420,24 @@ if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]]; t
     fi
 fi
 
+if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]]; then
+    if [[ -n "$INSTALL_NODE_ID" && ! "$INSTALL_NODE_ID" =~ ^[A-Za-z0-9][A-Za-z0-9_.-]{0,62}$ ]]; then
+        die "Invalid node ID resolved for spoke; use 1-63 letters, numbers, dot, underscore, or hyphen"
+    fi
+    if [[ -n "$INSTALL_WIREGUARD_IP" ]]; then
+        if ! python3 - "$INSTALL_WIREGUARD_IP" <<'PY'
+import ipaddress, sys
+ip = ipaddress.ip_address(sys.argv[1])
+raise SystemExit(0 if ip.version == 4 and ip in ipaddress.ip_network("10.99.0.0/24") else 1)
+PY
+        then
+            die "WireGuard IP must be inside 10.99.0.0/24"
+        fi
+    fi
+fi
+
 # --- 7c. read secrets from admin (never copied to spokes) ---
 # Extract only the secrets each spoke type needs and pass them as extra-vars.
-SECRETS_ADMIRAL_TOKEN=""
 SECRETS_TASK_ENCRYPTION_KEY=""
 SECRETS_HARBOR_SECRET_KEY=""
 SECRETS_HARBOR_ENCRYPTION_KEY=""
@@ -406,11 +449,9 @@ SECRETS_HARBOR_API_TOKEN=""
 SECRETS_HARBOR_POSTGRES_USER="admiral"
 SECRETS_SSH_USER=""
 if [[ "$INSTALL_MODE" == "worker-node" ]]; then
-    SECRETS_ADMIRAL_TOKEN=$(read_admiral_secret "ADMIRAL_ADMIN_TOKEN") || true
     SECRETS_TASK_ENCRYPTION_KEY=$(read_admiral_secret "ADMIRAL_TASK_ENCRYPTION_KEY") || true
 fi
 if [[ "$INSTALL_MODE" == "portal-node" ]]; then
-    SECRETS_ADMIRAL_TOKEN=$(read_admiral_secret "ADMIRAL_ADMIN_TOKEN") || true
     SECRETS_HARBOR_SECRET_KEY=$(read_admiral_secret "HARBOR_SECRET_KEY") || true
     SECRETS_HARBOR_ENCRYPTION_KEY=$(read_admiral_secret "HARBOR_ENCRYPTION_KEY") || true
     if systemctl is-active --quiet caddy 2>/dev/null && systemctl is-active --quiet admirald 2>/dev/null; then
@@ -439,7 +480,6 @@ EXTRA_VARS_JSON=$(
     INSTALL_PUBLIC_IP="$INSTALL_PUBLIC_IP" \
     INSTALL_WIREGUARD_IP="$INSTALL_WIREGUARD_IP" \
     INSTALL_ADMIN_ENDPOINT="$INSTALL_ADMIN_ENDPOINT" \
-    SECRETS_ADMIRAL_TOKEN="$SECRETS_ADMIRAL_TOKEN" \
     SECRETS_TASK_ENCRYPTION_KEY="$SECRETS_TASK_ENCRYPTION_KEY" \
     SECRETS_HARBOR_SECRET_KEY="$SECRETS_HARBOR_SECRET_KEY" \
     SECRETS_HARBOR_ENCRYPTION_KEY="$SECRETS_HARBOR_ENCRYPTION_KEY" \
@@ -467,10 +507,6 @@ if os.environ.get("INSTALL_PUBLIC_IP"):
 
 if os.environ.get("INSTALL_WIREGUARD_IP"):
     d["admiral_wireguard_ip"] = os.environ["INSTALL_WIREGUARD_IP"]
-
-token = os.environ.get("SECRETS_ADMIRAL_TOKEN", "")
-if token:
-    d["admiral_admin_token_value"] = token
 
 task_key = os.environ.get("SECRETS_TASK_ENCRYPTION_KEY", "")
 if task_key:
@@ -535,12 +571,6 @@ umask 077
 EXTRA_VARS_FILE="$(mktemp /tmp/admiral-extra-vars.XXXXXX.json)"
 printf '%s\n' "$EXTRA_VARS_JSON" > "$EXTRA_VARS_FILE"
 unset EXTRA_VARS_JSON
-TMP_INVENTORY=""
-cleanup_installer_temps() {
-    [[ -z "$TMP_INVENTORY" ]] || rm -f -- "$TMP_INVENTORY"
-    [[ -z "${EXTRA_VARS_FILE:-}" ]] || rm -f -- "$EXTRA_VARS_FILE"
-}
-trap cleanup_installer_temps EXIT HUP INT TERM
 
 # --- 9. run official playbook ---
 # The playbook handles the rest: packages, configuration, services
@@ -551,17 +581,33 @@ if [[ -d "$ANSIBLE_DIR" ]]; then
     ANSIBLE_REMOTE_TEMP=/tmp/ansible-remote
     ANSIBLE_GALAXY_CACHE_DIR=/tmp/ansible-galaxy-cache
     if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]]; then
-        TMP_INVENTORY="$(mktemp /tmp/admiral-inventory.XXXXXX.yml)"
-        cat > "$TMP_INVENTORY" <<EOF
-all:
-  hosts:
-    target:
-      ansible_host: ${INSTALL_PUBLIC_IP}
-      ansible_user: ${INSTALL_TARGET_SSH_USER}
-      ansible_ssh_private_key_file: ${INSTALL_TARGET_SSH_KEY}
-      ansible_python_interpreter: /usr/bin/python3
-      ansible_ssh_common_args: -o StrictHostKeyChecking=yes
-EOF
+        TMP_INVENTORY="$(mktemp /tmp/admiral-inventory.XXXXXX.json)"
+        INSTALL_PUBLIC_IP="$INSTALL_PUBLIC_IP" \
+        INSTALL_TARGET_SSH_USER="$INSTALL_TARGET_SSH_USER" \
+        INSTALL_TARGET_SSH_KEY="$INSTALL_TARGET_SSH_KEY" \
+        TMP_KNOWN_HOSTS="$TMP_KNOWN_HOSTS" \
+        python3 - "$TMP_INVENTORY" <<'PY'
+import json, os, sys
+inventory = {
+    "all": {
+        "hosts": {
+            "target": {
+                "ansible_host": os.environ["INSTALL_PUBLIC_IP"],
+                "ansible_user": os.environ["INSTALL_TARGET_SSH_USER"],
+                "ansible_ssh_private_key_file": os.environ["INSTALL_TARGET_SSH_KEY"],
+                "ansible_python_interpreter": "/usr/bin/python3",
+                "ansible_ssh_common_args": (
+                    "-o StrictHostKeyChecking=yes "
+                    f"-o UserKnownHostsFile={os.environ['TMP_KNOWN_HOSTS']}"
+                ),
+            }
+        }
+    }
+}
+with open(sys.argv[1], "w", encoding="utf-8") as stream:
+    json.dump(inventory, stream)
+    stream.write("\n")
+PY
         ANSIBLE_LOCAL_TEMP="$ANSIBLE_LOCAL_TEMP" \
         ANSIBLE_REMOTE_TEMP="$ANSIBLE_REMOTE_TEMP" \
         ANSIBLE_GALAXY_CACHE_DIR="$ANSIBLE_GALAXY_CACHE_DIR" \
@@ -587,11 +633,15 @@ fi
 if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]]; then
     REMOTE_SSH_USER="$(read_admiral_secret ADMIRAL_SSH_USER || true)"
     [[ "$REMOTE_SSH_USER" =~ ^[a-z_][a-z0-9_-]{0,31}$ ]] || die "Remote installation did not produce a valid non-root SSH user. Root login remains available for recovery."
-    if ! ssh -i "$INSTALL_TARGET_SSH_KEY" -o BatchMode=yes -o StrictHostKeyChecking=yes \
+    if ! ssh "${SSH_OPTIONS[@]}" \
         "${REMOTE_SSH_USER}@${INSTALL_PUBLIC_IP}" true >/dev/null 2>&1; then
         die "Non-root SSH login verification failed for ${REMOTE_SSH_USER}; root login was not disabled."
     fi
-    ssh -i "$INSTALL_TARGET_SSH_KEY" -o BatchMode=yes -o StrictHostKeyChecking=yes \
+    if ! ssh "${SSH_OPTIONS[@]}" \
+        "${REMOTE_SSH_USER}@${INSTALL_PUBLIC_IP}" "sudo -n true" >/dev/null 2>&1; then
+        die "Non-root sudo verification failed for ${REMOTE_SSH_USER}; root login was not disabled."
+    fi
+    ssh "${SSH_OPTIONS[@]}" \
         "${REMOTE_SSH_USER}@${INSTALL_PUBLIC_IP}" \
         "sudo sh -c 'tmp=/etc/ssh/sshd_config.d/.60-admiral-root-lockdown.conf.tmp; install -m 0644 /dev/stdin \"\$tmp\" && mv \"\$tmp\" /etc/ssh/sshd_config.d/60-admiral-root-lockdown.conf && { sshd -t && systemctl reload sshd || { rm -f /etc/ssh/sshd_config.d/60-admiral-root-lockdown.conf; exit 1; }; }'" \
         <<<"PermitRootLogin no" \
@@ -617,8 +667,8 @@ fi
 # --- 10b. exchange WireGuard peers for spoke installs ---
 if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]]; then
     info "Exchanging WireGuard peers between hub and spoke..."
-    SPOKE_KEY=$(ssh -i "$INSTALL_TARGET_SSH_KEY" -o BatchMode=yes -o StrictHostKeyChecking=yes "${INSTALL_TARGET_SSH_USER}@${INSTALL_PUBLIC_IP}" "sudo sh -c 'wg pubkey < /etc/wireguard/admiral.key'" 2>/dev/null || true)
-    SPOKE_NODE_ID="${INSTALL_NODE_ID:-$(ssh -i "$INSTALL_TARGET_SSH_KEY" -o BatchMode=yes -o StrictHostKeyChecking=yes "${INSTALL_TARGET_SSH_USER}@${INSTALL_PUBLIC_IP}" "sudo sh -c \"grep -hE '^(ADMIRAL_FLEET_NODE_ID|HARBOR_NODE_ID)=' /etc/admiral/*.env 2>/dev/null | tail -n1 | cut -d= -f2-\"" 2>/dev/null || true)}"
+    SPOKE_KEY=$(ssh "${SSH_OPTIONS[@]}" "${INSTALL_TARGET_SSH_USER}@${INSTALL_PUBLIC_IP}" "sudo sh -c 'wg pubkey < /etc/wireguard/admiral.key'" 2>/dev/null || true)
+    SPOKE_NODE_ID="${INSTALL_NODE_ID:-$(ssh "${SSH_OPTIONS[@]}" "${INSTALL_TARGET_SSH_USER}@${INSTALL_PUBLIC_IP}" "sudo sh -c \"grep -hE '^(ADMIRAL_FLEET_NODE_ID|HARBOR_NODE_ID)=' /etc/admiral/*.env 2>/dev/null | tail -n1 | cut -d= -f2-\"" 2>/dev/null || true)}"
     if [[ -z "$SPOKE_KEY" ]]; then
         die "Could not read the spoke WireGuard public key after installation."
     fi
@@ -658,7 +708,7 @@ fi
 # --- 11. verify core runtime ---
 if [[ "$INSTALL_MODE" == "single-node" || "$INSTALL_MODE" == "worker-node" ]]; then
     if [[ "$INSTALL_MODE" == "worker-node" ]]; then
-        PODMAN_VER=$(ssh -i "$INSTALL_TARGET_SSH_KEY" -o BatchMode=yes -o StrictHostKeyChecking=yes "${INSTALL_TARGET_SSH_USER}@${INSTALL_PUBLIC_IP}" "sudo podman version --format '{{.Version}}'" 2>/dev/null || echo "0")
+        PODMAN_VER=$(ssh "${SSH_OPTIONS[@]}" "${INSTALL_TARGET_SSH_USER}@${INSTALL_PUBLIC_IP}" "sudo podman version --format '{{.Version}}'" 2>/dev/null || echo "0")
     else
         command -v podman >/dev/null 2>&1 || die "Podman was not installed by RPM dependencies."
         PODMAN_VER=$(podman version --format '{{.Version}}' 2>/dev/null || echo "0")
@@ -689,7 +739,7 @@ esac
 
 for service in "${REQUIRED_SERVICES[@]}"; do
     if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]]; then
-        ssh -i "$INSTALL_TARGET_SSH_KEY" -o BatchMode=yes -o StrictHostKeyChecking=yes "${INSTALL_TARGET_SSH_USER}@${INSTALL_PUBLIC_IP}" "systemctl is-active --quiet '$service'" || die "Service $service is not active after remote setup."
+        ssh "${SSH_OPTIONS[@]}" "${INSTALL_TARGET_SSH_USER}@${INSTALL_PUBLIC_IP}" "systemctl is-active --quiet '$service'" || die "Service $service is not active after remote setup."
     else
         systemctl is-active --quiet "$service" || die "Service $service is not active after setup."
     fi
@@ -704,7 +754,7 @@ if [[ "$INSTALL_DEV_MODE" != "true" ]]; then
         if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]]; then
             local quoted_cmd
             printf -v quoted_cmd '%q' "$cmd"
-            ssh -i "$INSTALL_TARGET_SSH_KEY" -o BatchMode=yes -o StrictHostKeyChecking=yes \
+            ssh "${SSH_OPTIONS[@]}" \
                 "${INSTALL_TARGET_SSH_USER}@${INSTALL_PUBLIC_IP}" "sudo bash -lc $quoted_cmd" 2>/dev/null || true
         else
             bash -lc "$cmd" 2>/dev/null || true

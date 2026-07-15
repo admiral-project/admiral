@@ -104,7 +104,7 @@
       HARBOR_BOOTSTRAP_ADMIN_DISPLAY_NAME=Harbor Bootstrap Admin
       HARBOR_MAX_BACKUP_UPLOAD_BYTES=536870912
       HARBOR_ENCRYPTION_KEY={{ admiral_harbor_encryption_key_value }}
-      HARBOR_DATABASE_URL=postgresql://{{ admiral_postgres_user | default('admiral') }}:{{ admiral_postgres_password }}@127.0.0.1:5432/admiral_harbor?sslmode=disable
+      HARBOR_DATABASE_URL=postgresql://{{ admiral_postgres_user | default('admiral') }}:{{ admiral_postgres_password }}@127.0.0.1:5432/admiral_harbor?sslmode=prefer
       HARBOR_NODE_ID={{ harbor_node_id_effective }}
       HARBOR_NODE_TOKEN={{ harbor_node_token_value }}
       ADMIRAL_API_URL={{ admiral_api_url_for_harbor | default(admiral_control_plane_url) }}
@@ -203,7 +203,6 @@
     --os "{{ ansible_distribution ~ ' ' ~ ansible_distribution_version }}"
   delegate_to: localhost
   environment:
-    ADMIRAL_ADMIN_TOKEN: "{{ admiral_admin_token_value }}"
     ADMIRAL_SERVER_URL: "{{ admiral_control_plane_url }}"
     ADMIRAL_TLS_CA_FILE: /etc/admiral/tls/ca.pem
   no_log: true
@@ -248,10 +247,13 @@
   delegate_to: localhost
   changed_when: false
   environment:
-    ADMIRAL_ADMIN_TOKEN: "{{ admiral_admin_token_value }}"
     ADMIRAL_SERVER_URL: "{{ admiral_control_plane_url }}"
     ADMIRAL_TLS_CA_FILE: /etc/admiral/tls/ca.pem
+  no_log: true
   when: admiral_install_mode in ['portal-node', 'admin-portal-node']
+
+- name: Apply admiral-harbor configuration changes before bootstrap commands
+  meta: flush_handlers
 
 - name: Remind operator to configure SMTP
   debug:

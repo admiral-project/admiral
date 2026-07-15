@@ -113,6 +113,9 @@
     state: started
     daemon_reload: true
 
+- name: Apply admiral-fleet configuration changes before registration
+  meta: flush_handlers
+
 # Fleet uses the bare hostname in --single-node.
 # Remote worker-node installs use either an explicit --node-id or the next
 # worker assignment from know_host.yaml.
@@ -129,6 +132,6 @@
     --token "{{ fleet_node_token_value }}"
   delegate_to: localhost
   environment:
-    ADMIRAL_ADMIN_TOKEN: "{{ admiral_admin_token_value }}"
     ADMIRAL_SERVER_URL: "{{ admiral_control_plane_url }}"
     ADMIRAL_TLS_CA_FILE: /etc/admiral/tls/ca.pem
+  no_log: true

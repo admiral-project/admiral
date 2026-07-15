@@ -36,12 +36,14 @@
       Environment=ENV=development
     mode: "0644"
   when: admiral_dev_mode | default(false) | bool
+  notify: restart admiral-flagship
 
 - name: Remove legacy admiral-flagship systemd override
   file:
     path: /etc/systemd/system/admiral-flagship.service.d
     state: absent
   when: not (admiral_dev_mode | default(false) | bool)
+  notify: restart admiral-flagship
 
 - name: Enable and start admiral-flagship
   systemd:
@@ -49,3 +51,7 @@
     enabled: true
     state: started
     daemon_reload: true
+
+
+- name: Apply admiral-flagship configuration changes before validation
+  meta: flush_handlers

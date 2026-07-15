@@ -41,4 +41,18 @@
   command:
     cmd: auditctl -R /etc/audit/rules.d/admiral.rules
   changed_when: false
-  when: audit_augenrules is failed
+  when: audit_augenrules.rc != 0
+
+
+- name: Verify Admiral audit rules are loaded
+  command:
+    cmd: auditctl -l
+  register: admiral_audit_rules_effective
+  changed_when: false
+  failed_when: >-
+    admiral_audit_rules_effective.rc != 0 or
+    'admiral_config' not in admiral_audit_rules_effective.stdout or
+    'admiral_secrets' not in admiral_audit_rules_effective.stdout or
+    'admiral_tls' not in admiral_audit_rules_effective.stdout or
+    'admiral_data' not in admiral_audit_rules_effective.stdout or
+    'admiral_wireguard' not in admiral_audit_rules_effective.stdout

@@ -21,6 +21,12 @@ FLASK_SQLALCHEMY_VERSION := 3.1.1
 FLASK_ALEMBIC_VERSION := 3.1.1
 FLASK_LOGIN_VERSION := 0.6.3
 MISTUNE_VERSION := 3.2.1
+ALEMBIC_SHA256 := 0612dbd5e2165482e895cb5e0f84575826c57be0286e57f167bdb5719d03e41c
+TYPING_EXTENSIONS_SHA256 := 40e4fd945fb070e470976538741ee85add33de5e8ab2f1583e9e264d8386916b
+FLASK_SQLALCHEMY_SHA256 := 1989afdf046a935bd1ab98dbd9a2d68e5ba1c69d0cd3e3646df0876bf8d997d3
+FLASK_ALEMBIC_SHA256 := 3df52c24519d280ea6fb9a9ae85317f23429f5971de673a680c9e11d35697484
+FLASK_LOGIN_SHA256 := 3b2489f46d854b5f1d7a55007271d2eae9f744e0935ca7b88ab584c770a7e4d2
+MISTUNE_SHA256 := 14d23e4803c4181e6bca4b56fe38f5f81af4a5df397a9bed4b99a9e173d13696
 
 .PHONY: all clean rpm rpm-admiral rpmlint validate-release-refs all-sources \
 	srpm srpms \
@@ -78,6 +84,12 @@ source-superproject: | $(SOURCEDIR)
 
 # -- Source tarballs from each submodule (for non-Go components) ---------
 
+define download_checked
+	curl -fsSL -o $(1) $(2)
+	echo '$(3)  $(1)' | sha256sum -c -
+endef
+
+
 source-admiral-flagship: | $(SOURCEDIR)
 	cd admiral-flagship && git archive --format=tar.gz \
 		--prefix=admiral-flagship-v$(VERSION)/ \
@@ -89,28 +101,22 @@ source-admiral-harbor: | $(SOURCEDIR)
 		-o $(SOURCEDIR)/admiral-harbor-$(VERSION).tar.gz $(HARBOR_COMMIT)
 
 source-python-flask-sqlalchemy: | $(SOURCEDIR)
-	curl -sL -o $(SOURCEDIR)/flask-sqlalchemy-$(FLASK_SQLALCHEMY_VERSION).tar.gz \
-		https://github.com/pallets-eco/flask-sqlalchemy/archive/refs/tags/$(FLASK_SQLALCHEMY_VERSION)/flask-sqlalchemy-$(FLASK_SQLALCHEMY_VERSION).tar.gz
+	$(call download_checked,$(SOURCEDIR)/flask-sqlalchemy-$(FLASK_SQLALCHEMY_VERSION).tar.gz,https://github.com/pallets-eco/flask-sqlalchemy/archive/refs/tags/$(FLASK_SQLALCHEMY_VERSION)/flask-sqlalchemy-$(FLASK_SQLALCHEMY_VERSION).tar.gz,$(FLASK_SQLALCHEMY_SHA256))
 
 source-python-alembic: | $(SOURCEDIR)
-	curl -sL -o $(SOURCEDIR)/alembic-$(ALEMBIC_VERSION).tar.gz \
-		https://github.com/sqlalchemy/alembic/archive/refs/tags/rel_$(subst .,_,$(ALEMBIC_VERSION))/alembic-$(ALEMBIC_VERSION).tar.gz
+	$(call download_checked,$(SOURCEDIR)/alembic-$(ALEMBIC_VERSION).tar.gz,https://github.com/sqlalchemy/alembic/archive/refs/tags/rel_$(subst .,_,$(ALEMBIC_VERSION))/alembic-$(ALEMBIC_VERSION).tar.gz,$(ALEMBIC_SHA256))
 
 source-python-typing-extensions: | $(SOURCEDIR)
-	curl -sL -o $(SOURCEDIR)/typing_extensions-$(TYPING_EXTENSIONS_VERSION).tar.gz \
-		https://github.com/python/typing_extensions/archive/refs/tags/$(TYPING_EXTENSIONS_VERSION)/typing_extensions-$(TYPING_EXTENSIONS_VERSION).tar.gz
+	$(call download_checked,$(SOURCEDIR)/typing_extensions-$(TYPING_EXTENSIONS_VERSION).tar.gz,https://github.com/python/typing_extensions/archive/refs/tags/$(TYPING_EXTENSIONS_VERSION)/typing_extensions-$(TYPING_EXTENSIONS_VERSION).tar.gz,$(TYPING_EXTENSIONS_SHA256))
 
 source-python-flask-alembic: | $(SOURCEDIR)
-	curl -sL -o $(SOURCEDIR)/flask-alembic-$(FLASK_ALEMBIC_VERSION).tar.gz \
-		https://github.com/pallets-eco/flask-alembic/archive/refs/tags/$(FLASK_ALEMBIC_VERSION)/flask-alembic-$(FLASK_ALEMBIC_VERSION).tar.gz
+	$(call download_checked,$(SOURCEDIR)/flask-alembic-$(FLASK_ALEMBIC_VERSION).tar.gz,https://github.com/pallets-eco/flask-alembic/archive/refs/tags/$(FLASK_ALEMBIC_VERSION)/flask-alembic-$(FLASK_ALEMBIC_VERSION).tar.gz,$(FLASK_ALEMBIC_SHA256))
 
 source-python-flask-login: | $(SOURCEDIR)
-	curl -sL -o $(SOURCEDIR)/flask-login-$(FLASK_LOGIN_VERSION).tar.gz \
-		https://github.com/maxcountryman/flask-login/archive/refs/tags/$(FLASK_LOGIN_VERSION)/flask-login-$(FLASK_LOGIN_VERSION).tar.gz
+	$(call download_checked,$(SOURCEDIR)/flask-login-$(FLASK_LOGIN_VERSION).tar.gz,https://github.com/maxcountryman/flask-login/archive/refs/tags/$(FLASK_LOGIN_VERSION)/flask-login-$(FLASK_LOGIN_VERSION).tar.gz,$(FLASK_LOGIN_SHA256))
 
 source-python-mistune: | $(SOURCEDIR)
-	curl -sL -o $(SOURCEDIR)/mistune-$(MISTUNE_VERSION).tar.gz \
-		https://github.com/lepture/mistune/archive/refs/tags/v$(MISTUNE_VERSION)/mistune-$(MISTUNE_VERSION).tar.gz
+	$(call download_checked,$(SOURCEDIR)/mistune-$(MISTUNE_VERSION).tar.gz,https://github.com/lepture/mistune/archive/refs/tags/v$(MISTUNE_VERSION)/mistune-$(MISTUNE_VERSION).tar.gz,$(MISTUNE_SHA256))
 
 all-sources: source-superproject \
 	source-admiral-flagship source-admiral-harbor \

@@ -47,6 +47,34 @@ In a production multinode deployment, a missing or unreachable WireGuard
 address must fail closed. Code must not silently fall back to a node's public or
 general interface address.
 
+
+## Installer setup findings addressed in this change
+
+The findings directly related to initial setup through `scripts/install.sh`,
+the Ansible playbooks, the Makefile, and packaging support are ADM-SEC-003,
+ADM-SEC-004, ADM-SEC-005, ADM-SEC-006, ADM-SEC-011, ADM-SEC-013,
+ADM-SEC-051, ADM-SEC-052, ADM-SEC-072, and ADM-SEC-073. The supported targets remain
+`--admin-node`, `--portal-node`, `--worker-node`, and `--admin-portal-node`,
+while preserving the co-located
+`--single-node` and explicitly insecure `--dev-node` setups.
+
+Applied hardening approach:
+
+- keep bootstrap and persistent SSH identities separate by allowing root only
+  for first contact, then verifying the persisted `opsa_*` account and
+  passwordless sudo before installing the root-login lockdown;
+- require an operator-provided SSH host key fingerprint before first spoke
+  connection and trust only the scanned key that matches that fingerprint;
+- pass Ansible variables through a root-only temporary JSON file instead of the
+  process command line, exclude the controller admin token from spoke variables,
+  and use cleanup traps for normal and interrupted runs;
+- validate option values before assignment, revalidate spoke IDs and WireGuard
+  addresses resolved from `know_host.yaml`, keep installer state as JSON, and
+  generate remote inventory with a JSON serializer instead of a shell heredoc;
+- make audit rule fallback and verification blocking, flush service handlers
+  before dependent bootstrap commands, use at least PostgreSQL `sslmode=prefer`
+  for Harbor, and verify downloaded third-party source tarballs by SHA256.
+
 ## Severity definitions
 
 - **Critical**: can expose cluster-wide secrets, destroy the source of truth,

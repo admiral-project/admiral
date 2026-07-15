@@ -47,6 +47,155 @@ self-service and its own PostgreSQL database. Each role requires its own
 WireGuard IP and dedicated system resources. If your deployment needs both
 worker and portal capabilities, deploy separate physical or virtual nodes.
 
+## Provisioning New Cluster Hosts from the Admin Node
+
+All worker and dedicated portal provisioning is initiated on the Admiral admin
+node. Do not copy `/etc/admiral/secrets`, the Admiral CA private key, or the
+installer to a spoke and run it there. The admin node is the Ansible controller,
+holds the cluster bootstrap inventory, and performs the remote installation over
+SSH.
+
+The examples below use documentation addresses:
+
+| Host | Public address | WireGuard address | Node ID |
+|------|----------------|-------------------|---------|
+| Admin | `203.0.113.10` | `10.99.0.1` | admin host name |
+| Portal | `198.51.100.30` | `10.99.0.100` | `portal-01` |
+| Worker | `198.51.100.20` | `10.99.0.2` | `worker-01` |
+
+Replace every address, node ID, SSH key path, and fingerprint with values from
+the real deployment.
+
+### 1. Install the Admin Profile
+
+For a dedicated admin with a separate portal, run on the future admin host:
+
+```bash
+sudo admiral_install --admin-node --public-ip 203.0.113.10
+```
+
+For the supported shared admin and portal topology, use this mode from the
+first installation:
+
+```bash
+sudo admiral_install --admin-portal-node --public-ip 203.0.113.10
+```
+
+Do not install `--admin-node` and later run `--portal-node` on that same host.
+`--portal-node` always describes a dedicated remote portal spoke.
+
+Before adding a spoke, verify on the admin node:
+
+```bash
+sudo test -f /etc/admiral/secrets
+sudo test -f /etc/admiral/tls/ca.pem
+sudo test -f /var/lib/admiral/know_host.yaml
+sudo admiralctl nodes list
+```
+
+The private SSH key used for first contact must be present on the admin node and
+must authenticate to the new host. Initial bootstrap may use `root` with a key.
+Password-based bootstrap is not supported.
+
+### 2. Obtain the Spoke Fingerprint Independently
+
+Before running the installer, open the VPS provider's serial console or another
+trusted out-of-band console on the new host. Read the fingerprint directly from
+that host, for example:
+
+```bash
+sudo ssh-keygen -lf /etc/ssh/ssh_host_ed25519_key.pub -E sha256
+```
+
+ECDSA or RSA host keys are also supported:
+
+```bash
+sudo ssh-keygen -lf /etc/ssh/ssh_host_ecdsa_key.pub -E sha256
+sudo ssh-keygen -lf /etc/ssh/ssh_host_rsa_key.pub -E sha256
+```
+
+Copy the complete `SHA256:...` value to the admin node. Do not establish trust
+from `ssh-keyscan` output alone; the installer uses `ssh-keyscan` only to obtain
+candidate public keys and accepts a candidate only when it matches this
+independently obtained fingerprint.
+
+### 3. Add a Dedicated Portal
+
+Run the following command on the admin node:
+
+```bash
+sudo admiral_install --portal-node \
+  --node-id portal-01 \
+  --public-ip 198.51.100.30 \
+  --wireguard-ip 10.99.0.100 \
+  --admin-endpoint 203.0.113.10 \
+  --ssh-key /root/.ssh/id_ed25519 \
+  --ssh-fingerprint SHA256:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+```
+
+If `portal.node_id` and `portal.wireguard_ip` are already assigned under
+`next` in `/var/lib/admiral/know_host.yaml`, `--node-id` and
+`--wireguard-ip` may be omitted. The installer resolves and validates those
+two values on the admin node.
+
+### 4. Add a Worker
+
+Run the following command on the admin node for each new worker:
+
+```bash
+sudo admiral_install --worker-node \
+  --node-id worker-01 \
+  --public-ip 198.51.100.20 \
+  --wireguard-ip 10.99.0.2 \
+  --admin-endpoint 203.0.113.10 \
+  --ssh-key /root/.ssh/id_ed25519 \
+  --ssh-fingerprint SHA256:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+```
+
+As with a portal, the worker node ID and WireGuard address may be omitted when
+the correct `next.worker` assignment exists in `know_host.yaml`.
+
+The installer performs the complete remote flow: verifies the SSH host key,
+runs Ansible, installs the shared `opsa_*` operator account, verifies
+passwordless sudo, disables root SSH login, exchanges WireGuard peers, and
+checks the expected services and security profile.
+
+### 5. Verify the New Host from Admin
+
+After the command succeeds, remain on the admin node and verify:
+
+```bash
+sudo admiralctl nodes list
+sudo wg show wg-admiral
+sudo systemctl is-active admirald caddy
+```
+
+Use the `opsa_*` username printed by the installer for an optional direct
+administrative check:
+
+```bash
+ssh -i /root/.ssh/id_ed25519 \
+  opsa_REPLACE@198.51.100.20 'sudo -n systemctl is-active admiral-fleet'
+```
+
+For a portal, replace the final service with `admiral-harbor`.
+
+### 6. Reconcile or Reinstall a Spoke
+
+Re-run the same `admiral_install --worker-node` or
+`admiral_install --portal-node` command from the admin node. The installer
+detects the persisted `opsa_*` account, connects with that non-root account,
+uses `sudo -n` for privileged operations, and preserves existing secrets and
+registrations. Supply the currently verified SSH host fingerprint on every
+run. If the host key changed, stop and verify the new key through the provider
+console before retrying.
+
+`--single-node` and `--dev-node` are local co-located setups, not commands for
+adding remote cluster hosts. `--single-node` is the secure production profile
+that combines admin, portal, and worker on one host. `--dev-node` is an
+explicitly insecure evaluation profile; the supported automatic transition is
+from `--dev-node` to `--single-node` on that same host.
+
 ### Manual migration from Admin+Portal to dedicated Portal
 
 An `admin-portal` host may become an `admin` host only after the operator has
@@ -103,10 +252,11 @@ must be accessible by root. If your key is in a non-standard location,
 use `--ssh-key` explicitly:
 
 ```bash
-# Example: key in a custom location
-admiral_install --worker-node \
+# Example: run from the admin node with a key in a custom location
+sudo admiral_install --worker-node \
   --public-ip 198.51.100.20 \
   --ssh-key /opt/keys/admin_id_ed25519 \
+  --ssh-fingerprint SHA256:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA \
   --admin-endpoint 203.0.113.10
 
 # Example: same key for local setup
@@ -128,18 +278,20 @@ The public key is automatically extracted from the private key using
 
 For `--worker-node` and `--portal-node`:
 
-1. The installer connects as **root** to the spoke using the SSH key
-2. Ansible creates the `opsa_<random>` user on the spoke
-3. The public key is extracted from the private key and deployed to
+1. The installer is run on the admin node and verifies the spoke host key.
+2. Initial bootstrap may connect as **root** using the SSH key.
+3. Ansible creates the cluster `opsa_<random>` user on the spoke.
+4. The public key is extracted from the private key and deployed to
    the new user's `authorized_keys`
-4. After installation, you can SSH as the admin user:
+5. The installer verifies `sudo -n` through that account and then sets
+   effective `PermitRootLogin no`.
+6. After installation, you can SSH as the admin user:
    ```bash
    ssh opsa_a1b2c3d4e5@198.51.100.20
    ```
 
-**Root login** is restricted to key-based authentication only
-(`PermitRootLogin prohibit-password`). Password-based root login is
-disabled by the SSH hardening baseline.
+If the non-root login or passwordless sudo check fails, installation stops
+before disabling key-based root recovery.
 
 Worker and portal modes accept the following additional flags for secure
 remote provisioning:
@@ -159,6 +311,7 @@ remote provisioning:
 |------|-----------------------------------|
 | single-node | `postgresql`, `caddy`, `admirald`, `admiral-fleet`, `admiral-flagship`, `admiral-harbor`, `cockpit.socket` |
 | admin-node | `postgresql`, `caddy`, `admirald`, `admiral-flagship`, `cockpit.socket` |
+| admin-portal-node | `postgresql`, `caddy`, `admirald`, `admiral-flagship`, `admiral-harbor`, `cockpit.socket` |
 | worker-node | `admiral-fleet` |
 | portal-node | `postgresql`, `admiral-harbor` |
 
@@ -170,7 +323,8 @@ The default installation is designed so that only the following ingress is publi
 
 - `22/tcp` for SSH on every node
 - `80/tcp` and `443/tcp` on admin and single-node hosts, terminated by Caddy
-- `51820/udp` for WireGuard on every node
+- `51820/udp` on admin, worker, and portal hosts in multinode deployments;
+  standalone secure single-node keeps WireGuard disabled
 
 Everything else is internal-only. Do not publish the following ports directly to the Internet:
 
@@ -225,31 +379,33 @@ The installer performs SSH host key verification before any secrets leave the
 admin node. A fingerprint is mandatory for remote bootstrap:
 
 1. **`ssh-keyscan` pre-flight**: Before the first SSH connection, the
-   installer runs `ssh-keyscan <public-ip>` into a temporary value. It does
-   not modify `known_hosts` until the operator-supplied fingerprint matches.
+   installer obtains candidate public keys from `ssh-keyscan <public-ip>`.
+   This scan does not establish trust.
 
 2. **`StrictHostKeyChecking=yes`**: Every subsequent SSH connection uses
-   `StrictHostKeyChecking=yes`. If the host key does not match, the
-   connection is aborted immediately. Previously the installer used
-   `accept-new`, which accepted any unknown key on first contact.
+   a root-only temporary `known_hosts` file containing only the candidate key
+   that matched the operator-supplied fingerprint. A stale or unrelated entry
+   in the operator's persistent `known_hosts` cannot override that decision.
 
 3. **Fingerprint verification**: `--ssh-fingerprint` is required and must
-   match the key retrieved by `ssh-keyscan`. To obtain and independently
-   verify the fingerprint before installation:
+   match one of the candidate keys. Obtain the trusted value from the VPS
+   provider console or another out-of-band channel, for example by running
+   this command directly on the new spoke:
 
    ```bash
-   ssh-keyscan <spoke-public-ip> | ssh-keygen -lf -
+   sudo ssh-keygen -lf /etc/ssh/ssh_host_ed25519_key.pub -E sha256
    ```
 
 An unknown host without an independently verified fingerprint fails before
-authentication or secret transfer. A mismatch leaves `known_hosts` unchanged.
+authentication or secret transfer. The persistent `known_hosts` file is never
+modified by spoke bootstrap.
 
 ### Example with fingerprint verification
 
 ```bash
 admiral_install --worker-node \
   --public-ip 198.51.100.20 \
-  --ssh-fingerprint SHA256:abc123... \
+  --ssh-fingerprint SHA256:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA \
   --admin-endpoint 203.0.113.10
 ```
 
