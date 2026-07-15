@@ -2,7 +2,25 @@
 
 Status: open findings from the July 2026 review. Each finding now has a
 corresponding GitHub issue in the correct component repository.
-Updated 2026-07-14.
+Updated 2026-07-15.
+
+## GitHub reconciliation (2026-07-15)
+
+The referenced repositories were checked with `gh issue list --state open`.
+There are 86 documented tickets still open. ADM-SEC-007 has a code remediation
+on `main` but remains open pending acceptance validation and GitHub closure.
+The following documented issues
+are closed on GitHub; their evidence remains below for auditability and each
+is marked accordingly: ADM-SEC-003 through ADM-SEC-006, ADM-SEC-011,
+ADM-SEC-013, ADM-SEC-020, ADM-SEC-051, ADM-SEC-052, ADM-SEC-071 through
+ADM-SEC-073, ADM-QUAL-020, and ADM-QUAL-021.
+
+The open dependency-maintenance issues below are outside the July review and
+do not yet have an entry in this document:
+
+- `admiral-fleet#1`, `admiralctl#1`, and `admirald#1`: Go toolchain update.
+- `admiral-harbor#1` and `admiral-flagship#1`: Flask version pin.
+- `admiral-harbor#12` and `admiral-flagship#7`: Werkzeug version pin.
 
 This document tracks product defects and hardening gaps. It intentionally does
 not record host-specific configuration drift or any real credentials, node
@@ -137,6 +155,8 @@ Applied hardening approach:
 
 ### ADM-SEC-003 — Non-root inter-node SSH flow is incomplete
 
+- **GitHub status:** Closed (reconciled 2026-07-15)
+
 - **GitHub issue:** https://github.com/admiral-project/admiral/issues/32
 
 - **Severity:** High
@@ -176,6 +196,8 @@ Applied hardening approach:
 
 ### ADM-SEC-004 — Bootstrap host identity is trusted without independent verification
 
+- **GitHub status:** Closed (reconciled 2026-07-15)
+
 - **GitHub issue:** https://github.com/admiral-project/admiral/issues/33
 
 - **Severity:** Critical
@@ -199,6 +221,8 @@ Applied hardening approach:
     tested.
 
 ### ADM-SEC-005 — Cluster secrets are exposed through the Ansible process command line
+
+- **GitHub status:** Closed (reconciled 2026-07-15)
 
 - **GitHub issue:** https://github.com/admiral-project/admiral/issues/34
 
@@ -224,6 +248,8 @@ Applied hardening approach:
 
 ### ADM-SEC-006 — Installer state is executed as shell code and arguments lack strict validation
 
+- **GitHub status:** Closed (reconciled 2026-07-15)
+
 - **GitHub issue:** https://github.com/admiral-project/admiral/issues/35
 
 - **Severity:** Critical
@@ -248,6 +274,10 @@ Applied hardening approach:
   - Missing option values produce an actionable installer error.
 
 ### ADM-SEC-007 — Harbor retains control-plane administrator credentials
+
+- **GitHub status:** Open; the reported token exposure is remediated in
+  `2af08c7`. The installer contract test passes, but E2E acceptance validation
+  and issue closure remain pending.
 
 - **GitHub issue:** https://github.com/admiral-project/admiral/issues/36
 
@@ -377,6 +407,8 @@ Applied hardening approach:
 
 ### ADM-SEC-051 — Audit rule fallback is unreachable
 
+- **GitHub status:** Closed (reconciled 2026-07-15)
+
 - **GitHub issue:** https://github.com/admiral-project/admiral/issues/55
 
 - **Severity:** Medium
@@ -397,6 +429,8 @@ Applied hardening approach:
   - Successful installation verifies the expected Admiral audit keys.
 
 ### ADM-SEC-052 — Installer options do not validate that a value follows
+
+- **GitHub status:** Closed (reconciled 2026-07-15)
 
 - **GitHub issue:** https://github.com/admiral-project/admiral/issues/56
 
@@ -438,6 +472,8 @@ Applied hardening approach:
   - WireGuard and package/update requirements remain functional.
 
 ### ADM-SEC-011 — Transition from dev-node does not fully restore the secure profile
+
+- **GitHub status:** Closed (reconciled 2026-07-15)
 
 - **GitHub issue:** https://github.com/admiral-project/admiral/issues/40
 
@@ -486,6 +522,8 @@ Applied hardening approach:
     expected local proxy.
 
 ### ADM-SEC-013 — Rendered service configuration does not reliably reach the running process
+
+- **GitHub status:** Closed (reconciled 2026-07-15)
 
 - **GitHub issue:** https://github.com/admiral-project/admiral/issues/42
 
@@ -639,6 +677,8 @@ Applied hardening approach:
     services are changed.
 
 ### ADM-SEC-020 — Documentation overstates guarantees of the current artifacts
+
+- **GitHub status:** Closed (reconciled 2026-07-15)
 
 - **GitHub issue:** https://github.com/admiral-project/admiral/issues/49
 
@@ -1835,6 +1875,8 @@ may be supplementary, but cannot replace the EL10 acceptance gate.
 
 ### ADM-SEC-071 — Systemd units use `ProtectSystem=full` instead of `strict`
 
+- **GitHub status:** Closed (reconciled 2026-07-15)
+
 - **GitHub issue:** https://github.com/admiral-project/admiral/issues/57
 
 - **Severity:** Medium
@@ -1852,6 +1894,8 @@ may be supplementary, but cannot replace the EL10 acceptance gate.
 
 ### ADM-SEC-072 — Makefile downloads source tarballs without checksum verification
 
+- **GitHub status:** Closed (reconciled 2026-07-15)
+
 - **GitHub issue:** https://github.com/admiral-project/admiral/issues/58
 
 - **Severity:** Medium
@@ -1867,6 +1911,8 @@ may be supplementary, but cannot replace the EL10 acceptance gate.
   - Checksum mismatches fail the build.
 
 ### ADM-SEC-073 — Harbor database connection uses `sslmode=disable` for localhost
+
+- **GitHub status:** Closed (reconciled 2026-07-15)
 
 - **GitHub issue:** https://github.com/admiral-project/admiral/issues/59
 
@@ -2039,6 +2085,8 @@ may be supplementary, but cannot replace the EL10 acceptance gate.
 
 ### ADM-QUAL-020 — Systemd units missing restrictive hardening directives
 
+- **GitHub status:** Closed (reconciled 2026-07-15)
+
 - **GitHub issue:** https://github.com/admiral-project/admiral/issues/60
 
 - **Severity:** Low
@@ -2052,6 +2100,8 @@ may be supplementary, but cannot replace the EL10 acceptance gate.
     `DevicePolicy=closed`.
 
 ### ADM-QUAL-021 — Fleet `ReadWritePaths` includes overly broad `/run/user`
+
+- **GitHub status:** Closed (reconciled 2026-07-15)
 
 - **GitHub issue:** https://github.com/admiral-project/admiral/issues/61
 
