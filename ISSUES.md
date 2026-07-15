@@ -7,9 +7,9 @@ Updated 2026-07-15.
 ## GitHub reconciliation (2026-07-15)
 
 The referenced repositories were checked with `gh issue list --state open`.
-There are 85 documented tickets still open. The following documented issues
+There are 84 documented tickets still open. The following documented issues
 are closed on GitHub; their evidence remains below for auditability and each
-is marked accordingly: ADM-SEC-003 through ADM-SEC-007, ADM-SEC-011,
+is marked accordingly: ADM-SEC-003 through ADM-SEC-008, ADM-SEC-011,
 ADM-SEC-013, ADM-SEC-020, ADM-SEC-051, ADM-SEC-052, ADM-SEC-071 through
 ADM-SEC-073, ADM-QUAL-020, and ADM-QUAL-021.
 
@@ -299,6 +299,9 @@ Applied hardening approach:
     privilege boundary.
 
 ### ADM-SEC-008 — Portal reuses the central PostgreSQL credential
+
+- **GitHub status:** Closed 2026-07-15. Remediated in `886f9e6`; installer
+  syntax and mode-contract tests pass.
 
 - **GitHub issue:** https://github.com/admiral-project/admiral/issues/37
 
