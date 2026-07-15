@@ -195,6 +195,17 @@ class InstallerModeTests(unittest.TestCase):
         self.assertIn("difference(admiral_allowed_public_services)", content)
         self.assertIn("difference(admiral_allowed_public_ports)", content)
 
+    def test_spoke_egress_allows_only_declared_dns_and_https_endpoints(self) -> None:
+        content = FIREWALL_TASKS.read_text(encoding="utf-8")
+
+        template = (ROOT / "ansible" / "roles" / "admiral_firewall" / "templates" / "admiral-egress.nft.j2").read_text(encoding="utf-8")
+
+        self.assertIn("tcp dport 53 accept", template)
+        self.assertIn("udp dport 53 accept", template)
+        self.assertIn("tcp dport 443 accept", template)
+        self.assertIn("Kubernetes model", template)
+        self.assertIn("ip daddr 10.99.0.0/24 accept", template)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -1,6 +1,14 @@
 table inet admiral_egress {
     chain output {
         type filter hook output priority -5; policy accept;
+        # Admiral deliberately uses a port-level node policy here. Docker Hub
+        # and PayPal use DNS, CDNs, and rotating addresses; pinning their IPs
+        # would make secure installs fail unpredictably. This follows the
+        # Kubernetes model: node connectivity remains available while finer
+        # workload policy is a separate concern.
+        # References:
+        # https://kubernetes.io/docs/concepts/services-networking/network-policies/
+        # https://kubernetes.io/docs/concepts/cluster-administration/networking/
         oif lo accept
         ct state { established, related } accept
         ip daddr 10.99.0.0/24 accept
@@ -9,6 +17,14 @@ table inet admiral_egress {
         udp dport 53 accept
 {% else %}
         tcp dport 22 accept
+        # DNS is required for registry and PayPal endpoint discovery. It is
+        # intentionally port-based rather than tied to DHCP/static resolver
+        # addresses; operators can add a destination-aware control later.
+        tcp dport 53 accept
+        udp dport 53 accept
+        # HTTPS is required for OCI registries and PayPal APIs. Restricting
+        # this to a static IP list is not reliable because both use CDNs.
+        tcp dport 443 accept
         udp dport 51820 accept
 {% endif %}
         reject

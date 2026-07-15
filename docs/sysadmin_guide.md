@@ -500,6 +500,24 @@ registros antes de declarar la instalación terminada.
 
 For normal modes (`--single-node`, `--admin-node`, `--admin-portal-node`, `--worker-node`, `--portal-node`), the installer applies a secure-by-default baseline including firewall policy, SELinux settings, login hardening, auditd, and fail2ban. Blocking security checks cause installation to fail; they are not advisory warnings.
 
+### Configuring secure spoke egress
+
+Worker and dedicated portal nodes use a default-deny outbound nftables policy.
+It permits only loopback, established traffic, the Admiral VPN, SSH, DNS
+(UDP/TCP 53), HTTPS (TCP 443), and WireGuard (UDP 51820). All other outbound
+traffic is rejected for both IPv4 and IPv6. DNS and HTTPS are intentionally
+allowed by port rather than by fixed IP: Docker Hub and PayPal use rotating
+CDN addresses, and resolver addresses may be supplied dynamically by DHCP.
+
+This is a node-level baseline, not an application egress allowlist. It keeps
+the node operational without brittle endpoint lists; image policy, digests,
+and workload-specific restrictions remain separate controls. This mirrors
+Kubernetes, where node networking is distinct from optional per-Pod
+`NetworkPolicy` egress isolation.
+
+References: [Kubernetes network policies](https://kubernetes.io/docs/concepts/services-networking/network-policies/)
+and [Kubernetes cluster networking](https://kubernetes.io/docs/concepts/cluster-administration/networking/).
+
 `--dev-node` is explicitly an evaluation mode and does **not** apply all production hardening controls. In dev-node mode:
 
 - Fail2ban protections are not applied.
