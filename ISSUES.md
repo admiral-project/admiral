@@ -95,31 +95,17 @@ general interface address.
   `--portal-node` transition is rejected before the play changes host state.
 - **Resolved in:** `daf5b64` (2026-07-14)
 
-## Findings
-
 ### ADM-SEC-002 — Shared admin and portal receives the wrong firewall and egress profile
 
-- **GitHub issue:** https://github.com/admiral-project/admiral/issues/31
-
 - **Severity:** Critical
-- **Affected modes:** shared `--admin-node` + `--portal-node`
-- **Evidence:** `ansible/roles/admiral_firewall/tasks/main.yml` selects admin
-  or spoke egress from `admiral_install_mode`. A shared portal still has the
-  literal mode `portal-node`, so the role removes admin egress rules and
-  installs the spoke rules. Public HTTP/HTTPS survives only when left behind by
-  the earlier admin run.
-- **Impact:** The shared admin can lose required DNS and HTTP/HTTPS egress,
-  while its ingress policy depends on previous state instead of the declared
-  topology. A fresh or partially reconciled host is unpredictable.
-- **Recommendation:** Calculate one effective firewall profile (`admin`,
-  `worker-spoke`, or `portal-spoke`) in pre-tasks and use it consistently.
-  Declare the complete desired service and port set rather than relying on
-  existing rules.
-- **Acceptance criteria:**
-  - A shared portal retains the admin ingress and egress policy.
-  - A dedicated portal exposes only SSH and WireGuard publicly.
-  - Starting from an empty, admin-configured, or intentionally polluted
-    firewalld state converges to the same expected rules.
+- **Resolution:** The explicit `admin-portal` profile uses the admin ingress
+  and egress policy. Firewall reconciliation now derives the complete allowed
+  public service and port set from the effective profile, removes every other
+  permanent public rule, and then applies the declared rules. This converges
+  clean, previously configured, and polluted firewalld states.
+- **Resolved in:** `daf5b64`, `8c0e185` (2026-07-14)
+
+## Findings
 
 ### ADM-SEC-003 — Non-root inter-node SSH flow is incomplete
 
