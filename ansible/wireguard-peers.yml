@@ -27,6 +27,19 @@
       set_fact:
         node_wg_public_key: "{{ wg_pub_slurp.content | b64decode | trim }}"
 
+    # The configuration template needs the node's private key. Read it from
+    # the managed node, never from the Ansible controller filesystem.
+    - name: Read WireGuard private key from node
+      slurp:
+        src: /etc/wireguard/admiral.key
+      register: wg_private_key_slurp
+      no_log: true
+
+    - name: Store private key as fact for this node
+      set_fact:
+        node_wg_private_key: "{{ wg_private_key_slurp.content | b64decode | trim }}"
+      no_log: true
+
 - name: Read Admirald-managed know_host inventory on hub
   hosts: admin
   gather_facts: false
@@ -59,34 +72,62 @@
     hub_host: "{{ groups['admin'][0] }}"
     node_lookup_key: "{{ hostvars[inventory_hostname].fleet_node_id | default(hostvars[inventory_hostname].admiral_node_name | default(inventory_hostname)) }}"
   tasks:
+    - name: Ensure peer fragment directory exists on hub
+      file:
+        path: /etc/wireguard/peers.d
+        state: directory
+        owner: root
+        group: root
+        mode: "0700"
+      delegate_to: "{{ hub_host }}"
+      run_once: true
+
     - name: Write spoke peer config to hub
       copy:
         content: |
           [Peer]
           PublicKey = {{ hostvars[inventory_hostname].node_wg_public_key }}
           AllowedIPs = {{ hostvars[hub_host].admiral_known_hosts_inventory.nodes[node_lookup_key].wireguard_ip }}/32
-        dest: "/etc/wireguard/peers.d/{{ inventory_hostname }}.conf"
+        dest: "/etc/wireguard/peers.d/{{ inventory_hostname | regex_replace('[^A-Za-z0-9_.-]', '_') }}.conf"
+        owner: root
+        group: root
         mode: "0600"
+      delegate_to: "{{ hub_host }}"
 
 - name: Build and deploy hub WireGuard configuration
   hosts: admin
   gather_facts: false
   become: true
   tasks:
-    - name: Read all peer config files
+    - name: Ensure peer fragment directory exists on hub
+      file:
+        path: /etc/wireguard/peers.d
+        state: directory
+        owner: root
+        group: root
+        mode: "0700"
+
+    - name: Find peer config files on hub
+      find:
+        paths: /etc/wireguard/peers.d
+        patterns: "*.conf"
+        file_type: file
+      register: hub_peer_file_paths
+
+    - name: Read all peer config files from hub
       slurp:
         src: "{{ item }}"
-      loop: "{{ query('fileglob', '/etc/wireguard/peers.d/*.conf') }}"
+      loop: "{{ hub_peer_file_paths.files | map(attribute='path') | list }}"
       register: peer_files
+
+    - name: Initialize peer list for template
+      set_fact:
+        admiral_wireguard_peers: []
 
     - name: Build peer list for template
       set_fact:
-        admiral_wireguard_peers: >-
-          [
-          {% for p in peer_files.results %}
-          {{ p.content | b64decode | from_yaml | combine({'allowed_ips': p.content | b64decode | regex_replace('.*AllowedIPs = ', '') | regex_replace('\n.*', '')}) | to_json }}
-          {% endfor %}
-          ]
+        admiral_wireguard_peers: "{{ admiral_wireguard_peers + [{'public_key': (item.content | b64decode | regex_findall('(?m)^PublicKey\\s*=\\s*(.+)$') | first | trim), 'allowed_ips': (item.content | b64decode | regex_findall('(?m)^AllowedIPs\\s*=\\s*(.+)$') | first | trim)}] }}"
+      loop: "{{ peer_files.results }}"
 
     - name: Debug peer list
       debug:
@@ -101,7 +142,7 @@
         admiral_wireguard_role: hub
         admiral_wireguard_ip: 10.99.0.1
         admiral_wg_private_key:
-          stdout: "{{ lookup('file', '/etc/wireguard/admiral.key') }}"
+          stdout: "{{ node_wg_private_key }}"
         admiral_wireguard_port: "51820"
         admiral_wireguard_peers: "{{ admiral_wireguard_peers }}"
       no_log: true
@@ -133,7 +174,7 @@
         admiral_wireguard_hub_endpoint: "{{ hostvars[hub_host].ansible_host | default(hostvars[hub_host].fleet_public_ip | default(hostvars[hub_host].ansible_default_ipv4.address)) }}"
         admiral_wireguard_ip: "{{ hostvars[hub_host].admiral_known_hosts_inventory.nodes[node_lookup_key].wireguard_ip }}"
         admiral_wg_private_key:
-          stdout: "{{ lookup('file', '/etc/wireguard/admiral.key') }}"
+          stdout: "{{ node_wg_private_key }}"
         admiral_wireguard_port: "51820"
       no_log: true
       notify: restart wireguard
