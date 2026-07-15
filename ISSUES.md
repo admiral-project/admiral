@@ -3,14 +3,13 @@
 Status: open findings from the July 2026 review. Each finding now has a
 corresponding GitHub issue in the correct component repository.
 Updated 2026-07-15.
-
 ## GitHub reconciliation (2026-07-15)
 
 The referenced repositories were checked with `gh issue list --state open`.
-There are 84 documented tickets still open. The following documented issues
+There are 83 documented tickets still open. The following documented issues
 are closed on GitHub; their evidence remains below for auditability and each
 is marked accordingly: ADM-SEC-003 through ADM-SEC-008, ADM-SEC-011,
-ADM-SEC-013, ADM-SEC-020, ADM-SEC-051, ADM-SEC-052, ADM-SEC-071 through
+ADM-SEC-013, ADM-SEC-020, ADM-SEC-050 through ADM-SEC-052, ADM-SEC-071 through
 ADM-SEC-073, ADM-QUAL-020, and ADM-QUAL-021.
 
 The open dependency-maintenance issues below are outside the July review and
@@ -377,6 +376,8 @@ Applied hardening approach:
   - Negative egress tests cover IPv4 and IPv6.
 
 ### ADM-SEC-050 — WireGuard peer exchange playbook operates on the wrong hosts
+
+- **GitHub status:** Closed (fixed by commit `aa2d1aa`, 2026-07-15)
 
 - **GitHub issue:** https://github.com/admiral-project/admiral/issues/54
 
