@@ -95,7 +95,7 @@ Updated 2026-07-16.
 - `admiral-flagship#1` and `admiral-harbor#1` are real packaging issues:
   their RPM specs now require `python3-flask >= 3.1.3`, preventing installation
   with the vulnerable Flask 3.1.2 package. The static packaging check passes;
-  the parent change is recorded in the next commit.
+  the parent change is recorded in `2aaadd0`.
 - Remaining open issues are still under triage; no issue is marked resolved
   here until its code change and tests are verified.
 ## GitHub reconciliation (2026-07-15)
