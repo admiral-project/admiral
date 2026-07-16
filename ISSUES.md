@@ -17,7 +17,8 @@ Updated 2026-07-16.
   1.16.7.
 - `admiral#62` is a real issue, with stale file-location evidence: the
   affected Go builds are in the three RPM specs rather than `Makefile:42`.
-  The specs are fixed in the working tree and await verification/commit.
+  The specs are fixed in commit `3a14cef`; the parent records the updated
+  submodule revisions in commit `aca9b9b`.
 - Remaining open issues are still under triage; no issue is marked resolved
   here until its code change and tests are verified.
 ## GitHub reconciliation (2026-07-15)
