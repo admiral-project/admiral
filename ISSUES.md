@@ -41,7 +41,7 @@ Updated 2026-07-16.
   all eight reported request marshal sites now return contextual errors. The
   package test could not start because this checkout lacks a `go.sum` entry
   for `pgx/v5`; no dependency files were changed. Parent/RPM synchronization
-  is pending validation.
+  is recorded in `21b7fa1`; the release-reference validator passes.
 - Remaining open issues are still under triage; no issue is marked resolved
   here until its code change and tests are verified.
 ## GitHub reconciliation (2026-07-15)
