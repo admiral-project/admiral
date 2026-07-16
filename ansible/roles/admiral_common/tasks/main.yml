@@ -283,10 +283,32 @@
       changed_when: true
       no_log: true
 
-    - name: Parse generated Ed25519 keys
+    - name: Extract Ed25519 private key file path from CLI output
       set_fact:
-        admiral_ed25519_private_key_generated: "{{ (admiral_ed25519_key_generated.stdout | default('') ~ '\n' ~ admiral_ed25519_key_generated.stderr | default('')) | regex_search('private_key:([a-f0-9]+)', '\\1') | first | default('') }}"
+        # admiralctl outputs: private_key_file:<path>  public_key:<hex>
+        # SECURITY: We read the seed from a file rather than embedding it in
+        # stdout because Ed25519 seeds are sensitive material. The file is
+        # created with mode 0600 by admiralctl and slurped here with no_log.
+        admiral_ed25519_key_file_path: "{{ (admiral_ed25519_key_generated.stdout | default('') ~ '\n' ~ admiral_ed25519_key_generated.stderr | default('')) | regex_search('private_key_file:([^\s]+)', '\\1') | first | default('') }}"
         admiral_task_public_key_generated: "{{ (admiral_ed25519_key_generated.stdout | default('') ~ '\n' ~ admiral_ed25519_key_generated.stderr | default('')) | regex_search('public_key:([a-f0-9]+)', '\\1') | first | default('') }}"
+      when:
+        - admiral_install_mode in ['single-node', 'admin-node', 'admin-portal-node']
+        - admiral_ed25519_key_generated.changed | default(false)
+      no_log: true
+
+    - name: Read Ed25519 private key seed from generated file
+      slurp:
+        src: "{{ admiral_ed25519_key_file_path }}"
+      register: admiral_ed25519_key_file_contents
+      when:
+        - admiral_install_mode in ['single-node', 'admin-node', 'admin-portal-node']
+        - admiral_ed25519_key_generated.changed | default(false)
+        - admiral_ed25519_key_file_path | default('') != ''
+      no_log: true
+
+    - name: Set Ed25519 private key from file content
+      set_fact:
+        admiral_ed25519_private_key_generated: "{{ admiral_ed25519_key_file_contents.content | b64decode | trim }}"
       when:
         - admiral_install_mode in ['single-node', 'admin-node', 'admin-portal-node']
         - admiral_ed25519_key_generated.changed | default(false)
