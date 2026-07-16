@@ -37,6 +37,11 @@ Updated 2026-07-16.
   the complete auth suite did not finish in the available execution window.
   Parent/RPM reference synchronization is recorded in `4820e24`; the
   release-reference validator passes.
+- `admiralctl#13` is a real issue and was fixed in submodule commit `ec5d0b4`:
+  all eight reported request marshal sites now return contextual errors. The
+  package test could not start because this checkout lacks a `go.sum` entry
+  for `pgx/v5`; no dependency files were changed. Parent/RPM synchronization
+  is pending validation.
 - Remaining open issues are still under triage; no issue is marked resolved
   here until its code change and tests are verified.
 ## GitHub reconciliation (2026-07-15)
