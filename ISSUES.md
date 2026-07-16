@@ -97,7 +97,7 @@ Updated 2026-07-16.
   `f40afb8`: HTTP response reads are capped at 10 MiB and oversized responses
   return an explicit error. The focused test is present; the package test is
   blocked by the existing missing `go.sum` entry for `pgx/v5`; parent/RPM sync
-  is recorded in the next parent commit.
+  is recorded in `82b7f1e`; the release-reference validator passes.
 - `admiral-harbor#17` is a real issue and was fixed in submodule commit
   `d149708`: fiscal evidence now accepts only PDF/PNG/JPEG files and enforces
   a configurable 10 MiB limit before hashing or saving. Focused fiscal tests
