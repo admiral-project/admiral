@@ -90,7 +90,8 @@ Updated 2026-07-16.
 - `admiral-harbor#17` is a real issue and was fixed in submodule commit
   `d149708`: fiscal evidence now accepts only PDF/PNG/JPEG files and enforces
   a configurable 10 MiB limit before hashing or saving. Focused fiscal tests
-  pass (3 tests); parent/RPM sync is recorded in the next parent commit.
+  pass (3 tests); parent/RPM sync is recorded in `a7a992a`; the
+  release-reference validator passes.
 - Remaining open issues are still under triage; no issue is marked resolved
   here until its code change and tests are verified.
 ## GitHub reconciliation (2026-07-15)
