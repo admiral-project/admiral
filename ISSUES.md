@@ -65,7 +65,7 @@ Updated 2026-07-16.
   `6feb618`: the unsupported incident attachment field and multipart upload
   path were removed, so users are no longer told that an unpersisted upload
   succeeded. The instance-detail regression test passes; parent/RPM sync is
-  pending validation.
+  recorded in `4b9cb7f`; the release-reference validator passes.
 - Remaining open issues are still under triage; no issue is marked resolved
   here until its code change and tests are verified.
 ## GitHub reconciliation (2026-07-15)
