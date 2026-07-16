@@ -99,7 +99,7 @@ Updated 2026-07-16.
 - `admiral-flagship#7` and `admiral-harbor#12` are real dependency issues:
   both submodules now declare `Flask>=3.1.3` and `Werkzeug>=3.0.6` in
   `pyproject.toml`. The fixes are `8a4ef2c` and `027289c`; parent/RPM sync is
-  recorded in the next parent commit.
+  recorded in `12c2f6b`; the release-reference validator passes.
 - Remaining open issues are still under triage; no issue is marked resolved
   here until its code change and tests are verified.
 ## GitHub reconciliation (2026-07-15)
