@@ -87,6 +87,10 @@ Updated 2026-07-16.
   the package test is blocked by the existing missing `go.sum` entry for
   `pgx/v5`; parent/RPM sync is recorded in `e53ae21`; the release-reference
   validator passes.
+- `admiral-harbor#17` is a real issue and was fixed in submodule commit
+  `d149708`: fiscal evidence now accepts only PDF/PNG/JPEG files and enforces
+  a configurable 10 MiB limit before hashing or saving. Focused fiscal tests
+  pass (3 tests); parent/RPM sync is recorded in the next parent commit.
 - Remaining open issues are still under triage; no issue is marked resolved
   here until its code change and tests are verified.
 ## GitHub reconciliation (2026-07-15)
