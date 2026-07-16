@@ -8,9 +8,8 @@ Updated 2026-07-16.
 
 - `admiral-fleet#1` is addressed in the parent RPM spec by requiring Go
   `>=1.26.4`; the checked-out EL10 toolchain is Go 1.26.5. `go test`,
-  `go vet`, and a PIE `-trimpath` build pass. `govulncheck` is not installed
-  in this environment, so its zero-vulnerability criterion remains pending
-  direct tool execution.
+  `go vet`, a PIE `-trimpath` build, and `/root/go/bin/govulncheck ./...`
+  pass; govulncheck reports no vulnerabilities.
 - Fleet issues `#41` through `#54` are addressed in submodule commit
   `93178ce`: bind and publish addresses are constrained, task signatures have
   freshness/replay checks, secrets use env-files, restore DNS is pinned and
