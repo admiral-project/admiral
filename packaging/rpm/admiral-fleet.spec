@@ -41,7 +41,7 @@ node-level resources.
 cd admiral-fleet
 export GOCACHE=%{_tmppath}/go-cache
 mkdir -p "$GOCACHE"
-go build -buildmode=pie -ldflags="-s -w" -o admiral-fleet ./cmd/admiral-fleet/
+go build -trimpath -buildmode=pie -ldflags="-s -w" -o admiral-fleet ./cmd/admiral-fleet/
 
 %install
 cd admiral-fleet

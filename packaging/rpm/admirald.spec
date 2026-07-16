@@ -39,7 +39,7 @@ dispatches tasks to fleet workers, and maintains auditability.
 cd admirald
 export GOCACHE=%{_tmppath}/go-cache
 mkdir -p "$GOCACHE"
-go build -buildmode=pie -ldflags="-s -w -X main.Version=%{version}" -o admirald ./cmd/admirald/
+go build -trimpath -buildmode=pie -ldflags="-s -w -X main.Version=%{version}" -o admirald ./cmd/admirald/
 
 %install
 cd admirald

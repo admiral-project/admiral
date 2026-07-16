@@ -2,7 +2,24 @@
 
 Status: open findings from the July 2026 review. Each finding now has a
 corresponding GitHub issue in the correct component repository.
-Updated 2026-07-15.
+Updated 2026-07-16.
+
+## Progress (2026-07-16)
+
+- Confirmed open issues across the superproject and all five component
+  repositories with `gh`.
+- `admiral-fleet#50` is a real issue and was fixed in commit `8958101`:
+  `collectVolumeTar` now closes each archive input immediately. Full tests
+  remain pending because the environment only provides Go 1.16.7.
+- `admiralctl#19` is a real issue and was fixed in commit `08a85fd`: all
+  command-level `--output` flags now reject values other than `table` and
+  `json`. Full tests remain pending because the environment only provides Go
+  1.16.7.
+- `admiral#62` is a real issue, with stale file-location evidence: the
+  affected Go builds are in the three RPM specs rather than `Makefile:42`.
+  The specs are fixed in the working tree and await verification/commit.
+- Remaining open issues are still under triage; no issue is marked resolved
+  here until its code change and tests are verified.
 ## GitHub reconciliation (2026-07-15)
 
 The referenced repositories were checked with `gh issue list --state open`.

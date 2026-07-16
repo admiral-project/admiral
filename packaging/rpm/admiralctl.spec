@@ -33,7 +33,7 @@ management, backup operations, and troubleshooting.
 cd admiralctl
 export GOCACHE=%{_tmppath}/go-cache
 mkdir -p "$GOCACHE"
-go build -buildmode=pie -ldflags="-s -w -X main.Version=%{version}" -o admiralctl ./cmd/admiralctl/
+go build -trimpath -buildmode=pie -ldflags="-s -w -X main.Version=%{version}" -o admiralctl ./cmd/admiralctl/
 
 %install
 cd admiralctl
