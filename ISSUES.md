@@ -161,9 +161,8 @@ Updated 2026-07-16.
 - `admiral-harbor#31` is a real issue and is fixed locally: tier catalog YAML
   is now parsed with `yaml.safe_load` instead of indentation heuristics, with
   malformed or non-mapping documents rejected as empty catalogs. PyYAML is
-  declared in the Python project and EL10 RPM BuildRequires/Requires. Tests
-  are pending because PyYAML is not installed in this environment. No push
-  was performed, per the user's instruction.
+  declared in the Python project and EL10 RPM BuildRequires/Requires. All 19
+  Harbor test files pass when run independently in the PyYAML test environment.
 - `admiralctl#14` is a real issue and was fixed in submodule commit `317fbf7`:
   operation polling now requires a positive timeout, and CLI commands expose
   `--wait-timeout` with a 30-minute default. The client and CLI unit tests pass.
