@@ -35,6 +35,12 @@ customer record and does not weaken customer-token isolation.
   the old exported `NewWithHTTP` constructor is gone. The full CLI test suite
   and `go vet ./...` pass. Parent/RPM references are synchronized in the
   current release commit.
+- The Python portals have current security fixes in `admiral-flagship`
+  commit `06cd45c` (strict node input validation and independent absolute
+  session lifetime) and `admiral-harbor` commit `9997564` (PayPal webhook
+  freshness window and removal of filesystem paths from backup responses).
+  Both portal suites pass: Flagship 204 tests and Harbor 160 tests. Their
+  parent RPM references are synchronized with these commits.
 - `admiral#44` is still open in GitHub, but its reported suppression is stale
   and is not reproducible in the current tree: all three Go RPM `%check`
   sections run `go test ./...` without `|| echo`, while Flagship and Harbor

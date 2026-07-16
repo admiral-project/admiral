@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 %global debug_package %{nil}
-%global commit 9684f1712d3c0a5a6273e1f1185a7f5ff9f71701
+%global commit 06cd45c50f7e4fbc64b5bfe00be7e2087530c174
 
 Name:    admiral-flagship
 Version: 0.0.1beta16
@@ -19,6 +19,7 @@ BuildArch: noarch
 
 BuildRequires: python3
 BuildRequires: python3-flask
+BuildRequires: python3-werkzeug >= 3.0.6
 BuildRequires: python3-gunicorn
 BuildRequires: python3-pytest
 BuildRequires: python3-requests
@@ -26,7 +27,8 @@ BuildRequires: systemd
 
 Requires: admiral-common
 Requires: python3
-Requires: python3-flask
+Requires: python3-flask >= 3.1.3
+Requires: python3-werkzeug >= 3.0.6
 Requires: python3-requests
 Requires: python3-gunicorn
 Requires: systemd
