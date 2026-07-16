@@ -125,7 +125,7 @@ Updated 2026-07-16.
   submodule commit `9684f17`: Flagship now loads `ADMIRAL_INSECURE_SKIP_VERIFY`
   from the environment, and its existing production validation rejects the
   insecure mode. Focused TLS/client tests pass (32 tests); parent/RPM sync is
-  recorded in the next parent commit.
+  recorded in `5d269c1`; the release-reference validator passes.
 - `admiral-harbor#17` is a real issue and was fixed in submodule commit
   `d149708`: fiscal evidence now accepts only PDF/PNG/JPEG files and enforces
   a configurable 10 MiB limit before hashing or saving. Focused fiscal tests
