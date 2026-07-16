@@ -119,7 +119,8 @@ Updated 2026-07-16.
   commit `522d036`: toast messages now use DOM text nodes instead of
   `innerHTML`, preventing backend error strings from becoming HTML. The JS
   regression test is present; npm tests could not run because `mocha` is not
-  installed; parent/RPM sync is recorded in the next parent commit.
+  installed; parent/RPM sync is recorded in `28d939a`; the release-reference
+  validator passes.
 - `admiral-harbor#17` is a real issue and was fixed in submodule commit
   `d149708`: fiscal evidence now accepts only PDF/PNG/JPEG files and enforces
   a configurable 10 MiB limit before hashing or saving. Focused fiscal tests
