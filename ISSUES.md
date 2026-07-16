@@ -66,6 +66,11 @@ Updated 2026-07-16.
   path were removed, so users are no longer told that an unpersisted upload
   succeeded. The instance-detail regression test passes; parent/RPM sync is
   recorded in `4b9cb7f`; the release-reference validator passes.
+- `admiralctl#15` is a real issue and was fixed in submodule commit `f4cb3f7`:
+  JSON/table output and policy rejection messages now use Cobra command
+  writers, and the unused `requireToken` helper was removed. The package
+  test is currently blocked by the existing missing `go.sum` entry for
+  `pgx/v5`; parent/RPM sync is recorded in the next parent commit.
 - Remaining open issues are still under triage; no issue is marked resolved
   here until its code change and tests are verified.
 ## GitHub reconciliation (2026-07-15)
