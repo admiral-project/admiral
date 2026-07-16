@@ -77,6 +77,11 @@ Updated 2026-07-16.
   are validated before backend calls, and node-metrics failures are logged
   with context. The focused BFF tests pass (84 tests); parent/RPM sync is
   recorded in `0476f31`; the release-reference validator passes.
+- `admiralctl#16` is a real issue and was fixed in submodule commit `557f605`:
+  app file paths are validated before absolute resolution, preventing
+  traversal inputs from bypassing the guard. The regression test is present;
+  the package test is blocked by the existing missing `go.sum` entry for
+  `pgx/v5`; parent/RPM sync is recorded in the next parent commit.
 - Remaining open issues are still under triage; no issue is marked resolved
   here until its code change and tests are verified.
 ## GitHub reconciliation (2026-07-15)
