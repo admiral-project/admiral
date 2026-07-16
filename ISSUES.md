@@ -59,8 +59,13 @@ Updated 2026-07-16.
   release-reference validator passes.
 - `admiral-harbor#24` is a real issue and was fixed in submodule commit
   `76580af`: MRR now sums `Subscription.monthly_price_cents`; regression tests
-  for MRR and CSV export pass. Parent/RPM synchronization is pending
-  recorded in `3b92f06`; the release-reference validator passes.
+  for MRR and CSV export pass. Parent/RPM synchronization is recorded in
+  `3b92f06`; the release-reference validator passes.
+- `admiral-harbor#25` is a real issue and was fixed in submodule commit
+  `6feb618`: the unsupported incident attachment field and multipart upload
+  path were removed, so users are no longer told that an unpersisted upload
+  succeeded. The instance-detail regression test passes; parent/RPM sync is
+  pending validation.
 - Remaining open issues are still under triage; no issue is marked resolved
   here until its code change and tests are verified.
 ## GitHub reconciliation (2026-07-15)
