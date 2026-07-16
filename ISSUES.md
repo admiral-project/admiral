@@ -174,14 +174,33 @@ Updated 2026-07-16.
   submodule commit `a860091`; focused catalog, CSRF, and admin suites pass.
 - Remaining open issues are still under triage; no issue is marked resolved
   here until its code change and tests are verified.
-## GitHub reconciliation (2026-07-15)
+## GitHub reconciliation (2026-07-16)
 
-The referenced repositories were checked with `gh issue list --state open`.
-There are 83 documented tickets still open. The following documented issues
-are closed on GitHub; their evidence remains below for auditability and each
-is marked accordingly: ADM-SEC-003 through ADM-SEC-008, ADM-SEC-011,
-ADM-SEC-013, ADM-SEC-020, ADM-SEC-050 through ADM-SEC-052, ADM-SEC-071 through
-ADM-SEC-073, ADM-QUAL-020, and ADM-QUAL-021.
+The referenced repositories were checked with `gh issue list --state open`
+and each issue verified with `gh issue view`. There are 91 open GitHub
+issues across all six repositories:
+
+| Repository | Open issues |
+|---|---|
+| admiral-project/admiral | 15 |
+| admiral-project/admirald | 19 |
+| admiral-project/admiral-fleet | 15 |
+| admiral-project/admiralctl | 11 |
+| admiral-project/admiral-flagship | 9 |
+| admiral-project/admiral-harbor | 22 |
+
+The following documented issues are closed on GitHub; their evidence
+remains below for auditability and each is marked accordingly:
+ADM-SEC-003 through ADM-SEC-008, ADM-SEC-011, ADM-SEC-013, ADM-SEC-020,
+ADM-SEC-050 through ADM-SEC-052, ADM-SEC-071 through ADM-SEC-073,
+ADM-QUAL-020, and ADM-QUAL-021.
+
+Findings documented in this file that do not yet have a corresponding
+GitHub issue: ADM-SEC-059, ADM-SEC-060, ADM-SEC-061, ADM-SEC-062,
+ADM-SEC-063, ADM-SEC-064, ADM-SEC-065, ADM-SEC-066, ADM-SEC-067,
+ADM-SEC-068, ADM-SEC-069, ADM-QUAL-004, ADM-QUAL-005, ADM-QUAL-006,
+and ADM-QUAL-025. These 15 findings should be opened in the appropriate
+component repositories before the next reconciliation.
 
 The open dependency-maintenance issues below are outside the July review and
 do not yet have an entry in this document:
@@ -499,6 +518,8 @@ Applied hardening approach:
 
 ### ADM-SEC-009 — Spoke egress policy can block the WireGuard handshake
 
+- **GitHub status:** Open (verified 2026-07-16)
+
 - **GitHub issue:** https://github.com/admiral-project/admiral/issues/38
 
 - **Severity:** High
@@ -548,7 +569,7 @@ Applied hardening approach:
 
 ### ADM-SEC-050 — WireGuard peer exchange playbook operates on the wrong hosts
 
-- **GitHub status:** Closed (fixed by commit `aa2d1aa`, 2026-07-15)
+- **GitHub status:** Closed (reconciled 2026-07-15)
 
 - **GitHub issue:** https://github.com/admiral-project/admiral/issues/54
 
@@ -624,6 +645,8 @@ Applied hardening approach:
 
 ### ADM-SEC-010 — Egress restrictions are bypassable over IPv6
 
+- **GitHub status:** Open (verified 2026-07-16)
+
 - **GitHub issue:** https://github.com/admiral-project/admiral/issues/39
 
 - **Severity:** High
@@ -669,6 +692,8 @@ Applied hardening approach:
     registrations.
 
 ### ADM-SEC-012 — Invalid fail2ban filters disable all jails and failure is ignored
+
+- **GitHub status:** Open (verified 2026-07-16)
 
 - **GitHub issue:** https://github.com/admiral-project/admiral/issues/41
 
@@ -718,6 +743,8 @@ Applied hardening approach:
 
 ### ADM-SEC-014 — Security validation is partly warning-only and incomplete
 
+- **GitHub status:** Open (verified 2026-07-16)
+
 - **GitHub issue:** https://github.com/admiral-project/admiral/issues/43
 
 - **Severity:** High
@@ -742,6 +769,8 @@ Applied hardening approach:
 
 ### ADM-SEC-015 — RPM builds can succeed with failed or skipped tests
 
+- **GitHub status:** Open (verified 2026-07-16)
+
 - **GitHub issue:** https://github.com/admiral-project/admiral/issues/44
 
 - **Severity:** High
@@ -762,6 +791,8 @@ Applied hardening approach:
   - Architecture-specific exclusions are explicit for both x86_64 and aarch64.
 
 ### ADM-SEC-016 — RPM source commits can publish an internally inconsistent release
+
+- **GitHub status:** Open (verified 2026-07-16)
 
 - **GitHub issue:** https://github.com/admiral-project/admiral/issues/45
 
@@ -786,6 +817,8 @@ Applied hardening approach:
 
 ### ADM-SEC-017 — Network services rely unnecessarily on the firewall as their only boundary
 
+- **GitHub status:** Open (verified 2026-07-16)
+
 - **GitHub issue:** https://github.com/admiral-project/admiral/issues/46
 
 - **Severity:** Medium
@@ -807,6 +840,8 @@ Applied hardening approach:
 
 ### ADM-SEC-018 — WireGuard is opened in modes that do not require a peer
 
+- **GitHub status:** Open (verified 2026-07-16)
+
 - **GitHub issue:** https://github.com/admiral-project/admiral/issues/47
 
 - **Severity:** Medium
@@ -826,6 +861,8 @@ Applied hardening approach:
     the local worker and portal.
 
 ### ADM-SEC-019 — Mode transitions and role exclusivity are order-dependent
+
+- **GitHub status:** Open (verified 2026-07-16)
 
 - **GitHub issue:** https://github.com/admiral-project/admiral/issues/48
 
