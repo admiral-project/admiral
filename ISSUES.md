@@ -108,7 +108,8 @@ Updated 2026-07-16.
   commit `b82498c`: Flagship now requires an explicit `FLAGSHIP_SECRET_KEY`
   regardless of `ENV`; the hard-coded development fallback was removed from
   runtime and `dev_run.py`. Focused security/factory tests pass (16 tests);
-  parent/RPM sync is recorded in the next parent commit.
+  parent/RPM sync is recorded in `8170cb8`; the release-reference validator
+  passes.
 - `admiral-harbor#17` is a real issue and was fixed in submodule commit
   `d149708`: fiscal evidence now accepts only PDF/PNG/JPEG files and enforces
   a configurable 10 MiB limit before hashing or saving. Focused fiscal tests
