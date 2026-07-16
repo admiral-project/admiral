@@ -21,8 +21,17 @@ Source8: harbor.env
 BuildArch: noarch
 
 BuildRequires: python3
+BuildRequires: python3-argon2-cffi
+BuildRequires: python3-cryptography
+BuildRequires: python3-flask
+BuildRequires: python3-flask-alembic
+BuildRequires: python3-flask-login
+BuildRequires: python3-flask-sqlalchemy
+BuildRequires: python3-gunicorn
+BuildRequires: python3-mistune
 BuildRequires: python3-pytest
 BuildRequires: python3-pyyaml
+BuildRequires: python3-requests
 BuildRequires: systemd
 
 Requires: admiral-common
@@ -116,11 +125,11 @@ restorecon -R %{_localstatedir}/lib/admiral/harbor 2>/dev/null || :
 %{python3} -m pytest tests/ -x --tb=short
 
 %changelog
-* Tue Jul 14 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta16-1
-- Harden Harbor services with strict filesystem and device policy
+* Thu Jul 16 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta16-2
+- Add missing BuildRequires for %%check section
 
 * Tue Jul 14 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta16-1
-- chore(release): bump to 0.0.1beta16
+- Harden Harbor services with strict filesystem and device policy
 
 * Tue Jul 07 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta15-2
 - Update source commit refs to include security audit fixes
