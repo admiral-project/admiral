@@ -25,7 +25,8 @@ Updated 2026-07-16.
   the broader release-manifest and exact-artifact E2E acceptance criteria.
 - `admirald#39` is a real issue and was fixed in submodule commit `de00756`:
   random command IDs now propagate CSPRNG failures instead of falling back to
-  timestamps. A parent gitlink/spec reference update is pending.
+  timestamps. The parent gitlink and RPM reference are synchronized in
+  commits `6c18b59` and `813ca04`; the release-reference validator passes.
 - Remaining open issues are still under triage; no issue is marked resolved
   here until its code change and tests are verified.
 ## GitHub reconciliation (2026-07-15)
