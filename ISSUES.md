@@ -60,7 +60,7 @@ Updated 2026-07-16.
 - `admiral-harbor#24` is a real issue and was fixed in submodule commit
   `76580af`: MRR now sums `Subscription.monthly_price_cents`; regression tests
   for MRR and CSV export pass. Parent/RPM synchronization is pending
-  validation.
+  recorded in `3b92f06`; the release-reference validator passes.
 - Remaining open issues are still under triage; no issue is marked resolved
   here until its code change and tests are verified.
 ## GitHub reconciliation (2026-07-15)
