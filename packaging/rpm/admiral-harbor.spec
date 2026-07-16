@@ -1,9 +1,9 @@
 %global debug_package %{nil}
-%global commit a8600915e0f50fac26240e15c417cf75c93d459e
+%global commit 060a5a779ae627667af984cc1279943e34c3f465
 
 Name:    admiral-harbor
 Version: 0.0.1beta16
-Release: 1%{?dist}
+Release: 3%{?dist}
 Summary: Admiral Customer Portal - Web UI for end users
 
 License: Apache-2.0
@@ -46,7 +46,6 @@ Requires: python3-argon2-cffi
 Requires: python3-cryptography
 Requires: python3-mistune
 Requires: python3-psycopg2
-Requires: python3-psycopg3 >= 3.1
 Requires: systemd
 Recommends: cockpit-bridge
 Requires: wireguard-tools
@@ -125,6 +124,10 @@ restorecon -R %{_localstatedir}/lib/admiral/harbor 2>/dev/null || :
 %{python3} -m pytest tests/ -x --tb=short
 
 %changelog
+* Thu Jul 16 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta16-3
+- Remove python3-psycopg3 from Requires (unused; app uses psycopg2 dialect)
+- Fix changelog chronological order
+
 * Thu Jul 16 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta16-2
 - Add missing BuildRequires for %%check section
 
@@ -211,16 +214,16 @@ restorecon -R %{_localstatedir}/lib/admiral/harbor 2>/dev/null || :
 * Mon Jun 15 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1alpha5-3
 - Add Requires: cockpit-bridge and Requires: wireguard-tools
 
+* Sun Jul 05 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta14-6
+- Set session cookie SameSite to Strict
+- Reduce customer session timeout from 240 to 120 minutes
+
 * Sun Jun 14 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1alpha5-2
 - Update source commit to latest alpha5
 - Replace favicon.ico with generated ico from source PNG
 - Fix admin_layout.html to use static favicon.ico reference
 - Fix branding.py and routes.py fallback for favicon vs logo
 - Fix list_backups returning None items
-
-* Sun Jul 05 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta14-6
-- Set session cookie SameSite to Strict
-- Reduce customer session timeout from 240 to 120 minutes
 
 * Sun Jun 14 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1alpha5-1
 - Bump to alpha5
