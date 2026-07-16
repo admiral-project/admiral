@@ -8,6 +8,12 @@ Updated 2026-07-16.
 
 - Confirmed open issues across the superproject and all five component
   repositories with `gh`.
+- `admiral#44` is still open in GitHub, but its reported suppression is stale
+  and is not reproducible in the current tree: all three Go RPM `%check`
+  sections run `go test ./...` without `|| echo`, while Flagship and Harbor
+  declare `python3-pytest` and run pytest directly. No code change was needed;
+  the broader issue remains open for an explicit failing-test RPM regression
+  test and architecture-specific exclusions.
 - `admiral-fleet#50` is a real issue and was fixed in commit `8958101`:
   `collectVolumeTar` now closes each archive input immediately. Full tests
   remain pending because the environment only provides Go 1.16.7.
