@@ -47,6 +47,11 @@ Updated 2026-07-16.
   now check and contextualize `rows.Err()`. The package test remains blocked
   by the existing missing `go.sum` entry for `pgx/v5`; parent/RPM sync is
   recorded in `0030f04` and the release-reference validator passes.
+- `admiralctl#18` is a real issue and was fixed in submodule commit `d148693`:
+  operation wait failures now return errors to Cobra instead of calling
+  `os.Exit`, so deferred cleanup can run. The package test could not start due
+  to the existing missing `go.sum` entry for `pgx/v5`; parent/RPM sync is
+  pending validation.
 - Remaining open issues are still under triage; no issue is marked resolved
   here until its code change and tests are verified.
 ## GitHub reconciliation (2026-07-15)
