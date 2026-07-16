@@ -87,6 +87,12 @@ Updated 2026-07-16.
   the package test is blocked by the existing missing `go.sum` entry for
   `pgx/v5`; parent/RPM sync is recorded in `e53ae21`; the release-reference
   validator passes.
+- `admiralctl#12` is a real security issue and was fixed in submodule commit
+  `2b1671a` (with documentation commit `cfc4a3a`): generated signing seeds
+  are written exclusively to a mode-0600 file and never printed; only the
+  public key and file path are displayed. The package test remains blocked by
+  the existing missing `go.sum` entry for `pgx/v5`; parent/RPM sync is
+  recorded in the next parent commit.
 - `admiral-harbor#17` is a real issue and was fixed in submodule commit
   `d149708`: fiscal evidence now accepts only PDF/PNG/JPEG files and enforces
   a configurable 10 MiB limit before hashing or saving. Focused fiscal tests
