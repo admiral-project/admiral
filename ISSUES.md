@@ -27,6 +27,10 @@ Updated 2026-07-16.
   random command IDs now propagate CSPRNG failures instead of falling back to
   timestamps. The parent gitlink and RPM reference are synchronized in
   commits `6c18b59` and `813ca04`; the release-reference validator passes.
+- `admirald#25` was a real issue but was already fixed in the signed submodule
+  commit `78becce`: HKDF derivation returns an error instead of panicking, and
+  the current secrets package contains no panic path. No duplicate code change
+  was necessary; this existing fix is included in the resolved count.
 - `admiral-fleet#52` is a real issue and was fixed in submodule commit
   `af07c1d`: fleet HTTP responses are drained before closing on all inspected
   status, callback, health-check, and restore paths. The parent/RPM reference
