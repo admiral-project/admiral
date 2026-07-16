@@ -103,7 +103,7 @@ Updated 2026-07-16.
   prompt, while retaining `--token` only with the existing exposure warning.
   Documentation and regression setup were updated; the package test remains
   blocked by the existing missing `go.sum` entry for `pgx/v5`; parent/RPM sync
-  is recorded in the next parent commit.
+  is recorded in `a195031`; the release-reference validator passes.
 - `admiral-harbor#17` is a real issue and was fixed in submodule commit
   `d149708`: fiscal evidence now accepts only PDF/PNG/JPEG files and enforces
   a configurable 10 MiB limit before hashing or saving. Focused fiscal tests
