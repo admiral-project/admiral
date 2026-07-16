@@ -19,6 +19,10 @@ Updated 2026-07-16.
   affected Go builds are in the three RPM specs rather than `Makefile:42`.
   The specs are fixed in commit `3a14cef`; the parent records the updated
   submodule revisions in commit `aca9b9b`.
+- `admiral#45` is a real release-integrity issue. As an immediate mitigation,
+  `Makefile` and the RPM specs now match every checked-out component commit;
+  `scripts/validate-release-refs.py` passes. Commit `1f060be` does not close
+  the broader release-manifest and exact-artifact E2E acceptance criteria.
 - Remaining open issues are still under triage; no issue is marked resolved
   here until its code change and tests are verified.
 ## GitHub reconciliation (2026-07-15)
