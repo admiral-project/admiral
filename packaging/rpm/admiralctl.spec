@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 %global debug_package %{nil}
-%global commit 317fbf75afd53bfbdbf24fb0d4ae7470738abf82
+%global commit 86f94845bf2fb422827fb0e0476e1f422689b8d4
 
 Name:    admiralctl
 Version: 0.0.1beta16
@@ -14,7 +14,7 @@ URL:     https://github.com/admiral-project/admiralctl
 Source0: https://github.com/admiral-project/admiral/archive/%{commit}/admiral-%{version}.tar.gz
 Source1: admiralctl.yaml
 
-BuildRequires: golang >= 1.22
+BuildRequires: golang >= 1.26.4
 BuildRequires: git
 
 Requires: admiral-common

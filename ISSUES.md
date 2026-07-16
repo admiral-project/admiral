@@ -26,6 +26,15 @@ customer record and does not weaken customer-token isolation.
 
 - Confirmed open issues across the superproject and all five component
   repositories with `gh`.
+- `admiralctl#1` and `admiralctl#10` through `#19` are verified in the current
+  checkout. The CLI now requires Go `>=1.26.4`, reports no vulnerabilities
+  under `/root/go/bin/govulncheck ./...`, bounds HTTP response bodies,
+  propagates request and operation errors, avoids `os.Exit` in command paths,
+  validates output formats and input paths, keeps signing keys at mode 0600,
+  warns on token flags, and uses an explicit HTTP-client option only in tests;
+  the old exported `NewWithHTTP` constructor is gone. The full CLI test suite
+  and `go vet ./...` pass. Parent/RPM references are synchronized in the
+  current release commit.
 - `admiral#44` is still open in GitHub, but its reported suppression is stale
   and is not reproducible in the current tree: all three Go RPM `%check`
   sections run `go test ./...` without `|| echo`, while Flagship and Harbor
