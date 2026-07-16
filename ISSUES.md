@@ -110,6 +110,11 @@ Updated 2026-07-16.
   runtime and `dev_run.py`. Focused security/factory tests pass (16 tests);
   parent/RPM sync is recorded in `8170cb8`; the release-reference validator
   passes.
+- `admiral-harbor#27` is a real security issue and was fixed in submodule
+  commit `a75f722`: customer search now escapes SQL `LIKE` metacharacters
+  before using `ILIKE`, so `%` and `_` are treated literally. The focused
+  regression test passes; parent/RPM sync is recorded in the next parent
+  commit.
 - `admiral-harbor#17` is a real issue and was fixed in submodule commit
   `d149708`: fiscal evidence now accepts only PDF/PNG/JPEG files and enforces
   a configurable 10 MiB limit before hashing or saving. Focused fiscal tests
