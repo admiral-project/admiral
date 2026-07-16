@@ -146,6 +146,12 @@ Updated 2026-07-16.
   both submodules now declare `Flask>=3.1.3` and `Werkzeug>=3.0.6` in
   `pyproject.toml`. The fixes are `8a4ef2c` and `027289c`; parent/RPM sync is
   recorded in `12c2f6b`; the release-reference validator passes.
+- `admiral-fleet#49` is a real issue and was fixed in submodule commit
+  `79d36d7`: the claim loop now routes execution through the outbox-aware
+  `HandleTask` path, failed callback files are retained for retry, and health
+  or storage report failures are logged with context. Go tests remain blocked
+  by the environment's Go 1.16.7 lacking `log/slog`; formatting and diff
+  validation pass.
 - Remaining open issues are still under triage; no issue is marked resolved
   here until its code change and tests are verified.
 ## GitHub reconciliation (2026-07-15)
