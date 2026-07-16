@@ -42,6 +42,11 @@ Updated 2026-07-16.
   package test could not start because this checkout lacks a `go.sum` entry
   for `pgx/v5`; no dependency files were changed. Parent/RPM synchronization
   is recorded in `21b7fa1`; the release-reference validator passes.
+- `admirald#38` is a real issue and was fixed in submodule commit `728b1fd`:
+  all 21 `rows.Next()` loops in `internal/database` and `internal/queuedb`
+  now check and contextualize `rows.Err()`. The package test remains blocked
+  by the existing missing `go.sum` entry for `pgx/v5`; parent/RPM sync is
+  pending validation.
 - Remaining open issues are still under triage; no issue is marked resolved
   here until its code change and tests are verified.
 ## GitHub reconciliation (2026-07-15)
