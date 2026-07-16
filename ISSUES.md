@@ -96,6 +96,10 @@ Updated 2026-07-16.
   their RPM specs now require `python3-flask >= 3.1.3`, preventing installation
   with the vulnerable Flask 3.1.2 package. The static packaging check passes;
   the parent change is recorded in `2aaadd0`.
+- `admiral-flagship#7` and `admiral-harbor#12` are real dependency issues:
+  both submodules now declare `Flask>=3.1.3` and `Werkzeug>=3.0.6` in
+  `pyproject.toml`. The fixes are `8a4ef2c` and `027289c`; parent/RPM sync is
+  recorded in the next parent commit.
 - Remaining open issues are still under triage; no issue is marked resolved
   here until its code change and tests are verified.
 ## GitHub reconciliation (2026-07-15)
