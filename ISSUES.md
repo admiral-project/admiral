@@ -23,6 +23,9 @@ Updated 2026-07-16.
   `Makefile` and the RPM specs now match every checked-out component commit;
   `scripts/validate-release-refs.py` passes. Commit `1f060be` does not close
   the broader release-manifest and exact-artifact E2E acceptance criteria.
+- `admirald#39` is a real issue and was fixed in submodule commit `de00756`:
+  random command IDs now propagate CSPRNG failures instead of falling back to
+  timestamps. A parent gitlink/spec reference update is pending.
 - Remaining open issues are still under triage; no issue is marked resolved
   here until its code change and tests are verified.
 ## GitHub reconciliation (2026-07-15)
