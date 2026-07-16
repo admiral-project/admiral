@@ -1,5 +1,5 @@
 %global debug_package %{nil}
-%global commit a75f72236c3fac06395a67e4abe2d8fb6f6abae8
+%global commit 4f6167bec622453f8fde52caa5c5794c712b0f49
 
 Name:    admiral-harbor
 Version: 0.0.1beta16
@@ -22,6 +22,7 @@ BuildArch: noarch
 
 BuildRequires: python3
 BuildRequires: python3-pytest
+BuildRequires: python3-pyyaml
 BuildRequires: systemd
 
 Requires: admiral-common
@@ -31,6 +32,7 @@ Requires: python3-flask-sqlalchemy
 Requires: python3-flask-alembic
 Requires: python3-gunicorn
 Requires: python3-requests
+Requires: python3-pyyaml
 Requires: python3-argon2-cffi
 Requires: python3-cryptography
 Requires: python3-mistune

@@ -158,6 +158,12 @@ Updated 2026-07-16.
   regression test is present; Go tests remain blocked by the same Go 1.16.7
   environment limitation. Parent/RPM synchronization is recorded in the
   following parent commit; `scripts/validate-release-refs.py` passes.
+- `admiral-harbor#31` is a real issue and is fixed locally: tier catalog YAML
+  is now parsed with `yaml.safe_load` instead of indentation heuristics, with
+  malformed or non-mapping documents rejected as empty catalogs. PyYAML is
+  declared in the Python project and EL10 RPM BuildRequires/Requires. Tests
+  are pending because PyYAML is not installed in this environment. No push
+  was performed, per the user's instruction.
 - Remaining open issues are still under triage; no issue is marked resolved
   here until its code change and tests are verified.
 ## GitHub reconciliation (2026-07-15)
