@@ -23,7 +23,7 @@ BuildRequires: systemd
 
 Requires: admiral-common
 Requires: python3
-Requires: python3-flask
+Requires: python3-flask >= 3.1.3
 Requires: python3-requests
 Requires: python3-gunicorn
 Requires: systemd

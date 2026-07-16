@@ -92,6 +92,10 @@ Updated 2026-07-16.
   a configurable 10 MiB limit before hashing or saving. Focused fiscal tests
   pass (3 tests); parent/RPM sync is recorded in `a7a992a`; the
   release-reference validator passes.
+- `admiral-flagship#1` and `admiral-harbor#1` are real packaging issues:
+  their RPM specs now require `python3-flask >= 3.1.3`, preventing installation
+  with the vulnerable Flask 3.1.2 package. The static packaging check passes;
+  the parent change is recorded in the next commit.
 - Remaining open issues are still under triage; no issue is marked resolved
   here until its code change and tests are verified.
 ## GitHub reconciliation (2026-07-15)
