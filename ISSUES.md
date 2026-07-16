@@ -164,6 +164,15 @@ Updated 2026-07-16.
   declared in the Python project and EL10 RPM BuildRequires/Requires. Tests
   are pending because PyYAML is not installed in this environment. No push
   was performed, per the user's instruction.
+- `admiralctl#14` is a real issue and was fixed in submodule commit `317fbf7`:
+  operation polling now requires a positive timeout, and CLI commands expose
+  `--wait-timeout` with a 30-minute default. The client and CLI unit tests pass.
+- `admirald` had a current-tree compile error in admin instance actions and a
+  Go 1.26-incompatible random-reader test. These are fixed in commits `6e2656c`
+  and `0b7662d`; `go test ./...` passes when optional PostgreSQL integration
+  tests are skipped by leaving `DATABASE_URL` unset.
+- Harbor test fixtures now initialize their SQLite engine before tests in
+  submodule commit `a860091`; focused catalog, CSRF, and admin suites pass.
 - Remaining open issues are still under triage; no issue is marked resolved
   here until its code change and tests are verified.
 ## GitHub reconciliation (2026-07-15)
