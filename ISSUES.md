@@ -4,6 +4,11 @@ Status: open findings from the July 2026 review. Each finding now has a
 corresponding GitHub issue in the correct component repository.
 Updated 2026-07-16.
 
+Administrative `admiralctl` requests are authenticated as the `system`
+principal by `admirald` when they use the admin token. Harbor requests still
+require their real `X-Admiral-Customer-ID`; the system principal is not a
+customer record and does not weaken customer-token isolation.
+
 ## Progress (2026-07-16)
 
 - `admiral-fleet#1` is addressed in the parent RPM spec by requiring Go
