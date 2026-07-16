@@ -152,6 +152,12 @@ Updated 2026-07-16.
   or storage report failures are logged with context. Go tests remain blocked
   by the environment's Go 1.16.7 lacking `log/slog`; formatting and diff
   validation pass.
+- `admiral-fleet#48` is a real issue and was fixed in submodule commit
+  `eb9a7da`: direct HTTPS and S3 restore downloads now read at most the
+  configured 1 GiB artifact limit and reject oversized objects. The S3 limit
+  regression test is present; Go tests remain blocked by the same Go 1.16.7
+  environment limitation. Parent/RPM synchronization is recorded in the
+  following parent commit; `scripts/validate-release-refs.py` passes.
 - Remaining open issues are still under triage; no issue is marked resolved
   here until its code change and tests are verified.
 ## GitHub reconciliation (2026-07-15)
