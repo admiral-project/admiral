@@ -31,6 +31,11 @@ Updated 2026-07-16.
   `af07c1d`: fleet HTTP responses are drained before closing on all inspected
   status, callback, health-check, and restore paths. The parent/RPM reference
   update is synchronized in `de3402f`; the release-reference validator passes.
+- `admiral-harbor#29` is a real issue and was fixed in submodule commit
+  `8bf2263`: Harbor now validates bounded RFC-style email syntax at customer
+  registration and course enrollment. The targeted regression test passes;
+  the complete auth suite did not finish in the available execution window.
+  Parent/RPM reference synchronization is pending validation.
 - Remaining open issues are still under triage; no issue is marked resolved
   here until its code change and tests are verified.
 ## GitHub reconciliation (2026-07-15)
