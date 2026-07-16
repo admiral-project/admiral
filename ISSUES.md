@@ -98,6 +98,12 @@ Updated 2026-07-16.
   return an explicit error. The focused test is present; the package test is
   blocked by the existing missing `go.sum` entry for `pgx/v5`; parent/RPM sync
   is recorded in `82b7f1e`; the release-reference validator passes.
+- `admiralctl#10` is a real security issue and was fixed in submodule commit
+  `4a5d9bb`: node registration now prefers `ADMIRAL_NODE_TOKEN` or the secure
+  prompt, while retaining `--token` only with the existing exposure warning.
+  Documentation and regression setup were updated; the package test remains
+  blocked by the existing missing `go.sum` entry for `pgx/v5`; parent/RPM sync
+  is recorded in the next parent commit.
 - `admiral-harbor#17` is a real issue and was fixed in submodule commit
   `d149708`: fiscal evidence now accepts only PDF/PNG/JPEG files and enforces
   a configurable 10 MiB limit before hashing or saving. Focused fiscal tests
