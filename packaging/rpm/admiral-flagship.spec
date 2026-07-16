@@ -18,7 +18,10 @@ Source2: flagship.env
 BuildArch: noarch
 
 BuildRequires: python3
+BuildRequires: python3-flask
+BuildRequires: python3-gunicorn
 BuildRequires: python3-pytest
+BuildRequires: python3-requests
 BuildRequires: systemd
 
 Requires: admiral-common
@@ -78,6 +81,9 @@ restorecon -R %{_prefix}/lib/admiral/flagship 2>/dev/null || :
 %{python3} -m pytest tests/ -x --tb=short
 
 %changelog
+* Thu Jul 16 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta16-2
+- Add missing BuildRequires for %%check section
+
 * Tue Jul 14 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta16-1
 - Harden the Flagship systemd unit with strict filesystem and device policy
 
