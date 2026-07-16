@@ -52,6 +52,10 @@ Updated 2026-07-16.
   `os.Exit`, so deferred cleanup can run. The package test could not start due
   to the existing missing `go.sum` entry for `pgx/v5`; parent/RPM sync is
   recorded in `2004423`; the release-reference validator passes.
+- `admiral-harbor#26` is a real issue and was fixed in submodule commit
+  `2174801`: the subscription CSV export now uses actual `Subscription`
+  fields and has a regression test covering exported database values. The
+  targeted test passes; parent/RPM sync is pending validation.
 - Remaining open issues are still under triage; no issue is marked resolved
   here until its code change and tests are verified.
 ## GitHub reconciliation (2026-07-15)
