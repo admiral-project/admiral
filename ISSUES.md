@@ -113,8 +113,8 @@ Updated 2026-07-16.
 - `admiral-harbor#27` is a real security issue and was fixed in submodule
   commit `a75f722`: customer search now escapes SQL `LIKE` metacharacters
   before using `ILIKE`, so `%` and `_` are treated literally. The focused
-  regression test passes; parent/RPM sync is recorded in the next parent
-  commit.
+  regression test passes; parent/RPM sync is recorded in `cde77c1`; the
+  release-reference validator passes.
 - `admiral-harbor#17` is a real issue and was fixed in submodule commit
   `d149708`: fiscal evidence now accepts only PDF/PNG/JPEG files and enforces
   a configurable 10 MiB limit before hashing or saving. Focused fiscal tests
