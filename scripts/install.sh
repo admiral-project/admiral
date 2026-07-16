@@ -775,7 +775,15 @@ if [[ "$INSTALL_DEV_MODE" != "true" ]]; then
     if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]]; then
         EXPECTED_ROOT_LOGIN="no"
     fi
-    if [[ "$SSHD_EFFECTIVE" != *"permitrootlogin $EXPECTED_ROOT_LOGIN"* ]]; then
+    ROOT_LOGIN_OK=false
+    if [[ "$SSHD_EFFECTIVE" == *"permitrootlogin $EXPECTED_ROOT_LOGIN"* ]]; then
+        ROOT_LOGIN_OK=true
+    fi
+    # OpenSSH >= 8.2 normalizes prohibit-password to without-password in sshd -T output.
+    if [[ "$EXPECTED_ROOT_LOGIN" == "prohibit-password" && "$SSHD_EFFECTIVE" == *"permitrootlogin without-password"* ]]; then
+        ROOT_LOGIN_OK=true
+    fi
+    if [[ "$ROOT_LOGIN_OK" == false ]]; then
         SECURITY_WARNINGS+=("sshd PermitRootLogin is not set to $EXPECTED_ROOT_LOGIN.")
     fi
     if [[ "$SSHD_EFFECTIVE" != *"passwordauthentication no"* ]]; then
