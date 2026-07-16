@@ -1,5 +1,5 @@
 %global debug_package %{nil}
-%global commit 060a5a779ae627667af984cc1279943e34c3f465
+%global commit 29b9dd7e97215f70880e29c868cca420c298e2c9
 
 Name:    admiral-harbor
 Version: 0.0.1beta16
@@ -137,6 +137,10 @@ restorecon -R %{_localstatedir}/lib/admiral/harbor 2>/dev/null || :
 * Tue Jul 07 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta15-2
 - Update source commit refs to include security audit fixes
 
+* Sun Jul 05 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta14-6
+- Set session cookie SameSite to Strict
+- Reduce customer session timeout from 240 to 120 minutes
+
 * Sun Jul 05 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta14-5
 - Update submodule commit refs and bump release
 
@@ -157,10 +161,13 @@ restorecon -R %{_localstatedir}/lib/admiral/harbor 2>/dev/null || :
 
 * Fri Jun 26 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta12-1
 - Bump to 0.0.1beta12 and update source commit ref
+
 * Thu Jun 25 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta11-1
 - Bump to 0.0.1beta11 and reset packaging release to 1
+
 * Wed Jun 24 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta10-1
 - Coordinate beta10 release for setup_command catalog validation
+
 * Tue Jun 23 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta9-1
 - Bump to 0.0.1beta9, update source commit ref
 - Multi-node beta: add rate limiting and audit remediation
@@ -168,18 +175,24 @@ restorecon -R %{_localstatedir}/lib/admiral/harbor 2>/dev/null || :
 - Fix admin login rate limit tests
 - Align DATABASE_URL sslmode to require
 - Fix admin login with bootstrap user credentials
+
 * Mon Jun 22 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta8-2
 - Bump to 0.0.1beta8, update source commit ref
+
 * Sat Jun 20 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta7-1
 - Bump to 0.0.1beta7, update source commit ref
+
 * Fri Jun 19 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta5-2
 - Rebuild against current superproject HEAD
+
 * Fri Jun 19 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta4-2
 - Rebuild against current superproject HEAD
 - Remove hardcoded ADMIRAL_LISTEN_ADDRESS from admirald systemd unit
+
 * Fri Jun 19 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta4-1
 - Bump to 0.0.1beta4, update spec commit ref
 - Make env.py compatible with flask-alembic 3.x
+
 * Thu Jun 18 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta3-1
 - Bump to 0.0.1beta3, update spec commit ref
 - Fix psycopg dependencies (remove psycopg2, correct psycopg3 name)
@@ -214,9 +227,11 @@ restorecon -R %{_localstatedir}/lib/admiral/harbor 2>/dev/null || :
 * Mon Jun 15 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1alpha5-3
 - Add Requires: cockpit-bridge and Requires: wireguard-tools
 
-* Sun Jul 05 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta14-6
-- Set session cookie SameSite to Strict
-- Reduce customer session timeout from 240 to 120 minutes
+* Sun Jun 14 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1alpha5-4
+- Add missing tone-ok CSS class for status pills
+
+* Sun Jun 14 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1alpha5-3
+- Rework instance detail page layout and styling
 
 * Sun Jun 14 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1alpha5-2
 - Update source commit to latest alpha5
@@ -243,12 +258,6 @@ restorecon -R %{_localstatedir}/lib/admiral/harbor 2>/dev/null || :
 - Fix admin templates: use technical_status instead of status
 - Fix dashboard CSS grid max-width
 - Add favicon to admin_layout.html
-
-* Sun Jun 14 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1alpha5-4
-- Add missing tone-ok CSS class for status pills
-
-* Sun Jun 14 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1alpha5-3
-- Rework instance detail page layout and styling
 
 * Sat Jun 13 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1alpha4-3
 - Bump admiral-harbor packaging
