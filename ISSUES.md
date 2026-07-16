@@ -51,7 +51,7 @@ Updated 2026-07-16.
   operation wait failures now return errors to Cobra instead of calling
   `os.Exit`, so deferred cleanup can run. The package test could not start due
   to the existing missing `go.sum` entry for `pgx/v5`; parent/RPM sync is
-  pending validation.
+  recorded in `2004423`; the release-reference validator passes.
 - Remaining open issues are still under triage; no issue is marked resolved
   here until its code change and tests are verified.
 ## GitHub reconciliation (2026-07-15)
