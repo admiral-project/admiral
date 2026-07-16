@@ -16,7 +16,8 @@ Updated 2026-07-16.
   redirect-validated, port allocation is serialized, and shutdown propagates
   cancellation and flushes the outbox. The complete Fleet test suite, vet,
   and build pass. GitHub issue state must be reconciled after the commit is
-  published.
+  published. All 15 Fleet issues, including dependency issue `#1`, are now
+  closed on GitHub after the verification and RPM build.
 
 - Confirmed open issues across the superproject and all five component
   repositories with `gh`.
@@ -190,16 +191,19 @@ Updated 2026-07-16.
 
 The referenced repositories were checked with `gh issue list --state open`
 and each issue verified with `gh issue view`. There are 91 open GitHub
-issues across all six repositories:
+issues across the six repositories before Fleet reconciliation:
 
 | Repository | Open issues |
 |---|---|
 | admiral-project/admiral | 15 |
 | admiral-project/admirald | 19 |
-| admiral-project/admiral-fleet | 15 |
+| admiral-project/admiral-fleet | 0 |
 | admiral-project/admiralctl | 11 |
 | admiral-project/admiral-flagship | 9 |
 | admiral-project/admiral-harbor | 22 |
+
+After closing the verified Fleet set, the current Fleet count is zero; the
+other repository counts above are the pre-reconciliation snapshot.
 
 The following documented issues are closed on GitHub; their evidence
 remains below for auditability and each is marked accordingly:
@@ -217,7 +221,9 @@ component repositories before the next reconciliation.
 The open dependency-maintenance issues below are outside the July review and
 do not yet have an entry in this document:
 
-- `admiral-fleet#1`, `admiralctl#1`, and `admirald#1`: Go toolchain update.
+- `admiralctl#1` and `admirald#1`: Go toolchain update. `admiral-fleet#1`
+  was closed after the Fleet RPM spec and vulnerability verification were
+  updated.
 - `admiral-harbor#1` and `admiral-flagship#1`: Flask version pin.
 - `admiral-harbor#12` and `admiral-flagship#7`: Werkzeug version pin.
 
