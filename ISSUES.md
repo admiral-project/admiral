@@ -92,10 +92,11 @@ Updated 2026-07-16.
   a configurable 10 MiB limit before hashing or saving. Focused fiscal tests
   pass (3 tests); parent/RPM sync is recorded in `a7a992a`; the
   release-reference validator passes.
-- `admiral-flagship#1` and `admiral-harbor#1` are real packaging issues:
-  their RPM specs now require `python3-flask >= 3.1.3`, preventing installation
-  with the vulnerable Flask 3.1.2 package. The static packaging check passes;
-  the parent change is recorded in `2aaadd0`.
+- `admiral-flagship#1` and `admiral-harbor#1` are real packaging issues, but
+  remain pending for EL10: current EPEL 10.3 provides Flask `3.1.2`, not the
+  required fixed `3.1.3`. The RPM specs therefore do not impose an unavailable
+  dependency that would make Tier 1 installations fail; the issue remains
+  explicitly tracked until EPEL ships the fixed package.
 - `admiral-flagship#7` and `admiral-harbor#12` are real dependency issues:
   both submodules now declare `Flask>=3.1.3` and `Werkzeug>=3.0.6` in
   `pyproject.toml`. The fixes are `8a4ef2c` and `027289c`; parent/RPM sync is

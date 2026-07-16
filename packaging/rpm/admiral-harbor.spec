@@ -25,7 +25,7 @@ BuildRequires: python3-pytest
 BuildRequires: systemd
 
 Requires: admiral-common
-Requires: python3-flask >= 3.1.3
+Requires: python3-flask
 Requires: python3-flask-login
 Requires: python3-flask-sqlalchemy
 Requires: python3-flask-alembic
