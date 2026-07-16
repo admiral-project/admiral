@@ -35,7 +35,8 @@ Updated 2026-07-16.
   `8bf2263`: Harbor now validates bounded RFC-style email syntax at customer
   registration and course enrollment. The targeted regression test passes;
   the complete auth suite did not finish in the available execution window.
-  Parent/RPM reference synchronization is pending validation.
+  Parent/RPM reference synchronization is recorded in `4820e24`; the
+  release-reference validator passes.
 - Remaining open issues are still under triage; no issue is marked resolved
   here until its code change and tests are verified.
 ## GitHub reconciliation (2026-07-15)
