@@ -27,6 +27,10 @@ Updated 2026-07-16.
   random command IDs now propagate CSPRNG failures instead of falling back to
   timestamps. The parent gitlink and RPM reference are synchronized in
   commits `6c18b59` and `813ca04`; the release-reference validator passes.
+- `admiral-fleet#52` is a real issue and was fixed in submodule commit
+  `af07c1d`: fleet HTTP responses are drained before closing on all inspected
+  status, callback, health-check, and restore paths. The parent/RPM reference
+  update is pending validation.
 - Remaining open issues are still under triage; no issue is marked resolved
   here until its code change and tests are verified.
 ## GitHub reconciliation (2026-07-15)
