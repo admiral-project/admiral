@@ -70,7 +70,8 @@ Updated 2026-07-16.
   JSON/table output and policy rejection messages now use Cobra command
   writers, and the unused `requireToken` helper was removed. The package
   test is currently blocked by the existing missing `go.sum` entry for
-  `pgx/v5`; parent/RPM sync is recorded in the next parent commit.
+  `pgx/v5`; parent/RPM sync is recorded in `781c772`; the release-reference
+  validator passes.
 - Remaining open issues are still under triage; no issue is marked resolved
   here until its code change and tests are verified.
 ## GitHub reconciliation (2026-07-15)
