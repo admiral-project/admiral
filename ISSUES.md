@@ -2003,6 +2003,11 @@ may be supplementary, but cannot replace the EL10 acceptance gate.
 
 - **GitHub issue:** https://github.com/admiral-project/admiral-harbor/issues/21
 
+- **Status:** Fixed in `admiral-harbor` commit `7987d6f` and pending release RPM validation.
+- **Evidence:** Customer passwords require at least 12 characters and administrator
+  passwords require at least 16 characters; registration, profile changes, and
+  admin password changes have regression coverage.
+
 - **Severity:** Medium
 - **Affected components:** `admiral-harbor`
 - **Evidence:** `admiral-harbor/app/auth.py:240-241` checks only `if not
