@@ -2,11 +2,11 @@
 # SPDX-License-Identifier: Apache-2.0
 
 %global debug_package %{nil}
-%global commit a03755b473d51266aa7ff5df1a1ef7de3bc79f0d
+%global commit 3dcce8bb3d844e76e81b6e606e98f476ec929deb
 
 Name:    admiral-fleet
 Version: 0.0.1beta17
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: Admiral Fleet Worker Agent
 
 License: Apache-2.0
@@ -47,7 +47,7 @@ go build -trimpath -buildmode=pie -ldflags="-s -w" -o admiral-fleet ./cmd/admira
 cd admiral-fleet
 install -Dm0755 admiral-fleet %{buildroot}%{_bindir}/admiral-fleet
 install -Dm0644 %{SOURCE1} %{buildroot}%{_unitdir}/admiral-fleet.service
-install -Dm0644 %{SOURCE2} %{buildroot}%{_sysconfdir}/admiral/fleet.env
+install -Dm0600 %{SOURCE2} %{buildroot}%{_sysconfdir}/admiral/fleet.env
 
 %check
 cd admiral-fleet
@@ -59,7 +59,7 @@ mkdir -p "$GOCACHE"
 %license admiral-fleet/LICENSE
 %{_bindir}/admiral-fleet
 %{_unitdir}/admiral-fleet.service
-%config(noreplace) %{_sysconfdir}/admiral/fleet.env
+%attr(0600, root, root) %config(noreplace) %{_sysconfdir}/admiral/fleet.env
 
 %post
 %systemd_post admiral-fleet.service
@@ -73,6 +73,12 @@ loginctl enable-linger admiral-apps 2>/dev/null || :
 %systemd_postun_with_restart admiral-fleet.service
 
 %changelog
+* Fri Jul 17 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta17-2
+- Create backup artifacts with private permissions
+- Stop distributing the queue encryption key to Fleet
+- Install the Fleet token configuration as root-only
+- Rebuild with latest submodule refs and release bump
+
 * Fri Jul 17 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta17-1
 - Bump to 0.0.1beta17 and rebuild with latest security hardening
 

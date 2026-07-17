@@ -30,6 +30,11 @@ Installer review also found and fixed two issues outside the original list:
 - An existing `admiral-common` package prevented reconciliation from loading
   current repository playbooks; the installer now installs or updates it
   before invoking Ansible.
+- **ADM-SEC-089 (Critical, packaging):** the beta17-2 specs referenced component
+  commits from before the final security fixes, and RPM metadata declared
+  secret-bearing INI/environment files as mode `0644`. Release references now
+  match the committed submodules, and all credential configuration files are
+  packaged as `0600 root:root` so an RPM upgrade cannot reopen their modes.
 
 No RPM build or unit-test execution is claimed by this validation record.
 

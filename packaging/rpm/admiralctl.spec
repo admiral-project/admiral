@@ -6,7 +6,7 @@
 
 Name:    admiralctl
 Version: 0.0.1beta17
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: Admiral Command-Line Interface
 
 License: Apache-2.0
@@ -38,7 +38,7 @@ go build -trimpath -buildmode=pie -ldflags="-s -w -X main.Version=%{version}" -o
 %install
 cd admiralctl
 install -Dm0755 admiralctl %{buildroot}%{_bindir}/admiralctl
-install -Dm0644 %{SOURCE1} %{buildroot}%{_sysconfdir}/admiralctl/config.yaml
+install -Dm0600 %{SOURCE1} %{buildroot}%{_sysconfdir}/admiralctl/config.yaml
 install -Dm0644 docs/admiralctl.1 %{buildroot}%{_mandir}/man1/admiralctl.1
 install -Dm0644 docs/admiralctl-admin.8 %{buildroot}%{_mandir}/man8/admiralctl-admin.8
 
@@ -54,12 +54,16 @@ mkdir -p "$GOCACHE"
 %{_mandir}/man1/admiralctl.1*
 %{_mandir}/man8/admiralctl-admin.8*
 %dir %{_sysconfdir}/admiralctl
-%config(noreplace) %{_sysconfdir}/admiralctl/config.yaml
+%attr(0600, root, root) %config(noreplace) %{_sysconfdir}/admiralctl/config.yaml
 
 %post
 restorecon -F %{_bindir}/admiralctl 2>/dev/null || :
 
 %changelog
+* Fri Jul 17 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta17-2
+- Install the global CLI token configuration as root-only
+- Rebuild with latest submodule refs and release bump
+
 * Fri Jul 17 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta17-1
 - Bump to 0.0.1beta17 and rebuild with latest security hardening
 

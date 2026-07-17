@@ -2,11 +2,11 @@
 # SPDX-License-Identifier: Apache-2.0
 
 %global debug_package %{nil}
-%global commit bb5599abfae64c6e8c6eeba5e674f785ecc2f214
+%global commit dc2219d0cf3ca5854412c75182713faa1fe43890
 
 Name:    admirald
 Version: 0.0.1beta17
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: Admiral Control Plane - Core API and orchestration service
 
 License: Apache-2.0
@@ -45,7 +45,7 @@ go build -trimpath -buildmode=pie -ldflags="-s -w -X main.Version=%{version}" -o
 cd admirald
 install -Dm0755 admirald %{buildroot}%{_bindir}/admirald
 install -Dm0644 %{SOURCE1} %{buildroot}%{_unitdir}/admirald.service
-install -Dm0644 %{SOURCE2} %{buildroot}%{_sysconfdir}/admirald.ini
+install -Dm0600 %{SOURCE2} %{buildroot}%{_sysconfdir}/admirald.ini
 install -d %{buildroot}/etc/systemd/system/admirald.service.d
 
 %check
@@ -58,7 +58,7 @@ mkdir -p "$GOCACHE"
 %license admirald/LICENSE
 %{_bindir}/admirald
 %{_unitdir}/admirald.service
-%config(noreplace) %{_sysconfdir}/admirald.ini
+%attr(0600, root, root) %config(noreplace) %{_sysconfdir}/admirald.ini
 %dir %attr(0750, root, admiral) /etc/systemd/system/admirald.service.d
 
 %post
@@ -72,6 +72,13 @@ restorecon -F %{_bindir}/admirald 2>/dev/null || :
 %systemd_postun_with_restart admirald.service
 
 %changelog
+* Fri Jul 17 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta17-2
+- Load control plane secrets from systemd credentials
+- Keep the queue encryption key inside the control plane
+- Install the control-plane configuration as root-only
+- Verify checksums for internal restores
+- Rebuild with latest submodule refs and release bump
+
 * Fri Jul 17 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta17-1
 - Bump to 0.0.1beta17 and rebuild with latest security hardening
 

@@ -3,7 +3,7 @@
 
 Name:    admiral-harbor
 Version: 0.0.1beta17
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: Admiral Customer Portal - Web UI for end users
 
 License: Apache-2.0
@@ -90,7 +90,7 @@ install -Dm0644 %{SOURCE2} %{buildroot}%{_unitdir}/admiral-harbor-worker.service
 install -Dm0644 %{SOURCE3} %{buildroot}%{_unitdir}/admiral-harbor-worker.timer
 install -Dm0644 %{SOURCE4} %{buildroot}%{_unitdir}/admiral-harbor-catalog-sync.service
 install -Dm0644 %{SOURCE5} %{buildroot}%{_unitdir}/admiral-harbor-catalog-sync.timer
-install -Dm0644 %{SOURCE8} %{buildroot}%{_sysconfdir}/admiral/harbor.env
+install -Dm0600 %{SOURCE8} %{buildroot}%{_sysconfdir}/admiral/harbor.env
 install -d %{buildroot}/etc/systemd/system/admiral-harbor.service.d
 mkdir -p %{buildroot}%{_localstatedir}/lib/admiral/harbor/uploads
 
@@ -105,7 +105,7 @@ mkdir -p %{buildroot}%{_localstatedir}/lib/admiral/harbor/uploads
 %{_bindir}/harbor-migrate
 %{_bindir}/harborctl
 %{_mandir}/man8/harborctl.8*
-%config(noreplace) %{_sysconfdir}/admiral/harbor.env
+%attr(0600, root, root) %config(noreplace) %{_sysconfdir}/admiral/harbor.env
 %dir %attr(0750, root, admiral) /etc/systemd/system/admiral-harbor.service.d
 %dir %attr(0750, admiral, admiral) %{_localstatedir}/lib/admiral/harbor
 %dir %attr(0750, admiral, admiral) %{_localstatedir}/lib/admiral/harbor/uploads
@@ -131,6 +131,10 @@ restorecon -R %{_localstatedir}/lib/admiral/harbor 2>/dev/null || :
 %{python3} -m pytest tests/ -x --tb=short
 
 %changelog
+* Fri Jul 17 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta17-2
+- Install the Harbor credential configuration as root-only
+- Rebuild with latest submodule refs and release bump
+
 * Fri Jul 17 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta17-1
 - Bump to 0.0.1beta17 and rebuild with latest security hardening
 - Preserve the raw PayPal webhook payload for signature verification

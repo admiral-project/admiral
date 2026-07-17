@@ -6,7 +6,7 @@
 
 Name:    admiral-flagship
 Version: 0.0.1beta17
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: Admiral Administrative Web Console
 
 License: Apache-2.0
@@ -60,13 +60,13 @@ See https://www.apache.org/licenses/LICENSE-2.0
 EOF
 fi
 install -Dm0644 %{SOURCE1} %{buildroot}%{_unitdir}/admiral-flagship.service
-install -Dm0644 %{SOURCE2} %{buildroot}%{_sysconfdir}/admiral/flagship.env
+install -Dm0600 %{SOURCE2} %{buildroot}%{_sysconfdir}/admiral/flagship.env
 install -d %{buildroot}/etc/systemd/system/admiral-flagship.service.d
 
 %files -f flagships.files
 %license %{_licensedir}/admiral-flagship/LICENSE
 %{_unitdir}/admiral-flagship.service
-%config(noreplace) %{_sysconfdir}/admiral/flagship.env
+%attr(0600, root, root) %config(noreplace) %{_sysconfdir}/admiral/flagship.env
 %dir %attr(0750, root, admiral) /etc/systemd/system/admiral-flagship.service.d
 
 %post
@@ -83,6 +83,10 @@ restorecon -R %{_prefix}/lib/admiral/flagship 2>/dev/null || :
 %{python3} -m pytest tests/ -x --tb=short
 
 %changelog
+* Fri Jul 17 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta17-2
+- Install the Flagship token configuration as root-only
+- Rebuild with latest submodule refs and release bump
+
 * Fri Jul 17 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta17-1
 - Bump to 0.0.1beta17 and rebuild with latest security hardening
 
