@@ -235,6 +235,26 @@ in the Ansible provisioning layer.
 - **Acceptance criteria:**
   - The peers directory has mode `0700`.
 
+### ADM-SEC-092 — Live PayPal mode remained pinned to sandbox endpoint
+
+- **Severity:** Critical
+- **Status:** Fixed on 2026-07-17.
+- **Affected components:** `admiral-harbor`, installer, Ansible and RPM configuration.
+- **Evidence:** `Config.HARBOR_PAYPAL_BASE_URL` and installed `harbor.env` always
+  supplied the sandbox URL. `_base_url()` gave that value priority over the mode
+  stored through the admin panel, so changing from sandbox to live continued to
+  authenticate and submit requests against sandbox.
+- **Impact:** Real-payment activation through the documented admin workflow could
+  not work predictably. An operator override could also direct PayPal credentials
+  to an arbitrary host.
+- **Resolution:** Bind sandbox and live modes to PayPal's fixed official endpoints,
+  reject unknown modes, remove the obsolete endpoint setting from installation
+  paths, and fail explicitly when non-mock credentials are absent.
+- **Acceptance criteria:**
+  - Live mode always calls `https://api-m.paypal.com`.
+  - Sandbox mode always calls `https://api-m.sandbox.paypal.com`.
+  - Unknown modes and absent non-mock credentials fail closed.
+
 ## Positive findings (things that are well-implemented)
 
 | Area | Detail |

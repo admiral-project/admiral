@@ -111,7 +111,6 @@
       HARBOR_PAYPAL_CLIENT_ID=
       HARBOR_PAYPAL_CLIENT_SECRET=
       HARBOR_PAYPAL_WEBHOOK_ID=
-      HARBOR_PAYPAL_BASE_URL=https://api-m.sandbox.paypal.com
       HARBOR_PAYPAL_MODE={{ 'sandbox' if not (admiral_dev_mode | default(false) | bool) else 'mock' }}
       HARBOR_PAYPAL_RETURN_URL=https://{{ admiral_harbor_external_host | default('portal.localhost.invalid') }}/billing/return
       HARBOR_PAYPAL_CANCEL_URL=https://{{ admiral_harbor_external_host | default('portal.localhost.invalid') }}/billing/cancel
