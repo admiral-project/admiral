@@ -741,6 +741,11 @@ for service in "${REQUIRED_SERVICES[@]}"; do
     fi
 done
 
+if [[ "$INSTALL_MODE" == "single-node" || "$INSTALL_MODE" == "admin-portal-node" ]]; then
+    info "Verifying Harbor authentication with the Admiral API..."
+    harborctl ping || die "Harbor cannot authenticate with the Admiral API. Check ADMIRAL_HARBOR_API_TOKEN in /etc/admiral/harbor.env and harbor_api_token in /etc/admirald.ini."
+fi
+
 # --- 11b. security checklist (blocking in secure modes) ---
 if [[ "$INSTALL_DEV_MODE" != "true" ]]; then
     SECURITY_WARNINGS=()

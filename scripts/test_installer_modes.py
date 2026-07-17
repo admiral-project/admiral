@@ -162,6 +162,21 @@ class InstallerModeTests(unittest.TestCase):
         self.assertIn("sslmode=prefer", content)
         self.assertNotIn("sslmode=disable", content)
 
+    def test_harbor_scoped_token_is_configured_on_both_sides(self) -> None:
+        admirald = ADMIRALD_TASKS.read_text(encoding="utf-8")
+        harbor = HARBOR_TASKS.read_text(encoding="utf-8")
+        installer = INSTALLER.read_text(encoding="utf-8")
+
+        self.assertIn(
+            "harbor_api_token = {{ admirald_harbor_api_token | default(admiral_harbor_api_token_value) }}",
+            admirald,
+        )
+        self.assertIn(
+            "ADMIRAL_HARBOR_API_TOKEN={{ admiral_harbor_api_token_value }}",
+            harbor,
+        )
+        self.assertIn("harborctl ping", installer)
+
     def test_sysadmin_guide_provisions_spokes_from_admin(self) -> None:
         content = SYSADMIN_GUIDE.read_text(encoding="utf-8")
 
