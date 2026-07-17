@@ -1,15 +1,39 @@
 # Admiral installer security findings
 
-Status: open findings from the July 2026 review. Each finding now has a
-corresponding GitHub issue in the correct component repository.
-Updated 2026-07-16.
+Status: all tracked GitHub issues are closed; the remaining work is release
+and end-to-end verification.
+Updated 2026-07-17.
+
+## Current status (2026-07-17)
+
+- `gh issue list --state open` returns zero open issues in all six
+  repositories: `admiral`, `admirald`, `admiral-fleet`, `admiralctl`,
+  `admiral-flagship`, and `admiral-harbor`.
+- `ADM-SEC-062` (MFA) is intentionally closed as not planned for the current
+  release scope.
+- `admiral-common-0.0.1beta16-5.el10.noarch.rpm` was built and installed.
+  The Ansible Fleet role now persists both `ADMIRAL_TASK_PUBLIC_KEY` and the
+  generated Fleet token during idempotent re-convergence.
+- The approved `admiral_install --single-node --public-ip 127.0.0.1` flow
+  completed with `failed=0`; `admirald`, `admiral-fleet`,
+  `admiral-flagship`, and `admiral-harbor` are active.
+- The WordPress golden workload was provisioned with real rootless Podman
+  containers: operation `op_3523db8971e4c767` succeeded, and instance
+  `inst_70c005a351e9d880` is `running`, `healthy`, and has
+  `setup_completed=true`.
+- Golden pause and resume both succeeded. The manual database backup also
+  succeeded. Restore and deprovision remain the next required golden-test
+  steps.
+- Fleet task authentication and signed-task verification are working in the
+  running workload path; the earlier `401` and missing-public-key errors were
+  resolved by the Ansible/package fix.
 
 Administrative `admiralctl` requests are authenticated as the `system`
 principal by `admirald` when they use the admin token. Harbor requests still
 require their real `X-Admiral-Customer-ID`; the system principal is not a
 customer record and does not weaken customer-token isolation.
 
-## Progress (2026-07-16)
+## Progress (historical, through 2026-07-16)
 
 - `admiral-fleet#1` is addressed in the parent RPM spec by requiring Go
   `>=1.26.4`; the checked-out EL10 toolchain is Go 1.26.5. `go test`,
@@ -215,7 +239,7 @@ customer record and does not weaken customer-token isolation.
   submodule commit `a860091`; focused catalog, CSRF, and admin suites pass.
 - Remaining open issues are still under triage; no issue is marked resolved
   here until its code change and tests are verified.
-## GitHub reconciliation (2026-07-16)
+## GitHub reconciliation snapshot (2026-07-16)
 
 The referenced repositories were checked with `gh issue list --state open`
 and each issue verified with `gh issue view`. There are 91 open GitHub
