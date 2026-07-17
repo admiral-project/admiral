@@ -5,8 +5,8 @@
 %global commit a03755b473d51266aa7ff5df1a1ef7de3bc79f0d
 
 Name:    admiral-fleet
-Version: 0.0.1beta16
-Release: 3%{?dist}
+Version: 0.0.1beta17
+Release: 1%{?dist}
 Summary: Admiral Fleet Worker Agent
 
 License: Apache-2.0
@@ -73,6 +73,9 @@ loginctl enable-linger admiral-apps 2>/dev/null || :
 %systemd_postun_with_restart admiral-fleet.service
 
 %changelog
+* Fri Jul 17 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta17-1
+- Bump to 0.0.1beta17 and rebuild with latest security hardening
+
 * Thu Jul 16 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta16-2
 - Rebase hardened worker release onto origin/main
 

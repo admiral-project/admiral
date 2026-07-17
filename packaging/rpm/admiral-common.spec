@@ -1,11 +1,11 @@
 # SPDX-FileCopyrightText: William Moreno Reyes CP | MBA
 # SPDX-License-Identifier: Apache-2.0
 
-%global commit a6f99c03b63f8cea8bfa51c7a7e644821dec802e
+%global commit d001c22ff37df5b03981001a6585129bb695f35b
 
 Name:    admiral-common
-Version: 0.0.1beta16
-Release: 5%{?dist}
+Version: 0.0.1beta17
+Release: 1%{?dist}
 Summary: Common files and utilities for Admiral PaaS
 
 License: Apache-2.0
@@ -137,6 +137,18 @@ semanage fcontext -a -t container_file_t "/var/lib/admiral-apps/.local/share/con
 restorecon -R /var/lib/admiral-apps/.local/share/containers/storage/ 2>/dev/null || :
 
 %changelog
+* Fri Jul 17 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta17-1
+- Bump to 0.0.1beta17 with latest security and installer fixes
+- Document repository and notification policy
+- Permit notification SMTP and document sudo scope
+- Validate runtime security controls
+- Document dev mode confirmation
+- Centralize WireGuard hub address
+- Require TLS and verify PostgreSQL readiness
+- Harden dangerous mode and temporary data handling
+- Preserve Fleet token during convergence
+- Configure Fleet task verification key
+
 * Fri Jul 17 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta16-5
 - Preserve the generated Fleet token when converging an existing installation
 

@@ -2,11 +2,11 @@
 # SPDX-License-Identifier: Apache-2.0
 
 %global debug_package %{nil}
-%global commit f748057f97a2c7e7589502402d4b31e7cf074573
+%global commit bb5599abfae64c6e8c6eeba5e674f785ecc2f214
 
 Name:    admirald
-Version: 0.0.1beta16
-Release: 7%{?dist}
+Version: 0.0.1beta17
+Release: 1%{?dist}
 Summary: Admiral Control Plane - Core API and orchestration service
 
 License: Apache-2.0
@@ -72,6 +72,9 @@ restorecon -F %{_bindir}/admirald 2>/dev/null || :
 %systemd_postun_with_restart admirald.service
 
 %changelog
+* Fri Jul 17 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta17-1
+- Bump to 0.0.1beta17 and rebuild with latest security hardening
+
 * Fri Jul 17 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta16-7
 - Add atomic secret re-encryption endpoint for idempotent rotation
 
