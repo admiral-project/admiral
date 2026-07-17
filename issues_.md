@@ -42,6 +42,16 @@ Installer review also found and fixed two issues outside the original list:
   object. This could reject every genuine live webhook and prevent paid
   subscriptions from being confirmed. Harbor now parses and validates the raw
   request body, then sends the resulting object in the verification request.
+- **ADM-SEC-091 (Critical, PayPal):** live checkout stored only an `Order`, but
+  the webhook returned 404 unless a `Subscription` already existed. Since the
+  live browser return deliberately waits for webhook confirmation, no code
+  created that subscription and genuine purchases could never provision. The
+  webhook now materializes the subscription from its locked matching order and
+  continues through the existing idempotent provisioning path. Provisioning is
+  now gated specifically on `PAYMENT.SALE.COMPLETED`; subscription activation
+  alone no longer grants service before a confirmed sale. Completed-sale
+  amount and currency must exactly match the stored billing contract before
+  any state change, invoice, payment record, or provisioning occurs.
 
 No RPM build or unit-test execution is claimed by this validation record.
 

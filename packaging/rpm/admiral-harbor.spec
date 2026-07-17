@@ -1,9 +1,9 @@
 %global debug_package %{nil}
-%global commit fceec4fedd2f10ca2571412b6064ac16c12c95d4
+%global commit ed25a2bce4d9440f8307e05dfbc40e28e5ffc223
 
 Name:    admiral-harbor
 Version: 0.0.1beta17
-Release: 3%{?dist}
+Release: 4%{?dist}
 Summary: Admiral Customer Portal - Web UI for end users
 
 License: Apache-2.0
@@ -131,6 +131,10 @@ restorecon -R %{_localstatedir}/lib/admiral/harbor 2>/dev/null || :
 %{python3} -m pytest tests/ -x --tb=short
 
 %changelog
+* Fri Jul 17 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta17-4
+- Materialize live subscriptions from their locked PayPal orders
+- Provision only after a completed sale with matching amount and currency
+
 * Fri Jul 17 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta17-3
 - Send webhook_event as an object to PayPal signature verification
 
