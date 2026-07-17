@@ -289,6 +289,18 @@ in the Ansible provisioning layer.
   - Mock endpoints are unavailable whenever the effective mode is not mock.
   - Environment mode is used only when no non-mock database configuration exists.
 
+### ADM-SEC-094 — Fiscal acceptance allowed external redirects
+
+- **Severity:** Medium
+- **Status:** Fixed on 2026-07-17.
+- **Affected component:** `admiral-harbor` customer fiscal acceptance.
+- **Evidence:** The POST handler passed the submitted `next` field directly to
+  Flask's `redirect()` in the success, validation-error and unconfigured paths.
+- **Impact:** A manipulated form could redirect an authenticated customer to an
+  attacker-controlled site immediately after a trusted Harbor interaction.
+- **Resolution:** Accept only local paths beginning with one forward slash and
+  reject absolute, scheme-relative and backslash-based redirect targets.
+
 ## Positive findings (things that are well-implemented)
 
 | Area | Detail |
