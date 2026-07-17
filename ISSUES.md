@@ -1461,6 +1461,11 @@ IDs continue the ADM-SEC sequence; quality-only findings use ADM-QUAL.
 
 - **GitHub issue:** https://github.com/admiral-project/admirald/issues/31
 
+- **Status:** Fixed in the current release branch.
+- **Evidence:** Administrative login and authentication-failure limiting now use
+  the PostgreSQL-backed limiter, so limits are shared across service processes.
+  API and database tests pass.
+
 - **Severity:** Medium
 - **Affected components:** `admirald`
 - **Evidence:** `admirald/internal/api/middleware.go:63,145-164`
