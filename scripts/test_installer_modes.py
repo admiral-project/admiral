@@ -112,6 +112,8 @@ class InstallerModeTests(unittest.TestCase):
         self.assertNotIn("ADMIRAL_ADMIN_TOKEN", fleet)
         self.assertNotIn("ADMIRAL_ADMIN_TOKEN", harbor)
         self.assertIn("ADMIRAL_TASK_PUBLIC_KEY={{ admiral_task_public_key_value }}", fleet)
+        self.assertIn("fleet_existing_node_token not in ['', '__REQUIRED__']", fleet)
+        self.assertIn("admiral_fleet_token_value | default", fleet)
         self.assertIn("no_log: true", fleet)
         self.assertIn("no_log: true", harbor)
 

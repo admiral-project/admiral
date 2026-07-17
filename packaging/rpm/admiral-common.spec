@@ -5,7 +5,7 @@
 
 Name:    admiral-common
 Version: 0.0.1beta16
-Release: 4%{?dist}
+Release: 5%{?dist}
 Summary: Common files and utilities for Admiral PaaS
 
 License: Apache-2.0
@@ -137,6 +137,9 @@ semanage fcontext -a -t container_file_t "/var/lib/admiral-apps/.local/share/con
 restorecon -R /var/lib/admiral-apps/.local/share/containers/storage/ 2>/dev/null || :
 
 %changelog
+* Fri Jul 17 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta16-5
+- Preserve the generated Fleet token when converging an existing installation
+
 * Fri Jul 17 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta16-4
 - Configure Fleet task signature verification through Ansible
 
