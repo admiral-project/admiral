@@ -218,7 +218,9 @@ Do not change this file before Harbor has been moved and stopped.
 The installer creates a non-root SSH admin user on every node. This user:
 
 - Has a generated username (prefixed `opsa_`) stored in `/etc/admiral/secrets`
-- Belongs to the `wheel` group with NOPASSWD sudo access
+- Belongs to the `wheel` group with NOPASSWD sudo access. This is full root
+  access and is required for unattended provisioning; protect the SSH private
+  key as a root-equivalent credential.
 - Authenticates via SSH key only (password authentication is disabled)
 - Is the recommended access method for ongoing administration
 
@@ -507,6 +509,8 @@ For normal modes (`--single-node`, `--admin-node`, `--admin-portal-node`, `--wor
 ### Configuring secure spoke egress
 
 Worker and dedicated portal nodes use a default-deny outbound nftables policy.
+TCP 587 is explicitly allowed for SMTP submission so Harbor and Flagship can
+send quota, account, and operational notifications.
 It permits only loopback, established traffic, the Admiral VPN, SSH, DNS
 (UDP/TCP 53), HTTPS (TCP 443), and WireGuard (UDP 51820). All other outbound
 traffic is rejected for both IPv4 and IPv6. DNS and HTTPS are intentionally
@@ -529,6 +533,12 @@ and [Kubernetes cluster networking](https://kubernetes.io/docs/concepts/cluster-
 - Post-install security checklist warnings are skipped.
 
 Use `--dev-node` only for temporary testing workflows where direct port access is required.
+
+The installer enables the signed Caddy and Admiral COPR repositories. It
+refuses repository definitions that do not enable RPM GPG metadata checking;
+operators should still review the repository trust policy and pin package
+versions through their normal RPM/COPR change-control process before production
+rollouts.
 
 ## SELinux Recommended Configuration
 
