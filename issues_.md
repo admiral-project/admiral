@@ -255,6 +255,20 @@ in the Ansible provisioning layer.
   - Sandbox mode always calls `https://api-m.sandbox.paypal.com`.
   - Unknown modes and absent non-mock credentials fail closed.
 
+### ADM-QUAL-026 — PayPal admin rejected its documented secret-preservation flow
+
+- **Severity:** Medium
+- **Status:** Fixed on 2026-07-17.
+- **Affected component:** `admiral-harbor` admin PayPal configuration.
+- **Evidence:** The password placeholder instructed administrators to leave an
+  existing Client Secret blank to preserve it, but the HTML field was always
+  required and the POST handler rejected every blank value.
+- **Impact:** Updating only the webhook or resaving an unchanged configuration
+  required the operator to retrieve and re-enter the PayPal secret unnecessarily.
+- **Resolution:** Preserve the encrypted value when mode and Client ID remain
+  unchanged. Require a new secret for initial setup, mode changes, or Client ID
+  changes so credentials from sandbox and live cannot be mixed silently.
+
 ## Positive findings (things that are well-implemented)
 
 | Area | Detail |
@@ -275,15 +289,13 @@ in the Ansible provisioning layer.
 | No curl-pipe-bash | Installer is RPM-packaged, no remote code execution pattern |
 | GPG verification | Installer refuses COPR repos without `gpgcheck=1` |
 
-## Recommended remediation order
+## Remaining validation order
 
-1. **Immediate**: Add `no_log: true` to PostgreSQL tasks (ADM-SEC-080) — one-line fix.
-2. **Immediate**: Change `admirald.ini` to mode `0600 root:root` (ADM-SEC-081).
-3. **Before GA**: Add `no_log: true` to WireGuard template task (ADM-SEC-082).
-4. **Before GA**: Add mount path validation in fleet (ADM-SEC-083).
-5. **Before GA**: Implement per-task encryption key derivation (ADM-SEC-084).
-6. **Backlog**: Document or fix trustedCommand validation gap (ADM-SEC-085).
-7. **Backlog**: Fix backup file permissions, default checksum verification, WG directory permissions (ADM-SEC-086, 087, 088).
+1. Run the Harbor unit and integration suites against the pinned commit.
+2. Build and reinstall the beta17-6 Harbor RPM.
+3. Exercise sandbox checkout and webhook verification end to end.
+4. Complete the release blocker with a real PayPal live payment and verify that
+   the matching WordPress instance is provisioned exactly once.
 
 ## Notes
 
