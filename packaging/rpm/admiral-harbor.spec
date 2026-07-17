@@ -1,9 +1,9 @@
 %global debug_package %{nil}
-%global commit d4f7f583a6109acf6bc295dfb3d7f32bbff4a1b7
+%global commit 28cb59c3e2a255f8c5ea012755899af6124e1071
 
 Name:    admiral-harbor
 Version: 0.0.1beta16
-Release: 5%{?dist}
+Release: 6%{?dist}
 Summary: Admiral Customer Portal - Web UI for end users
 
 License: Apache-2.0
@@ -126,6 +126,9 @@ restorecon -R %{_localstatedir}/lib/admiral/harbor 2>/dev/null || :
 %{python3} -m pytest tests/ -x --tb=short
 
 %changelog
+* Thu Jul 16 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta16-6
+- Package latest origin/main formatting fixes
+
 * Thu Jul 16 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta16-5
 - Continue worker reconciliation after an individual step failure
 
