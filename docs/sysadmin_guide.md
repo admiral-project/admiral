@@ -196,6 +196,10 @@ that combines admin, portal, and worker on one host. `--dev-node` is an
 explicitly insecure evaluation profile; the supported automatic transition is
 from `--dev-node` to `--single-node` on that same host.
 
+For safety, `--dev-node` requires the operator to type `yes-insecure` when run
+interactively. Automation must pass `--yes` explicitly; without that flag the
+installer aborts when standard input is not a terminal.
+
 ### Manual migration from Admin+Portal to dedicated Portal
 
 An `admin-portal` host may become an `admin` host only after the operator has
