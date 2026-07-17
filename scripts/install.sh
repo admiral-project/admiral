@@ -46,6 +46,17 @@ if not isinstance(value, str) or not value:
 print(value)
 PY
 }
+require_firewall_services() {
+    local actual="$1"
+    shift
+    local service
+    for service in "$@"; do
+        [[ " $actual " == *" $service "* ]] || {
+            warn "Missing firewall service: $service"
+            return 1
+        }
+    done
+}
 detect_non_loopback_ip() {
     local ip=""
     if command -v ip >/dev/null 2>&1; then
@@ -80,6 +91,7 @@ Options:
   --ssh-user          SSH user for remote spoke configuration (default: root for bootstrap).
   --ssh-key           SSH private key for remote spoke configuration.
   --ssh-fingerprint   Expected SSH host key fingerprint (SHA256:...) for verification.
+  --yes               Confirm non-interactive dangerous operations such as --dev-node.
   -h, --help          Show this help message.
 
 Note: --worker-node and --portal-node are mutually exclusive by design.
@@ -98,6 +110,8 @@ INSTALL_TARGET_SSH_USER="root"
 INSTALL_TARGET_SSH_USER_EXPLICIT="false"
 INSTALL_TARGET_SSH_KEY=""
 INSTALL_SSH_FINGERPRINT=""
+INSTALL_YES="false"
+INSTALLER_TEMP_BASE=""
 EXTRA_VARS_FILE=""
 TMP_INVENTORY=""
 TMP_KNOWN_HOSTS=""
@@ -107,6 +121,7 @@ cleanup_installer_temps() {
     [[ -z "$TMP_INVENTORY" ]] || rm -f -- "$TMP_INVENTORY"
     [[ -z "$TMP_KNOWN_HOSTS" ]] || rm -f -- "$TMP_KNOWN_HOSTS"
     [[ -z "$EXTRA_VARS_FILE" ]] || rm -f -- "$EXTRA_VARS_FILE"
+    [[ -z "$INSTALLER_TEMP_BASE" ]] || rm -rf -- "$INSTALLER_TEMP_BASE"
 }
 trap cleanup_installer_temps EXIT
 trap 'exit 129' HUP
@@ -181,6 +196,9 @@ while [[ $# -gt 0 ]]; do
             require_option_value "--ssh-fingerprint" "${1-}"
             INSTALL_SSH_FINGERPRINT="$1"
             ;;
+        --yes)
+            INSTALL_YES="true"
+            ;;
         -h|--help)
             usage
             exit 0
@@ -193,6 +211,14 @@ while [[ $# -gt 0 ]]; do
 done
 
 [[ -n "$INSTALL_MODE" ]] || die "An installation mode is required. Use --single-node, --dev-node, --admin-node, --admin-portal-node, --worker-node or --portal-node."
+if [[ "$INSTALL_DEV_MODE" == "true" && "$INSTALL_YES" != "true" ]]; then
+    if [[ ! -t 0 ]]; then
+        die "--dev-node requires --yes when stdin is not interactive."
+    fi
+    warn "Type 'yes-insecure' to confirm this insecure development installation:"
+    read -r CONFIRMATION
+    [[ "$CONFIRMATION" == "yes-insecure" ]] || die "Aborted: --dev-node was not confirmed."
+fi
 if [[ "$INSTALL_MODE" == "single-node" && -z "$INSTALL_PUBLIC_IP" ]]; then
     INSTALL_PUBLIC_IP="127.0.0.1"
 fi
@@ -316,7 +342,9 @@ if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]]; t
     [[ -n "$MATCHING_HOST_KEYS" ]] || die "SSH host key fingerprint mismatch for $INSTALL_PUBLIC_IP. Aborting."
     info "SSH host key fingerprint verified."
     umask 077
-    TMP_KNOWN_HOSTS="$(mktemp /tmp/admiral-known-hosts.XXXXXX)"
+    INSTALLER_TEMP_BASE="$(mktemp -d /tmp/admiral-install.XXXXXX)"
+    chmod 700 "$INSTALLER_TEMP_BASE"
+    TMP_KNOWN_HOSTS="$(mktemp "$INSTALLER_TEMP_BASE/known-hosts.XXXXXX")"
     printf '%s' "$MATCHING_HOST_KEYS" > "$TMP_KNOWN_HOSTS"
     SSH_OPTIONS=(
         -i "$INSTALL_TARGET_SSH_KEY"
@@ -468,6 +496,8 @@ if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]]; t
     SECRETS_SSH_USER=$(read_admiral_secret "ADMIRAL_SSH_USER") || true
 fi
 
+INSTALL_ADMIN_WIREGUARD_IP="${ADMIRAL_WIREGUARD_HUB_IP:-10.99.0.1}"
+
 # --- 8. build extra-vars as JSON (prevents injection via --node-id) ---
 EXTRA_VARS_JSON=$(
     INSTALL_MODE="$INSTALL_MODE" \
@@ -476,6 +506,7 @@ EXTRA_VARS_JSON=$(
     INSTALL_PUBLIC_IP="$INSTALL_PUBLIC_IP" \
     INSTALL_WIREGUARD_IP="$INSTALL_WIREGUARD_IP" \
     INSTALL_ADMIN_ENDPOINT="$INSTALL_ADMIN_ENDPOINT" \
+    INSTALL_ADMIN_WIREGUARD_IP="$INSTALL_ADMIN_WIREGUARD_IP" \
     SECRETS_TASK_ENCRYPTION_KEY="$SECRETS_TASK_ENCRYPTION_KEY" \
     SECRETS_HARBOR_SECRET_KEY="$SECRETS_HARBOR_SECRET_KEY" \
     SECRETS_HARBOR_ENCRYPTION_KEY="$SECRETS_HARBOR_ENCRYPTION_KEY" \
@@ -490,7 +521,10 @@ EXTRA_VARS_JSON=$(
     python3 -c '
 import json, os
 
-d = {"admiral_install_mode": os.environ["INSTALL_MODE"]}
+d = {
+    "admiral_install_mode": os.environ["INSTALL_MODE"],
+    "admiral_wireguard_hub_ip": os.environ["INSTALL_ADMIN_WIREGUARD_IP"],
+}
 
 if os.environ.get("INSTALL_DEV_MODE") == "true":
     d["admiral_dev_mode"] = True
@@ -552,7 +586,7 @@ mode = os.environ["INSTALL_MODE"]
 if mode in ("worker-node", "portal-node"):
     d["fleet_node_role"] = "portal" if mode == "portal-node" else "worker"
     d["admiral_admin_endpoint"] = os.environ["INSTALL_ADMIN_ENDPOINT"]
-    d["admiral_admin_wireguard_ip"] = "10.99.0.1"
+    d["admiral_admin_wireguard_ip"] = os.environ["INSTALL_ADMIN_WIREGUARD_IP"]
     d["admiral_wireguard_hub_endpoint"] = os.environ["INSTALL_ADMIN_ENDPOINT"]
     d["admiral_bootstrap_from_controller"] = True
 
@@ -564,20 +598,29 @@ print(json.dumps(d))
 )
 
 umask 077
-EXTRA_VARS_FILE="$(mktemp /tmp/admiral-extra-vars.XXXXXX.json)"
+if [[ -z "$INSTALLER_TEMP_BASE" ]]; then
+    INSTALLER_TEMP_BASE="$(mktemp -d /tmp/admiral-install.XXXXXX)"
+    chmod 700 "$INSTALLER_TEMP_BASE"
+fi
+EXTRA_VARS_FILE="$(mktemp "$INSTALLER_TEMP_BASE/extra-vars.XXXXXX.json")"
 printf '%s\n' "$EXTRA_VARS_JSON" > "$EXTRA_VARS_FILE"
 unset EXTRA_VARS_JSON
+unset SECRETS_TASK_ENCRYPTION_KEY SECRETS_HARBOR_SECRET_KEY
+unset SECRETS_HARBOR_ENCRYPTION_KEY SECRETS_HARBOR_POSTGRES_PASSWORD
+unset SECRETS_HARBOR_POSTGRES_USER SECRETS_HARBOR_BOOTSTRAP_USER
+unset SECRETS_HARBOR_BOOTSTRAP_PASSWORD SECRETS_HARBOR_LEGACY_ADMIN_PASSWORD
+unset SECRETS_HARBOR_API_TOKEN SECRETS_SSH_USER INSTALL_SSH_PUB_KEY
 
 # --- 9. run official playbook ---
 # The playbook handles the rest: packages, configuration, services
 info "Running Admiral configuration playbook for mode: $INSTALL_MODE"
 ANSIBLE_DIR="/usr/share/admiral/ansible"
 if [[ -d "$ANSIBLE_DIR" ]]; then
-    ANSIBLE_LOCAL_TEMP=/tmp/ansible-local
-    ANSIBLE_REMOTE_TEMP=/tmp/ansible-remote
-    ANSIBLE_GALAXY_CACHE_DIR=/tmp/ansible-galaxy-cache
+    ANSIBLE_LOCAL_TEMP="$INSTALLER_TEMP_BASE/ansible-local"
+    ANSIBLE_REMOTE_TEMP="$INSTALLER_TEMP_BASE/ansible-remote"
+    ANSIBLE_GALAXY_CACHE_DIR="$INSTALLER_TEMP_BASE/ansible-galaxy-cache"
     if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]]; then
-        TMP_INVENTORY="$(mktemp /tmp/admiral-inventory.XXXXXX.json)"
+        TMP_INVENTORY="$(mktemp "$INSTALLER_TEMP_BASE/inventory.XXXXXX.json")"
         INSTALL_PUBLIC_IP="$INSTALL_PUBLIC_IP" \
         INSTALL_TARGET_SSH_USER="$INSTALL_TARGET_SSH_USER" \
         INSTALL_TARGET_SSH_KEY="$INSTALL_TARGET_SSH_KEY" \
@@ -671,8 +714,7 @@ if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]]; t
     if [[ -z "$SPOKE_NODE_ID" ]]; then
         die "Could not resolve the spoke node ID from --node-id or /etc/admiral/*.env after installation."
     fi
-    if [[ -n "$SPOKE_KEY" && -n "$SPOKE_NODE_ID" ]]; then
-        SPOKE_WG_IP=$(SPOKE_NODE_ID="$SPOKE_NODE_ID" admiralctl nodes list --output json 2>/dev/null | python3 -c "
+    SPOKE_WG_IP=$(SPOKE_NODE_ID="$SPOKE_NODE_ID" admiralctl nodes list --output json 2>/dev/null | python3 -c "
 import os, sys, json
 target = os.environ['SPOKE_NODE_ID']
 data = json.load(sys.stdin)
@@ -681,10 +723,10 @@ for n in data if isinstance(data, list) else data.get('nodes', []):
         sys.stdout.write(n.get('wireguard_ip', n.get('wg_ip', '')))
         break
 " 2>/dev/null || true)
-        if [[ -z "$SPOKE_WG_IP" ]]; then
-            die "Could not resolve wireguard_ip for spoke node '$SPOKE_NODE_ID' from admirald."
-        fi
-        wg set wg-admiral peer "$SPOKE_KEY" allowed-ips "${SPOKE_WG_IP}/32" persistent-keepalive 25
+    if [[ -z "$SPOKE_WG_IP" ]]; then
+        die "Could not resolve wireguard_ip for spoke node '$SPOKE_NODE_ID' from admirald."
+    fi
+    wg set wg-admiral peer "$SPOKE_KEY" allowed-ips "${SPOKE_WG_IP}/32" persistent-keepalive 25
         wg-quick save wg-admiral
         info "WireGuard peer added for spoke node ($SPOKE_WG_IP) on hub."
         handshake_ok=false
@@ -695,9 +737,8 @@ for n in data if isinstance(data, list) else data.get('nodes', []):
             fi
             sleep 2
         done
-        if [[ "$handshake_ok" != true ]]; then
-            die "WireGuard handshake with ${SPOKE_WG_IP} failed; check DNS/public UDP 51820, firewall, keys, and routes."
-        fi
+    if [[ "$handshake_ok" != true ]]; then
+        die "WireGuard handshake with ${SPOKE_WG_IP} failed; check DNS/public UDP 51820, firewall, keys, and routes."
     fi
 fi
 
@@ -801,14 +842,12 @@ if [[ "$INSTALL_DEV_MODE" != "true" ]]; then
     FW_SERVICES="$(run_target_cmd "firewall-cmd --zone=public --list-services")"
     case "$INSTALL_MODE" in
         single-node|admin-node|admin-portal-node)
-            if [[ "$FW_SERVICES" != *"ssh"* || "$FW_SERVICES" != *"http"* || "$FW_SERVICES" != *"https"* ]]; then
+            require_firewall_services "$FW_SERVICES" ssh http https ||
                 SECURITY_WARNINGS+=("Expected public services ssh/http/https for admin profile not fully present.")
-            fi
             ;;
         worker-node|portal-node)
-            if [[ "$FW_SERVICES" != *"ssh"* ]]; then
+            require_firewall_services "$FW_SERVICES" ssh ||
                 SECURITY_WARNINGS+=("Expected public service ssh is missing on spoke profile.")
-            fi
             if [[ "$FW_SERVICES" == *"http"* || "$FW_SERVICES" == *"https"* ]]; then
                 SECURITY_WARNINGS+=("Spoke profile exposes http/https in public zone.")
             fi

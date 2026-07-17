@@ -31,6 +31,18 @@ class InstallerModeTests(unittest.TestCase):
         )
 
         self.assertIn("--admin-portal-node", result.stdout)
+        self.assertIn("--yes", result.stdout)
+
+    def test_dev_mode_requires_explicit_noninteractive_confirmation(self) -> None:
+        result = subprocess.run(
+            ["bash", str(INSTALLER), "--dev-node"],
+            check=False,
+            capture_output=True,
+            text=True,
+        )
+
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("--dev-node requires --yes", result.stderr)
 
     def test_every_value_option_reports_a_missing_value(self) -> None:
         for option in (
@@ -159,10 +171,11 @@ class InstallerModeTests(unittest.TestCase):
         self.assertIn("sha256sum -c -", content)
         self.assertEqual(content.count("$(call download_checked,"), 6)
 
-    def test_harbor_database_prefers_tls(self) -> None:
+    def test_harbor_database_requires_tls(self) -> None:
         content = HARBOR_TASKS.read_text(encoding="utf-8")
 
-        self.assertIn("sslmode=prefer", content)
+        self.assertIn("sslmode=require", content)
+        self.assertNotIn("sslmode=prefer", content)
         self.assertNotIn("sslmode=disable", content)
 
     def test_harbor_scoped_token_is_configured_on_both_sides(self) -> None:
