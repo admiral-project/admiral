@@ -1,9 +1,9 @@
 %global debug_package %{nil}
-%global commit 9654885b5d97bb6a2b3f00d6a9bf15559569e160
+%global commit 7333f7f0ed7441f80a82dd54982bb27485a93225
 
 Name:    admiral-harbor
 Version: 0.0.1beta16
-Release: 9%{?dist}
+Release: 10%{?dist}
 Summary: Admiral Customer Portal - Web UI for end users
 
 License: Apache-2.0
@@ -129,6 +129,9 @@ restorecon -R %{_localstatedir}/lib/admiral/harbor 2>/dev/null || :
 %{python3} -m pytest tests/ -x --tb=short
 
 %changelog
+* Fri Jul 17 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta16-10
+- Remove unused migration factory import
+
 * Fri Jul 17 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta16-9
 - Run Harbor schema migrations explicitly before Gunicorn startup
 
