@@ -99,6 +99,7 @@
       ADMIRAL_FLEET_PUBLISH_ADDRESS={{ '0.0.0.0' if (admiral_dev_mode | default(false) | bool) else ('127.0.0.1' if admiral_install_mode == 'single-node' else admiral_wireguard_ip) }}
       ADMIRAL_FLEET_ADMIN_WIREGUARD_IP={{ admiral_admin_wireguard_ip | default('') }}
       ADMIRAL_FLEET_ROOTLESS_USER={{ fleet_rootless_user | default('admiral-apps') }}
+      ADMIRAL_TASK_PUBLIC_KEY={{ admiral_task_public_key_value }}
       ADMIRAL_TASK_ENCRYPTION_KEY={{ admiral_task_encryption_key_value }}
     mode: "0600"
     owner: root

@@ -111,6 +111,7 @@ class InstallerModeTests(unittest.TestCase):
         self.assertIn('SECRETS_HARBOR_POSTGRES_USER="admiral_portal"', installer)
         self.assertNotIn("ADMIRAL_ADMIN_TOKEN", fleet)
         self.assertNotIn("ADMIRAL_ADMIN_TOKEN", harbor)
+        self.assertIn("ADMIRAL_TASK_PUBLIC_KEY={{ admiral_task_public_key_value }}", fleet)
         self.assertIn("no_log: true", fleet)
         self.assertIn("no_log: true", harbor)
 
