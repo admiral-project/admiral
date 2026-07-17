@@ -470,7 +470,10 @@
 - name: Configure NOPASSWD sudo for SSH admin user
   copy:
     dest: "/etc/sudoers.d/{{ admiral_ssh_admin_user }}"
-    content: "{{ admiral_ssh_admin_user }} ALL=(ALL) NOPASSWD: ALL\n"
+    content: |
+      # Required for unattended Ansible provisioning and operator recovery.
+      # Protect the SSH key granting this account access; this is full root access.
+      {{ admiral_ssh_admin_user }} ALL=(ALL) NOPASSWD: ALL
     mode: "0440"
     validate: "visudo -cf %s"
   when: admiral_install_mode in ['single-node', 'admin-node', 'admin-portal-node', 'worker-node', 'portal-node']
