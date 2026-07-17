@@ -21,9 +21,9 @@ Updated 2026-07-17.
   containers: operation `op_3523db8971e4c767` succeeded, and instance
   `inst_70c005a351e9d880` is `running`, `healthy`, and has
   `setup_completed=true`.
-- Golden pause and resume both succeeded. The manual database backup also
-  succeeded. Restore and deprovision remain the next required golden-test
-  steps.
+- Golden pause and resume both succeeded. The manual database backup,
+  checksum-verified restore while paused, and final deprovision all
+  succeeded.
 - Fleet task authentication and signed-task verification are working in the
   running workload path; the earlier `401` and missing-public-key errors were
   resolved by the Ansible/package fix.
