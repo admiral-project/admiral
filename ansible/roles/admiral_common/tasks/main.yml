@@ -819,14 +819,43 @@
   changed_when: false
   when: admiral_install_mode in ['single-node', 'admin-node', 'admin-portal-node', 'portal-node']
 
+- name: Validate Admiral PostgreSQL role name
+  assert:
+    that:
+      - (admiral_postgres_user | default('admiral')) is match('^[a-z_][a-z0-9_]{0,62}$')
+    fail_msg: "Admiral PostgreSQL role names must be lowercase SQL identifiers."
+  when: admiral_install_mode in ['single-node', 'admin-node', 'admin-portal-node', 'portal-node']
+
+- name: Check whether Admiral PostgreSQL role exists
+  become: false
+  ansible.builtin.command:
+    argv:
+      - sudo
+      - -u
+      - postgres
+      - psql
+      - -tAc
+      - "SELECT 1 FROM pg_roles WHERE rolname = '{{ admiral_postgres_user | default('admiral') }}'"
+  register: admiral_postgres_role_check
+  changed_when: false
+  when: admiral_install_mode in ['single-node', 'admin-node', 'admin-portal-node', 'portal-node']
+
 - name: Ensure Admiral PostgreSQL role exists with generated password
   become: false
-  ansible.builtin.shell:
-    cmd: |
-      sudo -u postgres psql -c "SELECT 1 FROM pg_roles WHERE rolname = '{{ admiral_postgres_user | default('admiral') }}'" | grep -q 1 && \
-        sudo -u postgres psql -c "ALTER ROLE {{ admiral_postgres_user | default('admiral') }} WITH LOGIN PASSWORD '{{ admiral_postgres_password }}'" || \
-        sudo -u postgres psql -c "CREATE ROLE {{ admiral_postgres_user | default('admiral') }} LOGIN PASSWORD '{{ admiral_postgres_password }}'"
-  changed_when: false
+  ansible.builtin.command:
+    argv:
+      - sudo
+      - -u
+      - postgres
+      - psql
+      - -v
+      - ON_ERROR_STOP=1
+    stdin: >-
+      {{ 'ALTER ROLE' if (admiral_postgres_role_check.stdout | trim) == '1' else 'CREATE ROLE' }}
+      "{{ admiral_postgres_user | default('admiral') }}"
+      WITH LOGIN PASSWORD '{{ admiral_postgres_password | replace("'", "''") }}';
+  no_log: true
+  changed_when: (admiral_postgres_role_check.stdout | trim) != '1'
   when: admiral_install_mode in ['single-node', 'admin-node', 'admin-portal-node', 'portal-node']
 
 - name: Ensure Admiral PostgreSQL databases exist (admin/single only)

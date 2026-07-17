@@ -34,7 +34,7 @@
   file:
     path: /etc/wireguard/peers.d
     state: directory
-    mode: "0755"
+    mode: "0700"
   when: admiral_wireguard_role == 'hub'
 
 - name: Set WireGuard listen port
@@ -140,6 +140,7 @@
     src: wg-admiral.conf.j2
     dest: /etc/wireguard/wg-admiral.conf
     mode: "0600"
+  no_log: true
   notify: restart wireguard
 
 - name: Enable and start WireGuard
