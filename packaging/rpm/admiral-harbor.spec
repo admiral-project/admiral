@@ -3,7 +3,7 @@
 
 Name:    admiral-harbor
 Version: 0.0.1beta16
-Release: 10%{?dist}
+Release: 11%{?dist}
 Summary: Admiral Customer Portal - Web UI for end users
 
 License: Apache-2.0
@@ -129,6 +129,9 @@ restorecon -R %{_localstatedir}/lib/admiral/harbor 2>/dev/null || :
 %{python3} -m pytest tests/ -x --tb=short
 
 %changelog
+* Fri Jul 17 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta16-11
+- Include the explicit Harbor migration launcher in package sources
+
 * Fri Jul 17 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta16-10
 - Remove unused migration factory import
 
