@@ -44,6 +44,18 @@ class InstallerModeTests(unittest.TestCase):
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("--dev-node requires --yes", result.stderr)
 
+    def test_admin_modes_require_explicit_public_ip(self) -> None:
+        for mode in ("--admin-node", "--admin-portal-node"):
+            with self.subTest(mode=mode):
+                result = subprocess.run(
+                    ["bash", str(INSTALLER), mode],
+                    check=False,
+                    capture_output=True,
+                    text=True,
+                )
+                self.assertNotEqual(result.returncode, 0)
+                self.assertIn("requires --public-ip", result.stderr)
+
     def test_every_value_option_reports_a_missing_value(self) -> None:
         for option in (
             "--node-id",
@@ -233,9 +245,17 @@ class InstallerModeTests(unittest.TestCase):
 
         self.assertIn("tcp dport 53 accept", template)
         self.assertIn("udp dport 53 accept", template)
-        self.assertIn("tcp dport 443 accept", template)
+        self.assertIn("tcp dport { 443, 587 } accept", template)
         self.assertIn("Kubernetes model", template)
         self.assertIn("ip daddr 10.99.0.0/24 accept", template)
+
+    def test_secure_checklist_validates_runtime_controls(self) -> None:
+        installer = INSTALLER.read_text(encoding="utf-8")
+        self.assertIn("ss -H -lntu", installer)
+        self.assertIn("auditctl -l", installer)
+        self.assertIn("fail2ban-client ping", installer)
+        self.assertIn("nft list chain inet admiral_egress output", installer)
+        self.assertIn("gpgcheck", installer)
 
 
 if __name__ == "__main__":

@@ -57,15 +57,41 @@ require_firewall_services() {
         }
     done
 }
-detect_non_loopback_ip() {
-    local ip=""
-    if command -v ip >/dev/null 2>&1; then
-        ip=$(ip -o route get 1.1.1.1 2>/dev/null | awk '{for (i = 1; i <= NF; i++) if ($i == "src") { print $(i + 1); exit }}')
-    fi
-    if [[ -z "$ip" ]]; then
-        ip=$(hostname -I 2>/dev/null | awk '{for (i = 1; i <= NF; i++) if ($i !~ /^127\./) { print $i; exit }}')
-    fi
-    [[ -n "$ip" ]] && printf '%s\n' "$ip"
+expected_public_listeners() {
+    local listeners=""
+    case "$1" in
+        single-node) listeners=$'tcp/22\ntcp/80\ntcp/443' ;;
+        admin-node|admin-portal-node) listeners=$'tcp/22\ntcp/80\ntcp/443\nudp/51820' ;;
+        worker-node|portal-node) listeners=$'tcp/22\nudp/51820' ;;
+    esac
+    printf '%s\n' "$listeners" | sort -u | tr '\n' ' ' | sed 's/[[:space:]]*$//'
+}
+public_listeners() {
+    ss -H -lntu 2>/dev/null | awk '
+        {
+            address = $5
+            port = address
+            sub(/^.*:/, "", port)
+            host = address
+            sub(/:[^:]*$/, "", host)
+            gsub(/^\[/, "", host)
+            gsub(/\]$/, "", host)
+            if (host !~ /^(127\.|::1$)/) print $1 "/" port
+        }
+    ' | sort -u | tr '\n' ' ' | sed 's/[[:space:]]*$//'
+}
+require_exact_public_listeners() {
+    local actual="$1" expected="$2"
+    [[ "$actual" == "$expected" ]] || {
+        warn "Unexpected public listeners: expected '$expected', found '$actual'"
+        return 1
+    }
+}
+expected_firewall_ports() {
+    case "$1" in
+        admin-node|admin-portal-node|worker-node|portal-node) printf '%s\n' '51820/udp' ;;
+        single-node) printf '%s\n' ;;
+    esac
 }
 usage() {
     cat <<'EOF'
@@ -223,10 +249,7 @@ if [[ "$INSTALL_MODE" == "single-node" && -z "$INSTALL_PUBLIC_IP" ]]; then
     INSTALL_PUBLIC_IP="127.0.0.1"
 fi
 if [[ "$INSTALL_MODE" == "admin-node" || "$INSTALL_MODE" == "admin-portal-node" ]] && [[ -z "$INSTALL_PUBLIC_IP" ]]; then
-    INSTALL_PUBLIC_IP="$(detect_non_loopback_ip || true)"
-    if [[ -z "$INSTALL_PUBLIC_IP" ]]; then
-        die "Could not detect a non-loopback admin public IP. Use --public-ip."
-    fi
+    die "$INSTALL_MODE requires --public-ip; refusing to select an interface automatically."
 fi
 if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]]; then
     [[ -n "$INSTALL_PUBLIC_IP" ]] || die "Worker and portal modes require --public-ip."
@@ -412,6 +435,14 @@ dnf copr enable -y "@caddy/caddy"
 
 info "Enabling Admiral COPR repository..."
 dnf copr enable -y "admiral-project/admiral"
+
+for copr_repo in \
+    /etc/yum.repos.d/_copr:copr.fedorainfracloud.org:group_caddy:caddy.repo \
+    /etc/yum.repos.d/_copr:copr.fedorainfracloud.org:admiral-project:admiral.repo; do
+    [[ -f "$copr_repo" ]] || die "Expected COPR repository file is missing: $copr_repo"
+    grep -Eq '^[[:space:]]*gpgcheck[[:space:]]*=[[:space:]]*1[[:space:]]*$' "$copr_repo" ||
+        die "Refusing repository without GPG metadata verification: $copr_repo"
+done
 
 dnf clean all 2>/dev/null || true
 
@@ -839,7 +870,35 @@ if [[ "$INSTALL_DEV_MODE" != "true" ]]; then
         SECURITY_WARNINGS+=("sshd MaxAuthTries differs from recommended value 3.")
     fi
 
+    PUBLIC_LISTENERS="$(run_target_cmd "ss -H -lntu 2>/dev/null | awk '{ address=\$5; port=address; sub(/^.*:/, \"\", port); host=address; sub(/:[^:]*$/, \"\", host); gsub(/^\\[/, \"\", host); gsub(/\\]$/, \"\", host); if (host !~ /^(127\\.|::1\$)/) print \$1 \"/\" port }' | sort -u | tr '\\n' ' ' | sed 's/[[:space:]]*\$//'" || true)"
+    EXPECTED_LISTENERS="$(expected_public_listeners "$INSTALL_MODE")"
+    if ! require_exact_public_listeners "$PUBLIC_LISTENERS" "$EXPECTED_LISTENERS"; then
+        SECURITY_WARNINGS+=("Public listening sockets do not match the declared host profile.")
+    fi
+
+    AUDIT_RULES="$(run_target_cmd "auditctl -l" || true)"
+    for audit_key in admiral_config admiral_secrets admiral_tls admiral_data admiral_wireguard; do
+        if [[ "$AUDIT_RULES" != *"$audit_key"* ]]; then
+            SECURITY_WARNINGS+=("Loaded audit rules are missing key $audit_key.")
+        fi
+    done
+
+    FAIL2BAN_STATUS="$(run_target_cmd "fail2ban-client ping && fail2ban-client status sshd" || true)"
+    if [[ "$FAIL2BAN_STATUS" != *"Server replied: pong"* || "$FAIL2BAN_STATUS" != *"Jail list"* ]]; then
+        SECURITY_WARNINGS+=("fail2ban is not responding with the expected sshd jail.")
+    fi
+
+    NFT_EGRESS="$(run_target_cmd "nft list chain inet admiral_egress output" || true)"
+    if [[ "$NFT_EGRESS" != *"reject"* ]]; then
+        SECURITY_WARNINGS+=("The managed nftables egress reject policy is not active.")
+    fi
+
     FW_SERVICES="$(run_target_cmd "firewall-cmd --zone=public --list-services")"
+    FW_PORTS="$(run_target_cmd "firewall-cmd --permanent --zone=public --list-ports")"
+    EXPECTED_FW_PORTS="$(expected_firewall_ports "$INSTALL_MODE")"
+    if [[ "$FW_PORTS" != "$EXPECTED_FW_PORTS" ]]; then
+        SECURITY_WARNINGS+=("Public firewall ports do not match the declared host profile: expected '$EXPECTED_FW_PORTS', found '$FW_PORTS'.")
+    fi
     case "$INSTALL_MODE" in
         single-node|admin-node|admin-portal-node)
             require_firewall_services "$FW_SERVICES" ssh http https ||
