@@ -314,7 +314,7 @@
         - admiral_ed25519_key_generated.changed | default(false)
       no_log: true
 
-    - name: Generate task encryption key (shared AES-256-GCM key)
+    - name: Generate control-plane queue encryption key (AES-256-GCM)
       command:
         cmd: openssl rand -hex 32
       register: admiral_task_encryption_key_generated
