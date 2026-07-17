@@ -663,6 +663,44 @@ verification failed and the backup may not be recoverable.
 - It contains the keys used to encrypt stored secrets, including `ADMIRAL_SECRETS_KEY` and `HARBOR_ENCRYPTION_KEY`.
 - It contains `ADMIRAL_SSH_USER`, the non-root SSH admin username for all nodes.
 
+### Rotar `ADMIRAL_SECRETS_KEY`
+
+Admiral soporta una ventana de rotación para no perder los secretos cifrados.
+La clave nueva siempre se usa para cifrar valores nuevos; la clave anterior
+solo se conserva temporalmente para descifrar los valores existentes.
+
+1. Haz una copia segura de `/etc/admiral/secrets` y confirma que puedes
+   restaurarla.
+2. Genera una clave nueva en el nodo que ejecuta `admirald`:
+
+   ```bash
+   NEW_KEY=$(openssl rand -hex 32)
+   printf '%s\n' "$NEW_KEY"
+   ```
+
+3. Edita `/etc/admiral/secrets` y establece:
+
+   ```ini
+   ADMIRAL_SECRETS_KEY=<new-key>
+   ADMIRAL_SECRETS_KEY_PREVIOUS=<old-key>
+   ```
+
+   También puedes configurar `secrets_key_previous` en
+   `/etc/admirald.ini`. Se pueden indicar varias claves anteriores separadas
+   por comas.
+4. Reinicia `admirald` y verifica los logs antes de retirar la clave anterior:
+
+   ```bash
+   sudo systemctl restart admirald
+   sudo journalctl -u admirald -n 100 --no-pager
+   ```
+
+Durante la ventana de rotación, cualquier secreto nuevo usa la clave nueva y
+los existentes siguen siendo legibles con `ADMIRAL_SECRETS_KEY_PREVIOUS`.
+Después de reemplazar o re-cifrar los secretos existentes, elimina la clave
+anterior de ambos archivos y reinicia el servicio otra vez. Nunca compartas
+estas claves con `admiral-fleet`, Flagship ni Harbor.
+
 ## Common Checks
 
 ```bash
