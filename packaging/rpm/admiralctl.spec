@@ -2,11 +2,11 @@
 # SPDX-License-Identifier: Apache-2.0
 
 %global debug_package %{nil}
-%global commit 3808703227c7fbc7e88c79200ccd9d82fe015e44
+%global commit 8fbc0cbd3bb22b98d34c5d74c905bcf6dbc1613b
 
 Name:    admiralctl
 Version: 0.0.1beta16
-Release: 5%{?dist}
+Release: 6%{?dist}
 Summary: Admiral Command-Line Interface
 
 License: Apache-2.0
@@ -60,6 +60,9 @@ mkdir -p "$GOCACHE"
 restorecon -F %{_bindir}/admiralctl 2>/dev/null || :
 
 %changelog
+* Fri Jul 17 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta16-6
+- Document idempotent secret rotation in CLI manuals
+
 * Fri Jul 17 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta16-5
 - Install the CLI and administration manpages
 
