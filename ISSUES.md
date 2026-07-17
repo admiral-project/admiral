@@ -46,6 +46,9 @@ customer record and does not weaken customer-token isolation.
   single-node modes, and is built with Go `>=1.26.4`. Its `pgx` dependency is
   `v5.9.2`, and `govulncheck ./...` reports no vulnerabilities. The parent
   RPM reference is synchronized with submodule commit `d95618a`.
+- Administrator password changes now invalidate all other sessions while
+  preserving the current session; the regression test and full package checks
+  pass in submodule commit `7ba52e5`.
 - `admiral#44` is still open in GitHub, but its reported suppression is stale
   and is not reproducible in the current tree: all three Go RPM `%check`
   sections run `go test ./...` without `|| echo`, while Flagship and Harbor

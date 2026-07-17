@@ -2,11 +2,11 @@
 # SPDX-License-Identifier: Apache-2.0
 
 %global debug_package %{nil}
-%global commit d95618a85f65f9c9f3c57fc922bfee36cf9815c4
+%global commit 7ba52e56cd6e2df3b6742f6f9411313454f97ad5
 
 Name:    admirald
 Version: 0.0.1beta16
-Release: 2%{?dist}
+Release: 3%{?dist}
 Summary: Admiral Control Plane - Core API and orchestration service
 
 License: Apache-2.0
@@ -74,6 +74,9 @@ restorecon -F %{_bindir}/admirald 2>/dev/null || :
 %changelog
 * Thu Jul 16 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta16-2
 - Bind worker requests to authenticated nodes and update PostgreSQL client security fixes
+
+* Thu Jul 16 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta16-3
+- Invalidate other administrator sessions after a password change
 
 * Tue Jul 14 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta16-1
 - Harden the control-plane systemd unit with strict filesystem and device policy
