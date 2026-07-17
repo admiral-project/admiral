@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+set -euo pipefail
+cd /usr/lib/admiral/harbor
+exec /usr/bin/python3 migrate.py

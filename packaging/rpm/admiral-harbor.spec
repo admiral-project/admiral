@@ -1,9 +1,9 @@
 %global debug_package %{nil}
-%global commit bbc206b613b7df7cb68a245520021edf02b2d190
+%global commit 9654885b5d97bb6a2b3f00d6a9bf15559569e160
 
 Name:    admiral-harbor
 Version: 0.0.1beta16
-Release: 8%{?dist}
+Release: 9%{?dist}
 Summary: Admiral Customer Portal - Web UI for end users
 
 License: Apache-2.0
@@ -17,6 +17,7 @@ Source5: admiral-harbor-catalog-sync.timer
 Source6: harborctl
 Source7: harbor-gunicorn
 Source8: harbor.env
+Source9: harbor-migrate
 
 BuildArch: noarch
 
@@ -67,13 +68,14 @@ usage, and perform self-service operations.
 mkdir -p %{buildroot}%{_prefix}/lib/admiral/harbor
 echo "%%dir %{_prefix}/lib/admiral/harbor" > harbor.files
 if [ -d app ]; then
-    cp -r app run.py worker.py cli.py alembic.ini migrations %{buildroot}%{_prefix}/lib/admiral/harbor/
+    cp -r app run.py worker.py cli.py migrate.py alembic.ini migrations %{buildroot}%{_prefix}/lib/admiral/harbor/
     find %{buildroot}%{_prefix}/lib/admiral/harbor -type f -o -type l | sed "s|%{buildroot}||" | sort >> harbor.files
 fi
 # Install harborctl entry point
 install -Dm0755 %{SOURCE6} %{buildroot}%{_bindir}/harborctl
 # Install gunicorn wrapper
 install -Dm0755 %{SOURCE7} %{buildroot}%{_bindir}/harbor-gunicorn
+install -Dm0755 %{SOURCE9} %{buildroot}%{_bindir}/harbor-migrate
 if [ -f LICENSE ]; then
     install -Dm0644 LICENSE %{buildroot}%{_licensedir}/admiral-harbor/LICENSE
 else
@@ -99,6 +101,7 @@ mkdir -p %{buildroot}%{_localstatedir}/lib/admiral/harbor/uploads
 %{_unitdir}/admiral-harbor-catalog-sync.service
 %{_unitdir}/admiral-harbor-catalog-sync.timer
 %{_bindir}/harbor-gunicorn
+%{_bindir}/harbor-migrate
 %{_bindir}/harborctl
 %config(noreplace) %{_sysconfdir}/admiral/harbor.env
 %dir %attr(0750, root, admiral) /etc/systemd/system/admiral-harbor.service.d
@@ -126,6 +129,9 @@ restorecon -R %{_localstatedir}/lib/admiral/harbor 2>/dev/null || :
 %{python3} -m pytest tests/ -x --tb=short
 
 %changelog
+* Fri Jul 17 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta16-9
+- Run Harbor schema migrations explicitly before Gunicorn startup
+
 * Fri Jul 17 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta16-8
 - Format billing idempotency migration for CI and packaging
 
