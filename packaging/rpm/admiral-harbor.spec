@@ -1,9 +1,9 @@
 %global debug_package %{nil}
-%global commit 7333f7f0ed7441f80a82dd54982bb27485a93225
+%global commit 1a58d1b12d8e976d6627cb49451e6334e44cfbf1
 
 Name:    admiral-harbor
 Version: 0.0.1beta16
-Release: 11%{?dist}
+Release: 12%{?dist}
 Summary: Admiral Customer Portal - Web UI for end users
 
 License: Apache-2.0
@@ -76,6 +76,7 @@ install -Dm0755 %{SOURCE6} %{buildroot}%{_bindir}/harborctl
 # Install gunicorn wrapper
 install -Dm0755 %{SOURCE7} %{buildroot}%{_bindir}/harbor-gunicorn
 install -Dm0755 %{SOURCE9} %{buildroot}%{_bindir}/harbor-migrate
+install -Dm0644 docs/harborctl.8 %{buildroot}%{_mandir}/man8/harborctl.8
 if [ -f LICENSE ]; then
     install -Dm0644 LICENSE %{buildroot}%{_licensedir}/admiral-harbor/LICENSE
 else
@@ -103,6 +104,7 @@ mkdir -p %{buildroot}%{_localstatedir}/lib/admiral/harbor/uploads
 %{_bindir}/harbor-gunicorn
 %{_bindir}/harbor-migrate
 %{_bindir}/harborctl
+%{_mandir}/man8/harborctl.8*
 %config(noreplace) %{_sysconfdir}/admiral/harbor.env
 %dir %attr(0750, root, admiral) /etc/systemd/system/admiral-harbor.service.d
 %dir %attr(0750, admiral, admiral) %{_localstatedir}/lib/admiral/harbor
@@ -129,6 +131,9 @@ restorecon -R %{_localstatedir}/lib/admiral/harbor 2>/dev/null || :
 %{python3} -m pytest tests/ -x --tb=short
 
 %changelog
+* Fri Jul 17 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta16-12
+- Install the harborctl administration manpage
+
 * Fri Jul 17 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta16-11
 - Include the explicit Harbor migration launcher in package sources
 
