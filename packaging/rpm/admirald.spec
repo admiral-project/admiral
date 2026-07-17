@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 %global debug_package %{nil}
-%global commit efbadcf46a11499e4b170a5497286c3b31a76b5c
+%global commit d95618a85f65f9c9f3c57fc922bfee36cf9815c4
 
 Name:    admirald
 Version: 0.0.1beta16
@@ -15,7 +15,7 @@ Source0: https://github.com/admiral-project/admiral/archive/%{commit}/admiral-%{
 Source1: admirald.service
 Source2: admirald.ini
 
-BuildRequires: golang >= 1.22
+BuildRequires: golang >= 1.26.4
 BuildRequires: systemd
 BuildRequires: git
 

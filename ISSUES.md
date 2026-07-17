@@ -41,6 +41,11 @@ customer record and does not weaken customer-token isolation.
   freshness window and removal of filesystem paths from backup responses).
   Both portal suites pass: Flagship 204 tests and Harbor 160 tests. Their
   parent RPM references are synchronized with these commits.
+- `admirald` now binds worker heartbeats and task claims to the authenticated
+  node context, rejects missing WireGuard addresses outside development and
+  single-node modes, and is built with Go `>=1.26.4`. Its `pgx` dependency is
+  `v5.9.2`, and `govulncheck ./...` reports no vulnerabilities. The parent
+  RPM reference is synchronized with submodule commit `d95618a`.
 - `admiral#44` is still open in GitHub, but its reported suppression is stale
   and is not reproducible in the current tree: all three Go RPM `%check`
   sections run `go test ./...` without `|| echo`, while Flagship and Harbor
