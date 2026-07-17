@@ -1,9 +1,9 @@
 %global debug_package %{nil}
-%global commit 028f97ce1fb604cbb3486104bae7a16e00f74f8f
+%global commit 569e110a8f4bb6eeb5a67bf0f76fb892b7d7ec88
 
 Name:    admiral-harbor
 Version: 0.0.1beta16
-Release: 13%{?dist}
+Release: 14%{?dist}
 Summary: Admiral Customer Portal - Web UI for end users
 
 License: Apache-2.0
@@ -131,6 +131,9 @@ restorecon -R %{_localstatedir}/lib/admiral/harbor 2>/dev/null || :
 %{python3} -m pytest tests/ -x --tb=short
 
 %changelog
+* Fri Jul 17 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta16-14
+- Require POST and CSRF protection for billing and email confirmation actions
+
 * Fri Jul 17 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta16-13
 - Fix linting for the explicit migration launcher
 
