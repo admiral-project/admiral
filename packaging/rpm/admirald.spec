@@ -75,11 +75,11 @@ restorecon -F %{_bindir}/admirald 2>/dev/null || :
 * Thu Jul 16 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta16-4
 - Persist administrative authentication rate limits in PostgreSQL
 
-* Thu Jul 16 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta16-2
-- Bind worker requests to authenticated nodes and update PostgreSQL client security fixes
-
 * Thu Jul 16 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta16-3
 - Invalidate other administrator sessions after a password change
+
+* Thu Jul 16 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta16-2
+- Bind worker requests to authenticated nodes and update PostgreSQL client security fixes
 
 * Tue Jul 14 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta16-1
 - Harden the control-plane systemd unit with strict filesystem and device policy
