@@ -112,6 +112,15 @@ Comportamiento actual:
 No hay fallback a `admin_token`. Producion debe siempre definir
 `ADMIRAL_SECRETS_KEY` explicita y estable.
 
+### Rotacion de `ADMIRAL_SECRETS_KEY`
+
+Para rotar la clave sin perder secretos existentes, configure la nueva clave
+en `ADMIRAL_SECRETS_KEY` y la anterior en `ADMIRAL_SECRETS_KEY_PREVIOUS`
+(separadas por comas si hay más de una). Los nuevos valores se cifran con la
+clave actual; los valores existentes siguen siendo descifrables durante la
+ventana de migración. Después de re-cifrar o reemplazar los secretos
+existentes, retire las claves anteriores y reinicie `admirald`.
+
 ## `admiral-fleet`
 
 Variables soportadas:

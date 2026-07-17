@@ -2,11 +2,11 @@
 # SPDX-License-Identifier: Apache-2.0
 
 %global debug_package %{nil}
-%global commit b9ef7f8687950a985b757abd29b5bef562da9d32
+%global commit 768dca5237cb5cead2f128c1aba353ec086cd343
 
 Name:    admiral-flagship
 Version: 0.0.1beta16
-Release: 4%{?dist}
+Release: 5%{?dist}
 Summary: Admiral Administrative Web Console
 
 License: Apache-2.0
@@ -83,6 +83,9 @@ restorecon -R %{_prefix}/lib/admiral/flagship 2>/dev/null || :
 %{python3} -m pytest tests/ -x --tb=short
 
 %changelog
+* Fri Jul 17 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta16-5
+- Self-host browser assets and restrict the CSP to same-origin resources
+
 * Thu Jul 16 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta16-3
 - Package latest origin/main formatting fixes
 

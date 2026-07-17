@@ -1,9 +1,9 @@
 %global debug_package %{nil}
-%global commit b3af1543549ad7f33a18fb4f1aae6893b14a3a6d
+%global commit bbc206b613b7df7cb68a245520021edf02b2d190
 
 Name:    admiral-harbor
 Version: 0.0.1beta16
-Release: 7%{?dist}
+Release: 8%{?dist}
 Summary: Admiral Customer Portal - Web UI for end users
 
 License: Apache-2.0
@@ -126,6 +126,9 @@ restorecon -R %{_localstatedir}/lib/admiral/harbor 2>/dev/null || :
 %{python3} -m pytest tests/ -x --tb=short
 
 %changelog
+* Fri Jul 17 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta16-8
+- Format billing idempotency migration for CI and packaging
+
 * Thu Jul 16 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta16-6
 - Package latest origin/main formatting fixes
 

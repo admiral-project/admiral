@@ -2,11 +2,11 @@
 # SPDX-License-Identifier: Apache-2.0
 
 %global debug_package %{nil}
-%global commit 6a13c1ea9dd32df1ef27c0c1696d5b678c040727
+%global commit 67033f3a52f5fb4f2fa6ed9ad76f36421076f4e1
 
 Name:    admirald
 Version: 0.0.1beta16
-Release: 5%{?dist}
+Release: 6%{?dist}
 Summary: Admiral Control Plane - Core API and orchestration service
 
 License: Apache-2.0
@@ -72,6 +72,10 @@ restorecon -F %{_bindir}/admirald 2>/dev/null || :
 %systemd_postun_with_restart admirald.service
 
 %changelog
+* Fri Jul 17 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta16-6
+- Add encrypted secret key versioning and rotation support
+- Enforce WireGuard-only routing and redact app secret values
+
 * Thu Jul 16 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta16-4
 - Persist administrative authentication rate limits in PostgreSQL
 
