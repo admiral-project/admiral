@@ -1,4 +1,69 @@
-# Admiral beta12 multinode check
+# Admiral beta16 project status and validation check
+
+Date: 2026-07-17
+Workspace: `/root/admiral`
+
+## Current project status
+
+Admiral is in Beta and all six product repositories are functional. The
+current release work has addressed the triaged security, reliability,
+packaging, CLI, installer, and Harbor billing findings. The tracked GitHub
+issue queue is empty: `gh issue list --state open` returns zero issues in
+`admiral`, `admirald`, `admiral-fleet`, `admiralctl`, `admiral-flagship`, and
+`admiral-harbor`. `ADM-SEC-062` (MFA) is intentionally closed as not planned
+for the current release scope.
+
+All new commits were created with semantic English commit messages and
+`Signed-off-by: William Moreno Reyes <williamjmorenor@gmail.com>`. The latest
+installer/documentation commits include:
+
+- `ad8475c fix(installer): preserve Fleet token during convergence`.
+- `866f2ea docs(status): update issue and golden test status`.
+- The component fixes and packaging references are pinned in the superproject
+  Makefile and RPM specs.
+
+The individual component CI workflows previously completed successfully for
+the current component revisions. Local installer checks also pass (`18`
+tests). RPM packaging was performed with individual targets, never with
+`make rpm`: `admiral-common-0.0.1beta16-5.el10.noarch.rpm` was built and
+installed, and the Ansible single-node flow completed with `failed=0`.
+Fleet configuration now contains both the task-signature public key and the
+persisted node token, so convergence is idempotent and real task
+authentication works.
+
+## Golden single-node test
+
+The approved flow was executed on the installed single-node host using the
+demo WordPress application and real rootless Podman containers. The full
+cycle completed successfully:
+
+1. Provision: succeeded; workload containers were created by
+   `admiral-fleet` using the `systemd-podman` executor.
+2. Health/setup: instance reached `running`, `healthy`, with
+   `setup_completed=true`.
+3. Pause: succeeded.
+4. Resume: succeeded.
+5. Database backup: succeeded; backup ID was
+   `bk_306018030f35b3a2`.
+6. Restore with checksum verification: succeeded while the app was paused.
+7. Deprovision: succeeded.
+
+The four installed services—`admirald`, `admiral-fleet`, `admiral-flagship`,
+and `admiral-harbor`—remain active after the cycle. This validates the
+control-plane/Fleet handshake and the real rootless workload path, not merely
+service startup.
+
+## Validation scope still pending
+
+No multi-node check has been performed with the latest binaries and RPM
+references. The historical multi-node notes below describe an earlier beta
+environment and must not be interpreted as current-binary multi-node
+validation. A fresh admin/portal/worker multi-node run remains required
+before claiming that release gate complete.
+
+---
+
+# Historical beta12/beta13 multinode check
 
 Date: 2026-06-26
 Workspace: `/root/admiral`
