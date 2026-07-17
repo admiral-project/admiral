@@ -6,7 +6,7 @@
 
 Name:    admiralctl
 Version: 0.0.1beta16
-Release: 4%{?dist}
+Release: 5%{?dist}
 Summary: Admiral Command-Line Interface
 
 License: Apache-2.0
@@ -40,6 +40,7 @@ cd admiralctl
 install -Dm0755 admiralctl %{buildroot}%{_bindir}/admiralctl
 install -Dm0644 %{SOURCE1} %{buildroot}%{_sysconfdir}/admiralctl/config.yaml
 install -Dm0644 docs/admiralctl.1 %{buildroot}%{_mandir}/man1/admiralctl.1
+install -Dm0644 docs/admiralctl-admin.8 %{buildroot}%{_mandir}/man8/admiralctl-admin.8
 
 %check
 cd admiralctl
@@ -51,6 +52,7 @@ mkdir -p "$GOCACHE"
 %license admiralctl/LICENSE
 %{_bindir}/admiralctl
 %{_mandir}/man1/admiralctl.1*
+%{_mandir}/man8/admiralctl-admin.8*
 %dir %{_sysconfdir}/admiralctl
 %config(noreplace) %{_sysconfdir}/admiralctl/config.yaml
 
@@ -58,6 +60,9 @@ mkdir -p "$GOCACHE"
 restorecon -F %{_bindir}/admiralctl 2>/dev/null || :
 
 %changelog
+* Fri Jul 17 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta16-5
+- Install the CLI and administration manpages
+
 * Fri Jul 17 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta16-4
 - Add idempotent secrets rotate command
 
