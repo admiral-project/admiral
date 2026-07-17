@@ -1956,6 +1956,11 @@ may be supplementary, but cannot replace the EL10 acceptance gate.
 
 - **GitHub issue:** https://github.com/admiral-project/admiral-harbor/issues/18
 
+- **Status:** Fixed in `admiral-harbor` commit `d4f7f58`.
+- **Evidence:** Each worker reconciliation stage is isolated; an unexpected
+  exception is logged and counted while subsequent stages continue. Regression
+  tests cover both failure handling and action/error accounting.
+
 - **Severity:** High
 - **Affected components:** `admiral-harbor`
 - **Evidence:** `admiral-harbor/worker.py:510-557` (`main()`). Six
