@@ -301,6 +301,56 @@ in the Ansible provisioning layer.
 - **Resolution:** Accept only local paths beginning with one forward slash and
   reject absolute, scheme-relative and backslash-based redirect targets.
 
+### ADM-SEC-095 — Inspect snapshots persisted workload environment secrets
+
+- **Severity:** High
+- **Status:** Fixed on 2026-07-17.
+- **Affected components:** `admiral-fleet` inspect executor and `admirald` inspect API.
+- **Evidence:** The real WordPress golden test stored the complete Podman inspect
+  response, including values for database and WordPress password environment
+  variables, in `customer_apps.inspect_data`.
+- **Impact:** Database readers and administrators requesting an inspect snapshot
+  could recover plaintext workload credentials unrelated to the diagnostic task.
+- **Resolution:** Redact every environment value before fleet persists a snapshot,
+  and redact again in the control plane when returning historical snapshots.
+
+### ADM-SEC-096 — Quiet JSON provisioning exposed generated credentials
+
+- **Severity:** High
+- **Status:** Fixed on 2026-07-17.
+- **Affected component:** `admiralctl instances provision`.
+- **Evidence:** `--quiet` was applied only to table output; combining it with
+  `--output json` serialized the complete provision response and its generated
+  credentials.
+- **Impact:** Automation expecting quiet output could write initial workload
+  credentials to terminals, CI logs or retained command output.
+- **Resolution:** Remove credentials from JSON responses when `--quiet` is set and
+  suppress the post-wait credential lookup for quiet table output.
+
+### ADM-QUAL-027 — JSON provisioning ignored wait semantics
+
+- **Severity:** Medium
+- **Status:** Fixed on 2026-07-17.
+- **Affected component:** `admiralctl instances provision`.
+- **Evidence:** The JSON branch returned immediately after printing the queued
+  response, before evaluating `--wait`.
+- **Impact:** Scripts could continue while provisioning was still pending despite
+  explicitly requesting terminal operation state.
+- **Resolution:** Wait for the operation and emit its terminal JSON result before
+  returning.
+
+### ADM-QUAL-028 — Persisted inspect snapshots were never loaded
+
+- **Severity:** Medium
+- **Status:** Fixed on 2026-07-17.
+- **Affected component:** `admirald` instance database access.
+- **Evidence:** `GetCustomerApp` omitted `inspect_data` from both its query and scan,
+  so the inspect result endpoint returned 404 even after a successful task had
+  stored a snapshot.
+- **Impact:** Operators could trigger diagnostic work but could not retrieve its
+  result through the supported API and CLI.
+- **Resolution:** Load the persisted inspect snapshot in single-instance queries.
+
 ## Positive findings (things that are well-implemented)
 
 | Area | Detail |
