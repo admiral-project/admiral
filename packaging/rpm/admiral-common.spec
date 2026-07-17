@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: William Moreno Reyes CP | MBA
 # SPDX-License-Identifier: Apache-2.0
 
-%global commit d001c22ff37df5b03981001a6585129bb695f35b
+%global commit 51d402bde68511469fe59580a6cbedeef04e9dd3
 
 Name:    admiral-common
 Version: 0.0.1beta17
@@ -138,6 +138,7 @@ restorecon -R /var/lib/admiral-apps/.local/share/containers/storage/ 2>/dev/null
 
 %changelog
 * Fri Jul 17 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta17-2
+- Pin the source archive after the final installer and Ansible security fixes
 - Rebuild with latest submodule refs and release bump
 
 * Fri Jul 17 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta17-1
