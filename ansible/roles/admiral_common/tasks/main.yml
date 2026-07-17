@@ -401,6 +401,21 @@
           ADMIRAL_SSH_USER={{ admiral_ssh_admin_user }}
       no_log: true
 
+    - name: Verify bootstrap secret inventory permissions
+      stat:
+        path: /etc/admiral/secrets
+      register: admiral_secrets_permissions
+      no_log: true
+
+    - name: Enforce bootstrap secret inventory permissions
+      assert:
+        that:
+          - admiral_secrets_permissions.stat.mode == '0600'
+          - admiral_secrets_permissions.stat.pw_name == 'root'
+          - admiral_secrets_permissions.stat.gr_name == 'root'
+        fail_msg: "Admiral bootstrap secret inventory has unsafe ownership or permissions."
+      no_log: true
+
 - name: Remove secrets file from non-admin nodes (safety cleanup)
   file:
     path: /etc/admiral/secrets
@@ -727,6 +742,8 @@
   when: admiral_install_mode in ['single-node', 'admin-node', 'admin-portal-node', 'portal-node']
 
 - name: Include WireGuard subnet in PostgreSQL listen_addresses for multi-node
+  # PostgreSQL remains local to each host. Dedicated portal nodes have their
+  # own database and never connect to the admin database over WireGuard.
   set_fact:
     admiral_pg_listen_addresses: "127.0.0.1"
   when: admiral_install_mode in ['single-node', 'admin-node', 'admin-portal-node']
@@ -787,6 +804,16 @@
     name: postgresql
     enabled: true
     state: restarted
+  when: admiral_install_mode in ['single-node', 'admin-node', 'admin-portal-node', 'portal-node']
+
+- name: Verify PostgreSQL accepts local connections after restart
+  become_user: postgres
+  command: psql -d postgres -c "SELECT 1"
+  register: admiral_postgresql_check
+  retries: 5
+  delay: 2
+  until: admiral_postgresql_check.rc == 0
+  changed_when: false
   when: admiral_install_mode in ['single-node', 'admin-node', 'admin-portal-node', 'portal-node']
 
 - name: Ensure Admiral PostgreSQL role exists with generated password
