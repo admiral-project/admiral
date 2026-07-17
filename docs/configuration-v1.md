@@ -16,8 +16,8 @@ Archivo `/etc/admirald.ini`:
 
 ```ini
 port=8080
-database_url=postgres://admiral_core_user:postgres@localhost:5432/admiral_core?sslmode=disable
-queue_database_url=postgres://admiral_queue_user:postgres@localhost:5432/admiral_queue?sslmode=disable
+database_url=postgres://admiral_core_user:postgres@localhost:5432/admiral_core?sslmode=require
+queue_database_url=postgres://admiral_queue_user:postgres@localhost:5432/admiral_queue?sslmode=require
 admin_token=replace-with-internal-token
 token_pepper=replace-with-long-random-pepper
 secrets_key=replace-with-long-random-production-secret
@@ -95,8 +95,8 @@ Backends soportados hoy:
 Ejemplos:
 
 ```ini
-database_url=postgres://admiral_core_user:postgres@localhost:5432/admiral_core?sslmode=disable
-queue_database_url=postgres://admiral_queue_user:postgres@localhost:5432/admiral_queue?sslmode=disable
+database_url=postgres://admiral_core_user:postgres@localhost:5432/admiral_core?sslmode=require
+queue_database_url=postgres://admiral_queue_user:postgres@localhost:5432/admiral_queue?sslmode=require
 database_url=sqlite:///var/lib/admiral/dev.db
 ```
 
