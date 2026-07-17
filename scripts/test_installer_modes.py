@@ -22,6 +22,18 @@ MAKEFILE = ROOT / "Makefile"
 
 
 class InstallerModeTests(unittest.TestCase):
+    def test_fedora_is_limited_to_dev_mode(self) -> None:
+        content = INSTALLER.read_text(encoding="utf-8")
+
+        self.assertIn('[[ "$INSTALL_DEV_MODE" == "true" ]]', content)
+        self.assertIn("Fedora is supported only with --dev-node", content)
+
+    def test_admiral_common_is_reconciled_to_current_repository_version(self) -> None:
+        content = INSTALLER.read_text(encoding="utf-8")
+
+        self.assertIn('dnf install -y admiral-common', content)
+        self.assertNotIn('if ! rpm -q admiral-common', content)
+
     def test_installer_help_lists_explicit_admin_portal_mode(self) -> None:
         result = subprocess.run(
             ["bash", str(INSTALLER), "--help"],

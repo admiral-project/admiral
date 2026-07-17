@@ -402,6 +402,8 @@ case "$ID" in
         ;;
     fedora)
         info "Fedora detected (Tier 2 - development, not recommended for production)"
+        [[ "$INSTALL_DEV_MODE" == "true" ]] ||
+            die "Fedora is supported only with --dev-node; secure production modes require Enterprise Linux 10."
         ;;
     amzn)
         die "Amazon Linux does not ship Podman (required for rootless containers). Admiral is not installable on AL2023."
@@ -452,11 +454,10 @@ if ! rpm -q ansible-core >/dev/null 2>&1; then
     dnf install -y ansible-core
 fi
 
-# Install admiral-common first so its playbooks are on disk
-if ! rpm -q admiral-common >/dev/null 2>&1; then
-    info "Installing admiral-common..."
-    dnf install -y admiral-common
-fi
+# Install or update admiral-common first so reconciliation always uses the
+# playbooks from the currently enabled Admiral repository.
+info "Installing the current admiral-common package..."
+dnf install -y admiral-common
 
 # --- 7b. resolve spoke node defaults from know_host.yaml (without copying topology) ---
 # Extract only the wireguard_ip and node_id needed for this specific spoke.
