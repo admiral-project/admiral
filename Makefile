@@ -32,6 +32,7 @@ MISTUNE_SHA256 := 14d23e4803c4181e6bca4b56fe38f5f81af4a5df397a9bed4b99a9e173d136
 	srpm srpms \
 	rpm-admiral-common rpm-admirald rpm-admiral-fleet \
 	rpm-admiralctl rpm-admiral-flagship rpm-admiral-harbor \
+	rpm-admiral-no-test \
 	srpm-admiral-common srpm-admirald srpm-admiral-fleet \
 	srpm-admiralctl srpm-admiral-flagship srpm-admiral-harbor \
 	rpm-python-flask-sqlalchemy rpm-python-flask-alembic rpm-python-flask-login \
@@ -299,6 +300,22 @@ rpm-admiral: validate-release-refs all-sources source-support-files
 	@echo "=== Building admiral-harbor ==="
 	$(MAKE) rpm-admiral-harbor
 	@echo "=== All 6 Admiral RPMs built ==="
+	@find $(RPMDIR)/RPMS -name 'admiral*.rpm' -exec basename {} \;
+
+rpm-admiral-no-test: validate-release-refs all-sources source-support-files
+	@echo "=== Building admiral-common (no tests) ==="
+	$(MAKE) rpm-admiral-common RPMFLAGS="$(RPMFLAGS) --nocheck"
+	@echo "=== Building admirald (no tests) ==="
+	$(MAKE) rpm-admirald RPMFLAGS="$(RPMFLAGS) --nocheck"
+	@echo "=== Building admiral-fleet (no tests) ==="
+	$(MAKE) rpm-admiral-fleet RPMFLAGS="$(RPMFLAGS) --nocheck"
+	@echo "=== Building admiralctl (no tests) ==="
+	$(MAKE) rpm-admiralctl RPMFLAGS="$(RPMFLAGS) --nocheck"
+	@echo "=== Building admiral-flagship (no tests) ==="
+	$(MAKE) rpm-admiral-flagship RPMFLAGS="$(RPMFLAGS) --nocheck"
+	@echo "=== Building admiral-harbor (no tests) ==="
+	$(MAKE) rpm-admiral-harbor RPMFLAGS="$(RPMFLAGS) --nocheck"
+	@echo "=== All 6 Admiral RPMs built (no tests) ==="
 	@find $(RPMDIR)/RPMS -name 'admiral*.rpm' -exec basename {} \;
 
 srpms: all-sources source-support-files
