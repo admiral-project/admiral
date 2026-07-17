@@ -14,7 +14,7 @@ an implementation plan without validation.
 | Finding | Validation | Disposition |
 |---------|------------|-------------|
 | ADM-SEC-080 | Confirmed | Fixed: the password is sent to `psql` on stdin, the role name is constrained, and the secret-bearing task uses `no_log`. |
-| ADM-SEC-081 | Risk confirmed; proposed fix invalid | Open architectural work. `admirald` runs as `admiral`, so `0600 root:root` would prevent startup. A real fix requires a dedicated service identity and ownership split. |
+| ADM-SEC-081 | Confirmed | Fixed with a systemd credential: the source INI is `0600 root:root` and is projected only into the `admirald` service namespace. The service also receives a restricted `/proc` view. |
 | ADM-SEC-082 | Defense-in-depth | Fixed with `no_log`. Ansible does not normally print rendered template contents, so the report's claim of unconditional key logging was overstated. |
 | ADM-SEC-083 | False positive | Rejected. `SharedVolumes[].Mount` is the destination inside the container; the host source is a generated named Podman volume, not the supplied path. Paths such as `/etc` are valid container destinations and do not mount host `/etc`. |
 | ADM-SEC-084 | Design risk confirmed; proposed fix incomplete | Open architectural work. HKDF by task ID from the same key distributed to every worker does not isolate compromised nodes. A fix needs per-node keys or envelope encryption plus ciphertext access controls and rotation/versioning. |

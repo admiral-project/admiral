@@ -38,9 +38,9 @@
       networking_portal_target = {{ admirald_networking_portal_target | default('https://127.0.0.1:5001') }}
       networking_cockpit_target = {{ admirald_networking_cockpit_target | default('http://127.0.0.1:9090') }}
       caddy_admin_url = {{ admirald_caddy_admin_url | default('http://127.0.0.1:2019') }}
-    mode: "0640"
+    mode: "0600"
     owner: root
-    group: admiral
+    group: root
   no_log: true
   notify: restart admirald
 

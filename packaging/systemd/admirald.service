@@ -10,6 +10,7 @@ ExecStart=/usr/bin/admirald
 Restart=on-failure
 RestartSec=10
 Environment=ADMIRAL_TLS_CA_FILE=/etc/admiral/tls/ca.pem
+LoadCredential=admirald.ini:/etc/admirald.ini
 StandardOutput=journal
 StandardError=journal
 
@@ -25,6 +26,8 @@ NoNewPrivileges=true
 PrivateTmp=true
 ProtectHome=true
 ProtectSystem=strict
+ProtectProc=invisible
+ProcSubset=pid
 CapabilityBoundingSet=
 SystemCallArchitectures=native
 PrivateDevices=true
