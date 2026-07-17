@@ -2,11 +2,11 @@
 # SPDX-License-Identifier: Apache-2.0
 
 %global debug_package %{nil}
-%global commit a32e986d5961e33ab3bf986dd471f67d74f3514b
+%global commit 3808703227c7fbc7e88c79200ccd9d82fe015e44
 
 Name:    admiralctl
 Version: 0.0.1beta16
-Release: 3%{?dist}
+Release: 4%{?dist}
 Summary: Admiral Command-Line Interface
 
 License: Apache-2.0
@@ -58,6 +58,9 @@ mkdir -p "$GOCACHE"
 restorecon -F %{_bindir}/admiralctl 2>/dev/null || :
 
 %changelog
+* Fri Jul 17 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta16-4
+- Add idempotent secrets rotate command
+
 * Thu Jul 16 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta16-2
 - Rebase hardened CLI release onto origin/main
 

@@ -678,28 +678,33 @@ solo se conserva temporalmente para descifrar los valores existentes.
    printf '%s\n' "$NEW_KEY"
    ```
 
-3. Edita `/etc/admiral/secrets` y establece:
+3. Conserva la clave anterior en `/etc/admiral/secrets` como respaldo y
+   configura `/etc/admirald.ini` con la clave nueva y la anterior:
 
    ```ini
-   ADMIRAL_SECRETS_KEY=<new-key>
-   ADMIRAL_SECRETS_KEY_PREVIOUS=<old-key>
+   secrets_key=<new-key>
+   secrets_key_previous=<old-key>
    ```
 
    También puedes configurar `secrets_key_previous` en
    `/etc/admirald.ini`. Se pueden indicar varias claves anteriores separadas
    por comas.
-4. Reinicia `admirald` y verifica los logs antes de retirar la clave anterior:
+4. Reinicia `admirald` y ejecuta la migración idempotente desde el nodo
+   administrativo:
 
    ```bash
    sudo systemctl restart admirald
+   sudo admiralctl secrets rotate
    sudo journalctl -u admirald -n 100 --no-pager
    ```
 
-Durante la ventana de rotación, cualquier secreto nuevo usa la clave nueva y
-los existentes siguen siendo legibles con `ADMIRAL_SECRETS_KEY_PREVIOUS`.
-Después de reemplazar o re-cifrar los secretos existentes, elimina la clave
-anterior de ambos archivos y reinicia el servicio otra vez. Nunca compartas
-estas claves con `admiral-fleet`, Flagship ni Harbor.
+El comando devuelve `migrated`, `already_current` y `total`; repetirlo no
+vuelve a cifrar los registros que ya usan la clave nueva. Durante la ventana
+de rotación, cualquier secreto nuevo usa la clave nueva y los existentes
+siguen siendo legibles con `secrets_key_previous`. Cuando `migrated` sea cero
+y hayas verificado la aplicación, elimina la clave anterior de
+`/etc/admirald.ini` y reinicia el servicio. Nunca compartas estas claves con
+`admiral-fleet`, Flagship ni Harbor.
 
 ## Common Checks
 

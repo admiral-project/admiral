@@ -2,11 +2,11 @@
 # SPDX-License-Identifier: Apache-2.0
 
 %global debug_package %{nil}
-%global commit 67033f3a52f5fb4f2fa6ed9ad76f36421076f4e1
+%global commit f748057f97a2c7e7589502402d4b31e7cf074573
 
 Name:    admirald
 Version: 0.0.1beta16
-Release: 6%{?dist}
+Release: 7%{?dist}
 Summary: Admiral Control Plane - Core API and orchestration service
 
 License: Apache-2.0
@@ -72,6 +72,9 @@ restorecon -F %{_bindir}/admirald 2>/dev/null || :
 %systemd_postun_with_restart admirald.service
 
 %changelog
+* Fri Jul 17 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta16-7
+- Add atomic secret re-encryption endpoint for idempotent rotation
+
 * Fri Jul 17 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta16-6
 - Add encrypted secret key versioning and rotation support
 - Enforce WireGuard-only routing and redact app secret values
