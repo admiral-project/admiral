@@ -1,9 +1,9 @@
 %global debug_package %{nil}
-%global commit 724f769021a28ceedbb053248616447f7b18b981
+%global commit fceec4fedd2f10ca2571412b6064ac16c12c95d4
 
 Name:    admiral-harbor
 Version: 0.0.1beta17
-Release: 2%{?dist}
+Release: 3%{?dist}
 Summary: Admiral Customer Portal - Web UI for end users
 
 License: Apache-2.0
@@ -131,6 +131,9 @@ restorecon -R %{_localstatedir}/lib/admiral/harbor 2>/dev/null || :
 %{python3} -m pytest tests/ -x --tb=short
 
 %changelog
+* Fri Jul 17 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta17-3
+- Send webhook_event as an object to PayPal signature verification
+
 * Fri Jul 17 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta17-2
 - Install the Harbor credential configuration as root-only
 - Rebuild with latest submodule refs and release bump

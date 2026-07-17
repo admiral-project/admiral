@@ -37,6 +37,11 @@ Installer review also found and fixed two issues outside the original list:
   packaged as `0600 root:root` so an RPM upgrade cannot reopen their modes.
   Every individual Admiral RPM target now runs the release-reference gate, and
   the gate also detects stale `admiral-common` installer/Ansible payload pins.
+- **ADM-SEC-090 (Critical, PayPal):** the postback signature request sent
+  `webhook_event` as a JSON string, while PayPal's API schema requires an
+  object. This could reject every genuine live webhook and prevent paid
+  subscriptions from being confirmed. Harbor now parses and validates the raw
+  request body, then sends the resulting object in the verification request.
 
 No RPM build or unit-test execution is claimed by this validation record.
 
