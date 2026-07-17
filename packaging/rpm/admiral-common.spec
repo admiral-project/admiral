@@ -172,6 +172,9 @@ restorecon -R /var/lib/admiral-apps/.local/share/containers/storage/ 2>/dev/null
 * Tue Jul 07 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta15-3
 - Update source commit refs to include security audit fixes
 
+* Sun Jul 05 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta14-3
+- Add MemoryDenyWriteExecute and RestrictRealtime to admirald.service
+
 * Sun Jul 05 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta14-2
 - Update submodule commit refs and bump release
 
@@ -302,9 +305,6 @@ restorecon -R /var/lib/admiral-apps/.local/share/containers/storage/ 2>/dev/null
 * Sun Jun 14 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1alpha4-4
 - Set /var/lib/admiral to 0751 root:admiral for rootless traversal
 - Add chmod 0751 in %%post scriptlet
-
-* Sun Jul 05 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta14-3
-- Add MemoryDenyWriteExecute and RestrictRealtime to admirald.service
 
 * Sat Jun 13 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1alpha4-3
 - Add HARBOR_DATABASE_URL to ansible playbook
