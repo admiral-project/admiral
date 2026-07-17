@@ -1,9 +1,9 @@
 %global debug_package %{nil}
-%global commit 1939410ae525dc971dddff0fddd3c904b04a695d
+%global commit dace4150997e956702814efe679430b33fbaf018
 
 Name:    admiral-harbor
 Version: 0.0.1beta17
-Release: 6%{?dist}
+Release: 7%{?dist}
 Summary: Admiral Customer Portal - Web UI for end users
 
 License: Apache-2.0
@@ -131,6 +131,10 @@ restorecon -R %{_localstatedir}/lib/admiral/harbor 2>/dev/null || :
 %{python3} -m pytest tests/ -x --tb=short
 
 %changelog
+* Fri Jul 17 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta17-7
+- Use the database PayPal mode consistently across checkout and callbacks
+- Prevent mock provisioning when administrators activate live payments
+
 * Fri Jul 17 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta17-6
 - Preserve an existing PayPal secret for unchanged credentials
 - Require a new secret when switching payment environment or client

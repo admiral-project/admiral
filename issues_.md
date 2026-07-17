@@ -269,6 +269,26 @@ in the Ansible provisioning layer.
   unchanged. Require a new secret for initial setup, mode changes, or Client ID
   changes so credentials from sandbox and live cannot be mixed silently.
 
+### ADM-SEC-093 — Checkout trusted stale environment mode after live activation
+
+- **Severity:** Critical
+- **Status:** Fixed on 2026-07-17.
+- **Affected component:** `admiral-harbor` checkout, return and mock approval routes.
+- **Evidence:** PayPal API calls resolved mode from the database, while checkout
+  plan validation, browser return and mock approval read `HARBOR_PAYPAL_MODE`
+  directly. On a host started in mock mode, changing the admin configuration to
+  live left the browser return on the mock-only provisioning branch.
+- **Impact:** An `ACTIVE` or `APPROVED` subscription response could provision an
+  instance before Harbor received the required `PAYMENT.SALE.COMPLETED` webhook.
+- **Resolution:** Introduce one effective-mode resolver backed by the stored admin
+  configuration and use it for API calls, checkout, browser callbacks, webhook
+  freshness and mock routes. Initial admin configuration now inherits the process
+  default instead of silently creating a sandbox override.
+- **Acceptance criteria:**
+  - Stored live mode always waits for the completed-sale webhook.
+  - Mock endpoints are unavailable whenever the effective mode is not mock.
+  - Environment mode is used only when no non-mock database configuration exists.
+
 ## Positive findings (things that are well-implemented)
 
 | Area | Detail |
