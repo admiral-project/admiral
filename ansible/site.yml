@@ -4,6 +4,11 @@
   gather_facts: true
   become: true
 
+  vars:
+    # Stable hub address for the current single-hub WireGuard topology.
+    # Override this variable when a future deployment uses another subnet.
+    admiral_wireguard_hub_ip: "10.99.0.1"
+
   pre_tasks:
     - name: Map installer mode to persistent node role
       set_fact:
@@ -93,8 +98,8 @@
 
     - name: Determine control-plane runtime address
       set_fact:
-        admiral_control_plane_host: "{{ '127.0.0.1' if admiral_install_mode == 'single-node' else '10.99.0.1' }}"
-        admiral_control_plane_url: "https://{{ '127.0.0.1' if admiral_install_mode == 'single-node' else '10.99.0.1' }}:8080"
+        admiral_control_plane_host: "{{ '127.0.0.1' if admiral_install_mode == 'single-node' else admiral_wireguard_hub_ip }}"
+        admiral_control_plane_url: "https://{{ '127.0.0.1' if admiral_install_mode == 'single-node' else admiral_wireguard_hub_ip }}:8080"
 
     - name: Create Admiral bootstrap directories on remote spokes
       file:
