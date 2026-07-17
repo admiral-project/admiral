@@ -2,11 +2,11 @@
 # SPDX-License-Identifier: Apache-2.0
 
 %global debug_package %{nil}
-%global commit 93178cea627635bc521643500a73109b91f658ed
+%global commit a03755b473d51266aa7ff5df1a1ef7de3bc79f0d
 
 Name:    admiral-fleet
 Version: 0.0.1beta16
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: Admiral Fleet Worker Agent
 
 License: Apache-2.0
@@ -73,6 +73,9 @@ loginctl enable-linger admiral-apps 2>/dev/null || :
 %systemd_postun_with_restart admiral-fleet.service
 
 %changelog
+* Thu Jul 16 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta16-2
+- Rebase hardened worker release onto origin/main
+
 * Tue Jul 14 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta16-1
 - Run rootless Podman exec through the persistent user bus
 - Keep transient env files visible across PrivateTmp namespaces

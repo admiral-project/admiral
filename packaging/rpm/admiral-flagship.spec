@@ -2,11 +2,11 @@
 # SPDX-License-Identifier: Apache-2.0
 
 %global debug_package %{nil}
-%global commit 06cd45c50f7e4fbc64b5bfe00be7e2087530c174
+%global commit 35b98501825e3a99c878ded4bdd7bbf9db1c9ecc
 
 Name:    admiral-flagship
 Version: 0.0.1beta16
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: Admiral Administrative Web Console
 
 License: Apache-2.0
@@ -83,6 +83,9 @@ restorecon -R %{_prefix}/lib/admiral/flagship 2>/dev/null || :
 %{python3} -m pytest tests/ -x --tb=short
 
 %changelog
+* Thu Jul 16 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta16-2
+- Rebase security hardening release onto origin/main
+
 * Thu Jul 16 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta16-2
 - Add missing BuildRequires for %%check section
 

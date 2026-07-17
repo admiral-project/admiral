@@ -16,7 +16,7 @@ customer record and does not weaken customer-token isolation.
   `go vet`, a PIE `-trimpath` build, and `/root/go/bin/govulncheck ./...`
   pass; govulncheck reports no vulnerabilities.
 - Fleet issues `#41` through `#54` are addressed in submodule commit
-  `93178ce`: bind and publish addresses are constrained, task signatures have
+  `a03755b`: bind and publish addresses are constrained, task signatures have
   freshness/replay checks, secrets use env-files, restore DNS is pinned and
   redirect-validated, port allocation is serialized, and shutdown propagates
   cancellation and flushes the outbox. The complete Fleet test suite, vet,
@@ -36,7 +36,7 @@ customer record and does not weaken customer-token isolation.
   and `go vet ./...` pass. Parent/RPM references are synchronized in the
   current release commit.
 - The Python portals have current security fixes in `admiral-flagship`
-  commit `06cd45c` (strict node input validation and independent absolute
+  commit `35b9850` (strict node input validation and independent absolute
   session lifetime) and `admiral-harbor` commit `9997564` (PayPal webhook
   freshness window and removal of filesystem paths from backup responses).
   Both portal suites pass: Flagship 204 tests and Harbor 160 tests. Their

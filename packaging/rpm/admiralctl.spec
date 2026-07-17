@@ -2,11 +2,11 @@
 # SPDX-License-Identifier: Apache-2.0
 
 %global debug_package %{nil}
-%global commit 86f94845bf2fb422827fb0e0476e1f422689b8d4
+%global commit a32e986d5961e33ab3bf986dd471f67d74f3514b
 
 Name:    admiralctl
 Version: 0.0.1beta16
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: Admiral Command-Line Interface
 
 License: Apache-2.0
@@ -58,6 +58,9 @@ mkdir -p "$GOCACHE"
 restorecon -F %{_bindir}/admiralctl 2>/dev/null || :
 
 %changelog
+* Thu Jul 16 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta16-2
+- Rebase hardened CLI release onto origin/main
+
 * Tue Jul 14 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta16-1
 - chore(release): bump to 0.0.1beta16
 
