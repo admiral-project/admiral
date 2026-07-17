@@ -157,27 +157,27 @@ RPMFLAGS := --define '_topdir $(RPMTOPDIR)' \
 
 # -- RPM targets ---------------------------------------------------------
 
-rpm-admiral-common: source-superproject source-support-files
+rpm-admiral-common: validate-release-refs source-superproject source-support-files
 	cp $(SPECSDIR)/$(@:rpm-%=%).spec $(RPMTOPDIR)/SPECS/
 	rpmbuild -ba $(RPMFLAGS) $(RPMTOPDIR)/SPECS/admiral-common.spec
 
-rpm-admirald: source-superproject source-support-files
+rpm-admirald: validate-release-refs source-superproject source-support-files
 	cp $(SPECSDIR)/$(@:rpm-%=%).spec $(RPMTOPDIR)/SPECS/
 	rpmbuild -ba $(RPMFLAGS) $(RPMTOPDIR)/SPECS/admirald.spec
 
-rpm-admiral-fleet: source-superproject source-support-files
+rpm-admiral-fleet: validate-release-refs source-superproject source-support-files
 	cp $(SPECSDIR)/$(@:rpm-%=%).spec $(RPMTOPDIR)/SPECS/
 	rpmbuild -ba $(RPMFLAGS) $(RPMTOPDIR)/SPECS/admiral-fleet.spec
 
-rpm-admiralctl: source-superproject source-support-files
+rpm-admiralctl: validate-release-refs source-superproject source-support-files
 	cp $(SPECSDIR)/$(@:rpm-%=%).spec $(RPMTOPDIR)/SPECS/
 	rpmbuild -ba $(RPMFLAGS) $(RPMTOPDIR)/SPECS/admiralctl.spec
 
-rpm-admiral-flagship: source-admiral-flagship source-support-files
+rpm-admiral-flagship: validate-release-refs source-admiral-flagship source-support-files
 	cp $(SPECSDIR)/$(@:rpm-%=%).spec $(RPMTOPDIR)/SPECS/
 	rpmbuild -ba $(RPMFLAGS) $(RPMTOPDIR)/SPECS/admiral-flagship.spec
 
-rpm-admiral-harbor: source-admiral-harbor source-support-files
+rpm-admiral-harbor: validate-release-refs source-admiral-harbor source-support-files
 	cp $(SPECSDIR)/$(@:rpm-%=%).spec $(RPMTOPDIR)/SPECS/
 	rpmbuild -ba $(RPMFLAGS) $(RPMTOPDIR)/SPECS/admiral-harbor.spec
 

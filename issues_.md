@@ -35,6 +35,8 @@ Installer review also found and fixed two issues outside the original list:
   secret-bearing INI/environment files as mode `0644`. Release references now
   match the committed submodules, and all credential configuration files are
   packaged as `0600 root:root` so an RPM upgrade cannot reopen their modes.
+  Every individual Admiral RPM target now runs the release-reference gate, and
+  the gate also detects stale `admiral-common` installer/Ansible payload pins.
 
 No RPM build or unit-test execution is claimed by this validation record.
 
