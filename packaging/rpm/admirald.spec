@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 %global debug_package %{nil}
-%global commit cc357d4d34c149a6e3c4deaea35d97954750875b
+%global commit e412a0fda4aa2bf13c0f13f7171cc09badb520a7
 
 Name:    admirald
 Version: 0.0.1beta17
