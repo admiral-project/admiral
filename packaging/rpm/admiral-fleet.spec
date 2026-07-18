@@ -15,7 +15,7 @@ Source0: https://github.com/admiral-project/admiral/archive/%{commit}/admiral-%{
 Source1: admiral-fleet.service
 Source2: fleet.env
 
-BuildRequires: golang >= 1.26.4
+BuildRequires: golang >= 1.26.5
 BuildRequires: systemd >= 250
 BuildRequires: git
 

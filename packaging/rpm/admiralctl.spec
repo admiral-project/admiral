@@ -14,7 +14,7 @@ URL:     https://github.com/admiral-project/admiralctl
 Source0: https://github.com/admiral-project/admiral/archive/%{commit}/admiral-%{version}.tar.gz
 Source1: admiralctl.yaml
 
-BuildRequires: golang >= 1.26.4
+BuildRequires: golang >= 1.26.5
 BuildRequires: git
 
 Requires: admiral-common

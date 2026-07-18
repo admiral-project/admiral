@@ -15,7 +15,7 @@ Source0: https://github.com/admiral-project/admiral/archive/%{commit}/admiral-%{
 Source1: admirald.service
 Source2: admirald.ini
 
-BuildRequires: golang >= 1.26.4
+BuildRequires: golang >= 1.26.5
 BuildRequires: systemd
 BuildRequires: git
 
