@@ -1,6 +1,6 @@
 # Admiral Networking v1
 
-Status: Implemented for alpha release  
+Status: Implemented for functional beta validation
 Scope: `admirald`, `admiral-fleet`, `admiralctl`, `admiral-flagship`, `admiral-harbor`  
 Contract version: `networking_v1`
 

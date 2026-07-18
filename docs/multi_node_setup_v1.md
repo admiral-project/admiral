@@ -4,7 +4,7 @@ Admiral Multi Node Networking Contract v1
 
 Status
 
-Proposed — Phase 6
+Implemented for beta validation; operational details may still change before 1.0.
 
 Purpose
 

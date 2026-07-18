@@ -9,7 +9,9 @@ This guide matches the current repository state and the EL10 packaging.
 - Source-tree installer: `scripts/install.sh`
 - HTTPS helper: `admiral_https_setup`
 
-Harbor is part of the current product and is in active development.
+Admiral is a functional beta under testing and validation. It is not yet
+recommended for production use; Harbor's real PayPal payment flow remains a
+1.0 validation item.
 
 ## Deployment Modes
 
@@ -24,12 +26,12 @@ Harbor is part of the current product and is in active development.
 
 Single-node combines the admin, worker, and portal roles on one host.
 
-The supported shared production topology uses `--admin-portal-node` from the
+The supported shared beta topology uses `--admin-portal-node` from the
 first installation. It installs the Admin services and Harbor on one host;
 Workers remain dedicated nodes. Installing `--admin-node` and then running
 `--portal-node` on the same host is not supported.
 
-The other supported production topology uses `--admin-node` with a dedicated
+The other supported beta topology uses `--admin-node` with a dedicated
 `--portal-node` and dedicated Workers. A dedicated portal receives a separate
 local PostgreSQL role and password and reaches Admirald only through its
 WireGuard address.
@@ -191,7 +193,7 @@ run. If the host key changed, stop and verify the new key through the provider
 console before retrying.
 
 `--single-node` and `--dev-node` are local co-located setups, not commands for
-adding remote cluster hosts. `--single-node` is the secure production profile
+adding remote cluster hosts. `--single-node` is the secure beta profile
 that combines admin, portal, and worker on one host. `--dev-node` is an
 explicitly insecure evaluation profile; the supported automatic transition is
 from `--dev-node` to `--single-node` on that same host.

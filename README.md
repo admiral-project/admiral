@@ -4,14 +4,14 @@ Admiral is a simple, billing-aware Platform as a Service (PaaS) designed for sof
 
 Admiral focuses on simplicity, predictable operations, low cost, and a secure-by-default deployment model.
 
-**Status:** Early development — not production ready.
+**Status:** Functional beta — under validation and not yet recommended for production.
 
 Current integration status in this repository:
 
-* `admirald`, `admiral-fleet`, and `admiralctl` are the active backend E2E focus.
+* `admirald`, `admiral-fleet`, and `admiralctl` are functional and covered by backend E2E validation.
 * `admiral-flagship` is functional, with working dashboard and instance management views.
 * `admiral-flagship` is part of the normal single-node installation flow.
-* `admiral-harbor` is in active development and is also part of the normal single-node installation flow, but it is not production ready.
+* `admiral-harbor` is functional and part of the normal single-node installation flow; its real PayPal payment flow remains a 1.0 validation item.
 
 ---
 
@@ -503,13 +503,15 @@ It scales pragmatically instead of architecting for problems most small SaaS bus
 
 # Project Status
 
-Admiral is currently under active development.
+Admiral is a functional beta release under active testing and validation.
 
-It is not yet production ready.
+Single-node and multi-node workflows are implemented, but the project is not
+yet recommended for production use. In particular, the real PayPal payment
+flow remains a 1.0 validation item.
 
-Interfaces, APIs, workflows, and deployment mechanisms may change until a stable release is announced.
-
-Early contributors and testers should expect rapid iteration.
+Interfaces, APIs, workflows, and deployment mechanisms may change before a
+stable release is announced. Beta users should expect rapid iteration and
+should keep tested backups and a rollback plan.
 
 ---
 

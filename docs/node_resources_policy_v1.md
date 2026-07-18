@@ -1,9 +1,9 @@
 # Admiral Node Resources Policy v1
 
-Status: Accepted for alpha release  
+Status: Accepted for functional beta validation
 Scope: `admirald`, `admiral-fleet`, `admiralctl`, `admiral-flagship`, `admiral-harbor`  
 Policy version: `node_resources_policy_v1`  
-Primary goal: protect worker nodes from RAM and disk overcommitment while keeping provisioning behavior deterministic, auditable and simple for alpha.
+Primary goal: protect worker nodes from RAM and disk overcommitment while keeping provisioning behavior deterministic, auditable and simple for the beta.
 
 ---
 
@@ -11,7 +11,7 @@ Primary goal: protect worker nodes from RAM and disk overcommitment while keepin
 
 This policy defines how Admiral evaluates worker node capacity, health and eligibility for provisioning new customer applications.
 
-For alpha release, Admiral must protect nodes using conservative RAM and disk commitment rules. CPU is tracked and limited at runtime through app tier quotas, but CPU does not block provisioning in this policy version.
+For the beta, Admiral must protect nodes using conservative RAM and disk commitment rules. CPU is tracked and limited at runtime through app tier quotas, but CPU does not block provisioning in this policy version.
 
 The policy must be implemented as deterministic code. Given the same node metrics, committed resources and requested tier, all Admiral components must produce the same provisioning decision.
 
@@ -32,12 +32,12 @@ A node that is not healthy must never be available for provisioning.
 
 ## 3. Alpha resource model
 
-For alpha release, the scheduler protects these resources:
+For the beta, the scheduler protects these resources:
 
 - RAM
 - Persistent disk capacity
 
-For alpha release, the scheduler does not reject provisioning because of CPU commitment. CPU quota is still part of the tier definition and must be applied to the app runtime where supported.
+For the beta, the scheduler does not reject provisioning because of CPU commitment. CPU quota is still part of the tier definition and must be applied to the app runtime where supported.
 
 ### 3.1 Resource types
 
@@ -1097,7 +1097,7 @@ This policy is correctly implemented when all statements below are true.
 
 ## 21. Final rule summary
 
-For alpha release, a node can receive a new app only if all of the following are true:
+For the beta, a node can receive a new app only if all of the following are true:
 
 ```text
 fleet_status == online
@@ -1110,4 +1110,3 @@ node_committed_disk_bytes + requested_tier_disk_bytes <= floor((node_total_disk_
 ```
 
 If any condition fails, the node must not be used for provisioning the requested app.
-
