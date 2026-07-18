@@ -781,7 +781,7 @@ fi
 
 case "$INSTALL_MODE" in
     single-node)
-        REQUIRED_SERVICES=(postgresql caddy admirald admiral-fleet admiral-flagship admiral-harbor cockpit.socket firewalld auditd fail2ban)
+        REQUIRED_SERVICES=(postgresql caddy admirald admiral-fleet admiral-flagship admiral-harbor admiral-harbor-worker.timer admiral-harbor-catalog-sync.timer cockpit.socket firewalld auditd fail2ban)
         ;;
     admin-node)
         REQUIRED_SERVICES=(postgresql caddy admirald admiral-flagship cockpit.socket firewalld auditd fail2ban wg-quick@wg-admiral)
@@ -805,10 +805,18 @@ for service in "${REQUIRED_SERVICES[@]}"; do
     fi
 done
 
-if [[ "$INSTALL_MODE" == "single-node" || "$INSTALL_MODE" == "admin-portal-node" ]]; then
-    info "Verifying Harbor authentication with the Admiral API..."
-    harborctl ping || die "Harbor cannot authenticate with the Admiral API. Check ADMIRAL_HARBOR_API_TOKEN in /etc/admiral/harbor.env and harbor_api_token in /etc/admirald.ini."
-fi
+case "$INSTALL_MODE" in
+    single-node|admin-portal-node)
+        info "Verifying Harbor authentication with the Admiral API..."
+        harborctl ping || die "Harbor cannot authenticate with the Admiral API. Check ADMIRAL_HARBOR_API_TOKEN in /etc/admiral/harbor.env and harbor_api_token in /etc/admirald.ini."
+        ;;
+    portal-node)
+        info "Verifying remote Harbor authentication with the Admiral API..."
+        ssh "${SSH_OPTIONS[@]}" "${INSTALL_TARGET_SSH_USER}@${INSTALL_PUBLIC_IP}" \
+            "sudo -n /usr/bin/harborctl ping" || \
+            die "Remote Harbor cannot authenticate with the Admiral API. Check ADMIRAL_HARBOR_API_TOKEN on the portal and harbor_api_token on the admin node."
+        ;;
+esac
 
 # --- 11b. security checklist (blocking in secure modes) ---
 if [[ "$INSTALL_DEV_MODE" != "true" ]]; then

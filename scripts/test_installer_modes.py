@@ -219,6 +219,22 @@ class InstallerModeTests(unittest.TestCase):
         )
         self.assertIn("harborctl ping", installer)
 
+    def test_single_node_requires_all_harbor_timers(self) -> None:
+        installer = INSTALLER.read_text(encoding="utf-8")
+        runtime_checks = installer.split("# --- 11. verify core runtime ---", 1)[1]
+        service_matrix = runtime_checks.split('case "$INSTALL_MODE" in', 1)[1]
+        single_node_services = service_matrix.split("single-node)", 1)[1].split(";;", 1)[0]
+
+        self.assertIn("admiral-harbor-worker.timer", single_node_services)
+        self.assertIn("admiral-harbor-catalog-sync.timer", single_node_services)
+
+    def test_dedicated_portal_verifies_harbor_authentication_remotely(self) -> None:
+        installer = INSTALLER.read_text(encoding="utf-8")
+
+        self.assertIn('portal-node)\n        info "Verifying remote Harbor authentication', installer)
+        self.assertIn('"sudo -n /usr/bin/harborctl ping"', installer)
+        self.assertIn("Remote Harbor cannot authenticate with the Admiral API", installer)
+
     def test_sysadmin_guide_provisions_spokes_from_admin(self) -> None:
         content = SYSADMIN_GUIDE.read_text(encoding="utf-8")
 
