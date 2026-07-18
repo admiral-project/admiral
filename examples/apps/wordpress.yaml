@@ -77,7 +77,7 @@ services:
       - web
     requires:
       - db
-    setup_command: wp core install --path=/var/www/html --url=https://$ADMIRAL_INSTANCE_ID.local --title="$WORDPRESS_SITE_TITLE" --admin_user=$WORDPRESS_ADMIN_USER --admin_password=$WORDPRESS_ADMIN_PASSWORD --admin_email=$WORDPRESS_ADMIN_EMAIL --skip-email --allow-root
+    setup_command: wp core install --path=/var/www/html --url=http://localhost --title="$WORDPRESS_SITE_TITLE" --admin_user=$WORDPRESS_ADMIN_USER --admin_password=$WORDPRESS_ADMIN_PASSWORD --admin_email=$WORDPRESS_ADMIN_EMAIL --skip-email --allow-root
     setup_timeout: 120
     env:
       WORDPRESS_DB_HOST: 127.0.0.1:3306
