@@ -79,8 +79,7 @@ Cada instancia tiene un subestado de almacenamiento:
 - `ok` — uso menor a 60% del limite
 - `warning` — uso entre 60% y 80%
 - `critical` — uso entre 80% y 90%
-- `over_quota` — uso mayor o igual al 100%
-- `grace_period` — en periodo de gracia tras exceder cuota
+- `over_quota` — uso mayor o igual al 100%. **Nota de implementación:** Aunque la constante `StorageGracePeriod` (`grace_period`) existe en el código Go, el sistema registra el estado como `over_quota` en la columna `storage_state` de la base de datos mientras dura el período de gracia activo, identificándolo porque `grace_period_ends_at` está establecido en el futuro (`grace_period_ends_at IS NOT NULL AND grace_period_ends_at > CURRENT_TIMESTAMP`).
 - `suspended` — pausada por storage (via `pause_app_storage`)
 - `unknown` — no se pudo medir
 

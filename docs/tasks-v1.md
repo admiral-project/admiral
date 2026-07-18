@@ -4,13 +4,13 @@ Este documento describe el contrato de tareas actualmente implementado entre `ad
 
 ## Transporte
 
-- cola PostgreSQL: `fleet_commands`
+- cola PostgreSQL: `fleet_commands` (gestionado mediante `queuedb`)
 - formato: JSON
-- transporte requerido: `amqps://`
+- transporte requerido: Conexión nativa de PostgreSQL (`postgres://` o `postgresql://`). **Nota:** No se utiliza ni se soporta AMQP, AMQPS o RabbitMQ para la distribución de tareas; la cola está completamente basada en PostgreSQL.
 
 Reglas actuales:
 
-- la cola debe ser durable
+- la cola debe ser durable (almacenada en PostgreSQL)
 - los mensajes deben ser persistentes
 - el worker debe validar `node_id`
 - el worker no debe loggear payloads completos ni secretos

@@ -89,15 +89,13 @@ Variables de entorno equivalentes:
 
 Backends soportados hoy:
 
-- PostgreSQL
-- SQLite
+- PostgreSQL (SQLite no está soportado en `admirald` y requiere PostgreSQL tanto para la base de datos principal como para la cola duradera).
 
-Ejemplos:
+Ejemplo:
 
 ```ini
 database_url=postgres://admiral_core_user:postgres@localhost:5432/admiral_core?sslmode=require
 queue_database_url=postgres://admiral_queue_user:postgres@localhost:5432/admiral_queue?sslmode=require
-database_url=sqlite:///var/lib/admiral/dev.db
 ```
 
 ### `secrets_key`

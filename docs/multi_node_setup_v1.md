@@ -1,8 +1,6 @@
-multi_node_networking_v1.md
+# Admiral Multi Node Setup v1
 
-Admiral Multi Node Networking Contract v1
-
-Status
+## Status
 
 Implemented for beta validation; operational details may still change before 1.0.
 
