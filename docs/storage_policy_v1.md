@@ -87,15 +87,16 @@ Cada transición de estado registra una operación con `action` descriptiva:
 - `app_suspended_due_to_storage`
 - `app_reactivated_after_storage_recovery`
 
-## Columnas Nuevas en `customer_apps`
+## Columnas Reales en `customer_apps` (Esquema de Base de Datos)
 
 | Columna | Tipo | Descripción |
 |---------|------|-------------|
-| `storage_state` | TEXT | Estado actual (ok/warning/critical/over_quota/grace_period/suspended) |
-| `storage_emergency_bytes` | BIGINT | Límite de emergencia calculado |
-| `storage_grace_started_at` | TIMESTAMP (nullable) | Inicio del período de gracia |
-| `storage_grace_expires_at` | TIMESTAMP (nullable) | Fin del período de gracia |
-| `storage_paused_reason` | TEXT (nullable) | `grace_expired`, `emergency_limit`, `node_protection` |
+| `storage_state` | TEXT | Estado de almacenamiento (e.g., `ok`, `warning`, `critical`, `over_quota`, `suspended`, `unknown`). Durante el período de gracia activo, el valor registrado es `over_quota` con una fecha límite en `grace_period_ends_at`. |
+| `emergency_limit_bytes` | BIGINT | Límite de cuota de emergencia calculado (`storage_emergency_bytes` a nivel conceptual). |
+| `grace_period_starts_at` | TIMESTAMP (nullable) | Inicio del período de gracia (`storage_grace_started_at` conceptual). |
+| `grace_period_ends_at` | TIMESTAMP (nullable) | Fin del período de gracia (`storage_grace_expires_at` conceptual). |
+
+*Nota:* No existe una columna física `storage_paused_reason` en la base de datos de `customer_apps`. En su lugar, cuando una aplicación es pausada por exceder los límites de almacenamiento o expirar su periodo de gracia, su `technical_status` general se actualiza a `paused_for_storage`.
 
 ## Columnas Nuevas en `nodes`
 

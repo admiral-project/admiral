@@ -270,7 +270,7 @@ RAM commit limit:
 node_ram_commit_limit_bytes = floor(node_total_ram_bytes * RAM_COMMIT_RATIO)
 ```
 
-With alpha constants:
+With v1 constants:
 
 ```text
 node_ram_commit_limit_bytes = floor(node_total_ram_bytes * 0.80)
@@ -290,7 +290,7 @@ Disk commit limit:
 node_disk_commit_limit_bytes = floor((node_total_disk_bytes * DISK_SAFE_NODE_RATIO) / DISK_APP_EMERGENCY_MULTIPLIER)
 ```
 
-With alpha constants:
+With v1 constants:
 
 ```text
 node_disk_commit_limit_bytes = floor((node_total_disk_bytes * 0.80) / 1.20)
