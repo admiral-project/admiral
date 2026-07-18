@@ -46,6 +46,68 @@ if not isinstance(value, str) or not value:
 print(value)
 PY
 }
+expected_node_role() {
+    case "$1" in
+        single-node) printf '%s\n' 'single' ;;
+        admin-node) printf '%s\n' 'admin' ;;
+        admin-portal-node) printf '%s\n' 'admin-portal' ;;
+        worker-node) printf '%s\n' 'worker' ;;
+        portal-node) printf '%s\n' 'portal' ;;
+        *) return 1 ;;
+    esac
+}
+validate_node_role() {
+    local persisted_role="$1"
+    local requested_role="$2"
+    local target="$3"
+
+    case "$persisted_role" in
+        "$requested_role") return 0 ;;
+        dev)
+            [[ "$requested_role" == "single" ]] && return 0
+            ;;
+        admin|admin-portal|worker|portal|single) ;;
+        *) die "$target has an invalid Admiral role '$persisted_role'. Refusing to modify the host." ;;
+    esac
+    die "$target is provisioned as '$persisted_role' and cannot be provisioned as '$requested_role'. Refusing to modify the host."
+}
+preflight_local_node_role() {
+    local requested_role="$1"
+    local persisted_role=""
+    local legacy_path=""
+
+    if [[ -f /etc/admiral/role ]]; then
+        IFS= read -r persisted_role < /etc/admiral/role || true
+        validate_node_role "$persisted_role" "$requested_role" "This host"
+        return
+    fi
+    for legacy_path in /etc/admiral/secrets /etc/admiral/harbor.env /etc/admiral/fleet.env /etc/admirald.ini; do
+        [[ ! -e "$legacy_path" ]] || die "This host has an unprofiled Admiral installation. Refusing to modify packages or repositories."
+    done
+}
+preflight_remote_node_role() {
+    local requested_role="$1"
+    local probe_command=""
+    local quoted_probe=""
+    local persisted_role=""
+
+    probe_command='if [ -f /etc/admiral/role ]; then tr -d "\r\n" < /etc/admiral/role; elif [ -e /etc/admiral/secrets ] || [ -e /etc/admiral/harbor.env ] || [ -e /etc/admiral/fleet.env ] || [ -e /etc/admirald.ini ]; then printf %s __ADMIRAL_LEGACY__; else printf %s __ADMIRAL_NEW__; fi'
+    printf -v quoted_probe '%q' "$probe_command"
+    if [[ "$INSTALL_TARGET_SSH_USER" == "root" ]]; then
+        persisted_role=$(ssh "${SSH_OPTIONS[@]}" "root@${INSTALL_PUBLIC_IP}" "bash -lc $quoted_probe") ||
+            die "Could not inspect the existing Admiral role on $INSTALL_PUBLIC_IP. Refusing remote changes."
+    else
+        persisted_role=$(ssh "${SSH_OPTIONS[@]}" "${INSTALL_TARGET_SSH_USER}@${INSTALL_PUBLIC_IP}" "sudo -n bash -lc $quoted_probe") ||
+            die "Could not inspect the existing Admiral role on $INSTALL_PUBLIC_IP. Refusing remote changes."
+    fi
+    case "$persisted_role" in
+        __ADMIRAL_NEW__) return ;;
+        __ADMIRAL_LEGACY__)
+            die "Remote host $INSTALL_PUBLIC_IP has an unprofiled Admiral installation. Refusing to modify packages or repositories."
+            ;;
+    esac
+    validate_node_role "$persisted_role" "$requested_role" "Remote host $INSTALL_PUBLIC_IP"
+}
 require_firewall_services() {
     local actual="$1"
     shift
@@ -315,6 +377,12 @@ if [[ -n "$INSTALL_TARGET_SSH_USER" && ! "$INSTALL_TARGET_SSH_USER" =~ ^[a-z_][a
     die "Invalid SSH username"
 fi
 
+REQUESTED_NODE_ROLE=$(expected_node_role "$INSTALL_MODE") || die "Unsupported installation mode: $INSTALL_MODE"
+if [[ "$INSTALL_DEV_MODE" != "true" ]] &&
+    [[ "$INSTALL_MODE" == "single-node" || "$INSTALL_MODE" == "admin-node" || "$INSTALL_MODE" == "admin-portal-node" ]]; then
+    preflight_local_node_role "$REQUESTED_NODE_ROLE"
+fi
+
 # --- 0b1. detect SSH public key for admin user creation ---
 # The public key is needed to set up the non-root SSH admin user on every node.
 # For admin/single-node: detect from --ssh-key, id_ed25519.pub, id_rsa.pub, or authorized_keys.
@@ -385,6 +453,7 @@ if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]]; t
             info "Using persisted non-root SSH user: $INSTALL_TARGET_SSH_USER"
         fi
     fi
+    preflight_remote_node_role "$REQUESTED_NODE_ROLE"
 fi
 
 # --- 1. root check ---

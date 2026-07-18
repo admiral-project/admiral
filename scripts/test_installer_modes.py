@@ -253,6 +253,20 @@ class InstallerModeTests(unittest.TestCase):
         self.assertNotIn("admiral_portal_shares_admin_host", content)
         self.assertNotIn("systemctl is-active --quiet", content)
 
+    def test_role_preflight_runs_before_package_or_repository_changes(self) -> None:
+        installer = INSTALLER.read_text(encoding="utf-8")
+        mutation_offset = installer.index("dnf install -y epel-release")
+
+        self.assertLess(installer.index('preflight_local_node_role "$REQUESTED_NODE_ROLE"'), mutation_offset)
+        self.assertLess(installer.index('preflight_remote_node_role "$REQUESTED_NODE_ROLE"'), mutation_offset)
+        self.assertIn("Refusing to modify packages or repositories", installer)
+
+    def test_secure_role_preflight_preserves_dev_mode_behavior(self) -> None:
+        installer = INSTALLER.read_text(encoding="utf-8")
+
+        self.assertIn('if [[ "$INSTALL_DEV_MODE" != "true" ]]', installer)
+        self.assertIn('[[ "$requested_role" == "single" ]] && return 0', installer)
+
     def test_role_transition_is_limited_to_dev_to_single(self) -> None:
         content = PLAYBOOK.read_text(encoding="utf-8")
 
