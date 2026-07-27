@@ -7,13 +7,22 @@
 - name: Generate WireGuard private key
   shell:
     cmd: |
-      if [ ! -f /etc/wireguard/admiral.key ]; then
-        wg genkey > /etc/wireguard/admiral.key
-        chmod 0400 /etc/wireguard/admiral.key
-      fi
-      cat /etc/wireguard/admiral.key
-  register: admiral_wg_private_key
-  changed_when: false
+      umask 077
+      wg genkey > /etc/wireguard/admiral.key
+      chmod 0400 /etc/wireguard/admiral.key
+    creates: /etc/wireguard/admiral.key
+  no_log: true
+
+- name: Read WireGuard private key
+  slurp:
+    src: /etc/wireguard/admiral.key
+  register: admiral_wg_private_key_slurp
+  no_log: true
+
+- name: Set WireGuard private key fact
+  set_fact:
+    admiral_wg_private_key:
+      stdout: "{{ admiral_wg_private_key_slurp.content | b64decode | trim }}"
   no_log: true
 
 - name: Derive WireGuard public key
@@ -106,17 +115,16 @@
           )
       }}
 
-- name: Enable IP forwarding on hub nodes
+- name: Disable inter-node IP forwarding
   sysctl:
     name: "{{ item }}"
-    value: '1'
+    value: '0'
     sysctl_set: true
     state: present
     reload: true
   loop:
     - net.ipv4.ip_forward
     - net.ipv6.conf.all.forwarding
-  when: admiral_wireguard_role == 'hub'
 
 - name: Read hub WireGuard public key from file for spoke nodes
   slurp:

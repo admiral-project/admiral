@@ -990,6 +990,35 @@ if [[ "$INSTALL_DEV_MODE" != "true" ]]; then
         SECURITY_WARNINGS+=("The managed nftables egress reject policy is not active.")
     fi
 
+    if [[ "$INSTALL_MODE" != "single-node" ]]; then
+        FORWARDING_STATE="$(run_target_cmd "sysctl -n net.ipv4.ip_forward; sysctl -n net.ipv6.conf.all.forwarding" || true)"
+        if [[ "$FORWARDING_STATE" != $'0\n0' ]]; then
+            SECURITY_WARNINGS+=("IP forwarding is not disabled on the VPN node.")
+        fi
+
+        WG_ZONE_TARGET="$(run_target_cmd "firewall-cmd --zone=admiral --get-target" || true)"
+        WG_ZONE_INTERFACES="$(run_target_cmd "firewall-cmd --zone=admiral --list-interfaces" || true)"
+        TRUSTED_INTERFACES="$(run_target_cmd "firewall-cmd --zone=trusted --list-interfaces" || true)"
+        if [[ "$WG_ZONE_TARGET" != "DROP" ]]; then
+            SECURITY_WARNINGS+=("The WireGuard firewalld zone does not use a DROP target.")
+        fi
+        if [[ " $WG_ZONE_INTERFACES " != *" wg-admiral "* ]]; then
+            SECURITY_WARNINGS+=("wg-admiral is not assigned to the restricted firewalld zone.")
+        fi
+        if [[ " $TRUSTED_INTERFACES " == *" wg-admiral "* ]]; then
+            SECURITY_WARNINGS+=("wg-admiral remains assigned to the trusted firewalld zone.")
+        fi
+
+        WG_ALLOWED_IPS="$(run_target_cmd "wg show wg-admiral allowed-ips" || true)"
+        if [[ "$WG_ALLOWED_IPS" == *"10.99.0.0/24"* || "$WG_ALLOWED_IPS" == *"0.0.0.0/0"* ]]; then
+            SECURITY_WARNINGS+=("WireGuard contains an unexpectedly broad peer route.")
+        fi
+        if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]] &&
+            [[ "$WG_ALLOWED_IPS" != *"10.99.0.1/32"* ]]; then
+            SECURITY_WARNINGS+=("The spoke WireGuard route is not restricted to the admin hub.")
+        fi
+    fi
+
     FW_SERVICES="$(run_target_cmd "firewall-cmd --zone=public --list-services")"
     FW_PORTS="$(run_target_cmd "firewall-cmd --zone=public --list-ports")"
     EXPECTED_FW_PORTS="$(expected_firewall_ports "$INSTALL_MODE")"

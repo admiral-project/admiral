@@ -541,6 +541,12 @@ lists; image policy, digests, and workload-specific restrictions remain
 separate controls. This mirrors Kubernetes, where node networking is distinct
 from optional per-Pod `NetworkPolicy` egress isolation.
 
+The WireGuard topology is deliberately hub-and-spoke. Spokes install only a
+`10.99.0.1/32` route to the admin hub, IP forwarding is disabled, and
+`wg-admiral` belongs to a dedicated firewalld zone with a `DROP` target. Worker
+and portal nodes therefore cannot use the admin node to route traffic directly
+to one another.
+
 References: [Kubernetes network policies](https://kubernetes.io/docs/concepts/services-networking/network-policies/)
 and [Kubernetes cluster networking](https://kubernetes.io/docs/concepts/cluster-administration/networking/).
 

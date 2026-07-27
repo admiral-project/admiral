@@ -303,6 +303,31 @@ class InstallerModeTests(unittest.TestCase):
         self.assertIn("Kubernetes model", template)
         self.assertIn("ip daddr 10.99.0.0/24 accept", template)
 
+    def test_wireguard_is_segmented_as_a_hub_and_spoke_vpn(self) -> None:
+        installer = INSTALLER.read_text(encoding="utf-8")
+        wireguard_tasks = (
+            ROOT / "ansible" / "roles" / "admiral_wireguard" / "tasks" / "main.yml"
+        ).read_text(encoding="utf-8")
+        wireguard_template = (
+            ROOT
+            / "ansible"
+            / "roles"
+            / "admiral_wireguard"
+            / "templates"
+            / "wg-admiral.conf.j2"
+        ).read_text(encoding="utf-8")
+
+        self.assertIn("umask 077", wireguard_tasks)
+        self.assertIn("creates: /etc/wireguard/admiral.key", wireguard_tasks)
+        self.assertIn("Disable inter-node IP forwarding", wireguard_tasks)
+        self.assertIn("value: '0'", wireguard_tasks)
+        self.assertIn("default('10.99.0.1') }}/32", wireguard_template)
+        self.assertNotIn("AllowedIPs = 10.99.0.0/24", wireguard_template)
+        self.assertIn("firewall-cmd --zone=admiral --get-target", installer)
+        self.assertIn("firewall-cmd --zone=trusted --list-interfaces", installer)
+        self.assertIn("wg show wg-admiral allowed-ips", installer)
+        self.assertIn("10.99.0.1/32", installer)
+
     def test_secure_checklist_validates_runtime_controls(self) -> None:
         installer = INSTALLER.read_text(encoding="utf-8")
         common = COMMON_TASKS.read_text(encoding="utf-8")

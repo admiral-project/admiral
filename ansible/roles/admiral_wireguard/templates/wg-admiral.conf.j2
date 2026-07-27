@@ -13,6 +13,6 @@ AllowedIPs = {{ peer.allowed_ips }}
 [Peer]
 PublicKey = {{ admiral_wireguard_hub_public_key }}
 Endpoint = {{ admiral_wireguard_hub_endpoint }}:{{ admiral_wireguard_port }}
-AllowedIPs = 10.99.0.0/24
+AllowedIPs = {{ admiral_wireguard_hub_ip | default('10.99.0.1') }}/32
 PersistentKeepalive = 25
 {% endif %}
