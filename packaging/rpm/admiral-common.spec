@@ -1,11 +1,11 @@
 # SPDX-FileCopyrightText: William Moreno Reyes CP | MBA
 # SPDX-License-Identifier: Apache-2.0
 
-%global commit ea2dc78d03cc084af5874f66237686d4407efd03
+%global commit 0437e306423e8d669ea0974d821c0f1221bcf98c
 
 Name:    admiral-common
 Version: 0.0.1beta17
-Release: 6%{?dist}
+Release: 7%{?dist}
 Summary: Common files and utilities for Admiral PaaS
 
 License: Apache-2.0
@@ -137,6 +137,9 @@ semanage fcontext -a -t container_file_t "/var/lib/admiral-apps/.local/share/con
 restorecon -R /var/lib/admiral-apps/.local/share/containers/storage/ 2>/dev/null || :
 
 %changelog
+* Mon Jul 27 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta17-7
+- Hash Cockpit credentials through standard input instead of process arguments
+
 * Mon Jul 27 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta17-6
 - Permit NTP through the production egress policy
 - Require effective clock synchronization before installation completes
