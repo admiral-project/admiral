@@ -122,13 +122,15 @@ require_firewall_services() {
 expected_public_listeners() {
     local listeners=""
     case "$1" in
-        single-node) listeners=$'tcp/22\ntcp/80\ntcp/443' ;;
-        admin-node|admin-portal-node) listeners=$'tcp/22\ntcp/80\ntcp/443\nudp/51820' ;;
+        single-node) listeners=$'tcp/22\ntcp/80\ntcp/443\nudp/443' ;;
+        admin-node|admin-portal-node) listeners=$'tcp/22\ntcp/80\ntcp/443\nudp/443\nudp/51820' ;;
         worker-node|portal-node) listeners=$'tcp/22\nudp/51820' ;;
     esac
     printf '%s\n' "$listeners" | sort -u | tr '\n' ' ' | sed 's/[[:space:]]*$//'
 }
 public_listeners() {
+    # Loopback and WireGuard (10.99.0.0/24) sockets are not public surface:
+    # internal services bind to them by design on spoke nodes.
     ss -H -lntu 2>/dev/null | awk '
         {
             address = $5
@@ -138,7 +140,7 @@ public_listeners() {
             sub(/:[^:]*$/, "", host)
             gsub(/^\[/, "", host)
             gsub(/\]$/, "", host)
-            if (host !~ /^(127\.|::1$)/) print $1 "/" port
+            if (host !~ /^(127\.|::1$)/ && host !~ /^10\.99\.0\./) print $1 "/" port
         }
     ' | sort -u | tr '\n' ' ' | sed 's/[[:space:]]*$//'
 }
@@ -939,7 +941,7 @@ if [[ "$INSTALL_DEV_MODE" != "true" ]]; then
         SECURITY_WARNINGS+=("sshd MaxAuthTries differs from recommended value 3.")
     fi
 
-    PUBLIC_LISTENERS="$(run_target_cmd "ss -H -lntu 2>/dev/null | awk '{ address=\$5; port=address; sub(/^.*:/, \"\", port); host=address; sub(/:[^:]*$/, \"\", host); gsub(/^\\[/, \"\", host); gsub(/\\]$/, \"\", host); if (host !~ /^(127\\.|::1\$)/) print \$1 \"/\" port }' | sort -u | tr '\\n' ' ' | sed 's/[[:space:]]*\$//'" || true)"
+    PUBLIC_LISTENERS="$(run_target_cmd "ss -H -lntu 2>/dev/null | awk '{ address=\$5; port=address; sub(/^.*:/, \"\", port); host=address; sub(/:[^:]*$/, \"\", host); gsub(/^\\[/, \"\", host); gsub(/\\]$/, \"\", host); if (host !~ /^(127\\.|::1\$)/ && host !~ /^10\\.99\\.0\\./) print \$1 \"/\" port }' | sort -u | tr '\\n' ' ' | sed 's/[[:space:]]*\$//'" || true)"
     EXPECTED_LISTENERS="$(expected_public_listeners "$INSTALL_MODE")"
     if ! require_exact_public_listeners "$PUBLIC_LISTENERS" "$EXPECTED_LISTENERS"; then
         SECURITY_WARNINGS+=("Public listening sockets do not match the declared host profile.")
