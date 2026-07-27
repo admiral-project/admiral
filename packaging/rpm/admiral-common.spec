@@ -1,11 +1,11 @@
 # SPDX-FileCopyrightText: William Moreno Reyes CP | MBA
 # SPDX-License-Identifier: Apache-2.0
 
-%global commit 0437e306423e8d669ea0974d821c0f1221bcf98c
+%global commit bd016c47a0ecbb9c95f70faff05bd01b70cc8ef1
 
 Name:    admiral-common
 Version: 0.0.1beta17
-Release: 7%{?dist}
+Release: 8%{?dist}
 Summary: Common files and utilities for Admiral PaaS
 
 License: Apache-2.0
@@ -137,6 +137,10 @@ semanage fcontext -a -t container_file_t "/var/lib/admiral-apps/.local/share/con
 restorecon -R /var/lib/admiral-apps/.local/share/containers/storage/ 2>/dev/null || :
 
 %changelog
+* Mon Jul 27 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta17-8
+- Disable keyboard-interactive SSH, empty passwords, X11, and agent forwarding
+- Verify the effective SSH daemon policy before completing installation
+
 * Mon Jul 27 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta17-7
 - Hash Cockpit credentials through standard input instead of process arguments
 
