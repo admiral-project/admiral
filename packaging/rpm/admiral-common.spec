@@ -46,6 +46,9 @@ cp -r ansible/* %{buildroot}%{_datadir}/admiral/ansible/
 # Installer command
 install -Dm0755 scripts/install.sh %{buildroot}%{_bindir}/admiral_install
 
+# Rootless subordinate ID allocator
+install -Dm0755 scripts/admiral_rootless_subids.py %{buildroot}%{_libexecdir}/admiral-rootless-subids
+
 # HTTPS setup script
 install -Dm0755 scripts/admiral_https_setup.py %{buildroot}%{_bindir}/admiral_https_setup
 
@@ -85,6 +88,7 @@ install -D -m 0644 %{SOURCE1} %{buildroot}%{_sysusersdir}/%{name}.conf
 
 %{_bindir}/admiral_https_setup
 %{_bindir}/admiral_install
+%{_libexecdir}/admiral-rootless-subids
 %{_datadir}/admiral/ansible/
 
 %post
@@ -113,10 +117,6 @@ if getent passwd admiral-apps >/dev/null 2>&1; then
 # for the rootless admiral-apps user.
 d /run/user/${ADMIRAL_APPS_UID}/libpod 01700 admiral-apps admiral-apps - -
 TMPFILESEOF
-    grep -q '^admiral-apps:100000:131072$' /etc/subuid 2>/dev/null || \
-        echo 'admiral-apps:100000:131072' >> /etc/subuid
-    grep -q '^admiral-apps:100000:131072$' /etc/subgid 2>/dev/null || \
-        echo 'admiral-apps:100000:131072' >> /etc/subgid
 fi
 
 # SELinux contexts

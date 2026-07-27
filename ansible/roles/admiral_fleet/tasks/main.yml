@@ -8,10 +8,62 @@
     name: admiral-fleet
     state: present
 
+- name: Allocate non-overlapping subordinate IDs for rootless workloads
+  command:
+    argv:
+      - /usr/libexec/admiral-rootless-subids
+      - --user
+      - admiral-apps
+  changed_when: false
+
 - name: Enable linger for admiral-apps (rootless workload persistence)
   command: loginctl enable-linger admiral-apps
   args:
     creates: /var/lib/systemd/linger/admiral-apps
+
+- name: Resolve rootless workload UID
+  command:
+    argv:
+      - id
+      - -u
+      - admiral-apps
+  register: admiral_apps_uid
+  changed_when: false
+
+- name: Enable and start systemd-machined
+  systemd:
+    name: systemd-machined.service
+    state: started
+
+- name: Start persistent rootless user manager
+  systemd:
+    name: "user@{{ admiral_apps_uid.stdout }}.service"
+    state: started
+
+- name: Wait for rootless user D-Bus
+  wait_for:
+    path: "/run/user/{{ admiral_apps_uid.stdout }}/bus"
+    state: present
+    timeout: 30
+
+- name: Verify rootless Podman storage ownership
+  command:
+    argv:
+      - runuser
+      - -u
+      - admiral-apps
+      - --
+      - env
+      - HOME=/var/lib/admiral-apps
+      - "XDG_RUNTIME_DIR=/run/user/{{ admiral_apps_uid.stdout }}"
+      - "DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/{{ admiral_apps_uid.stdout }}/bus"
+      - podman
+      - info
+      - --format
+      - "{{ '{{.Store.GraphRoot}}' }}"
+  register: admiral_rootless_graph_root
+  changed_when: false
+  failed_when: admiral_rootless_graph_root.stdout != '/var/lib/admiral-apps/.local/share/containers/storage'
 
 - name: Check for Admirald-managed known host inventory
   stat:

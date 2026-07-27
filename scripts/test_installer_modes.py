@@ -328,6 +328,24 @@ class InstallerModeTests(unittest.TestCase):
         self.assertIn("wg show wg-admiral allowed-ips", installer)
         self.assertIn("10.99.0.1/32", installer)
 
+    def test_rootless_runtime_is_prepared_and_verified(self) -> None:
+        installer = INSTALLER.read_text(encoding="utf-8")
+        fleet = (
+            ROOT / "ansible" / "roles" / "admiral_fleet" / "tasks" / "main.yml"
+        ).read_text(encoding="utf-8")
+        common_spec = (
+            ROOT / "packaging" / "rpm" / "admiral-common.spec"
+        ).read_text(encoding="utf-8")
+
+        self.assertIn("Allocate non-overlapping subordinate IDs", fleet)
+        self.assertIn("Start persistent rootless user manager", fleet)
+        self.assertIn("Wait for rootless user D-Bus", fleet)
+        self.assertIn("Verify rootless Podman storage ownership", fleet)
+        self.assertIn("/usr/libexec/admiral-rootless-subids", installer)
+        self.assertIn("systemd-machined.service", installer)
+        self.assertIn("DBUS_SESSION_BUS_ADDRESS", installer)
+        self.assertNotIn("echo 'admiral-apps:100000:131072'", common_spec)
+
     def test_secure_checklist_validates_runtime_controls(self) -> None:
         installer = INSTALLER.read_text(encoding="utf-8")
         common = COMMON_TASKS.read_text(encoding="utf-8")
