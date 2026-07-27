@@ -763,6 +763,44 @@ admiralctl routes list
 admiralctl operations list
 ```
 
+## Local KVM Validation Host
+
+A clean KVM guest is preferable to repeatedly reconciling an existing Admiral
+host when validating installer, RPM, SELinux, firewall, rootless Podman, or
+first-boot behavior. See
+[`local_kvm_cloud_setup.md`](local_kvm_cloud_setup.md) for the complete lab
+topology and golden WordPress test.
+
+On a disposable validation host with only about 4 GiB of RAM, a 4 GiB swap file
+can prevent QEMU, package updates, or image pulls from triggering the OOM
+killer. This is a laboratory safeguard, not a replacement for enough production
+RAM and not a performance recommendation.
+
+Create it once using an explicit path:
+
+```bash
+sudo install -d -m 0700 /var/swap
+sudo fallocate -l 4G /var/swap/admiral-test.swap
+sudo chmod 0600 /var/swap/admiral-test.swap
+sudo mkswap /var/swap/admiral-test.swap
+sudo swapon /var/swap/admiral-test.swap
+grep -qxF '/var/swap/admiral-test.swap none swap defaults 0 0' /etc/fstab \
+  || echo '/var/swap/admiral-test.swap none swap defaults 0 0' \
+     | sudo tee -a /etc/fstab
+sudo findmnt --verify
+```
+
+Monitor the host while testing:
+
+```bash
+free -h
+swapon --show
+ps -C qemu-kvm -o pid,rss,cmd
+```
+
+Multi-node validation should use 8–12 GiB of host RAM rather than relying on
+swap for several simultaneous guests.
+
 ## References
 
 - `docs/admiral-installation-guide.md` for the full install runbook
