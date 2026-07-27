@@ -305,6 +305,7 @@ class InstallerModeTests(unittest.TestCase):
 
     def test_secure_checklist_validates_runtime_controls(self) -> None:
         installer = INSTALLER.read_text(encoding="utf-8")
+        common = COMMON_TASKS.read_text(encoding="utf-8")
         self.assertIn("ss -H -lntu", installer)
         self.assertIn("auditctl -l", installer)
         self.assertIn("fail2ban-client ping", installer)
@@ -312,6 +313,20 @@ class InstallerModeTests(unittest.TestCase):
         self.assertIn("dnf-automatic.timer", installer)
         self.assertIn("chronyc tracking", installer)
         self.assertIn("nft list chain inet admiral_egress output", installer)
+        for directive in (
+            "KbdInteractiveAuthentication no",
+            "PermitEmptyPasswords no",
+            "X11Forwarding no",
+            "AllowAgentForwarding no",
+        ):
+            self.assertIn(directive, common)
+        for effective_setting in (
+            "kbdinteractiveauthentication no",
+            "permitemptypasswords no",
+            "x11forwarding no",
+            "allowagentforwarding no",
+        ):
+            self.assertIn(effective_setting, installer)
 
     def test_security_updates_and_effective_bans_are_enforced(self) -> None:
         installer = INSTALLER.read_text(encoding="utf-8")

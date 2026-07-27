@@ -125,6 +125,10 @@
     content: |
       PermitRootLogin prohibit-password
       PasswordAuthentication no
+      KbdInteractiveAuthentication no
+      PermitEmptyPasswords no
+      X11Forwarding no
+      AllowAgentForwarding no
       MaxAuthTries 3
       LoginGraceTime 30
   register: admiral_sshd_hardening

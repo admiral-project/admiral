@@ -937,6 +937,18 @@ if [[ "$INSTALL_DEV_MODE" != "true" ]]; then
     if [[ "$SSHD_EFFECTIVE" != *"passwordauthentication no"* ]]; then
         SECURITY_WARNINGS+=("sshd password authentication is not disabled.")
     fi
+    if [[ "$SSHD_EFFECTIVE" != *"kbdinteractiveauthentication no"* ]]; then
+        SECURITY_WARNINGS+=("sshd keyboard-interactive authentication is not disabled.")
+    fi
+    if [[ "$SSHD_EFFECTIVE" != *"permitemptypasswords no"* ]]; then
+        SECURITY_WARNINGS+=("sshd empty passwords are not explicitly disabled.")
+    fi
+    if [[ "$SSHD_EFFECTIVE" != *"x11forwarding no"* ]]; then
+        SECURITY_WARNINGS+=("sshd X11 forwarding is not disabled.")
+    fi
+    if [[ "$SSHD_EFFECTIVE" != *"allowagentforwarding no"* ]]; then
+        SECURITY_WARNINGS+=("sshd agent forwarding is not disabled.")
+    fi
     if [[ "$SSHD_EFFECTIVE" != *"maxauthtries 3"* ]]; then
         SECURITY_WARNINGS+=("sshd MaxAuthTries differs from recommended value 3.")
     fi

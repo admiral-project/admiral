@@ -153,6 +153,10 @@ El re-run es idempotente: regenera la clave y el certificado firmados por la
 CA existente, sincroniza las copias de PostgreSQL y reinicia los servicios
 afectados. La CA y su clave (`ca-key.pem`, solo en el nodo admin) no se tocan.
 
+En perfiles seguros, SSH acepta únicamente claves, limita los intentos y
+desactiva autenticación interactiva, contraseñas vacías, X11 y reenvío de
+agente. El reenvío TCP permanece disponible para el túnel opcional documentado.
+
 ### Política de egreso por puertos
 
 La política nftables de egreso (`admiral_egress`) filtra por puerto destino
