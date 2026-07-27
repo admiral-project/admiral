@@ -333,6 +333,15 @@ class InstallerModeTests(unittest.TestCase):
         self.assertIn("nft list ruleset", fail2ban)
         self.assertIn("gpgcheck", installer)
 
+    def test_cockpit_password_is_not_exposed_in_process_arguments(self) -> None:
+        cockpit = (
+            ROOT / "ansible" / "roles" / "admiral_cockpit" / "tasks" / "main.yml"
+        ).read_text(encoding="utf-8")
+
+        self.assertIn("cmd: openssl passwd -6 -stdin", cockpit)
+        self.assertIn('stdin: "{{ admiral_cockpit_admin_password }}"', cockpit)
+        self.assertNotIn('mkpasswd --method=sha-512 "{{ admiral_cockpit_admin_password }}"', cockpit)
+
 
 if __name__ == "__main__":
     unittest.main()

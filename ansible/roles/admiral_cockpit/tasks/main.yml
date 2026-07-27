@@ -51,25 +51,19 @@
     state: restarted
     daemon_reload: true
 
-- name: Check if mkpasswd is available for password hashing
-  command: which mkpasswd
-  register: mkpasswd_check
-  changed_when: false
-  failed_when: false
-  check_mode: false
-
-- name: Generate sha-512 password hash via mkpasswd
+- name: Generate Cockpit password hash without process argument exposure
   command:
-    cmd: mkpasswd --method=sha-512 "{{ admiral_cockpit_admin_password }}"
+    cmd: openssl passwd -6 -stdin
+    stdin: "{{ admiral_cockpit_admin_password }}"
+    stdin_add_newline: true
   register: cockpit_password_hash
   changed_when: false
   no_log: true
-  when: mkpasswd_check.rc == 0
 
 - name: Create Cockpit admin system user
   user:
     name: "{{ admiral_cockpit_admin_user }}"
-    password: "{{ cockpit_password_hash.stdout if mkpasswd_check.rc == 0 else (admiral_cockpit_admin_password | password_hash('sha512')) }}"
+    password: "{{ cockpit_password_hash.stdout }}"
     shell: /bin/bash
     create_home: true
     state: present
