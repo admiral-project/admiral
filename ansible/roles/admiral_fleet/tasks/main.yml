@@ -100,7 +100,7 @@
       ADMIRAL_FLEET_EXECUTOR={{ fleet_executor | default('systemd-podman') }}
       ADMIRAL_FLEET_DATA_DIR=/var/lib/admiral
       ADMIRAL_FLEET_CALLBACK_OUTBOX=/var/lib/admiral/outbox
-      ADMIRAL_FLEET_HTTP_ADDR={{ fleet_http_addr | default('127.0.0.1:9099') }}
+      ADMIRAL_FLEET_HTTP_ADDR={{ fleet_http_addr | default('127.0.0.1:9099' if admiral_install_mode == 'single-node' else (admiral_wireguard_ip ~ ':9099')) }}
       ADMIRAL_FLEET_PUBLISH_ADDRESS={{ '0.0.0.0' if (admiral_dev_mode | default(false) | bool) else ('127.0.0.1' if admiral_install_mode == 'single-node' else admiral_wireguard_ip) }}
       ADMIRAL_FLEET_ADMIN_WIREGUARD_IP={{ admiral_admin_wireguard_ip | default('') }}
       ADMIRAL_FLEET_ROOTLESS_USER={{ fleet_rootless_user | default('admiral-apps') }}
