@@ -2434,3 +2434,79 @@ may be supplementary, but cannot replace the EL10 acceptance gate.
   error otherwise.
 - **Acceptance criteria:**
   - Invalid `--output` values produce a clear error message.
+
+## Security review follow-ups (2026-07-27)
+
+The following items were documented in `docs/admiral-installation-guide.md`
+during the install.sh security review and require dedicated work before 1.0.
+
+### ADM-SEC-080 — Internal TLS certificates have no automated renewal
+
+- **Severity:** Medium
+- **Affected modes:** all modes
+- **Evidence:** CA has 10-year validity; service certs have 730-day validity.
+  No playbook or timer regenerates certificates before expiry.
+- **Impact:** After two years the internal HTTPS trust chain breaks; workloads
+  relying on WireGuard-internal TLS (Admiral↔Portal, Caddy↔upstream) fail
+  silently or become unreachable.
+- **Recommendation:** Add a `cert_renewal.yml` Ansible playbook (or systemd
+  timer) that regenerates service certs signed by the existing CA, then
+  restarts affected services. The procedure is idempotent and already works
+  manually via `rm + admiral_install --single-node`.
+- **Acceptance criteria:**
+  - A single playbook regenerates all internal TLS certs without rotating the CA.
+  - Affected services restart cleanly after renewal.
+  - A CI test validates the renewal path against a local CA fixture.
+
+### ADM-SEC-081 — Flagship uses the full admin API token
+
+- **Severity:** Medium
+- **Affected modes:** admin and single-node
+- **Evidence:** `/etc/admiral/flagship.env` contains `ADMIRAL_ADMIN_TOKEN`,
+  the same unrestricted token used by `admiralctl`. Flagship uses it for
+  every API call.
+- **Impact:** Compromise of the Flagship process grants full platform
+  administrative control; the Flagship product boundary does not constrain
+  privilege.
+- **Recommendation:** Create a scoped Flagship API token in `admirald` with
+  only the permissions Flagship actually requires (read nodes, read/write
+  instances, read backups, read apps). Remove `ADMIRAL_ADMIN_TOKEN` from
+  `flagship.env` after migration.
+- **Acceptance criteria:**
+  - Flagship starts and operates with a scoped token.
+  - The scoped token is rejected from node registration, task claim,
+    and secret endpoints.
+  - `ADMIRAL_ADMIN_TOKEN` is absent from `flagship.env`.
+
+### ADM-SEC-082 — admiral-tunnel@.service has no sandboxing
+
+- **Severity:** Low
+- **Affected modes:** `--admin-node` when SSH tunnel is enabled
+- **Evidence:** `admiral-tunnel@.service` runs an `autossh` process as root
+  with no `ProtectSystem`, `NoNewPrivileges`, `PrivateTmp`, or other systemd
+  hardening directives.
+- **Impact:** A compromised autossh binary runs with full root privileges
+  and unrestricted filesystem access.
+- **Recommendation:** Add `ProtectSystem=strict`, `NoNewPrivileges=true`,
+  `PrivateTmp=true`, and `ReadWritePaths` for the required socket/state
+  directory. Validate that `autossh` functions correctly under these
+  restrictions.
+- **Acceptance criteria:**
+  - The unit includes standard sandboxing directives.
+  - SSH tunnels still establish and reconnect correctly.
+
+### ADM-SEC-083 — No documented removal or rotation of the opsa_* NOPASSWD account
+
+- **Severity:** Low
+- **Affected modes:** `--single-node`
+- **Evidence:** The install guide documents `userdel` as an operator action
+  but there is no `admiralctl` command or Ansible role to remove or rotate
+  the bootstrap SSH user.
+- **Impact:** Operators who want to close the NOPASSWD surface after install
+  must follow manual steps that are easy to get wrong.
+- **Recommendation:** Either add an `admiralctl node harden` subcommand that
+  removes the NOPASSWD sudo entry and optionally the user, or document the
+  manual steps in `docs/sysadmin_guide.md` with rollback instructions.
+- **Acceptance criteria:**
+  - A supported path exists to disable or remove the NOPASSWD account.
+  - The path is idempotent and safe on single-node installs.

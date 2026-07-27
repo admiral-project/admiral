@@ -93,6 +93,81 @@ Ese archivo contiene:
 
 Si se pierde, no se pueden recuperar los datos cifrados ni los secretos necesarios para reinstalar la plataforma.
 
+## Seguridad operativa
+
+Esta sección documenta los riesgos aceptados por diseño y los procedimientos
+de mantenimiento de seguridad que el operador debe conocer.
+
+### Usuario SSH de operación (`opsa_*`)
+
+El instalador crea un usuario SSH no-root (`opsa_<sufijo aleatorio>`, registrado
+en `/etc/admiral/secrets` como `ADMIRAL_SSH_USER`) con `sudo NOPASSWD: ALL`.
+Existe para el aprovisionamiento desatendido con Ansible (admin → spokes) y
+como vía de recuperación del operador.
+
+**Esto equivale a acceso root completo sin contraseña.** La llave SSH que da
+acceso a esta cuenta debe protegerse como si fuera la clave root.
+
+- En nodos spoke (`--worker-node`, `--portal-node`) es indispensable: root
+  queda bloqueado (`PermitRootLogin no`) tras verificar el acceso no-root.
+- En `--single-node` puede prescindirse de él una vez instalado, porque el
+  aprovisionamiento es local. Para eliminarlo:
+
+```bash
+userdel -r "$(grep ^ADMIRAL_SSH_USER= /etc/admiral/secrets | cut -d= -f2-)"
+rm -f /etc/sudoers.d/opsa_*
+```
+
+Si se elimina, la recuperación del host dependerá del acceso root por llave
+(`PermitRootLogin prohibit-password`).
+
+### Token de administración en Flagship
+
+`/etc/admiral/flagship.env` contiene `ADMIRAL_ADMIN_TOKEN`, el token con
+privilegios administrativos totales sobre la API de `admirald`. Flagship lo
+necesita para operar como consola administrativa. Comprometer el proceso
+Flagship equivale a comprometer la plataforma completa. El archivo se instala
+con permisos `0600 root:admiral` y solo es legible por el servicio.
+
+### Renovación de certificados TLS internos
+
+La CA interna (`/etc/admiral/tls/ca.pem`) tiene vigencia de 10 años y los
+certificados de servicio firmados con ella tienen vigencia de 730 días.
+**No existe renovación automática todavía**; antes de que expiren, renueve
+manualmente en cada nodo admin/portal:
+
+```bash
+rm -f /etc/admiral/tls/admirald-key.pem /etc/admiral/tls/admirald.csr /etc/admiral/tls/admirald.pem
+sudo admiral_install --single-node   # o el modo original del nodo
+```
+
+El re-run es idempotente: regenera la clave y el certificado firmados por la
+CA existente, sincroniza las copias de PostgreSQL y reinicia los servicios
+afectados. La CA y su clave (`ca-key.pem`, solo en el nodo admin) no se tocan.
+
+### Política de egreso por puertos
+
+La política nftables de egreso (`admiral_egress`) filtra por puerto destino
+(22, 53, 80, 443, 587, 51820 según perfil), no por dirección destino, porque
+los registros OCI y las APIs de PayPal usan CDNs con IPs rotativas. Un
+workload comprometido podría exfiltrar por 443; es una decisión consciente,
+equivalente al modelo de Kubernetes. El operador puede añadir control por
+destino encima si lo requiere.
+
+### UIDs de contenedores rootless
+
+El usuario `admiral-apps` recibe el rango fijo `100000:131072` en
+`/etc/subuid` y `/etc/subgid`. En hosts con asignaciones previas en ese rango,
+verifique colisiones antes de instalar (`grep 100000 /etc/subuid /etc/subgid`).
+
+### Superficie de red interna
+
+Los servicios internos (`admirald`, Fleet, Flagship, Harbor, PostgreSQL, la
+Admin API de Caddy) escuchan en loopback o en la IP WireGuard del nodo.
+El checklist del instalador no los considera superficie pública: la subred
+`10.99.0.0/24` solo es alcanzable por pares WireGuard autenticados, y las
+reglas de la zona `admiral` de firewalld solo admiten tráfico del hub.
+
 ## Archivos de configuración
 
 | Componente | Archivo |
