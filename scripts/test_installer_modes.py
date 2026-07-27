@@ -13,6 +13,7 @@ INSTALLER = ROOT / "scripts" / "install.sh"
 PLAYBOOK = ROOT / "ansible" / "site.yml"
 FIREWALL_TASKS = ROOT / "ansible" / "roles" / "admiral_firewall" / "tasks" / "main.yml"
 FLEET_TASKS = ROOT / "ansible" / "roles" / "admiral_fleet" / "tasks" / "main.yml"
+SELINUX_TASKS = ROOT / "ansible" / "roles" / "admiral_selinux" / "tasks" / "main.yml"
 HARBOR_TASKS = ROOT / "ansible" / "roles" / "admiral_harbor" / "tasks" / "main.yml"
 AUDIT_TASKS = ROOT / "ansible" / "roles" / "admiral_auditd" / "tasks" / "main.yml"
 COMMON_TASKS = ROOT / "ansible" / "roles" / "admiral_common" / "tasks" / "main.yml"
@@ -36,6 +37,47 @@ class InstallerModeTests(unittest.TestCase):
         self.assertIn("fedora)", content)
         self.assertIn('[[ "$INSTALL_DEV_MODE" == "true" ]]', content)
         self.assertIn("Fedora is supported only with --dev-node", content)
+
+    def test_rootless_cgroup_selinux_permission_is_configured_after_fleet_install(self) -> None:
+        fleet_tasks = FLEET_TASKS.read_text(encoding="utf-8")
+        install_position = fleet_tasks.index("- name: Install admiral-fleet")
+        boolean_position = fleet_tasks.index(
+            "- name: Read SELinux permission for rootless cgroup management"
+        )
+
+        self.assertGreater(boolean_position, install_position)
+        self.assertIn("container_manage_cgroup", fleet_tasks)
+        self.assertIn("- setsebool", fleet_tasks)
+        self.assertIn("ansible_selinux.status == 'enabled'", fleet_tasks)
+
+    def test_cgroup_selinux_check_only_applies_to_workload_nodes(self) -> None:
+        content = INSTALLER.read_text(encoding="utf-8")
+
+        self.assertIn(
+            '[[ "$INSTALL_MODE" == "single-node" || "$INSTALL_MODE" == "worker-node" ]]',
+            content,
+        )
+        self.assertIn(
+            "getsebool container_manage_cgroup",
+            content,
+        )
+
+    def test_required_selinux_booleans_do_not_hide_configuration_failures(self) -> None:
+        common_tasks = SELINUX_TASKS.read_text(encoding="utf-8")
+        fleet_tasks = FLEET_TASKS.read_text(encoding="utf-8")
+        common_boolean_tasks = common_tasks.split(
+            "- name: Read SELinux permission for reverse proxy connections", 1
+        )[1]
+        fleet_boolean_tasks = fleet_tasks.split(
+            "- name: Read SELinux permission for rootless cgroup management", 1
+        )[1].split(
+            "- name: Allocate non-overlapping subordinate IDs", 1
+        )[0]
+
+        self.assertIn("httpd_can_network_connect", common_tasks)
+        self.assertNotIn("failed_when: false", common_boolean_tasks)
+        self.assertNotIn("container_manage_cgroup", common_tasks)
+        self.assertNotIn("failed_when: false", fleet_boolean_tasks)
 
     def test_admiral_common_is_reconciled_to_current_repository_version(self) -> None:
         content = INSTALLER.read_text(encoding="utf-8")

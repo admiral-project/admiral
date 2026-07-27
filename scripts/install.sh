@@ -984,12 +984,15 @@ if [[ "$INSTALL_DEV_MODE" != "true" ]]; then
         SECURITY_WARNINGS+=("SELinux is '$SELINUX_STATE' (expected: Enforcing).")
     fi
 
-    SELINUX_BOOLS="$(run_target_cmd "getsebool httpd_can_network_connect container_manage_cgroup")"
+    SELINUX_BOOLS="$(run_target_cmd "getsebool httpd_can_network_connect")"
     if [[ "$SELINUX_BOOLS" != *"httpd_can_network_connect --> on"* ]]; then
         SECURITY_WARNINGS+=("SELinux boolean httpd_can_network_connect is not set to on.")
     fi
-    if [[ "$SELINUX_BOOLS" != *"container_manage_cgroup --> on"* ]]; then
-        SECURITY_WARNINGS+=("SELinux boolean container_manage_cgroup is not set to on.")
+    if [[ "$INSTALL_MODE" == "single-node" || "$INSTALL_MODE" == "worker-node" ]]; then
+        CONTAINER_SELINUX_BOOL="$(run_target_cmd "getsebool container_manage_cgroup")"
+        if [[ "$CONTAINER_SELINUX_BOOL" != *"container_manage_cgroup --> on"* ]]; then
+            SECURITY_WARNINGS+=("SELinux boolean container_manage_cgroup is not set to on.")
+        fi
     fi
 
     SSHD_EFFECTIVE="$(run_target_cmd "sshd -T")"

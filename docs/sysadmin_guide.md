@@ -576,7 +576,8 @@ Admiral expects SELinux to stay enabled. The recommended operational state is:
 
 - SELinux in `Enforcing` mode
 - `httpd_can_network_connect` boolean set to `on`
-- `container_manage_cgroup` boolean set to `on`
+- `container_manage_cgroup` boolean set to `on` on `single-node` and
+  `worker-node` hosts
 
 The official setup path (`admiral_install`) leaves the system configured with these recommended SELinux parameters.
 

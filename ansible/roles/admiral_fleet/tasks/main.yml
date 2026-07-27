@@ -8,6 +8,26 @@
     name: admiral-fleet
     state: present
 
+- name: Read SELinux permission for rootless cgroup management
+  command:
+    argv:
+      - getsebool
+      - container_manage_cgroup
+  register: admiral_container_manage_cgroup
+  changed_when: false
+  when: ansible_selinux.status == 'enabled'
+
+- name: Allow rootless containers to manage delegated cgroups
+  command:
+    argv:
+      - setsebool
+      - -P
+      - container_manage_cgroup
+      - "on"
+  when:
+    - ansible_selinux.status == 'enabled'
+    - "'--> on' not in admiral_container_manage_cgroup.stdout"
+
 - name: Allocate non-overlapping subordinate IDs for rootless workloads
   command:
     argv:

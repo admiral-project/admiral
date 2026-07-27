@@ -3,7 +3,6 @@
   command: getenforce
   register: selinux_status
   changed_when: false
-  failed_when: false
 
 - name: Fail when SELinux is disabled
   fail:
@@ -14,39 +13,22 @@
   command: setenforce 1
   when: selinux_status.stdout == "Permissive"
 
-- name: Query available SELinux booleans
-  shell: getsebool -a | awk '{print $1}'
-  register: selinux_booleans
+- name: Read SELinux permission for reverse proxy connections
+  command:
+    argv:
+      - getsebool
+      - httpd_can_network_connect
+  register: admiral_httpd_can_network_connect
   changed_when: false
-  failed_when: false
-  when: selinux_status.rc == 0
+  when: ansible_selinux.status == 'enabled'
 
-- name: Probe SELinux boolean httpd_can_network_connect
-  shell: getsebool -a | grep -q '^httpd_can_network_connect[[:space:]]'
-  register: httpd_can_network_connect_probe
-  changed_when: false
-  failed_when: false
-  when: selinux_status.rc == 0
-
-- name: Enable SELinux boolean httpd_can_network_connect
-  command: setsebool -P httpd_can_network_connect on
+- name: Allow the reverse proxy to reach loopback services
+  command:
+    argv:
+      - setsebool
+      - -P
+      - httpd_can_network_connect
+      - "on"
   when:
-    - selinux_status.rc == 0
-    - httpd_can_network_connect_probe.rc == 0
-  changed_when: false
-  failed_when: false
-
-- name: Probe SELinux boolean container_manage_cgroup
-  shell: getsebool -a | grep -q '^container_manage_cgroup[[:space:]]'
-  register: container_manage_cgroup_probe
-  changed_when: false
-  failed_when: false
-  when: selinux_status.rc == 0
-
-- name: Enable SELinux boolean container_manage_cgroup
-  command: setsebool -P container_manage_cgroup on
-  when:
-    - selinux_status.rc == 0
-    - container_manage_cgroup_probe.rc == 0
-  changed_when: false
-  failed_when: false
+    - ansible_selinux.status == 'enabled'
+    - "'--> on' not in admiral_httpd_can_network_connect.stdout"
