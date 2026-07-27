@@ -2,11 +2,11 @@
 # SPDX-License-Identifier: Apache-2.0
 
 %global debug_package %{nil}
-%global commit 4f075fc8d00c7ef86e14772001daabbcd51b0d2c
+%global commit 9c874892834e9783bbc084e7ccd888381a651bdf
 
 Name:    admiralctl
 Version: 0.0.1beta17
-Release: 1%{?dist}
+Release: 3%{?dist}
 Summary: Admiral Command-Line Interface
 
 License: Apache-2.0
@@ -60,6 +60,10 @@ mkdir -p "$GOCACHE"
 restorecon -F %{_bindir}/admiralctl 2>/dev/null || :
 
 %changelog
+* Mon Jul 27 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta17-3
+- Align the superproject, build, and RPM refs with admiralctl origin/main
+- Include the expanded CLI regression test suite in the source release
+
 * Fri Jul 17 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta17-2
 - Install the global CLI token configuration as root-only
 - Rebuild with latest submodule refs and release bump
