@@ -965,7 +965,7 @@ if [[ "$INSTALL_DEV_MODE" != "true" ]]; then
     fi
 
     FW_SERVICES="$(run_target_cmd "firewall-cmd --zone=public --list-services")"
-    FW_PORTS="$(run_target_cmd "firewall-cmd --permanent --zone=public --list-ports")"
+    FW_PORTS="$(run_target_cmd "firewall-cmd --zone=public --list-ports")"
     EXPECTED_FW_PORTS="$(expected_firewall_ports "$INSTALL_MODE")"
     if [[ "$FW_PORTS" != "$EXPECTED_FW_PORTS" ]]; then
         SECURITY_WARNINGS+=("Public firewall ports do not match the declared host profile: expected '$EXPECTED_FW_PORTS', found '$FW_PORTS'.")
