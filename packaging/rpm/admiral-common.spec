@@ -1,11 +1,11 @@
 # SPDX-FileCopyrightText: William Moreno Reyes CP | MBA
 # SPDX-License-Identifier: Apache-2.0
 
-%global commit 2ded07f35a4844ae0cc38cb5621d5418605207e1
+%global commit 6f1f78028828ccedc185c1b27dafa10eecbbfa1b
 
 Name:    admiral-common
 Version: 0.0.1beta17
-Release: 4%{?dist}
+Release: 5%{?dist}
 Summary: Common files and utilities for Admiral PaaS
 
 License: Apache-2.0
@@ -137,6 +137,11 @@ semanage fcontext -a -t container_file_t "/var/lib/admiral-apps/.local/share/con
 restorecon -R /var/lib/admiral-apps/.local/share/containers/storage/ 2>/dev/null || :
 
 %changelog
+* Mon Jul 27 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta17-5
+- Apply and automate security errata conditionally on Tier 1 EL10 hosts
+- Use and exercise native nftables enforcement for Fail2ban
+- Document the Tier 1 EL10 and Tier 2 Fedora Rawhide support matrix
+
 * Fri Jul 17 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta17-3
 - Stop installing the obsolete PayPal API endpoint override
 - Document automatic endpoint selection for live payments
