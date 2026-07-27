@@ -955,7 +955,7 @@ if [[ "$INSTALL_DEV_MODE" != "true" ]]; then
     done
 
     FAIL2BAN_STATUS="$(run_target_cmd "fail2ban-client ping && fail2ban-client status sshd" || true)"
-    if [[ "$FAIL2BAN_STATUS" != *"Server replied: pong"* || "$FAIL2BAN_STATUS" != *"Jail list"* ]]; then
+    if [[ "$FAIL2BAN_STATUS" != *"Server replied: pong"* || "$FAIL2BAN_STATUS" != *"Status for the jail"* ]]; then
         SECURITY_WARNINGS+=("fail2ban is not responding with the expected sshd jail.")
     fi
 
