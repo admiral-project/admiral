@@ -367,3 +367,9 @@
   when:
     - not (admiral_dev_mode | default(false) | bool)
     - admiral_use_nftables_egress
+
+- name: Wait for production time synchronization through the egress policy
+  command:
+    cmd: chronyc waitsync 30
+  changed_when: false
+  when: not (admiral_dev_mode | default(false) | bool)

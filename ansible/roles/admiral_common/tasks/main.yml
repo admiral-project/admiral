@@ -75,6 +75,19 @@
     - ansible_distribution in ['RedHat', 'CentOS', 'Rocky', 'AlmaLinux']
     - ansible_distribution_major_version | int == 10
 
+- name: Install production time synchronization
+  dnf:
+    name: chrony
+    state: present
+  when: not (admiral_dev_mode | default(false) | bool)
+
+- name: Enable production time synchronization
+  systemd:
+    name: chronyd
+    enabled: true
+    state: started
+  when: not (admiral_dev_mode | default(false) | bool)
+
 - name: Install admiral-common baseline package
   dnf:
     name:

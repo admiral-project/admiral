@@ -291,13 +291,14 @@ class InstallerModeTests(unittest.TestCase):
         self.assertIn("difference(admiral_allowed_public_services)", content)
         self.assertIn("difference(admiral_allowed_public_ports)", content)
 
-    def test_spoke_egress_allows_only_declared_dns_and_https_endpoints(self) -> None:
+    def test_spoke_egress_allows_required_network_endpoints(self) -> None:
         content = FIREWALL_TASKS.read_text(encoding="utf-8")
 
         template = (ROOT / "ansible" / "roles" / "admiral_firewall" / "templates" / "admiral-egress.nft.j2").read_text(encoding="utf-8")
 
         self.assertIn("tcp dport 53 accept", template)
         self.assertIn("udp dport 53 accept", template)
+        self.assertIn("udp dport 123 accept", template)
         self.assertIn("tcp dport { 443, 587 } accept", template)
         self.assertIn("Kubernetes model", template)
         self.assertIn("ip daddr 10.99.0.0/24 accept", template)
@@ -309,6 +310,7 @@ class InstallerModeTests(unittest.TestCase):
         self.assertIn("fail2ban-client ping", installer)
         self.assertIn("fail2ban-client get sshd actions", installer)
         self.assertIn("dnf-automatic.timer", installer)
+        self.assertIn("chronyc tracking", installer)
         self.assertIn("nft list chain inet admiral_egress output", installer)
 
     def test_security_updates_and_effective_bans_are_enforced(self) -> None:
@@ -323,6 +325,9 @@ class InstallerModeTests(unittest.TestCase):
         self.assertIn("ansible_distribution in ['RedHat', 'CentOS', 'Rocky', 'AlmaLinux']", common)
         self.assertIn("ansible_distribution_major_version | int == 10", common)
         self.assertIn("not (admiral_dev_mode | default(false) | bool)", common)
+        self.assertIn("name: chrony", common)
+        self.assertIn("name: chronyd", common)
+        self.assertIn("chronyc waitsync 30", FIREWALL_TASKS.read_text(encoding="utf-8"))
         self.assertIn("banaction = nftables[type=allports]", fail2ban)
         self.assertIn("Exercise Fail2ban nftables enforcement", fail2ban)
         self.assertIn("nft list ruleset", fail2ban)

@@ -527,16 +527,19 @@ Worker and dedicated portal nodes use a default-deny outbound nftables policy.
 TCP 587 is explicitly allowed for SMTP submission so Harbor and Flagship can
 send quota, account, and operational notifications.
 It permits only loopback, established traffic, the Admiral VPN, SSH, DNS
-(UDP/TCP 53), HTTPS (TCP 443), and WireGuard (UDP 51820). All other outbound
-traffic is rejected for both IPv4 and IPv6. DNS and HTTPS are intentionally
-allowed by port rather than by fixed IP: Docker Hub and PayPal use rotating
-CDN addresses, and resolver addresses may be supplied dynamically by DHCP.
+(UDP/TCP 53), NTP (UDP 123), HTTPS (TCP 443), and WireGuard (UDP 51820). All
+other outbound traffic is rejected for both IPv4 and IPv6. DNS and HTTPS are
+intentionally allowed by port rather than by fixed IP: Docker Hub and PayPal
+use rotating CDN addresses, and resolver addresses may be supplied dynamically
+by DHCP.
 
-This is a node-level baseline, not an application egress allowlist. It keeps
-the node operational without brittle endpoint lists; image policy, digests,
-and workload-specific restrictions remain separate controls. This mirrors
-Kubernetes, where node networking is distinct from optional per-Pod
-`NetworkPolicy` egress isolation.
+This is a node-level baseline, not an application egress allowlist. The
+installer verifies that `chronyd` has actually synchronized the host clock;
+correct time is required for TLS, token expiry, and trustworthy audit
+timestamps. The policy keeps the node operational without brittle endpoint
+lists; image policy, digests, and workload-specific restrictions remain
+separate controls. This mirrors Kubernetes, where node networking is distinct
+from optional per-Pod `NetworkPolicy` egress isolation.
 
 References: [Kubernetes network policies](https://kubernetes.io/docs/concepts/services-networking/network-policies/)
 and [Kubernetes cluster networking](https://kubernetes.io/docs/concepts/cluster-administration/networking/).

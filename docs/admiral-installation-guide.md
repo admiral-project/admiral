@@ -156,11 +156,14 @@ afectados. La CA y su clave (`ca-key.pem`, solo en el nodo admin) no se tocan.
 ### Política de egreso por puertos
 
 La política nftables de egreso (`admiral_egress`) filtra por puerto destino
-(22, 53, 80, 443, 587, 51820 según perfil), no por dirección destino, porque
-los registros OCI y las APIs de PayPal usan CDNs con IPs rotativas. Un
-workload comprometido podría exfiltrar por 443; es una decisión consciente,
-equivalente al modelo de Kubernetes. El operador puede añadir control por
-destino encima si lo requiere.
+(22, 53, 80, 123, 443, 587, 51820 según perfil), no por dirección destino,
+porque los registros OCI y las APIs de PayPal usan CDNs con IPs rotativas.
+NTP (UDP/123) mantiene una hora fiable y la instalación de producción exige
+que `chronyd` alcance sincronización antes de completarse; esto protege la
+validación TLS, la caducidad de tokens y las marcas de auditoría. Un workload
+comprometido podría exfiltrar por 443; es una decisión consciente, equivalente
+al modelo de Kubernetes. El operador puede añadir control por destino encima
+si lo requiere.
 
 ### UIDs de contenedores rootless
 

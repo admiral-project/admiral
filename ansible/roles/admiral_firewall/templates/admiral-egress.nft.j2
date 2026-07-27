@@ -12,6 +12,8 @@ table inet admiral_egress {
         oif lo accept
         ct state { established, related } accept
         ip daddr 10.99.0.0/24 accept
+        # Correct time is security-critical for TLS, tokens, and audit records.
+        udp dport 123 accept
 {% if admiral_effective_host_profile in ['single-node', 'admin'] %}
         # SMTP submission is required for Harbor and Flagship notifications.
         tcp dport { 22, 80, 443, 587, 53 } accept

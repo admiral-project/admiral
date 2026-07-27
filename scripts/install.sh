@@ -968,6 +968,11 @@ if [[ "$INSTALL_DEV_MODE" != "true" ]]; then
         SECURITY_WARNINGS+=("automatic security updates are not enabled and active.")
     fi
 
+    TIME_SYNC="$(run_target_cmd "chronyc tracking" || true)"
+    if [[ "$TIME_SYNC" != *"Leap status     : Normal"* ]]; then
+        SECURITY_WARNINGS+=("chronyd has not synchronized the system clock.")
+    fi
+
     NFT_EGRESS="$(run_target_cmd "nft list chain inet admiral_egress output" || true)"
     if [[ "$NFT_EGRESS" != *"reject"* ]]; then
         SECURITY_WARNINGS+=("The managed nftables egress reject policy is not active.")
