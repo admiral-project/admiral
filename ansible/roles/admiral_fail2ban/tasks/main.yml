@@ -47,7 +47,11 @@
           bantime = 1h
           findtime = 10m
           maxretry = 5
-          banaction = firewallcmd-ipset
+          # EL10 uses the nftables firewalld backend. The legacy
+          # firewallcmd-ipset action depends on xt_set and can report a ban
+          # without installing an effective rule on minimal VPS kernels.
+          banaction = nftables[type=allports]
+          banaction_allports = nftables[type=allports]
 
           [sshd]
           enabled = true
@@ -61,7 +65,7 @@
           maxretry = 5
           findtime = 10m
           bantime = 1h
-          banaction = firewallcmd-ipset
+          banaction = nftables[type=allports]
 
           [admiral-harbor]
           enabled = {{ 'true' if admiral_install_mode in ['single-node', 'admin-portal-node', 'portal-node'] else 'false' }}
@@ -71,7 +75,7 @@
           maxretry = 5
           findtime = 10m
           bantime = 1h
-          banaction = firewallcmd-ipset
+          banaction = nftables[type=allports]
 
     - name: Enable and start fail2ban
       command: fail2ban-client -t
@@ -81,5 +85,32 @@
       systemd:
         name: fail2ban
         enabled: true
-        state: started
+        state: restarted
         daemon_reload: true
+
+    - name: Exercise Fail2ban nftables enforcement
+      block:
+        - name: Add a temporary documentation-range ban
+          command:
+            cmd: fail2ban-client set sshd banip 192.0.2.1
+          changed_when: false
+
+        - name: Read active Fail2ban nftables rules
+          command:
+            cmd: nft list ruleset
+          register: admiral_fail2ban_nft_rules
+          changed_when: false
+
+        - name: Verify the temporary ban is enforced by nftables
+          assert:
+            that:
+              - "'192.0.2.1' in admiral_fail2ban_nft_rules.stdout"
+            fail_msg: >-
+              Fail2ban accepted a ban but did not install an effective
+              nftables rule.
+      always:
+        - name: Remove the temporary documentation-range ban
+          command:
+            cmd: fail2ban-client set sshd unbanip 192.0.2.1
+          changed_when: false
+          failed_when: false

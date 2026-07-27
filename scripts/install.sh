@@ -958,6 +958,15 @@ if [[ "$INSTALL_DEV_MODE" != "true" ]]; then
     if [[ "$FAIL2BAN_STATUS" != *"Server replied: pong"* || "$FAIL2BAN_STATUS" != *"Status for the jail"* ]]; then
         SECURITY_WARNINGS+=("fail2ban is not responding with the expected sshd jail.")
     fi
+    FAIL2BAN_ACTIONS="$(run_target_cmd "fail2ban-client get sshd actions" || true)"
+    if [[ "$FAIL2BAN_ACTIONS" != *"nftables"* ]]; then
+        SECURITY_WARNINGS+=("fail2ban sshd jail is not using the required nftables action.")
+    fi
+
+    AUTOMATIC_UPDATES="$(run_target_cmd "systemctl is-enabled dnf-automatic.timer && systemctl is-active dnf-automatic.timer" || true)"
+    if [[ "$AUTOMATIC_UPDATES" != *"enabled"* || "$AUTOMATIC_UPDATES" != *"active"* ]]; then
+        SECURITY_WARNINGS+=("automatic security updates are not enabled and active.")
+    fi
 
     NFT_EGRESS="$(run_target_cmd "nft list chain inet admiral_egress output" || true)"
     if [[ "$NFT_EGRESS" != *"reject"* ]]; then

@@ -15,6 +15,8 @@ FIREWALL_TASKS = ROOT / "ansible" / "roles" / "admiral_firewall" / "tasks" / "ma
 FLEET_TASKS = ROOT / "ansible" / "roles" / "admiral_fleet" / "tasks" / "main.yml"
 HARBOR_TASKS = ROOT / "ansible" / "roles" / "admiral_harbor" / "tasks" / "main.yml"
 AUDIT_TASKS = ROOT / "ansible" / "roles" / "admiral_auditd" / "tasks" / "main.yml"
+COMMON_TASKS = ROOT / "ansible" / "roles" / "admiral_common" / "tasks" / "main.yml"
+FAIL2BAN_TASKS = ROOT / "ansible" / "roles" / "admiral_fail2ban" / "tasks" / "main.yml"
 ADMIRALD_TASKS = ROOT / "ansible" / "roles" / "admirald" / "tasks" / "main.yml"
 FLAGSHIP_TASKS = ROOT / "ansible" / "roles" / "admiral_flagship" / "tasks" / "main.yml"
 SYSADMIN_GUIDE = ROOT / "docs" / "sysadmin_guide.md"
@@ -22,9 +24,16 @@ MAKEFILE = ROOT / "Makefile"
 
 
 class InstallerModeTests(unittest.TestCase):
+    def test_all_tier_one_el10_distributions_are_accepted(self) -> None:
+        content = INSTALLER.read_text(encoding="utf-8")
+
+        self.assertIn("rhel|centos|rocky|almalinux)", content)
+        self.assertIn('[[ "$MAJOR" -ge 10 ]]', content)
+
     def test_fedora_is_limited_to_dev_mode(self) -> None:
         content = INSTALLER.read_text(encoding="utf-8")
 
+        self.assertIn("fedora)", content)
         self.assertIn('[[ "$INSTALL_DEV_MODE" == "true" ]]', content)
         self.assertIn("Fedora is supported only with --dev-node", content)
 
@@ -298,7 +307,25 @@ class InstallerModeTests(unittest.TestCase):
         self.assertIn("ss -H -lntu", installer)
         self.assertIn("auditctl -l", installer)
         self.assertIn("fail2ban-client ping", installer)
+        self.assertIn("fail2ban-client get sshd actions", installer)
+        self.assertIn("dnf-automatic.timer", installer)
         self.assertIn("nft list chain inet admiral_egress output", installer)
+
+    def test_security_updates_and_effective_bans_are_enforced(self) -> None:
+        installer = INSTALLER.read_text(encoding="utf-8")
+        common = COMMON_TASKS.read_text(encoding="utf-8")
+        fail2ban = FAIL2BAN_TASKS.read_text(encoding="utf-8")
+
+        self.assertIn("Apply available security updates", common)
+        self.assertIn("security: true", common)
+        self.assertIn("name: dnf-automatic", common)
+        self.assertIn("name: dnf-automatic.timer", common)
+        self.assertIn("ansible_distribution in ['RedHat', 'CentOS', 'Rocky', 'AlmaLinux']", common)
+        self.assertIn("ansible_distribution_major_version | int == 10", common)
+        self.assertIn("not (admiral_dev_mode | default(false) | bool)", common)
+        self.assertIn("banaction = nftables[type=allports]", fail2ban)
+        self.assertIn("Exercise Fail2ban nftables enforcement", fail2ban)
+        self.assertIn("nft list ruleset", fail2ban)
         self.assertIn("gpgcheck", installer)
 
 

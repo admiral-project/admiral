@@ -50,10 +50,18 @@ El instalador:
 
 La postura por defecto es:
 
+- RHEL 10, CentOS Stream 10, Rocky Linux 10 y AlmaLinux 10 son Tier 1
+- Fedora Rawhide es Tier 2 y solo se admite con `--dev-node`; sus ajustes
+  inseguros de desarrollo son intencionales y están separados del perfil EL10
 - `22/tcp` siempre público para administración por SSH
 - `80/tcp` y `443/tcp` públicos solo en `--single-node` y `--admin-node`, servidos por Caddy
-- `51820/udp` público siempre para WireGuard
+- `51820/udp` público en perfiles multi-node para WireGuard; el single-node
+  seguro no ejecuta WireGuard
 - ningún puerto interno de `admirald`, `admiral-fleet`, `admiral-flagship`, `admiral-harbor`, PostgreSQL o la Admin API de Caddy debe exponerse directamente
+- los errata de seguridad disponibles se aplican durante el playbook y
+  `dnf-automatic.timer` queda habilitado para actualizaciones posteriores
+- Fail2ban usa nftables nativo y la instalación comprueba que un baneo de
+  prueba crea una regla efectiva
 
 ### 3. Configurar HTTPS público
 
