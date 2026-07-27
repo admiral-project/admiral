@@ -236,28 +236,28 @@ SSH access (recommended, non-root):
 ### SSH Key Requirements
 
 Before running the installer, you must have SSH key-based access to the
-target node. The installer uses this key to:
+target node. The installer uses SSH keys to:
 
-1. Connect to the node during installation
-2. Extract the public key for the new admin user
+1. Connect to remote spoke nodes during installation
+2. Select or extract the public key for the new admin user
 3. Deploy the public key to the admin user's `authorized_keys`
 
-#### Private key location
+#### Key selection
 
-The installer auto-detects the SSH private key in the following order:
+The installer selects the administrator public key in the following order:
 
 | Mode | Detection order |
 |------|----------------|
-| `--single-node`, `--admin-node`, `--admin-portal-node` | 1. `--ssh-key <path>` flag if provided |
-| | 2. `~/.ssh/id_ed25519` |
-| | 3. `~/.ssh/id_rsa` |
-| `--worker-node`, `--portal-node` | 1. `--ssh-key <path>` flag if provided |
-| | 2. `/root/.ssh/id_ed25519` |
-| | 3. `/root/.ssh/id_rsa` |
+| `--single-node`, `--admin-node`, `--admin-portal-node` | 1. `--ssh-public-key <path>` if provided |
+| | 2. Public key extracted from `--ssh-key <path>` if provided |
+| | 3. Root's `id_ed25519.pub`, `id_rsa.pub`, or `authorized_keys` |
+| | 4. The invoking sudo user's `authorized_keys` |
+| `--worker-node`, `--portal-node` | 1. `--ssh-public-key <path>` for the generated administrator, if provided |
+| | 2. Public key extracted from the required bootstrap `--ssh-key <path>` |
 
-**Important**: The installer runs as root. For spoke nodes, the key path
-must be accessible by root. If your key is in a non-standard location,
-use `--ssh-key` explicitly:
+**Important**: Spoke provisioning still needs a private key accessible by root
+to establish the remote SSH connection. Local installation does not need the
+private key on the server; prefer `--ssh-public-key`:
 
 ```bash
 # Example: run from the admin node with a key in a custom location
@@ -267,20 +267,25 @@ sudo admiral_install --worker-node \
   --ssh-fingerprint SHA256:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA \
   --admin-endpoint 203.0.113.10
 
-# Example: same key for local setup
-admiral_install --single-node \
-  --ssh-key /home/admin/.ssh/id_ed25519
+# Local setup authorizes a public key and never needs its private half
+sudo admiral_install --single-node \
+  --ssh-public-key /home/admin/.ssh/authorized_keys
 ```
 
 #### Public key extraction
 
-The public key is automatically extracted from the private key using
-`ssh-keygen -y -f <private_key>`. This means:
+For remote authentication, the public key is automatically extracted from the
+private key using `ssh-keygen -y -f <private_key>`. This means:
 
 - The private key file must exist on disk
 - The private key must not be passphrase-protected (the installer
   uses `BatchMode=yes` for non-interactive SSH)
 - The corresponding `.pub` file is not required
+
+An explicitly supplied public-key file and discovered `authorized_keys` entries
+are parsed to remove authorization options and validated with `ssh-keygen`
+before Ansible writes the selected key. The installer never copies a private
+key into the generated administrator account.
 
 #### Spoke node flow
 
@@ -311,6 +316,7 @@ remote provisioning:
 | `--admin-endpoint <ip>` | Admin node IP for API access from spoke |
 | `--ssh-user <user>` | SSH user for remote connection (default: root) |
 | `--ssh-key <path>` | SSH private key for remote authentication |
+| `--ssh-public-key <path>` | Public key authorized for the generated administrator |
 | `--ssh-fingerprint <fingerprint>` | Expected SSH host key fingerprint for MITM verification |
 
 ### Service Map

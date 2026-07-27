@@ -85,6 +85,7 @@ class InstallerModeTests(unittest.TestCase):
             "--admin-endpoint",
             "--ssh-user",
             "--ssh-key",
+            "--ssh-public-key",
             "--ssh-fingerprint",
         ):
             with self.subTest(option=option):
@@ -136,6 +137,17 @@ class InstallerModeTests(unittest.TestCase):
 
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("complete OpenSSH SHA256 fingerprint", result.stderr)
+
+    def test_local_bootstrap_accepts_validated_public_keys(self) -> None:
+        content = INSTALLER.read_text(encoding="utf-8")
+
+        self.assertIn("--ssh-public-key", content)
+        self.assertIn("read_public_key_file()", content)
+        self.assertIn("read_invoking_user_public_key()", content)
+        self.assertIn("subprocess.run(", content)
+        self.assertIn('["ssh-keygen", "-lf", "-"]', content)
+        self.assertIn('actual_uid=$(id -u "$invoking_user"', content)
+        self.assertIn('"$invoking_home/.ssh/authorized_keys"', content)
 
     def test_remote_ssh_uses_only_the_verified_temporary_host_key(self) -> None:
         content = INSTALLER.read_text(encoding="utf-8")

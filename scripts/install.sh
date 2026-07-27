@@ -13,6 +13,57 @@ require_option_value() {
     local val="${2-}"
     [[ -n "$val" && "$val" != --* ]] || die "$opt requires a value."
 }
+read_public_key_file() {
+    local key_file="$1"
+    python3 - "$key_file" <<'PY'
+import re
+import subprocess
+import sys
+
+key_types = re.compile(
+    r"^(?:ssh-(?:ed25519|rsa)|ecdsa-sha2-nistp(?:256|384|521)|"
+    r"sk-ssh-ed25519@openssh\.com|sk-ecdsa-sha2-nistp256@openssh\.com)$"
+)
+try:
+    with open(sys.argv[1], encoding="utf-8") as stream:
+        lines = stream.readlines()
+except OSError:
+    raise SystemExit(1)
+
+for raw in lines:
+    fields = raw.strip().split()
+    for index, field in enumerate(fields[:-1]):
+        if not key_types.fullmatch(field):
+            continue
+        candidate = " ".join(fields[index:])
+        result = subprocess.run(
+            ["ssh-keygen", "-lf", "-"],
+            input=candidate + "\n",
+            text=True,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+            check=False,
+        )
+        if result.returncode == 0:
+            print(candidate)
+            raise SystemExit(0)
+raise SystemExit(1)
+PY
+}
+read_invoking_user_public_key() {
+    local invoking_user="${SUDO_USER-}"
+    local invoking_uid="${SUDO_UID-}"
+    local actual_uid=""
+    local invoking_home=""
+
+    [[ -n "$invoking_user" && "$invoking_user" != "root" ]] || return 1
+    [[ "$invoking_user" =~ ^[a-z_][a-z0-9_-]{0,31}$ && "$invoking_uid" =~ ^[0-9]+$ ]] || return 1
+    actual_uid=$(id -u "$invoking_user" 2>/dev/null) || return 1
+    [[ "$actual_uid" == "$invoking_uid" ]] || return 1
+    invoking_home=$(getent passwd "$invoking_user" | cut -d: -f6)
+    [[ -n "$invoking_home" ]] || return 1
+    read_public_key_file "$invoking_home/.ssh/authorized_keys"
+}
 is_loopback_host() {
     case "$1" in
         ""|127.0.0.1|localhost|::1)
@@ -180,6 +231,7 @@ Options:
   --admin-endpoint    Override the admin endpoint for spoke installs.
   --ssh-user          SSH user for remote spoke configuration (default: root for bootstrap).
   --ssh-key           SSH private key for remote spoke configuration.
+  --ssh-public-key    Public key to authorize for the generated administrator.
   --ssh-fingerprint   Expected SSH host key fingerprint (SHA256:...) for verification.
   --yes               Confirm non-interactive dangerous operations such as --dev-node.
   -h, --help          Show this help message.
@@ -199,6 +251,7 @@ INSTALL_ADMIN_ENDPOINT=""
 INSTALL_TARGET_SSH_USER="root"
 INSTALL_TARGET_SSH_USER_EXPLICIT="false"
 INSTALL_TARGET_SSH_KEY=""
+INSTALL_SSH_PUBLIC_KEY_FILE=""
 INSTALL_SSH_FINGERPRINT=""
 INSTALL_YES="false"
 INSTALLER_TEMP_BASE=""
@@ -280,6 +333,11 @@ while [[ $# -gt 0 ]]; do
             shift
             require_option_value "--ssh-key" "${1-}"
             INSTALL_TARGET_SSH_KEY="$1"
+            ;;
+        --ssh-public-key)
+            shift
+            require_option_value "--ssh-public-key" "${1-}"
+            INSTALL_SSH_PUBLIC_KEY_FILE="$1"
             ;;
         --ssh-fingerprint)
             shift
@@ -387,29 +445,45 @@ fi
 
 # --- 0b1. detect SSH public key for admin user creation ---
 # The public key is needed to set up the non-root SSH admin user on every node.
-# For admin/single-node: detect from --ssh-key, id_ed25519.pub, id_rsa.pub, or authorized_keys.
-# For worker/portal: extract from the private key used to connect to the spoke.
+# An explicit public key is independent from the private bootstrap credential.
+# Local modes can discover root's or the invoking sudo user's authorized key.
+# Spokes still need a private key for transport when no separate public key is supplied.
 INSTALL_SSH_PUB_KEY=""
-if [[ "$INSTALL_MODE" == "single-node" || "$INSTALL_MODE" == "admin-node" || "$INSTALL_MODE" == "admin-portal-node" ]]; then
+if [[ -n "$INSTALL_SSH_PUBLIC_KEY_FILE" ]]; then
+    [[ -f "$INSTALL_SSH_PUBLIC_KEY_FILE" ]] ||
+        die "SSH public key file not found: $INSTALL_SSH_PUBLIC_KEY_FILE"
+    INSTALL_SSH_PUB_KEY=$(read_public_key_file "$INSTALL_SSH_PUBLIC_KEY_FILE" || true)
+    [[ -n "$INSTALL_SSH_PUB_KEY" ]] ||
+        die "No valid OpenSSH public key found in $INSTALL_SSH_PUBLIC_KEY_FILE."
+fi
+if [[ -z "$INSTALL_SSH_PUB_KEY" ]] &&
+    [[ "$INSTALL_MODE" == "single-node" || "$INSTALL_MODE" == "admin-node" || "$INSTALL_MODE" == "admin-portal-node" ]]; then
     if [[ -n "$INSTALL_TARGET_SSH_KEY" && -f "$INSTALL_TARGET_SSH_KEY" ]]; then
         INSTALL_SSH_PUB_KEY=$(ssh-keygen -y -f "$INSTALL_TARGET_SSH_KEY" 2>/dev/null || true)
     fi
     if [[ -z "$INSTALL_SSH_PUB_KEY" ]]; then
         if [[ -f /root/.ssh/id_ed25519.pub ]]; then
-            INSTALL_SSH_PUB_KEY=$(cat /root/.ssh/id_ed25519.pub)
+            INSTALL_SSH_PUB_KEY=$(read_public_key_file /root/.ssh/id_ed25519.pub || true)
         elif [[ -f /root/.ssh/id_rsa.pub ]]; then
-            INSTALL_SSH_PUB_KEY=$(cat /root/.ssh/id_rsa.pub)
+            INSTALL_SSH_PUB_KEY=$(read_public_key_file /root/.ssh/id_rsa.pub || true)
         fi
     fi
     if [[ -z "$INSTALL_SSH_PUB_KEY" ]]; then
-        INSTALL_SSH_PUB_KEY=$(head -1 /root/.ssh/authorized_keys 2>/dev/null || true)
+        INSTALL_SSH_PUB_KEY=$(read_public_key_file /root/.ssh/authorized_keys 2>/dev/null || true)
     fi
-    [[ -n "$INSTALL_SSH_PUB_KEY" ]] || die "No SSH public key found for admin user setup. Use --ssh-key or install a key at ~/.ssh/id_ed25519.pub."
+    if [[ -z "$INSTALL_SSH_PUB_KEY" ]]; then
+        INSTALL_SSH_PUB_KEY=$(read_invoking_user_public_key 2>/dev/null || true)
+    fi
+    [[ -n "$INSTALL_SSH_PUB_KEY" ]] ||
+        die "No SSH public key found for admin user setup. Use --ssh-public-key or provide a private key with --ssh-key."
 fi
-if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]]; then
+if [[ -z "$INSTALL_SSH_PUB_KEY" ]] &&
+    [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]]; then
     INSTALL_SSH_PUB_KEY=$(ssh-keygen -y -f "$INSTALL_TARGET_SSH_KEY" 2>/dev/null || true)
     [[ -n "$INSTALL_SSH_PUB_KEY" ]] || die "Could not extract public key from $INSTALL_TARGET_SSH_KEY."
 fi
+printf '%s\n' "$INSTALL_SSH_PUB_KEY" | ssh-keygen -lf - >/dev/null 2>&1 ||
+    die "The selected administrator SSH public key is invalid."
 
 # --- 0c. populate known_hosts before first SSH connection ---
 # ssh-keyscan is read-only and transmits no credentials.
