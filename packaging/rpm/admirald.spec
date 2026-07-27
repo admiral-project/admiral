@@ -2,11 +2,11 @@
 # SPDX-License-Identifier: Apache-2.0
 
 %global debug_package %{nil}
-%global commit dfa58e252a0b71106806e5482b982b5aeddf2f9d
+%global commit 79a8adb221a2015ab2398bf257cc0497968f6ad2
 
 Name:    admirald
-Version: 0.0.1beta17
-Release: 2%{?dist}
+Version: 0.0.1beta18
+Release: 1%{?dist}
 Summary: Admiral Control Plane - Core API and orchestration service
 
 License: Apache-2.0
@@ -72,6 +72,9 @@ restorecon -F %{_bindir}/admirald 2>/dev/null || :
 %systemd_postun_with_restart admirald.service
 
 %changelog
+* Mon Jul 27 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta18-1
+- Bump version to 0.0.1beta18
+
 * Fri Jul 17 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta17-2
 - Load control plane secrets from systemd credentials
 - Keep the queue encryption key inside the control plane

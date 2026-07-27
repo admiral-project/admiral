@@ -1,9 +1,9 @@
 %global debug_package %{nil}
-%global commit bf19cd18805bfa695b8b586bad93558168d537e0
+%global commit ad0394834383b89978e966911b2ab561804ddebf
 
 Name:    admiral-harbor
-Version: 0.0.1beta17
-Release: 4%{?dist}
+Version: 0.0.1beta18
+Release: 1%{?dist}
 Summary: Admiral Customer Portal - Web UI for end users
 
 License: Apache-2.0
@@ -131,6 +131,9 @@ restorecon -R %{_localstatedir}/lib/admiral/harbor 2>/dev/null || :
 %{python3} -m pytest tests/ -x --tb=short
 
 %changelog
+* Mon Jul 27 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta18-1
+- Bump version to 0.0.1beta18
+
 * Fri Jul 17 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta17-2
 - Fix Harbor migration path and bootstrap behavior before service startup
 

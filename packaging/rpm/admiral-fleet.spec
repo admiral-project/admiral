@@ -2,11 +2,11 @@
 # SPDX-License-Identifier: Apache-2.0
 
 %global debug_package %{nil}
-%global commit 432497f356bfa82313b1877a9a983081f740a9c0
+%global commit fa06badfa57e5c6c510a8dcb39ff709c3adc3218
 
 Name:    admiral-fleet
-Version: 0.0.1beta17
-Release: 2%{?dist}
+Version: 0.0.1beta18
+Release: 1%{?dist}
 Summary: Admiral Fleet Worker Agent
 
 License: Apache-2.0
@@ -73,6 +73,9 @@ loginctl enable-linger admiral-apps 2>/dev/null || :
 %systemd_postun_with_restart admiral-fleet.service
 
 %changelog
+* Mon Jul 27 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta18-1
+- Bump version to 0.0.1beta18
+
 * Fri Jul 17 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta17-2
 - Create backup artifacts with private permissions
 - Stop distributing the queue encryption key to Fleet
