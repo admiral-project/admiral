@@ -537,7 +537,7 @@ if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]]; t
     MATCHING_HOST_KEYS=""
     FOUND_FINGERPRINTS=""
     while IFS= read -r HOST_KEY; do
-        [[ -n "$HOST_KEY" ]] || continue
+        [[ -n "$HOST_KEY" && "$HOST_KEY" != \#* ]] || continue
         HOST_FINGERPRINT=$(printf '%s\n' "$HOST_KEY" | ssh-keygen -lf - -E sha256 2>/dev/null | awk '{print $2}' || true)
         [[ -n "$HOST_FINGERPRINT" ]] || die "Could not parse SSH host keys returned by $INSTALL_PUBLIC_IP."
         FOUND_FINGERPRINTS+="${HOST_FINGERPRINT}"$'\n'
