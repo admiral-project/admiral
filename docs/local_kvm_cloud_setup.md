@@ -142,6 +142,17 @@ Cada VM necesita una interfaz con NAT para instalar paquetes y una segunda LAN
 privada compartida para la topología del laboratorio. Los puertos SSH del host
 se asignan individualmente y sólo a loopback.
 
+La comunicación en runtime no usa SSH: después del bootstrap, `admirald` y
+`admiral-fleet` se comunican mediante la API autenticada sobre WireGuard. SSH
+es únicamente el transporte que usa `install.sh` mientras configura un spoke
+remoto.
+
+Para un workload publicado sobre la IP WireGuard del worker, por ejemplo
+`10.99.0.2`, el healthcheck debe validar esa dirección. No se debe asumir que
+`127.0.0.1` en el admin representa el workload del worker. Fleet resuelve la
+dirección publicada del renderer para healthchecks TCP/HTTP; los command
+healthchecks se ejecutan dentro del contenedor y pueden usar loopback.
+
 La prueba multi-node debe comprobar además:
 
 - fingerprint SSH de cada spoke antes del primer acceso;

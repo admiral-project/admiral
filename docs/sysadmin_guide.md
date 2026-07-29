@@ -763,6 +763,45 @@ admiralctl routes list
 admiralctl operations list
 ```
 
+## Current Beta 18 Validation Status
+
+The July 29, 2026 validation confirmed the following runtime path:
+
+```text
+admirald ⇄ authenticated API over WireGuard ⇄ admiral-fleet
+                                      ↓
+                         rootless Podman as admiral-apps
+```
+
+SSH is used only by `install.sh` as a temporary bootstrap transport for
+remote spoke configuration. Fleet does not use SSH to execute workloads or
+exchange tasks, heartbeats, or results.
+
+Validated evidence:
+
+- Rocky Linux 10 single-node with local
+  `admiral-fleet-0.0.1beta18-2.fc44.x86_64.rpm`;
+- Rocky Linux 10 private multinode with the same RPM on `rocky-worker`;
+- WordPress/MariaDB provisioned successfully in both modes;
+- `setup_completed=true`, `health_status=healthy`, and
+  `technical_status=running`;
+- Podman reported `rootless=true` with graph root
+  `/var/lib/admiral-apps/.local/share/containers/storage`;
+- the Fleet healthcheck fix is commit
+  `7eec3c25b81a7babf7967a8039241c66546cdfd9`.
+
+When testing a private multinode worker, use the worker WireGuard address for
+the published workload port. The WordPress example uses `http://localhost` as
+its initial `siteurl`; a direct request to an ephemeral published port can
+therefore redirect to port 80. Treat `setup_completed` and the Fleet operation
+result as the provisioning gate, and configure a real external hostname/URL
+before using the example as an HTTP routing test.
+
+Still required before calling the beta18 validation complete: backup/restore
+against private S3 with TLS, a second private topology, and an explicit
+re-convergence test proving that re-running the admin installer preserves
+WireGuard peers.
+
 ## Local KVM Validation Host
 
 A clean KVM guest is preferable to repeatedly reconciling an existing Admiral

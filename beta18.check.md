@@ -1108,3 +1108,86 @@ configuración del worker. El intento no se registra como instalación exitosa.
 Siguiente acción: resolver la ruta de bootstrap SSH y repetir exclusivamente
 la opción `admiral_install --worker-node`, con los RPM locales, para que el
 intercambio WireGuard y el registro del nodo ocurran desde el instalador.
+
+### Actualización de bitácora: golden rootless con Fleet corregido — 2026-07-29
+
+La validación posterior cerró la discrepancia entre single-node y multinodo.
+El defecto no estaba en la comunicación entre componentes: `admiral-fleet`
+se comunica con `admirald` por la API sobre WireGuard. El defecto estaba en los
+healthchecks TCP/HTTP de Fleet, que usaban `127.0.0.1` aun cuando el workload
+multinodo publicaba el puerto sobre la IP WireGuard del worker.
+
+Corrección aplicada en el repositorio `admiral-fleet`:
+
+- `7eec3c25b81a7babf7967a8039241c66546cdfd9 fix(fleet): probe published workload address`
+  calcula la dirección publicada mediante el renderer y la usa para los
+  healthchecks TCP/HTTP; los command healthchecks continúan ejecutándose dentro
+  del contenedor sobre loopback, como corresponde.
+- El root `admiral` fijó esa referencia completa en
+  `c162862b0456e65ec42f92810367a6812b83acb2`.
+- RPM construido: `admiral-fleet-0.0.1beta18-2.fc44.x86_64.rpm`.
+
+#### Rocky Linux 10 single-node
+
+El RPM local `-2` se instaló en la VM Rocky single-node y `admiral-fleet`
+quedó activo. El golden WordPress terminó con:
+
+```text
+operation: op_b1495918c987c418
+status: succeeded
+instance: inst_d081353e86baa922
+setup_completed: true
+health_status: healthy
+technical_status: running
+```
+
+La comprobación en la VM confirmó `rootless=true`, graph root
+`/var/lib/admiral-apps/.local/share/containers/storage` y los contenedores
+`infra`, `db`, `web` y `setup` ejecutándose como `admiral-apps`.
+
+#### Rocky Linux 10 multinodo privado
+
+El RPM local `-2` se instaló en `rocky-worker` y el servicio se reinició. El
+worker permaneció activo, saludable y registrado mediante WireGuard
+(`10.99.0.2`). El golden WordPress terminó con:
+
+```text
+operation: op_df39da2f8d865d6a
+status: succeeded
+instance: inst_2c4721f1ddf5719e
+node_id: rocky-worker
+setup_completed: true
+health_status: healthy
+technical_status: running
+```
+
+En el worker se confirmó `rootless=true` y los cuatro contenedores rootless
+publicaron el workload sobre `10.99.0.2:40001`. Los avisos iniciales del
+healthcheck MariaDB fueron transitorios durante el arranque; la operación
+terminó correctamente.
+
+El ejemplo `examples/apps/wordpress.yaml` configura `siteurl` como
+`http://localhost`. Por eso una petición directa al puerto efímero multinodo
+redirecciona a `:80`; esto es una limitación de URL del fixture, no un fallo de
+provisionamiento ni de Fleet. `setup_completed`, salud y ciclo de vida quedan
+validados: pause `op_2ea2f4294bb27622` terminó `succeeded` con estado
+`stopped`, y resume `op_e63b3b48ff73e922` terminó `succeeded`.
+
+#### Estado de seguridad revisado
+
+- C1 WireGuard: corregido en fuentes; falta únicamente la prueba explícita de
+  re-convergencia del admin con un peer conectado.
+- H2 Caddy: corregido y probado en single-node con socket Unix, ACL y watcher.
+- M4/M5 S3: corregidos en `install.sh`; permisos restringidos y variables
+  limpiadas.
+- H1/B10, H3/B9, M1/M2/M3 y M6: permanecen abiertos o parcialmente mitigados.
+- B7/N8: obsoleto; el root check está al inicio de `install.sh`.
+- Backup/restore S3 sobre storage privado con TLS: pendiente.
+
+#### Estado de cierre de esta ronda
+
+El golden rootless queda confirmado en Rocky single-node y Rocky multinodo.
+CentOS 10 y AlmaLinux 10 conservan evidencia de instalación single-node en
+esta bitácora; se debe distinguir esa evidencia histórica de una repetición con
+el RPM Fleet `-2`. Permanecen pendientes una segunda topología multinodo, el
+backup/restore S3 real y la actualización final de la guía de sysadmin.

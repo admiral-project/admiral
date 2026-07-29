@@ -15,12 +15,12 @@ los cierra automáticamente. El estado comprobado contra las fuentes es:
 
 | Hallazgo | Estado | Evidencia |
 |---|---|---|
-| C1, peers WireGuard del hub | Fix aplicado; validación multinodo pendiente | `admiral_wireguard` preserva los bloques `[Peer]` existentes cuando no recibe una lista nueva. |
+| C1, peers WireGuard del hub | Fix aplicado; falta prueba de re-convergencia | El rol lee y conserva los bloques `[Peer]` existentes cuando no recibe una lista nueva; el golden multinodo ya confirmó un worker sano. |
 | H2, API administrativa de Caddy | Fix aplicado y probado en single-node | Socket Unix, `SupplementaryGroups=caddy`, ACL explícita y watcher `PathChanged`. |
-| S3/firewall y M4/M5 | Fix aplicado | Credenciales locales restringidas y variables limpiadas; egress permite endpoint S3 compatible. Backup/restore real aún pendiente. |
+| S3/firewall y M4/M5 | Fix aplicado; backup/restore real pendiente | Credenciales locales restringidas, variables limpiadas y egress permite endpoint S3 compatible. |
 | H1, tokens en argv | Abierto | El registro de spokes todavía usa `admiralctl nodes register --token`. |
 | H3, SSH `NOPASSWD` | Abierto por diseño | Sigue siendo el modelo bootstrap documentado. |
-| M1/M2/M3/M6 y hallazgos bajos | Abiertos | Requieren cambios independientes y nueva ronda de RPM/VM. |
+| M1/M2/M3/M6 y hallazgos bajos | Abiertos | Requieren cambios independientes; M6 necesita además una prueba S3 con TLS. |
 
 La bitácora beta18 registra qué fixes fueron aplicados y cuáles fueron
 validados en una topología completa; no se marcarán como resueltos los segundos
@@ -32,10 +32,14 @@ hasta cerrar el multinodo y el golden test correspondiente.
 
 ### C1. WireGuard hub pierde todos los peers al re-ejecutar el instalador
 
+> Estado actual: **corregido en fuentes**. La descripción y la recomendación
+> siguientes documentan el defecto original y no describen el comportamiento
+> vigente; queda pendiente solamente una prueba de re-convergencia.
+
 **Archivos**: `ansible/roles/admiral_wireguard/templates/wg-admiral.conf.j2`,
 `ansible/roles/admiral_wireguard/tasks/main.yml:146-152`
 
-**Descripción**: La plantilla del hub genera la lista de peers desde
+**Descripción histórica**: La plantilla del hub generaba la lista de peers desde
 `admiral_wireguard_peers | default([])`. Esta variable **nunca se popula en el
 rol** `admiral_wireguard` — solo existe en el playbook separado
 `wireguard-peers.yml`. Cuando el operador re-ejecuta `install.sh --admin-node`
@@ -50,7 +54,7 @@ El flujo actual es:
 
 **Impacto**: Denegación de servicio de todos los nodos worker y portal.
 
-**Recomendación**: Antes de desplegar la plantilla en el rol, leer los peers
+**Recomendación histórica**: Antes de desplegar la plantilla en el rol, leer los peers
 existentes desde `/etc/wireguard/peers.d/*.conf` (igual que hace
 `wireguard-peers.yml:110-131`) y pasarlos como `admiral_wireguard_peers`.
 
@@ -226,37 +230,54 @@ no enfatizadas.
 | B9 | `admiral_common/tasks:523-541` + `admiral_wireguard/templates/wg-admiral.conf.j2` | **Acceso por llave SSH = root inmediato en TODOS los nodos.** El usuario admin `opsa_*` recibe `NOPASSWD: ALL` en admin, worker y portal. La misma llave pública bootstrap desplegada en `install.sh` queda autorizada en cada spoke. Comprometer esa llave y/o la máquina del operador compromete TODO el cluster (todos los nodos son root via sudo). Mitigación: emitir llaves SSH distintas por rol/nodo, o un CA SSH con short-lived certs (OpenSSH `sshdial-cert`) en lugar de raw `authorized_keys` permanentes. | **Alta** por diseño |
 | B10 | `admiral_harbor/tasks:192-207`, `admiral_fleet/tasks:203-218` | Reconfirma A2/A3: en beta18 el flujo de `admiralctl nodes register --token …` se ejecuta con el token como argv (visible en `ps` del admin durante la ventana de registro). La bitácora muestra registro exitoso pero no mide exposición; el riesgo sigue. Ver H1. | **Baja** |
 
-### 13.3 Hallazgos confirmados vs. estado actual
+### 13.3 Revisión contra las fuentes actuales — 2026-07-29
 
-- **C1 (crítico): `wg-admiral.conf.j2` pierde peers en re-provisión del hub** —
-  verificado: `admiral_wireguard/tasks/main.yml` no lee `/etc/wireguard/peers.d/`;
-  `admiral_wireguard_peers` solo lo popula el playbook independiente
-  `wireguard-peers.yml`. Reejecutar `install.sh --admin-node` sigue causando
-  DoS de todos los spokes. Sigue siendo el hallazgo prioritario.
-- **F1 (HTTP/3 bloqueado)**: `expected_public_listeners` exige `udp/443` pero
-  firewalld solo abre `https` (TCP). Caddy con QUIC queda bloqueado; reportado
-  por operadores en la bitácora como inconsistencia, no Plain text: aún sin
-  fix.
-- **D1/D3 (placeholder de puerto 5000 en harbor.env)**: vigente en
-  `packaging/config/harbor.env:16-19`. El operador que copie los placeholders
-  tal cual configura Harbor con URLs de Flagship.
+La revisión separa el estado del hallazgo de la evidencia que todavía falta:
+
+| Hallazgo | Estado actual | Atención requerida |
+|---|---|---|
+| C1, peers WireGuard | **Corregido en fuentes** | Ejecutar una re-convergencia real de `install.sh --admin-node` con un worker conectado y conservar la evidencia del handshake. |
+| H2, API administrativa Caddy | **Corregido en fuentes y validado en single-node** | Ninguna corrección pendiente; actualizar evidencia si se recrea una VM antigua. |
+| M4, permisos del archivo S3 | **Corregido en fuentes** | El instalador rechaza archivos legibles por grupo/otros; falta una prueba negativa documentada si se desea cerrar el test. |
+| M5, limpieza de variables S3 | **Corregido en fuentes** | `install.sh` ejecuta `unset S3_ACCESS_KEY_VALUE S3_SECRET_KEY_VALUE`. |
+| B7/N8, root check tardío | **Obsoleto** | El check de root está en la línea 7, antes de cualquier SSH. El hallazgo debe retirarse. |
+| B1/M6, S3 sin TLS | **Abierto real** | No aprobar backup/restore de producción sobre MinIO HTTP; configurar TLS o documentar explícitamente el riesgo de laboratorio. |
+| H1/B10, token en `argv` | **Abierto real, ventana de bootstrap** | Migrar el registro a stdin o a un mecanismo que no exponga el token en `ps`. |
+| H3/B9, SSH con sudo total | **Abierto por diseño de bootstrap** | Reducir a credenciales temporales y por nodo; no afecta la comunicación Fleet↔Admirald. |
+| M1/M2/M3 | **Abierto real, mitigado parcialmente** | Evaluar `systemd-creds`/credenciales temporales y eliminar exposición transitoria en `/proc`. |
+| F1/N4, UDP/443 | **Pendiente funcional** | Abrir UDP/443 solo si se promete HTTP/3; no es un fallo del plano Fleet. |
+| D1/D3 | **Abierto documental** | Cambiar los defaults PayPal/Harbor que todavía apuntan a `localhost:5000` cuando el servicio correspondiente usa 5001. |
+| B6/L12, parser `know_host.yaml` | **Abierto de robustez** | Sustituir `grep`/`awk` por parseo YAML validado. |
+
+Los restantes hallazgos de prioridad baja e informativa son mejoras de
+endurecimiento o limpieza de empaquetado; no bloquean el golden WordPress.
 
 ---
 
 ## 14. Recomendaciones priorizadas
 
+### Resueltos en fuentes
+
+| # | Evidencia |
+|---|---|
+| C1 | `ansible/roles/admiral_wireguard/tasks/main.yml` lee la configuración existente y `wg-admiral.conf.j2` conserva los bloques `[Peer]`. |
+| H2 | Caddy usa `/run/caddy/admin.sock`, ACL para `admiral` y `admiral-caddy-socket-permissions.path`. |
+| M4 | `install.sh` verifica que el archivo S3 no sea legible por grupo u otros usuarios. |
+| M5 | `install.sh` limpia las variables S3 después de generar los extra-vars. |
+| B7/N8 | El check `EUID` está al inicio del instalador, antes de cualquier interacción SSH. |
+
 ### Críticas
 
 | # | Acción | Archivos afectados |
 |---|--------|-------------------|
-| C1 | **Preservar peers WireGuard en re-provisión del hub**: leer `/etc/wireguard/peers.d/*.conf` antes de desplegar la plantilla, o integrar la lógica de `wireguard-peers.yml` en el rol `admiral_wireguard`. | `ansible/roles/admiral_wireguard/tasks/main.yml`, `wg-admiral.conf.j2` |
+| — | No quedan hallazgos críticos de código sin corregir. C1 conserva únicamente una prueba de re-convergencia pendiente. | `ansible/roles/admiral_wireguard/tasks/main.yml`, `wg-admiral.conf.j2` |
 
 ### Altas
 
 | # | Acción | Archivos afectados |
 |---|--------|-------------------|
 | H1 | **Tokens en argumentos CLI**: migrar `admiralctl nodes register --token` a stdin o env var. | `admiral_fleet/tasks:203-218`, `admiral_harbor/tasks:192-207` |
-| H2 | **Caddy admin API sin auth**: mover a socket Unix (`unix//run/caddy/admin.sock`) o agregar autenticación mutua TLS. | `admiral_common/tasks:109`, `admirald/internal/networking/caddy.go` |
+| H2 | Resuelto: socket Unix con permisos de servicio y watcher. | `ansible/roles/admiral_common/tasks/main.yml`, `packaging/config/admirald.ini` |
 | H3 | **Llave SSH → root en todo el cluster**: emitir llaves por rol/nodo o adoptar certificados SSH de corta vida签 con un CA SSH dedicado en vez de `authorized_keys` permanentes. Reducir blast radius si la llave bootstrap del operador se compromete. | `install.sh:523-525`, `admiral_common/tasks:523-551` |
 
 ### Medias
@@ -266,8 +287,8 @@ no enfatizadas.
 | M1 | **`admirald.ini` con todos los secrets en texto plano**: evaluar `systemd-creds encrypt` para secrets cifrados. | `admirald/tasks:17-43` |
 | M2 | **`harbor.env` con DB password y PayPal secrets**: igual que M1. | `admiral_harbor/tasks:107` |
 | M3 | **Secrets visibles en `/proc` durante install.sh**: escribir JSON directo desde Bash en lugar de pasar por env vars. | `install.sh:724-826` |
-| M4 | **Validar permisos de `--s3-credentials-file`**: rechazar si es legible por grupo/otros. | `install.sh:370-399` |
-| M5 | **Unset `S3_ACCESS_KEY_VALUE`/`S3_SECRET_KEY_VALUE`**: agregar al bloque unset después de escribir extra-vars. | `install.sh:843-847` |
+| M4 | Resuelto: el instalador rechaza credenciales S3 legibles por grupo u otros usuarios. | `scripts/install.sh` |
+| M5 | Resuelto: las variables S3 se limpian después de escribir los extra-vars. | `scripts/install.sh` |
 | M6 | **Forzar/requisar TLS en endpoint S3 de backup**: detectar scheme y rechazar `http://` para MinIO/S3 en producción, o guiar al operador a servir MinIO con TLS y permitir solo `https://` en el eggress. Cubre el caso de la bitácora beta18 (MinIO TCP/9000 sin TLS). | `admiral_fleet/tasks:181-184`, `admirald/tasks:51-53`, `admiral-egress.nft.j2` |
 
 ### Bajas
