@@ -116,6 +116,7 @@
       [Service]
       RuntimeDirectory=caddy
       RuntimeDirectoryMode=0750
+      ExecStartPost=/usr/bin/chmod 0660 /run/caddy/admin.sock
   when: admiral_install_mode in ['single-node', 'admin-node', 'admin-portal-node']
   notify: restart caddy
 
