@@ -20,6 +20,7 @@ ReadWritePaths=/var/lib/admiral /var/log/admiral
 # User
 User=admiral
 Group=admiral
+SupplementaryGroups=caddy
 
 # Hardening
 NoNewPrivileges=true

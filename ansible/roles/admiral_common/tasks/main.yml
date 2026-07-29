@@ -107,7 +107,7 @@
     mode: "0644"
     content: |
       {
-        admin 127.0.0.1:2019
+        admin unix//run/caddy/admin.sock
       }
   when: admiral_install_mode in ['single-node', 'admin-node', 'admin-portal-node']
 
