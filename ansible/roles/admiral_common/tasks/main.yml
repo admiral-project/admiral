@@ -110,6 +110,11 @@
         admin unix//run/caddy/admin.sock
       }
   when: admiral_install_mode in ['single-node', 'admin-node', 'admin-portal-node']
+  notify: restart caddy
+
+- name: Apply Caddy admin endpoint before dependent services
+  meta: flush_handlers
+  when: admiral_install_mode in ['single-node', 'admin-node', 'admin-portal-node']
 
 - name: Ensure sshd drop-in directory exists
   file:
