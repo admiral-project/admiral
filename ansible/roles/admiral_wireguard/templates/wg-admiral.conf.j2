@@ -13,6 +13,11 @@ AllowedIPs = {{ peer.allowed_ips }}
 {% for peer_block in admiral_existing_wireguard_peers | default([]) %}
 {{ peer_block | trim }}
 {% endfor %}
+{% if (admiral_existing_wireguard_peers | default([]) | length) == 0 %}
+{% for peer_fragment in admiral_existing_wireguard_peer_fragments | default([]) %}
+{{ peer_fragment | trim }}
+{% endfor %}
+{% endif %}
 {% endif %}
 {% elif admiral_wireguard_role == 'spoke' %}
 [Peer]

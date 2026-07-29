@@ -142,6 +142,30 @@
     - admiral_existing_wireguard_config is defined
   no_log: true
 
+- name: Find durable WireGuard peer fragments on hub
+  find:
+    paths: /etc/wireguard/peers.d
+    patterns: "*.conf"
+    file_type: file
+  register: admiral_existing_wireguard_peer_files
+  when: admiral_wireguard_role == 'hub'
+
+- name: Read durable WireGuard peer fragments on hub
+  slurp:
+    src: "{{ item.path }}"
+  loop: "{{ admiral_existing_wireguard_peer_files.files | default([]) }}"
+  register: admiral_existing_wireguard_peer_slurps
+  when: admiral_wireguard_role == 'hub'
+  no_log: true
+
+- name: Collect durable WireGuard peer fragments
+  set_fact:
+    admiral_existing_wireguard_peer_fragments: >-
+      {{ (admiral_existing_wireguard_peer_slurps.results | default([]))
+         | map(attribute='content') | map('b64decode') | list }}
+  when: admiral_wireguard_role == 'hub'
+  no_log: true
+
 - name: Disable inter-node IP forwarding
   sysctl:
     name: "{{ item }}"

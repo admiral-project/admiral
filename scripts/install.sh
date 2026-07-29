@@ -979,16 +979,23 @@ for n in data if isinstance(data, list) else data.get('nodes', []):
         die "Could not resolve wireguard_ip for spoke node '$SPOKE_NODE_ID' from admirald."
     fi
     wg set wg-admiral peer "$SPOKE_KEY" allowed-ips "${SPOKE_WG_IP}/32" persistent-keepalive 25
-        wg-quick save wg-admiral
-        info "WireGuard peer added for spoke node ($SPOKE_WG_IP) on hub."
-        handshake_ok=false
-        for _ in {1..12}; do
-            if wg show wg-admiral latest-handshakes | awk -v now="$(date +%s)" -v key="$SPOKE_KEY" '$1 == key && $2 > now-120 { found=1 } END { exit(found ? 0 : 1) }'; then
-                handshake_ok=true
-                break
-            fi
-            sleep 2
-        done
+    install -d -m 0700 /etc/wireguard/peers.d
+    PEER_FRAGMENT_NAME="${SPOKE_NODE_ID//[^A-Za-z0-9_.-]/_}"
+    PEER_FRAGMENT_TMP="$(mktemp /etc/wireguard/peers.d/.${PEER_FRAGMENT_NAME}.XXXXXX)"
+    chmod 0600 "$PEER_FRAGMENT_TMP"
+    printf '[Peer]\nPublicKey = %s\nAllowedIPs = %s/32\n' \
+        "$SPOKE_KEY" "$SPOKE_WG_IP" > "$PEER_FRAGMENT_TMP"
+    mv -f "$PEER_FRAGMENT_TMP" "/etc/wireguard/peers.d/${PEER_FRAGMENT_NAME}.conf"
+    wg-quick save wg-admiral
+    info "WireGuard peer added for spoke node ($SPOKE_WG_IP) on hub."
+    handshake_ok=false
+    for _ in {1..12}; do
+        if wg show wg-admiral latest-handshakes | awk -v now="$(date +%s)" -v key="$SPOKE_KEY" '$1 == key && $2 > now-120 { found=1 } END { exit(found ? 0 : 1) }'; then
+            handshake_ok=true
+            break
+        fi
+        sleep 2
+    done
     if [[ "$handshake_ok" != true ]]; then
         die "WireGuard handshake with ${SPOKE_WG_IP} failed; check DNS/public UDP 51820, firewall, keys, and routes."
     fi
