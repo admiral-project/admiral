@@ -4,6 +4,8 @@
 
 set -euo pipefail
 
+[[ $EUID -eq 0 ]] || { echo "[FATAL] This script must be run as root." >&2; exit 1; }
+
 # --- helpers ---
 die() { echo "[FATAL] $*" >&2; exit 1; }
 info() { echo "[INFO] $*"; }
@@ -66,10 +68,13 @@ read_invoking_user_public_key() {
 }
 is_loopback_host() {
     case "$1" in
-        ""|127.0.0.1|localhost|::1)
+        ""|localhost|::1)
             return 0
             ;;
     esac
+    if [[ "$1" =~ ^127\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$ ]]; then
+        return 0
+    fi
     return 1
 }
 # Read a single key from the secrets file safely (no shell evaluation).
@@ -191,7 +196,9 @@ public_listeners() {
             sub(/:[^:]*$/, "", host)
             gsub(/^\[/, "", host)
             gsub(/\]$/, "", host)
-            if (host !~ /^(127\.|::1$)/ && host !~ /^10\.99\.0\./) print $1 "/" port
+            if (host !~ /^(127\.|::1$)/ && host !~ /^10\.99\.0\./ &&
+                host !~ /^172\.(1[6-9]|2[0-9]|3[0-1])\./ &&
+                host !~ /^192\.168\./ && host !~ /^169\.254\./) print $1 "/" port
         }
     ' | sort -u | tr '\n' ' ' | sed 's/[[:space:]]*$//'
 }
@@ -370,6 +377,10 @@ S3_SECRET_KEY_VALUE=""
 if [[ -n "$INSTALL_S3_CREDENTIALS_FILE" ]]; then
     [[ -f "$INSTALL_S3_CREDENTIALS_FILE" ]] ||
         die "S3 credentials file not found: $INSTALL_S3_CREDENTIALS_FILE"
+    S3_CREDENTIALS_MODE="$(stat -c '%a' "$INSTALL_S3_CREDENTIALS_FILE" 2>/dev/null || printf '777')"
+    if (( 10#$S3_CREDENTIALS_MODE % 100 != 0 )); then
+        die "S3 credentials file must not be readable by group or other users: $INSTALL_S3_CREDENTIALS_FILE"
+    fi
     S3_CREDENTIALS_JSON=$(python3 - "$INSTALL_S3_CREDENTIALS_FILE" <<'PY'
 import json
 import sys
@@ -845,6 +856,7 @@ unset SECRETS_HARBOR_ENCRYPTION_KEY SECRETS_HARBOR_POSTGRES_PASSWORD
 unset SECRETS_HARBOR_POSTGRES_USER SECRETS_HARBOR_BOOTSTRAP_USER
 unset SECRETS_HARBOR_BOOTSTRAP_PASSWORD SECRETS_HARBOR_LEGACY_ADMIN_PASSWORD
 unset SECRETS_HARBOR_API_TOKEN SECRETS_SSH_USER INSTALL_SSH_PUB_KEY
+unset S3_ACCESS_KEY_VALUE S3_SECRET_KEY_VALUE
 
 # --- 9. run official playbook ---
 # The playbook handles the rest: packages, configuration, services
@@ -951,7 +963,7 @@ if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]]; t
     fi
     SPOKE_WG_IP=""
     for attempt in $(seq 1 30); do
-        SPOKE_WG_IP=$(SPOKE_NODE_ID="$SPOKE_NODE_ID" admiralctl nodes list --output json 2>/dev/null | python3 -c "
+        SPOKE_WG_IP=$(admiralctl nodes list --output json 2>/dev/null | SPOKE_NODE_ID="$SPOKE_NODE_ID" python3 -c "
 import os, sys, json
 target = os.environ['SPOKE_NODE_ID']
 data = json.load(sys.stdin)
