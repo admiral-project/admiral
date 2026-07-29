@@ -115,6 +115,33 @@
           )
       }}
 
+- name: Check for an existing hub WireGuard configuration
+  stat:
+    path: /etc/wireguard/wg-admiral.conf
+  register: admiral_existing_wireguard_config_file
+  when: admiral_wireguard_role == 'hub'
+
+- name: Read existing hub WireGuard configuration
+  slurp:
+    src: /etc/wireguard/wg-admiral.conf
+  register: admiral_existing_wireguard_config
+  when:
+    - admiral_wireguard_role == 'hub'
+    - admiral_existing_wireguard_config_file.stat.exists
+  no_log: true
+
+- name: Extract existing hub WireGuard peers
+  set_fact:
+    admiral_existing_wireguard_peers: >-
+      {{
+        (admiral_existing_wireguard_config.content | b64decode)
+        | regex_findall('(?ms)^\\[Peer\\]\\s*\\n.*?(?=^\\[Peer\\]|\\Z)')
+      }}
+  when:
+    - admiral_wireguard_role == 'hub'
+    - admiral_existing_wireguard_config is defined
+  no_log: true
+
 - name: Disable inter-node IP forwarding
   sysctl:
     name: "{{ item }}"

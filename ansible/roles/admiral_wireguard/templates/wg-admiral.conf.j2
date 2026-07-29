@@ -9,6 +9,11 @@ ListenPort = {{ admiral_wireguard_port }}
 PublicKey = {{ peer.public_key }}
 AllowedIPs = {{ peer.allowed_ips }}
 {% endfor %}
+{% if (admiral_wireguard_peers | default([]) | length) == 0 %}
+{% for peer_block in admiral_existing_wireguard_peers | default([]) %}
+{{ peer_block | trim }}
+{% endfor %}
+{% endif %}
 {% elif admiral_wireguard_role == 'spoke' %}
 [Peer]
 PublicKey = {{ admiral_wireguard_hub_public_key }}
