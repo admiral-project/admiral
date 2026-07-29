@@ -949,7 +949,9 @@ if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]]; t
     if [[ -z "$SPOKE_NODE_ID" ]]; then
         die "Could not resolve the spoke node ID from --node-id or /etc/admiral/*.env after installation."
     fi
-    SPOKE_WG_IP=$(SPOKE_NODE_ID="$SPOKE_NODE_ID" admiralctl nodes list --output json 2>/dev/null | python3 -c "
+    SPOKE_WG_IP=""
+    for attempt in $(seq 1 30); do
+        SPOKE_WG_IP=$(SPOKE_NODE_ID="$SPOKE_NODE_ID" admiralctl nodes list --output json 2>/dev/null | python3 -c "
 import os, sys, json
 target = os.environ['SPOKE_NODE_ID']
 data = json.load(sys.stdin)
@@ -958,6 +960,9 @@ for n in data if isinstance(data, list) else data.get('nodes', []):
         sys.stdout.write(n.get('wireguard_ip', n.get('wg_ip', '')))
         break
 " 2>/dev/null || true)
+        [[ -n "$SPOKE_WG_IP" ]] && break
+        sleep 1
+    done
     if [[ -z "$SPOKE_WG_IP" ]]; then
         die "Could not resolve wireguard_ip for spoke node '$SPOKE_NODE_ID' from admirald."
     fi
