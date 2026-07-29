@@ -1191,3 +1191,40 @@ CentOS 10 y AlmaLinux 10 conservan evidencia de instalación single-node en
 esta bitácora; se debe distinguir esa evidencia histórica de una repetición con
 el RPM Fleet `-2`. Permanecen pendientes una segunda topología multinodo, el
 backup/restore S3 real y la actualización final de la guía de sysadmin.
+
+### Actualización de bitácora: cierre de C1 WireGuard — 2026-07-29
+
+La primera re-convergencia del admin reveló que el peer existía solo en el
+estado runtime; una nueva ejecución de `install.sh --admin-node` podía perderlo.
+Se corrigió en fuentes y se reconstruyó el RPM común:
+
+- `613b2651497fd5032d4ce2f80a23928605d81147 fix(wireguard): persist spoke peers across reconciliation`;
+- `admiral-common-0.0.1beta18-29.fc44.noarch.rpm`;
+- el instalador ahora escribe `/etc/wireguard/peers.d/<node>.conf` y el rol del
+  hub lee esos fragmentos durante la reconciliación.
+
+El RPM local `-29` se instaló en admin y worker. El worker se volvió a
+configurar mediante `admiral_install --worker-node`:
+
+```text
+PLAY RECAP: ok=120 changed=13 unreachable=0 failed=0 skipped=198 rescued=0 ignored=0
+Admiral installation completed.
+```
+
+Después se ejecutó nuevamente `admiral_install --admin-node`:
+
+```text
+PLAY RECAP: ok=170 changed=24 unreachable=0 failed=0 skipped=149 rescued=0 ignored=0
+Admiral installation completed.
+```
+
+La evidencia posterior confirmó:
+
+- `/etc/wireguard/peers.d/rocky-worker.conf` presente;
+- peer `4PnINr0+Hd7taYxhKsqGh7kgbfWevuOusjM6NoYAQ3Q=` presente en `wg show`;
+- `AllowedIPs=10.99.0.2/32`;
+- handshake reciente y worker `status=active`, `health_status=healthy`;
+- `admiral-fleet-0.0.1beta18-2` y `admiral-common-0.0.1beta18-29` instalados;
+- Podman del worker continúa `rootless=true`.
+
+C1 queda validado en una re-convergencia real con un worker conectado.

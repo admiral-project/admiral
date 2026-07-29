@@ -15,7 +15,7 @@ los cierra automáticamente. El estado comprobado contra las fuentes es:
 
 | Hallazgo | Estado | Evidencia |
 |---|---|---|
-| C1, peers WireGuard del hub | Fix aplicado; falta prueba de re-convergencia | El rol lee y conserva los bloques `[Peer]` existentes cuando no recibe una lista nueva; el golden multinodo ya confirmó un worker sano. |
+| C1, peers WireGuard del hub | **Corregido y validado** | `peers.d/rocky-worker.conf` persistió el peer y sobrevivió una segunda ejecución de `install.sh --admin-node`; handshake activo. |
 | H2, API administrativa de Caddy | Fix aplicado y probado en single-node | Socket Unix, `SupplementaryGroups=caddy`, ACL explícita y watcher `PathChanged`. |
 | S3/firewall y M4/M5 | Fix aplicado; backup/restore real pendiente | Credenciales locales restringidas, variables limpiadas y egress permite endpoint S3 compatible. |
 | H1, tokens en argv | Abierto | El registro de spokes todavía usa `admiralctl nodes register --token`. |
@@ -32,9 +32,9 @@ hasta cerrar el multinodo y el golden test correspondiente.
 
 ### C1. WireGuard hub pierde todos los peers al re-ejecutar el instalador
 
-> Estado actual: **corregido en fuentes**. La descripción y la recomendación
+> Estado actual: **corregido y validado**. La descripción y la recomendación
 > siguientes documentan el defecto original y no describen el comportamiento
-> vigente; queda pendiente solamente una prueba de re-convergencia.
+> vigente. La prueba de re-convergencia se ejecutó con un worker conectado.
 
 **Archivos**: `ansible/roles/admiral_wireguard/templates/wg-admiral.conf.j2`,
 `ansible/roles/admiral_wireguard/tasks/main.yml:146-152`
@@ -236,7 +236,7 @@ La revisión separa el estado del hallazgo de la evidencia que todavía falta:
 
 | Hallazgo | Estado actual | Atención requerida |
 |---|---|---|
-| C1, peers WireGuard | **Corregido en fuentes** | Ejecutar una re-convergencia real de `install.sh --admin-node` con un worker conectado y conservar la evidencia del handshake. |
+| C1, peers WireGuard | **Corregido y validado** | Commit `613b2651497fd5032d4ce2f80a23928605d81147`; bootstrap creó el fragmento durable y la re-convergencia posterior conservó el peer y el handshake. |
 | H2, API administrativa Caddy | **Corregido en fuentes y validado en single-node** | Ninguna corrección pendiente; actualizar evidencia si se recrea una VM antigua. |
 | M4, permisos del archivo S3 | **Corregido en fuentes** | El instalador rechaza archivos legibles por grupo/otros; falta una prueba negativa documentada si se desea cerrar el test. |
 | M5, limpieza de variables S3 | **Corregido en fuentes** | `install.sh` ejecuta `unset S3_ACCESS_KEY_VALUE S3_SECRET_KEY_VALUE`. |
@@ -260,7 +260,7 @@ endurecimiento o limpieza de empaquetado; no bloquean el golden WordPress.
 
 | # | Evidencia |
 |---|---|
-| C1 | `ansible/roles/admiral_wireguard/tasks/main.yml` lee la configuración existente y `wg-admiral.conf.j2` conserva los bloques `[Peer]`. |
+| C1 | `613b2651497fd5032d4ce2f80a23928605d81147`; el instalador persiste fragmentos en `peers.d` y el rol los conserva durante la reconciliación. |
 | H2 | Caddy usa `/run/caddy/admin.sock`, ACL para `admiral` y `admiral-caddy-socket-permissions.path`. |
 | M4 | `install.sh` verifica que el archivo S3 no sea legible por grupo u otros usuarios. |
 | M5 | `install.sh` limpia las variables S3 después de generar los extra-vars. |
@@ -270,7 +270,7 @@ endurecimiento o limpieza de empaquetado; no bloquean el golden WordPress.
 
 | # | Acción | Archivos afectados |
 |---|--------|-------------------|
-| — | No quedan hallazgos críticos de código sin corregir. C1 conserva únicamente una prueba de re-convergencia pendiente. | `ansible/roles/admiral_wireguard/tasks/main.yml`, `wg-admiral.conf.j2` |
+| — | No quedan hallazgos críticos de código sin corregir. | `ansible/roles/admiral_wireguard/tasks/main.yml`, `wg-admiral.conf.j2` |
 
 ### Altas
 

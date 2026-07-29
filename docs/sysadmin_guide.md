@@ -789,6 +789,9 @@ Validated evidence:
   `/var/lib/admiral-apps/.local/share/containers/storage`;
 - the Fleet healthcheck fix is commit
   `7eec3c25b81a7babf7967a8039241c66546cdfd9`.
+- WireGuard peer persistence is commit
+  `613b2651497fd5032d4ce2f80a23928605d81147`; re-running the admin installer
+  was verified to preserve the worker peer and handshake.
 
 When testing a private multinode worker, use the worker WireGuard address for
 the published workload port. The WordPress example uses `http://localhost` as
@@ -798,9 +801,8 @@ result as the provisioning gate, and configure a real external hostname/URL
 before using the example as an HTTP routing test.
 
 Still required before calling the beta18 validation complete: backup/restore
-against private S3 with TLS, a second private topology, and an explicit
-re-convergence test proving that re-running the admin installer preserves
-WireGuard peers.
+against private S3 with TLS and a second private topology. WireGuard
+re-convergence is now validated.
 
 ## Local KVM Validation Host
 
