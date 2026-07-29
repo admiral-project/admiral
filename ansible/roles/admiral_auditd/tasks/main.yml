@@ -84,14 +84,6 @@
     - auditctl_available.rc != 0
     - augenrules_available.rc != 0
 
-- name: Restart auditd when audit rule loader utilities are unavailable
-  systemd:
-    name: auditd
-    state: restarted
-  when:
-    - auditctl_available.rc != 0
-    - augenrules_available.rc != 0
-
 - name: Assert audit rules file is present when audit rule loader utilities are unavailable
   ansible.builtin.assert:
     that:
