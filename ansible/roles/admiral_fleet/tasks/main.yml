@@ -81,6 +81,7 @@
       - info
       - --format
       - "{{ '{{.Store.GraphRoot}}' }}"
+    chdir: /
   register: admiral_rootless_graph_root
   changed_when: false
   failed_when: admiral_rootless_graph_root.stdout != '/var/lib/admiral-apps/.local/share/containers/storage'
