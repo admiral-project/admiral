@@ -2,11 +2,11 @@
 # SPDX-License-Identifier: Apache-2.0
 
 %global debug_package %{nil}
-%global commit fa06badfa57e5c6c510a8dcb39ff709c3adc3218
+%global commit 7eec3c25b81a7babf7967a8039241c66546cdfd9
 
 Name:    admiral-fleet
 Version: 0.0.1beta18
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: Admiral Fleet Worker Agent
 
 License: Apache-2.0
@@ -73,6 +73,9 @@ loginctl enable-linger admiral-apps 2>/dev/null || :
 %systemd_postun_with_restart admiral-fleet.service
 
 %changelog
+* Wed Jul 29 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta18-2
+- Probe published workload address for multinode healthchecks
+
 * Mon Jul 27 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta18-1
 - Bump version to 0.0.1beta18
 
