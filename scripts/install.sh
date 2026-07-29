@@ -1045,12 +1045,19 @@ if [[ "$INSTALL_DEV_MODE" != "true" ]]; then
         SECURITY_WARNINGS+=("Public listening sockets do not match the declared host profile.")
     fi
 
-    AUDIT_RULES="$(run_target_cmd "auditctl -l" || true)"
-    for audit_key in admiral_config admiral_secrets admiral_tls admiral_data admiral_wireguard; do
-        if [[ "$AUDIT_RULES" != *"$audit_key"* ]]; then
-            SECURITY_WARNINGS+=("Loaded audit rules are missing key $audit_key.")
+    if run_target_cmd "command -v auditctl >/dev/null 2>&1"; then
+        AUDIT_RULES="$(run_target_cmd "auditctl -l" || true)"
+        for audit_key in admiral_config admiral_secrets admiral_tls admiral_data admiral_wireguard; do
+            if [[ "$AUDIT_RULES" != *"$audit_key"* ]]; then
+                SECURITY_WARNINGS+=("Loaded audit rules are missing key $audit_key.")
+            fi
+        done
+    else
+        AUDIT_RULE_FILE_STATE="$(run_target_cmd "test -s /etc/audit/rules.d/admiral.rules && printf present || true")"
+        if [[ "$AUDIT_RULE_FILE_STATE" != "present" ]]; then
+            SECURITY_WARNINGS+=("The Admiral audit rules file is missing on a host without auditctl.")
         fi
-    done
+    fi
 
     FAIL2BAN_STATUS="$(run_target_cmd "fail2ban-client ping && fail2ban-client status sshd" || true)"
     if [[ "$FAIL2BAN_STATUS" != *"Server replied: pong"* || "$FAIL2BAN_STATUS" != *"Status for the jail"* ]]; then
