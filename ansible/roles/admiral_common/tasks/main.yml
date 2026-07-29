@@ -101,6 +101,24 @@
     state: present
   when: admiral_install_mode in ['single-node', 'admin-node', 'admin-portal-node']
 
+- name: Ensure Caddy systemd override directory exists
+  file:
+    path: /etc/systemd/system/caddy.service.d
+    state: directory
+    mode: "0755"
+  when: admiral_install_mode in ['single-node', 'admin-node', 'admin-portal-node']
+
+- name: Allocate Caddy runtime directory for the admin Unix socket
+  copy:
+    dest: /etc/systemd/system/caddy.service.d/admiral-runtime.conf
+    mode: "0644"
+    content: |
+      [Service]
+      RuntimeDirectory=caddy
+      RuntimeDirectoryMode=0750
+  when: admiral_install_mode in ['single-node', 'admin-node', 'admin-portal-node']
+  notify: restart caddy
+
 - name: Install managed Caddyfile for Admiral
   copy:
     dest: /etc/caddy/Caddyfile
