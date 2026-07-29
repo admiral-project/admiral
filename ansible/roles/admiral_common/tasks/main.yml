@@ -35,6 +35,7 @@
     state: latest
     security: true
     update_only: true
+    allowerasing: true
   when:
     - not (admiral_dev_mode | default(false) | bool)
     - ansible_distribution in ['RedHat', 'CentOS', 'Rocky', 'AlmaLinux']
