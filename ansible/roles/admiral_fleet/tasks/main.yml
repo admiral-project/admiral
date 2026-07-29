@@ -182,7 +182,6 @@
       ADMIRAL_S3_SECRET_ACCESS_KEY={{ admiral_s3_secret_key_value }}
       {% endif %}
     mode: "0600"
-  no_log: true
     owner: root
     group: admiral
   no_log: true
