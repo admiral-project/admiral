@@ -16,7 +16,9 @@ table inet admiral_egress {
         udp dport 123 accept
 {% if admiral_effective_host_profile in ['single-node', 'admin'] %}
         # SMTP submission is required for Harbor and Flagship notifications.
-        tcp dport { 22, 80, 443, 587, 53 } accept
+        # S3-compatible backup endpoints such as MinIO commonly expose the
+        # API on TCP/9000. HTTPS S3 endpoints continue to use TCP/443.
+        tcp dport { 22, 80, 443, 587, 9000, 53 } accept
         udp dport 53 accept
 {% else %}
         tcp dport 22 accept
@@ -27,7 +29,9 @@ table inet admiral_egress {
         udp dport 53 accept
         # HTTPS is required for OCI registries and PayPal APIs. Restricting
         # this to a static IP list is not reliable because both use CDNs.
-        tcp dport { 443, 587 } accept
+        # Workers must reach the configured external backup store as well as
+        # OCI registries and notification providers.
+        tcp dport { 443, 587, 9000 } accept
         udp dport 51820 accept
 {% endif %}
         reject

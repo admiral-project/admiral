@@ -150,6 +150,7 @@
     - { priority: 35, rule: "-p tcp --dport 22 -j ACCEPT" }
     - { priority: 40, rule: "-p tcp --dport 80 -j ACCEPT" }
     - { priority: 41, rule: "-p tcp --dport 443 -j ACCEPT" }
+    - { priority: 44, rule: "-p tcp --dport 9000 -j ACCEPT" }
     - { priority: 42, rule: "-p udp --dport 53 -j ACCEPT" }
     - { priority: 43, rule: "-p tcp --dport 53 -j ACCEPT" }
     - { priority: 200, rule: "-j REJECT" }
@@ -168,6 +169,7 @@
     - { priority: 20, rule: "-m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT" }
     - { priority: 30, rule: "-d 10.99.0.0/24 -j ACCEPT" }
     - { priority: 35, rule: "-p tcp --dport 22 -j ACCEPT" }
+    - { priority: 37, rule: "-p tcp --dport 9000 -j ACCEPT" }
     - { priority: 36, rule: "-p udp --dport 51820 -j ACCEPT" }
     - { priority: 200, rule: "-j REJECT" }
   changed_when: false
@@ -190,6 +192,7 @@
     - { priority: 35, rule: "-p tcp --dport 22 -j ACCEPT" }
     - { priority: 40, rule: "-p tcp --dport 80 -j ACCEPT" }
     - { priority: 41, rule: "-p tcp --dport 443 -j ACCEPT" }
+    - { priority: 44, rule: "-p tcp --dport 9000 -j ACCEPT" }
     - { priority: 42, rule: "-p udp --dport 53 -j ACCEPT" }
     - { priority: 43, rule: "-p tcp --dport 53 -j ACCEPT" }
     - { priority: 200, rule: "-j REJECT" }
@@ -209,6 +212,7 @@
     - { priority: 20, rule: "-m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT" }
     - { priority: 30, rule: "-d 10.99.0.0/24 -j ACCEPT" }
     - { priority: 35, rule: "-p tcp --dport 22 -j ACCEPT" }
+    - { priority: 37, rule: "-p tcp --dport 9000 -j ACCEPT" }
     - { priority: 36, rule: "-p udp --dport 51820 -j ACCEPT" }
     - { priority: 200, rule: "-j REJECT" }
   when:
