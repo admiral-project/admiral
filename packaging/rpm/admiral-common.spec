@@ -1,11 +1,11 @@
 # SPDX-FileCopyrightText: William Moreno Reyes CP | MBA
 # SPDX-License-Identifier: Apache-2.0
 
-%global commit a38b8c6fe9c4bc7cb166b75b580246124a1153a3
+%global commit 395b339ca039f57b669653f1a5b6176008660f15
 
 Name:    admiral-common
 Version: 0.0.1beta18
-Release: 5%{?dist}
+Release: 6%{?dist}
 Summary: Common files and utilities for Admiral PaaS
 
 License: Apache-2.0
@@ -137,6 +137,9 @@ semanage fcontext -a -t container_file_t "/var/lib/admiral-apps/.local/share/con
 restorecon -R /var/lib/admiral-apps/.local/share/containers/storage/ 2>/dev/null || :
 
 %changelog
+* Wed Jul 29 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta18-6
+- Handle EL10 systems without augenrules or auditctl utilities.
+
 * Wed Jul 29 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta18-5
 - Support EL10 auditd installations that provide augenrules without auditctl.
 
