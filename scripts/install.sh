@@ -1110,7 +1110,9 @@ if [[ "$INSTALL_DEV_MODE" != "true" ]]; then
             SECURITY_WARNINGS+=("IP forwarding is not disabled on the VPN node.")
         fi
 
-        WG_ZONE_TARGET="$(run_target_cmd "firewall-cmd --zone=admiral --get-target" || true)"
+        # firewalld on EL10 exposes zone targets through the permanent
+        # configuration API; without --permanent it exits with a usage error.
+        WG_ZONE_TARGET="$(run_target_cmd "firewall-cmd --permanent --zone=admiral --get-target" || true)"
         WG_ZONE_INTERFACES="$(run_target_cmd "firewall-cmd --zone=admiral --list-interfaces" || true)"
         TRUSTED_INTERFACES="$(run_target_cmd "firewall-cmd --zone=trusted --list-interfaces" || true)"
         if [[ "$WG_ZONE_TARGET" != "DROP" ]]; then
