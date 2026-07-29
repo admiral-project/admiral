@@ -558,6 +558,15 @@ case "$ID" in
         ;;
 esac
 
+# Normalize the base operating system before adding repositories or installing
+# Admiral packages. EL10 repositories can temporarily expose split package
+# updates (for example vim-minimal/vim-data); allow DNF to replace the stale
+# member so the rest of the setup starts from a consistent transaction state.
+if [[ "$ID" != "amzn" ]]; then
+    info "Applying available system updates before Admiral setup..."
+    dnf -y update --refresh --allowerasing
+fi
+
 # --- 3. verify Python 3 ---
 command -v python3 >/dev/null 2>&1 || die "Python 3 is required but not installed."
 
