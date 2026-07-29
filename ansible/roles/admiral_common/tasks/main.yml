@@ -122,6 +122,46 @@
   when: admiral_install_mode in ['single-node', 'admin-node', 'admin-portal-node']
   notify: restart caddy
 
+- name: Install Caddy admin socket permission repair service
+  copy:
+    dest: /etc/systemd/system/admiral-caddy-socket-permissions.service
+    mode: "0644"
+    content: |
+      [Unit]
+      Description=Grant Admirald access to the Caddy admin socket
+      After=caddy.service
+      Requires=caddy.service
+
+      [Service]
+      Type=oneshot
+      ExecStart=/usr/bin/setfacl -m u:admiral:rw /run/caddy/admin.sock
+      ExecStart=/usr/bin/chmod 0660 /run/caddy/admin.sock
+  when: admiral_install_mode in ['single-node', 'admin-node', 'admin-portal-node']
+
+- name: Install Caddy admin socket permission repair path
+  copy:
+    dest: /etc/systemd/system/admiral-caddy-socket-permissions.path
+    mode: "0644"
+    content: |
+      [Unit]
+      Description=Watch for Caddy admin socket recreation
+
+      [Path]
+      PathExists=/run/caddy/admin.sock
+      Unit=admiral-caddy-socket-permissions.service
+
+      [Install]
+      WantedBy=multi-user.target
+  when: admiral_install_mode in ['single-node', 'admin-node', 'admin-portal-node']
+
+- name: Enable Caddy admin socket permission repair path
+  systemd:
+    name: admiral-caddy-socket-permissions.path
+    enabled: true
+    state: started
+    daemon_reload: true
+  when: admiral_install_mode in ['single-node', 'admin-node', 'admin-portal-node']
+
 - name: Install managed Caddyfile for Admiral
   copy:
     dest: /etc/caddy/Caddyfile
