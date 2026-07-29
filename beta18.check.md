@@ -1054,3 +1054,57 @@ persistencia del rol `worker`, la creación de directorios, la copia de CA y la
 configuración inicial, pero todavía está ejecutando las actualizaciones de
 seguridad y no tiene aún un `PLAY RECAP` final. Por tanto, el worker y el
 backup/restore S3 real siguen pendientes de cierre.
+
+### Actualización de bitácora: validación EL10 y estado de hallazgos 2026-07-29
+
+Se repitió la instalación mediante el instalador empaquetado, sin editar
+manualmente las VMs, usando RPM locales construidos desde referencias Git
+completas:
+
+- `admiral-common-0.0.1beta18-27.fc44.noarch.rpm`;
+- `admirald-0.0.1beta18-3.fc44.x86_64.rpm`.
+
+CentOS 10 y AlmaLinux 10 terminaron `install.sh` con `failed=0` y
+`Admiral installation completed`. En ambas VMs quedaron activos `caddy`,
+`admirald` y `admiral-caddy-socket-permissions.path`. El socket Unix de Caddy
+conservó permisos para `admiral`, y el acceso de `admirald` se comprobó antes y
+después de recargar la configuración de Caddy.
+
+Las VMs single-node fueron apagadas limpiamente para liberar memoria; sus
+discos y logs se conservaron. El laboratorio multinodo sigue activo, pero el
+worker Rocky permanece `offline/degraded`, por lo que el golden multinodo y el
+backup/restore S3 externo todavía no están aprobados.
+
+#### Estado explícito de `notas.md`
+
+El informe de seguridad no se considera cerrado por el mero hecho de que la
+instalación termine correctamente:
+
+- Caddy/H2: corregido en fuentes con socket Unix, grupo/ACL y watcher de
+  permisos; falta consolidar la evidencia en el golden multinodo.
+- WireGuard/C1: se añadió preservación de la configuración existente del hub;
+  falta validar la convergencia con un worker realmente registrado y sano.
+- S3, firewall y credenciales del instalador: corregidos en fuentes y
+  empaquetados; falta cerrar backup/restore contra storage privado real.
+- H1 (tokens en argumentos), H3 (SSH `NOPASSWD`), M1/M2/M3/M6 y los hallazgos
+  de prioridad baja siguen abiertos y no deben presentarse como resueltos.
+
+La bitácora separa desde este punto “fix aplicado” de “fix validado en una
+topología completa”.
+
+### Actualización de bitácora: diagnóstico de worker multinodo 2026-07-29
+
+El worker Rocky no está todavía validado: `admiral-fleet` permanece activo,
+pero el administrador lo ve como `offline/degraded`, con
+`heartbeat_timeout`. En el worker no hay handshake WireGuard reciente y el
+hub no tiene aún el peer efectivo del worker. Por tanto, no se ejecutó todavía
+el golden test WordPress multinodo.
+
+Se recompiló `admiral-fleet` desde el commit referenciado por el spec; el RPM
+terminó `go test ./...` correctamente. La primera transferencia de ese RPM al
+worker mediante `scp` falló por autenticación SSH, antes de modificar la
+configuración del worker. El intento no se registra como instalación exitosa.
+
+Siguiente acción: resolver la ruta de bootstrap SSH y repetir exclusivamente
+la opción `admiral_install --worker-node`, con los RPM locales, para que el
+intercambio WireGuard y el registro del nodo ocurran desde el instalador.
