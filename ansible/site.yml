@@ -74,6 +74,14 @@
           role, or use the documented manual migration for admin-portal.
       when: admiral_node_role_file.stat.exists
 
+    - name: Ensure Admiral configuration directory exists before role persistence
+      file:
+        path: /etc/admiral
+        state: directory
+        owner: root
+        group: root
+        mode: "0750"
+
     - name: Persist Admiral node role
       copy:
         dest: /etc/admiral/role
