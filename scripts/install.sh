@@ -929,7 +929,7 @@ if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]]; t
     fi
     ssh "${SSH_OPTIONS[@]}" \
         "${REMOTE_SSH_USER}@${INSTALL_PUBLIC_IP}" \
-        "sudo sh -c 'tmp=/etc/ssh/sshd_config.d/.60-admiral-root-lockdown.conf.tmp; install -m 0644 /dev/stdin \"\$tmp\" && mv \"\$tmp\" /etc/ssh/sshd_config.d/60-admiral-root-lockdown.conf && { sshd -t && systemctl reload sshd || { rm -f /etc/ssh/sshd_config.d/60-admiral-root-lockdown.conf; exit 1; }; }'" \
+        "sudo sh -c 'tmp=/etc/ssh/sshd_config.d/.49-admiral-root-lockdown.conf.tmp; install -m 0644 /dev/stdin \"\$tmp\" && mv \"\$tmp\" /etc/ssh/sshd_config.d/49-admiral-root-lockdown.conf && { sshd -t && systemctl reload sshd || { rm -f /etc/ssh/sshd_config.d/49-admiral-root-lockdown.conf; exit 1; }; }'" \
         <<<"PermitRootLogin no" \
         || die "Could not validate and apply PermitRootLogin no; root login remains available for recovery."
     INSTALL_TARGET_SSH_USER="$REMOTE_SSH_USER"

@@ -606,6 +606,15 @@
     validate: "visudo -cf %s"
   when: admiral_install_mode in ['single-node', 'admin-node', 'admin-portal-node', 'worker-node', 'portal-node']
 
+- name: Disable inherited Cockpit socket on worker and portal profiles
+  systemd:
+    name: cockpit.socket
+    enabled: false
+    state: stopped
+    daemon_reload: true
+  when: admiral_install_mode in ['worker-node', 'portal-node']
+  failed_when: false
+
 - name: Deploy SSH public key to admin user
   authorized_key:
     user: "{{ admiral_ssh_admin_user }}"
