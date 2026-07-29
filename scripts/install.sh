@@ -702,6 +702,7 @@ SECRETS_HARBOR_LEGACY_ADMIN_PASSWORD=""
 SECRETS_HARBOR_API_TOKEN=""
 SECRETS_HARBOR_POSTGRES_USER="admiral"
 SECRETS_SSH_USER=""
+SECRETS_TASK_PUBLIC_KEY=""
 if [[ "$INSTALL_MODE" == "portal-node" ]]; then
     SECRETS_HARBOR_SECRET_KEY=$(read_admiral_secret "HARBOR_SECRET_KEY") || true
     SECRETS_HARBOR_ENCRYPTION_KEY=$(read_admiral_secret "HARBOR_ENCRYPTION_KEY") || true
@@ -717,6 +718,7 @@ if [[ "$INSTALL_MODE" == "portal-node" ]]; then
 fi
 if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]]; then
     SECRETS_SSH_USER=$(read_admiral_secret "ADMIRAL_SSH_USER") || true
+    SECRETS_TASK_PUBLIC_KEY=$(read_admiral_secret "ADMIRAL_TASK_PUBLIC_KEY") || true
 fi
 
 INSTALL_ADMIN_WIREGUARD_IP="${ADMIRAL_WIREGUARD_HUB_IP:-10.99.0.1}"
@@ -739,6 +741,7 @@ EXTRA_VARS_JSON=$(
     SECRETS_HARBOR_LEGACY_ADMIN_PASSWORD="$SECRETS_HARBOR_LEGACY_ADMIN_PASSWORD" \
     SECRETS_HARBOR_API_TOKEN="$SECRETS_HARBOR_API_TOKEN" \
     SECRETS_SSH_USER="$SECRETS_SSH_USER" \
+    SECRETS_TASK_PUBLIC_KEY="$SECRETS_TASK_PUBLIC_KEY" \
     S3_ACCESS_KEY_VALUE="$S3_ACCESS_KEY_VALUE" \
     S3_SECRET_KEY_VALUE="$S3_SECRET_KEY_VALUE" \
     INSTALL_SSH_PUB_KEY="$INSTALL_SSH_PUB_KEY" \
@@ -797,6 +800,10 @@ if hb_api_token:
 ssh_user = os.environ.get("SECRETS_SSH_USER", "")
 if ssh_user:
     d["admiral_ssh_admin_user"] = ssh_user
+
+task_public_key = os.environ.get("SECRETS_TASK_PUBLIC_KEY", "")
+if task_public_key:
+    d["admiral_task_public_key_value"] = task_public_key
 
 s3_access_key = os.environ.get("S3_ACCESS_KEY_VALUE", "")
 if s3_access_key:
