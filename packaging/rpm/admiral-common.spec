@@ -1,11 +1,11 @@
 # SPDX-FileCopyrightText: William Moreno Reyes CP | MBA
 # SPDX-License-Identifier: Apache-2.0
 
-%global commit 6d1685be89734c05558e7bffa0db8b119324c289
+%global commit 38c062129f98d95c65ab79654bbff1b7897e2243
 
 Name:    admiral-common
 Version: 0.0.1beta18
-Release: 2%{?dist}
+Release: 4%{?dist}
 Summary: Common files and utilities for Admiral PaaS
 
 License: Apache-2.0
@@ -137,6 +137,12 @@ semanage fcontext -a -t container_file_t "/var/lib/admiral-apps/.local/share/con
 restorecon -R /var/lib/admiral-apps/.local/share/containers/storage/ 2>/dev/null || :
 
 %changelog
+* Wed Jul 29 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta18-4
+- Update EL10 hosts before repository and Admiral package setup.
+
+* Wed Jul 29 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta18-3
+- Invoke DNF security updates explicitly so EL10 dependency resolution flags are honored.
+
 * Wed Jul 29 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta18-2
 - Allow DNF to resolve transient EL10 package dependency conflicts during security updates.
 
