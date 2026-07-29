@@ -177,7 +177,12 @@
       ADMIRAL_FLEET_ADMIN_WIREGUARD_IP={{ admiral_admin_wireguard_ip | default('') }}
       ADMIRAL_FLEET_ROOTLESS_USER={{ fleet_rootless_user | default('admiral-apps') }}
       ADMIRAL_TASK_PUBLIC_KEY={{ admiral_task_public_key_value }}
+      {% if (admiral_s3_access_key_value | default('')) != '' and (admiral_s3_secret_key_value | default('')) != '' %}
+      ADMIRAL_S3_ACCESS_KEY_ID={{ admiral_s3_access_key_value }}
+      ADMIRAL_S3_SECRET_ACCESS_KEY={{ admiral_s3_secret_key_value }}
+      {% endif %}
     mode: "0600"
+  no_log: true
     owner: root
     group: admiral
   no_log: true

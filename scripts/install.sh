@@ -233,6 +233,7 @@ Options:
   --ssh-key           SSH private key for remote spoke configuration.
   --ssh-public-key    Public key to authorize for the generated administrator.
   --ssh-fingerprint   Expected SSH host key fingerprint (SHA256:...) for verification.
+  --s3-credentials-file  File containing ADMIRAL_S3_ACCESS_KEY_ID and ADMIRAL_S3_SECRET_ACCESS_KEY.
   --yes               Confirm non-interactive dangerous operations such as --dev-node.
   -h, --help          Show this help message.
 
@@ -253,6 +254,7 @@ INSTALL_TARGET_SSH_USER_EXPLICIT="false"
 INSTALL_TARGET_SSH_KEY=""
 INSTALL_SSH_PUBLIC_KEY_FILE=""
 INSTALL_SSH_FINGERPRINT=""
+INSTALL_S3_CREDENTIALS_FILE=""
 INSTALL_YES="false"
 INSTALLER_TEMP_BASE=""
 EXTRA_VARS_FILE=""
@@ -344,6 +346,11 @@ while [[ $# -gt 0 ]]; do
             require_option_value "--ssh-fingerprint" "${1-}"
             INSTALL_SSH_FINGERPRINT="$1"
             ;;
+        --s3-credentials-file)
+            shift
+            require_option_value "--s3-credentials-file" "${1-}"
+            INSTALL_S3_CREDENTIALS_FILE="$1"
+            ;;
         --yes)
             INSTALL_YES="true"
             ;;
@@ -357,6 +364,40 @@ while [[ $# -gt 0 ]]; do
     esac
     shift
 done
+
+S3_ACCESS_KEY_VALUE=""
+S3_SECRET_KEY_VALUE=""
+if [[ -n "$INSTALL_S3_CREDENTIALS_FILE" ]]; then
+    [[ -f "$INSTALL_S3_CREDENTIALS_FILE" ]] ||
+        die "S3 credentials file not found: $INSTALL_S3_CREDENTIALS_FILE"
+    S3_CREDENTIALS_JSON=$(python3 - "$INSTALL_S3_CREDENTIALS_FILE" <<'PY'
+import json
+import sys
+
+required = {"ADMIRAL_S3_ACCESS_KEY_ID", "ADMIRAL_S3_SECRET_ACCESS_KEY"}
+values = {}
+try:
+    with open(sys.argv[1], encoding="utf-8") as stream:
+        for raw in stream:
+            line = raw.strip()
+            if not line or line.startswith("#"):
+                continue
+            key, separator, value = line.partition("=")
+            if separator and key in required and value:
+                values[key] = value
+except OSError as exc:
+    raise SystemExit(f"cannot read credentials file: {exc}")
+
+missing = sorted(required - values.keys())
+if missing:
+    raise SystemExit("missing required S3 credential keys: " + ", ".join(missing))
+print(json.dumps(values))
+PY
+) || die "Invalid S3 credentials file: $INSTALL_S3_CREDENTIALS_FILE"
+    S3_ACCESS_KEY_VALUE=$(S3_CREDENTIALS_JSON="$S3_CREDENTIALS_JSON" python3 -c 'import json, os; print(json.loads(os.environ["S3_CREDENTIALS_JSON"])["ADMIRAL_S3_ACCESS_KEY_ID"])')
+    S3_SECRET_KEY_VALUE=$(S3_CREDENTIALS_JSON="$S3_CREDENTIALS_JSON" python3 -c 'import json, os; print(json.loads(os.environ["S3_CREDENTIALS_JSON"])["ADMIRAL_S3_SECRET_ACCESS_KEY"])')
+    unset S3_CREDENTIALS_JSON
+fi
 
 [[ -n "$INSTALL_MODE" ]] || die "An installation mode is required. Use --single-node, --dev-node, --admin-node, --admin-portal-node, --worker-node or --portal-node."
 if [[ "$INSTALL_DEV_MODE" == "true" && "$INSTALL_YES" != "true" ]]; then
@@ -698,6 +739,8 @@ EXTRA_VARS_JSON=$(
     SECRETS_HARBOR_LEGACY_ADMIN_PASSWORD="$SECRETS_HARBOR_LEGACY_ADMIN_PASSWORD" \
     SECRETS_HARBOR_API_TOKEN="$SECRETS_HARBOR_API_TOKEN" \
     SECRETS_SSH_USER="$SECRETS_SSH_USER" \
+    S3_ACCESS_KEY_VALUE="$S3_ACCESS_KEY_VALUE" \
+    S3_SECRET_KEY_VALUE="$S3_SECRET_KEY_VALUE" \
     INSTALL_SSH_PUB_KEY="$INSTALL_SSH_PUB_KEY" \
     python3 -c '
 import json, os
@@ -754,6 +797,14 @@ if hb_api_token:
 ssh_user = os.environ.get("SECRETS_SSH_USER", "")
 if ssh_user:
     d["admiral_ssh_admin_user"] = ssh_user
+
+s3_access_key = os.environ.get("S3_ACCESS_KEY_VALUE", "")
+if s3_access_key:
+    d["admiral_s3_access_key_value"] = s3_access_key
+
+s3_secret_key = os.environ.get("S3_SECRET_KEY_VALUE", "")
+if s3_secret_key:
+    d["admiral_s3_secret_key_value"] = s3_secret_key
 
 ssh_pub_key = os.environ.get("INSTALL_SSH_PUB_KEY", "")
 if ssh_pub_key:
