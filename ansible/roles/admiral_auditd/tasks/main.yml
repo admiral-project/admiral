@@ -37,11 +37,20 @@
   register: audit_augenrules
   failed_when: false
 
+- name: Detect auditctl availability
+  command:
+    cmd: command -v auditctl
+  register: auditctl_available
+  changed_when: false
+  failed_when: false
+
 - name: Load audit rules via auditctl when augenrules is unavailable
   command:
     cmd: auditctl -R /etc/audit/rules.d/admiral.rules
   changed_when: false
-  when: audit_augenrules.rc != 0
+  when:
+    - audit_augenrules.rc != 0
+    - auditctl_available.rc == 0
 
 
 - name: Verify Admiral audit rules are loaded
@@ -56,3 +65,19 @@
     'admiral_tls' not in admiral_audit_rules_effective.stdout or
     'admiral_data' not in admiral_audit_rules_effective.stdout or
     'admiral_wireguard' not in admiral_audit_rules_effective.stdout
+  when: auditctl_available.rc == 0
+
+- name: Confirm audit rules were loaded through augenrules when auditctl is unavailable
+  ansible.builtin.stat:
+    path: /etc/audit/rules.d/admiral.rules
+  register: audit_rules_file
+  changed_when: false
+  when: auditctl_available.rc != 0
+
+- name: Assert audit rules file is present when auditctl is unavailable
+  ansible.builtin.assert:
+    that:
+      - audit_augenrules.rc == 0
+      - audit_rules_file.stat.exists
+    fail_msg: "augenrules did not load Admiral audit rules and auditctl is unavailable."
+  when: auditctl_available.rc != 0
