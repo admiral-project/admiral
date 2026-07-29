@@ -30,11 +30,11 @@
     enabled: true
     state: started
 
-- name: Load audit rules
+- name: Detect audit rule loader availability
   command:
-    cmd: augenrules --load
+    cmd: command -v augenrules
+  register: augenrules_available
   changed_when: false
-  register: audit_augenrules
   failed_when: false
 
 - name: Detect auditctl availability
@@ -44,12 +44,20 @@
   changed_when: false
   failed_when: false
 
+- name: Load audit rules with augenrules
+  command:
+    cmd: augenrules --load
+  changed_when: false
+  register: audit_augenrules
+  failed_when: false
+  when: augenrules_available.rc == 0
+
 - name: Load audit rules via auditctl when augenrules is unavailable
   command:
     cmd: auditctl -R /etc/audit/rules.d/admiral.rules
   changed_when: false
   when:
-    - audit_augenrules.rc != 0
+    - augenrules_available.rc != 0 or (audit_augenrules.rc | default(1)) != 0
     - auditctl_available.rc == 0
 
 
@@ -67,17 +75,28 @@
     'admiral_wireguard' not in admiral_audit_rules_effective.stdout
   when: auditctl_available.rc == 0
 
-- name: Confirm audit rules were loaded through augenrules when auditctl is unavailable
+- name: Confirm audit rules file when audit rule loader utilities are unavailable
   ansible.builtin.stat:
     path: /etc/audit/rules.d/admiral.rules
   register: audit_rules_file
   changed_when: false
-  when: auditctl_available.rc != 0
+  when:
+    - auditctl_available.rc != 0
+    - augenrules_available.rc != 0
 
-- name: Assert audit rules file is present when auditctl is unavailable
+- name: Restart auditd when audit rule loader utilities are unavailable
+  systemd:
+    name: auditd
+    state: restarted
+  when:
+    - auditctl_available.rc != 0
+    - augenrules_available.rc != 0
+
+- name: Assert audit rules file is present when audit rule loader utilities are unavailable
   ansible.builtin.assert:
     that:
-      - audit_augenrules.rc == 0
       - audit_rules_file.stat.exists
-    fail_msg: "augenrules did not load Admiral audit rules and auditctl is unavailable."
-  when: auditctl_available.rc != 0
+    fail_msg: "Admiral audit rules file is missing and no audit rule loader utility is available."
+  when:
+    - auditctl_available.rc != 0
+    - augenrules_available.rc != 0
