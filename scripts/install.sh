@@ -1045,7 +1045,8 @@ if [[ "$INSTALL_DEV_MODE" != "true" ]]; then
         SECURITY_WARNINGS+=("Public listening sockets do not match the declared host profile.")
     fi
 
-    if run_target_cmd "command -v auditctl >/dev/null 2>&1"; then
+    AUDITCTL_PATH="$(run_target_cmd "command -v auditctl || true")"
+    if [[ -n "$AUDITCTL_PATH" ]]; then
         AUDIT_RULES="$(run_target_cmd "auditctl -l" || true)"
         for audit_key in admiral_config admiral_secrets admiral_tls admiral_data admiral_wireguard; do
             if [[ "$AUDIT_RULES" != *"$audit_key"* ]]; then
