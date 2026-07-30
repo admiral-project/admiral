@@ -75,9 +75,11 @@ fuente fueron validadas. Se utilizará para las instalaciones restantes.
 
 Actualización: la tarea explícita reparó la ACL correctamente. Durante esa
 prueba, `PathChanged` se disparó por la misma modificación del ACL y produjo
-un bucle de arranques del servicio auxiliar. El watcher queda limitado a
-`PathExists`, que cubre la recreación del socket por Caddy sin reactivarse por
-su propia reparación. Falta repetir la convergencia con este ajuste final.
+un bucle de arranques del servicio auxiliar. `PathExists` también reprograma
+un servicio oneshot mientras el socket existe. La solución final elimina el
+watcher, aplica los permisos como root en `ExecStartPost` de Caddy y los
+reafirma durante la convergencia. Falta repetir la convergencia con este
+ajuste final.
 
 ## Criterio de salida
 

@@ -361,13 +361,13 @@ class InstallerModeTests(unittest.TestCase):
         self.assertIn("Enable EL10 CRB repository", common_tasks)
         self.assertIn("cmd: dnf config-manager --set-enabled crb", common_tasks)
 
-    def test_caddy_socket_acl_is_applied_to_existing_socket(self) -> None:
+    def test_caddy_socket_acl_uses_privileged_start_hook_without_watcher_loop(self) -> None:
         common_tasks = COMMON_TASKS.read_text(encoding="utf-8")
 
-        self.assertIn("Apply Caddy admin socket permissions to the current socket", common_tasks)
-        self.assertIn("name: admiral-caddy-socket-permissions.service", common_tasks)
-        self.assertIn("PathExists=/run/caddy/admin.sock", common_tasks)
-        self.assertNotIn("PathChanged=/run/caddy/admin.sock", common_tasks)
+        self.assertIn("ExecStartPost=+/usr/bin/setfacl -m u:admiral:rw,m::rw /run/caddy/admin.sock", common_tasks)
+        self.assertIn("Remove obsolete Caddy socket permission watcher units", common_tasks)
+        self.assertIn("Apply Caddy admin socket permissions after Caddy configuration", common_tasks)
+        self.assertNotIn("PathExists=/run/caddy/admin.sock", common_tasks)
 
     def test_rpm_baseline_configuration_is_not_treated_as_existing_installation(self) -> None:
         installer = INSTALLER.read_text(encoding="utf-8")
