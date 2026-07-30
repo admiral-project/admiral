@@ -218,12 +218,12 @@ expected_firewall_ports() {
 usage() {
     cat <<'EOF'
 Usage:
-  admiral_install --single-node [--public-ip <public-ip>]
-  admiral_install --dev-node [--public-ip <public-ip>]
-  admiral_install --admin-node [--public-ip <public-ip>]
-  admiral_install --admin-portal-node [--public-ip <public-ip>]
-  admiral_install --worker-node --public-ip <public-ip> [--wireguard-ip <wireguard-ip>]
-  admiral_install --portal-node --public-ip <public-ip> [--wireguard-ip <wireguard-ip>]
+  admiral-install --single-node [--public-ip <public-ip>]
+  admiral-install --dev-node [--public-ip <public-ip>]
+  admiral-install --admin-node [--public-ip <public-ip>]
+  admiral-install --admin-portal-node [--public-ip <public-ip>]
+  admiral-install --worker-node --public-ip <public-ip> [--wireguard-ip <wireguard-ip>]
+  admiral-install --portal-node --public-ip <public-ip> [--wireguard-ip <wireguard-ip>]
 
 Options:
   --single-node       Install all single-node components on one host.
@@ -686,7 +686,7 @@ if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]]; t
     if [[ -z "$INSTALL_NODE_ID" || -z "$INSTALL_WIREGUARD_IP" ]]; then
         if [[ -f /var/lib/admiral/know_host.yaml ]]; then
             if [[ -z "$INSTALL_NODE_ID" ]]; then
-                if ! INSTALL_NODE_ID=$(admiral-known-host "$ROLE_KEY" node_id); then
+            if ! INSTALL_NODE_ID=$(admiral-known-host "$ROLE_KEY" node_id); then
                     warn "Could not resolve node ID for role '$ROLE_KEY' from know_host.yaml."
                     INSTALL_NODE_ID=""
                 fi
@@ -1384,7 +1384,7 @@ HTTPS has not been configured yet.
 This is intentional.
 
 Run:
-  sudo admiral_https_setup
+  sudo admiral-https-setup
 
 The Admiral API is not publicly exposed.
 Internal services stay on loopback behind Caddy.

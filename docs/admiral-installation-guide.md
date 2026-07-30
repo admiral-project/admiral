@@ -6,8 +6,8 @@ Guía oficial para instalar Admiral en Enterprise Linux 10.
 
 Este documento cubre el flujo oficial de instalación:
 
-1. ejecutar `admiral_install`
-2. configurar HTTPS con `admiral_https_setup`
+1. ejecutar `admiral-install`
+2. configurar HTTPS con `admiral-https-setup`
 3. configurar el storage S3 de forma manual
 4. respaldar `/etc/admiral/secrets` fuera del servidor
 
@@ -20,8 +20,8 @@ Si necesita worker y portal, despliegue nodos separados.
 ## Plataforma soportada
 
 - Enterprise Linux 10
-- `admiral_install`
-- `admiral_https_setup`
+- `admiral-install`
+- `admiral-https-setup`
 - RPMs del repositorio Admiral
 
 ## Flujo oficial
@@ -38,7 +38,7 @@ git submodule update --init --recursive
 En single-node:
 
 ```bash
-sudo admiral_install --single-node
+sudo admiral-install --single-node
 ```
 
 El instalador:
@@ -65,14 +65,14 @@ La postura por defecto es:
 
 ### 3. Configurar HTTPS público
 
-`admiral_install` no configura el wildcard público ni maneja DNS.
+`admiral-install` no configura el wildcard público ni maneja DNS.
 Eso se hace manualmente después de la instalación con:
 
 ```bash
-sudo admiral_https_setup --domain cloud.example.com
+sudo admiral-https-setup --domain cloud.example.com
 ```
 
-`admiral_https_setup` usa DNS-01. El operador debe publicar el TXT record que certbot solicite.
+`admiral-https-setup` usa DNS-01. El operador debe publicar el TXT record que certbot solicite.
 
 El certificado público `ca.pem` puede distribuirse para validación TLS donde sea necesario.
 La clave privada `ca-key.pem` no debe salir del nodo admin.
@@ -146,7 +146,7 @@ manualmente en cada nodo admin/portal:
 
 ```bash
 rm -f /etc/admiral/tls/admirald-key.pem /etc/admiral/tls/admirald.csr /etc/admiral/tls/admirald.pem
-sudo admiral_install --single-node   # o el modo original del nodo
+sudo admiral-install --single-node   # o el modo original del nodo
 ```
 
 El re-run es idempotente: regenera la clave y el certificado firmados por la

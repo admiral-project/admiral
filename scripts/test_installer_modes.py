@@ -327,8 +327,8 @@ class InstallerModeTests(unittest.TestCase):
         content = SYSADMIN_GUIDE.read_text(encoding="utf-8")
 
         self.assertIn("All worker and dedicated portal provisioning is initiated", content)
-        self.assertIn("sudo admiral_install --portal-node", content)
-        self.assertIn("sudo admiral_install --worker-node", content)
+        self.assertIn("sudo admiral-install --portal-node", content)
+        self.assertIn("sudo admiral-install --worker-node", content)
         self.assertIn("--admin-portal-node", content)
         self.assertIn("--single-node", content)
         self.assertIn("--dev-node", content)

@@ -1,6 +1,6 @@
 # Laboratorio cloud local con KVM
 
-Este documento describe cómo validar `admiral_install --single-node` en una
+Este documento describe cómo validar `admiral-install --single-node` en una
 máquina EL10 nueva sin borrar el host de desarrollo ni confundir una
 reconciliación con una primera instalación.
 
@@ -58,7 +58,7 @@ La clave SSH creada para esta prueba es temporal. Cloud-init instala únicamente
 su mitad pública. Para instalaciones locales se pasa:
 
 ```bash
-sudo admiral_install --single-node \
+sudo admiral-install --single-node \
   --public-ip 10.0.2.15 \
   --ssh-public-key /home/rocky/.ssh/authorized_keys
 ```

@@ -241,8 +241,8 @@ Responsibilities:
 
 The RPMs install the operational entry points used by the umbrella installer:
 
-* `admiral_install` - packaged installer wrapper around `scripts/install.sh`
-* `admiral_https_setup` - DNS-01 wildcard certificate helper
+* `admiral-install` - packaged installer wrapper around `scripts/install.sh`
+* `admiral-https-setup` - DNS-01 wildcard certificate helper
 * `admirald`, `admiral-fleet`, and `admiralctl` - core backend binaries
 * `admiral-flagship` - administrative web console service
 * `harborctl` and `harbor-gunicorn` - Harbor CLI and web entry points
@@ -351,7 +351,7 @@ Or clone the repository and run:
 ```bash
 git clone https://github.com/admiral-project/admiral.git
 cd admiral
-sudo admiral_install --single-node
+sudo admiral-install --single-node
 ```
 
 The installer will:
@@ -396,7 +396,7 @@ The installer and Ansible do not manage DNS records for this step.
 Run the packaged HTTPS setup helper:
 
 ```bash
-sudo admiral_https_setup --domain cloud.example.com
+sudo admiral-https-setup --domain cloud.example.com
 ```
 
 From the source tree, the same helper is available as `scripts/admiral_https_setup.py`.

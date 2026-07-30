@@ -5,9 +5,9 @@ This guide matches the current repository state and the EL10 packaging.
 ## Supported Platform
 
 - Enterprise Linux 10 only
-- Supported installer entry point: `admiral_install`
+- Supported installer entry point: `admiral-install`
 - Source-tree installer: `scripts/install.sh`
-- HTTPS helper: `admiral_https_setup`
+- HTTPS helper: `admiral-https-setup`
 
 Admiral is a functional beta under testing and validation. It is not yet
 recommended for production use; Harbor's real PayPal payment flow remains a
@@ -15,7 +15,7 @@ recommended for production use; Harbor's real PayPal payment flow remains a
 
 ## Deployment Modes
 
-`admiral_install` supports six modes:
+`admiral-install` supports six modes:
 
 - `--single-node`
 - `--admin-node`
@@ -73,14 +73,14 @@ the real deployment.
 For a dedicated admin with a separate portal, run on the future admin host:
 
 ```bash
-sudo admiral_install --admin-node --public-ip 203.0.113.10
+sudo admiral-install --admin-node --public-ip 203.0.113.10
 ```
 
 For the supported shared admin and portal topology, use this mode from the
 first installation:
 
 ```bash
-sudo admiral_install --admin-portal-node --public-ip 203.0.113.10
+sudo admiral-install --admin-portal-node --public-ip 203.0.113.10
 ```
 
 Do not install `--admin-node` and later run `--portal-node` on that same host.
@@ -126,7 +126,7 @@ independently obtained fingerprint.
 Run the following command on the admin node:
 
 ```bash
-sudo admiral_install --portal-node \
+sudo admiral-install --portal-node \
   --node-id portal-01 \
   --public-ip 198.51.100.30 \
   --wireguard-ip 10.99.0.100 \
@@ -145,7 +145,7 @@ two values on the admin node.
 Run the following command on the admin node for each new worker:
 
 ```bash
-sudo admiral_install --worker-node \
+sudo admiral-install --worker-node \
   --node-id worker-01 \
   --public-ip 198.51.100.20 \
   --wireguard-ip 10.99.0.2 \
@@ -192,8 +192,8 @@ For a portal, replace the final service with `admiral-harbor`.
 
 ### 6. Reconcile or Reinstall a Spoke
 
-Re-run the same `admiral_install --worker-node` or
-`admiral_install --portal-node` command from the admin node. The installer
+Re-run the same `admiral-install --worker-node` or
+`admiral-install --portal-node` command from the admin node. The installer
 detects the persisted `opsa_*` account, connects with that non-root account,
 uses `sudo -n` for privileged operations, and preserves existing secrets and
 registrations. Supply the currently verified SSH host fingerprint on every
@@ -269,14 +269,14 @@ private key on the server; prefer `--ssh-public-key`:
 
 ```bash
 # Example: run from the admin node with a key in a custom location
-sudo admiral_install --worker-node \
+sudo admiral-install --worker-node \
   --public-ip 198.51.100.20 \
   --ssh-key /opt/keys/admin_id_ed25519 \
   --ssh-fingerprint SHA256:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA \
   --admin-endpoint 203.0.113.10
 
 # Local setup authorizes a public key and never needs its private half
-sudo admiral_install --single-node \
+sudo admiral-install --single-node \
   --ssh-public-key /home/admin/.ssh/authorized_keys
 ```
 
@@ -398,7 +398,7 @@ In multinode deployments (`--worker-node`), the use of a WireGuard VPN is **mand
 ## Spoke Bootstrapping and SSH Host Key Verification
 
 When provisioning a remote worker or portal node (`--worker-node` or
-`--portal-node`), the installer (`admiral_install` or `scripts/install.sh`)
+`--portal-node`), the installer (`admiral-install` or `scripts/install.sh`)
 transmits only the role-scoped bootstrap values, public CA certificate, and
 WireGuard public material required by that target. The central
 `/etc/admiral/secrets` inventory and CA private key never leave the admin host.
@@ -431,7 +431,7 @@ modified by spoke bootstrap.
 ### Example with fingerprint verification
 
 ```bash
-admiral_install --worker-node \
+admiral-install --worker-node \
   --public-ip 198.51.100.20 \
   --ssh-fingerprint SHA256:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA \
   --admin-endpoint 203.0.113.10
@@ -483,7 +483,7 @@ The installer and Ansible bootstrap:
 
 These are operator tasks and must be completed after installation:
 
-- Public HTTPS setup via `admiral_https_setup`
+- Public HTTPS setup via `admiral-https-setup`
 - S3 or other backup-storage configuration
 - DNS records for public endpoints
 - Any external email provider setup for Harbor
@@ -491,7 +491,7 @@ These are operator tasks and must be completed after installation:
 For HTTPS, run:
 
 ```bash
-sudo admiral_https_setup --domain cloud.example.com
+sudo admiral-https-setup --domain cloud.example.com
 ```
 
 For backup storage, use `admiralctl` after the platform is up. The installer does not create or configure the backup-storage backend.
@@ -593,7 +593,7 @@ Admiral expects SELinux to stay enabled. The recommended operational state is:
 - `container_manage_cgroup` boolean set to `on` on `single-node` and
   `worker-node` hosts
 
-The official setup path (`admiral_install`) leaves the system configured with these recommended SELinux parameters.
+The official setup path (`admiral-install`) leaves the system configured with these recommended SELinux parameters.
 
 You can verify the effective state with:
 

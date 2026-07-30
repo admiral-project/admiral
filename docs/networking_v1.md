@@ -626,7 +626,7 @@ Todos deben resolver a `203.0.113.42`.
 Una vez instalado Admiral y confirmados los DNS, ejecutar:
 
 ```bash
-sudo admiral_https_setup --domain cloud.example.com
+sudo admiral-https-setup --domain cloud.example.com
 ```
 
 O manualmente:
