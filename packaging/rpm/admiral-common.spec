@@ -1,11 +1,11 @@
 # SPDX-FileCopyrightText: William Moreno Reyes CP | MBA
 # SPDX-License-Identifier: Apache-2.0
 
-%global commit b5e27dd5971637ee5f3e0170c7817a689622872b
+%global commit 067e047be4bc3e15a8103ae94edeb7232fc9b804
 
 Name:    admiral-common
 Version: 0.0.1beta18
-Release: 32%{?dist}
+Release: 33%{?dist}
 Summary: Common files and utilities for Admiral PaaS
 
 License: Apache-2.0
@@ -144,6 +144,9 @@ semanage fcontext -a -t container_file_t "/var/lib/admiral-apps/.local/share/con
 restorecon -R /var/lib/admiral-apps/.local/share/containers/storage/ 2>/dev/null || :
 
 %changelog
+* Thu Jul 30 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta18-33
+- Refresh installer validation and secure remote command execution
+
 * Thu Jul 30 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta18-32
 - Remove cockpit-ws from production profiles while keeping cockpit-bridge
 
