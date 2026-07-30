@@ -33,12 +33,14 @@ Los RPMs se usan desde `packaging/build/RPMS/`:
 
 | Área | Entorno | Estado | Evidencia |
 |---|---|---|---|
-| Pruebas de instalador | Host de validación | Aprobado | `python3 -m unittest discover -s scripts -p 'test_*.py'`: 47 pruebas correctas. |
+| Pruebas de instalador | Host de validación | Aprobado | `python3 -m unittest discover -s scripts -p 'test_*.py'`: 48 pruebas correctas. |
 | Pruebas Go | Host de validación | Aprobado | `go test ./admirald/... ./admiral-fleet/... ./admiralctl/...` correcto. |
 | Single node | Rocky Linux 10 | Aprobado | `admiral-install --single-node` terminó con `ok=214`, `changed=104`, `failed=0`; servicios activos. |
 | WordPress | Rocky Linux 10 | Aprobado | Operación `op_45a77d013a8fdd86` correcta; instancia `inst_e8c7b3742bb647a5` sana y en ejecución. El HTTP local respondió 301 y los contenedores se ejecutaron como `admiral-apps` con Podman rootless. |
 | Single node | AlmaLinux 10 | Aprobado | Reinstalados los RPM locales actuales y convergencia `admiral-install --single-node` correcta. Caddy responde `200` en `127.0.0.1:2019`, los cinco servicios están activos, `harborctl ping` y ambos nodos informan estado saludable. No hubo errores de reconciliación de rutas posteriores al reinicio de Admirald. |
-| Single node | CentOS Stream 10 | Pendiente | Debe realizarse desde una VM limpia con los nuevos RPM locales de `admirald` y `admiral-common` que cambian la Admin API de Caddy a loopback TCP. |
+| Single node | CentOS Stream 10 | Aprobado | VM limpia con los RPM locales actuales. La convergencia `admiral-install --single-node` dejó los cinco servicios activos, Caddy respondió `200` en `127.0.0.1:2019`, Harbor respondió correctamente y los nodos portal/worker quedaron `active` y `healthy`. |
+| WordPress | CentOS Stream 10 | Aprobado | Operación `op_6fa5f77057b0536a` correcta; instancia `inst_60611fa4ffdfa938` con estado técnico `running`. `podman ps` bajo `admiral-apps` mostró los servicios rootless y `curl http://127.0.0.1:40000/` respondió `301`. |
+| WordPress | AlmaLinux 10 | Aprobado | Operación `op_e29c08a4012626d8` correcta; instancia `inst_c8bda6f60fb27eba` con estado técnico `running`. Los cuatro contenedores rootless se ejecutaron como `admiral-apps` y `curl http://127.0.0.1:40000/` respondió `301`. |
 | Multinodo | Nube local simulada | Pendiente | Falta crear red aislada, instalar nodo administrativo y enrolar el worker. |
 | SSH y handshake | Multinodo | Pendiente | La revisión estática confirma identidad SSH por nodo y autenticación Fleet--Admirald por token; falta evidencia de ejecución y revocación de la llave bootstrap. |
 | Issues de GitHub | `admiral-project/admiral` | En curso | #3 cerrado fuera de alcance (PayPal real); #12 cerrado tras corregir los nombres de comandos RPM. |
@@ -88,3 +90,11 @@ beta19 queda validado únicamente cuando las tres instalaciones single-node y el
 flujo multinodo terminen sin fallos, se compruebe el handshake Fleet--Admirald,
 WordPress rootless permanezca sano y cada issue abierto tenga una resolución con
 evidencia o una justificación explícita de fuera de alcance.
+
+## Hito cerrado: matriz single-node
+
+La matriz single-node queda cerrada el 2026-07-30. Rocky Linux 10, AlmaLinux
+10 y CentOS Stream 10 completaron la instalación con los RPM locales beta19;
+en los tres se verificó Caddy por `127.0.0.1:2019` y un despliegue real
+WordPress/MariaDB rootless. La siguiente fase es exclusivamente el escenario
+multinodo local y el cierre fundamentado de los issues restantes.
