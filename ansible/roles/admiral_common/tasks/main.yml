@@ -119,7 +119,7 @@
       RuntimeDirectoryMode=0750
       ExecStartPost=/usr/bin/chmod 0660 /run/caddy/admin.sock
       ExecStartPost=/usr/bin/setfacl -m u:admiral:x /run/caddy
-      ExecStartPost=/usr/bin/setfacl -m u:admiral:rw /run/caddy/admin.sock
+      ExecStartPost=/usr/bin/setfacl -m u:admiral:rw,m::rw /run/caddy/admin.sock
   when: admiral_install_mode in ['single-node', 'admin-node', 'admin-portal-node']
   notify: restart caddy
 
@@ -137,7 +137,7 @@
       Type=oneshot
       ExecStart=/usr/bin/chmod 0660 /run/caddy/admin.sock
       ExecStart=/usr/bin/setfacl -m u:admiral:x /run/caddy
-      ExecStart=/usr/bin/setfacl -m u:admiral:rw /run/caddy/admin.sock
+      ExecStart=/usr/bin/setfacl -m u:admiral:rw,m::rw /run/caddy/admin.sock
   when: admiral_install_mode in ['single-node', 'admin-node', 'admin-portal-node']
 
 - name: Install Caddy admin socket permission repair path
