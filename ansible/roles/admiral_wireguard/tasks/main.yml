@@ -139,6 +139,7 @@
       }}
   when:
     - admiral_wireguard_role == 'hub'
+    - admiral_existing_wireguard_config_file.stat.exists
     - admiral_existing_wireguard_config is defined
   no_log: true
 
