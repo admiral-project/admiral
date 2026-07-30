@@ -1,9 +1,9 @@
 %global debug_package %{nil}
-%global commit ad0394834383b89978e966911b2ab561804ddebf
+%global commit f830015319c730776b6bab5a80d7388f984b76c9
 
 Name:    admiral-harbor
 Version: 0.0.1beta18
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: Admiral Customer Portal - Web UI for end users
 
 License: Apache-2.0
@@ -131,6 +131,9 @@ restorecon -R %{_localstatedir}/lib/admiral/harbor 2>/dev/null || :
 %{python3} -m pytest tests/ -x --tb=short
 
 %changelog
+* Thu Jul 30 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta18-2
+- Normalize SLA datetimes and use calendar-month revenue windows
+
 * Mon Jul 27 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta18-1
 - Bump version to 0.0.1beta18
 

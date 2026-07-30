@@ -10,6 +10,7 @@ ExecStart=/usr/bin/admirald
 Restart=on-failure
 RestartSec=10
 Environment=ADMIRAL_TLS_CA_FILE=/etc/admiral/tls/ca.pem
+Environment=ENV=production
 LoadCredential=admirald.ini:/etc/admirald.ini
 StandardOutput=journal
 StandardError=journal

@@ -147,6 +147,7 @@
       Description=Watch for Caddy admin socket recreation
 
       [Path]
+      PathCreated=/run/caddy/admin.sock
       PathChanged=/run/caddy/admin.sock
       Unit=admiral-caddy-socket-permissions.service
 

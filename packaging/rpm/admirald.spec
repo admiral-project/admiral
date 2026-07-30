@@ -2,11 +2,11 @@
 # SPDX-License-Identifier: Apache-2.0
 
 %global debug_package %{nil}
-%global commit a6fa05b5ff44716f10b53a49e397a4c682e004e3
+%global commit 540a974a9e3756c5f247297b5399471caacee5b0
 
 Name:    admirald
 Version: 0.0.1beta18
-Release: 3%{?dist}
+Release: 4%{?dist}
 Summary: Admiral Control Plane - Core API and orchestration service
 
 License: Apache-2.0
@@ -72,6 +72,9 @@ restorecon -F %{_bindir}/admirald 2>/dev/null || :
 %systemd_postun_with_restart admirald.service
 
 %changelog
+* Thu Jul 30 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta18-4
+- Centralize single-node routing detection and enable production S3 TLS policy
+
 * Wed Jul 29 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta18-2
 - Use a restricted Unix socket for the Caddy admin API
 

@@ -1048,7 +1048,7 @@ esac
 
 for service in "${REQUIRED_SERVICES[@]}"; do
     service_ready=false
-    for _ in {1..6}; do
+    for attempt in $(seq 1 12); do
         if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]]; then
             if ssh "${SSH_OPTIONS[@]}" "${INSTALL_TARGET_SSH_USER}@${INSTALL_PUBLIC_IP}" "systemctl is-active --quiet '$service'"; then
                 service_ready=true
@@ -1057,6 +1057,12 @@ for service in "${REQUIRED_SERVICES[@]}"; do
         elif systemctl is-active --quiet "$service"; then
             service_ready=true
             break
+        fi
+        if [[ "$attempt" == 6 && ( "$service" == "admiral-fleet" || "$service" == "admiral-harbor" ) &&
+            ( "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ) ]]; then
+            info "${service} is still starting; restarting it once before continuing readiness checks."
+            ssh "${SSH_OPTIONS[@]}" "${INSTALL_TARGET_SSH_USER}@${INSTALL_PUBLIC_IP}" \
+                "sudo -n systemctl restart '$service'" || true
         fi
         sleep 5
     done

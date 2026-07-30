@@ -5,17 +5,23 @@ ListenPort = {{ admiral_wireguard_port }}
 
 {% if admiral_wireguard_role == 'hub' %}
 {% for peer in admiral_wireguard_peers | default([]) %}
+{% if peer.public_key | default('') and peer.allowed_ips | default('') %}
 [Peer]
 PublicKey = {{ peer.public_key }}
 AllowedIPs = {{ peer.allowed_ips }}
+{% endif %}
 {% endfor %}
 {% if (admiral_wireguard_peers | default([]) | length) == 0 %}
 {% for peer_block in admiral_existing_wireguard_peers | default([]) %}
+{% if peer_block | trim %}
 {{ peer_block | trim }}
+{% endif %}
 {% endfor %}
 {% if (admiral_existing_wireguard_peers | default([]) | length) == 0 %}
 {% for peer_fragment in admiral_existing_wireguard_peer_fragments | default([]) %}
+{% if peer_fragment | trim %}
 {{ peer_fragment | trim }}
+{% endif %}
 {% endfor %}
 {% endif %}
 {% endif %}
