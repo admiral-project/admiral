@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: William Moreno Reyes CP | MBA
 # SPDX-License-Identifier: Apache-2.0
 
-%global commit 30bebf51ebc14a7863dba09535cfca7b84fa5622
+%global commit b3bb48fc026cea1923db9137c6e54b17ec35d030
 
 Name:    admiral-common
 Version: 0.0.1beta19
