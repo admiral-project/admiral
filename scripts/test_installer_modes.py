@@ -473,8 +473,8 @@ class InstallerModeTests(unittest.TestCase):
         ).read_text(encoding="utf-8")
 
         self.assertIn("name: cockpit-bridge", cockpit)
-        self.assertNotIn("name: cockpit\n", cockpit)
-        self.assertNotIn("cockpit.socket", cockpit)
+        self.assertIn("name: cockpit-ws", cockpit)
+        self.assertIn("name: cockpit.socket", cockpit)
 
 
 if __name__ == "__main__":

@@ -3,3 +3,18 @@
   dnf:
     name: cockpit-bridge
     state: present
+
+- name: Remove Cockpit web service from production profiles
+  dnf:
+    name: cockpit-ws
+    state: absent
+  when: not (admiral_dev_mode | default(false) | bool)
+
+- name: Disable Cockpit web socket from production profiles
+  systemd:
+    name: cockpit.socket
+    enabled: false
+    state: stopped
+    daemon_reload: true
+  when: not (admiral_dev_mode | default(false) | bool)
+  failed_when: false

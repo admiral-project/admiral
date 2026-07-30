@@ -577,6 +577,8 @@ if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]]; t
     SSH_OPTIONS=(
         -i "$INSTALL_TARGET_SSH_KEY"
         -o BatchMode=yes
+        -o ControlMaster=no
+        -o ControlPersist=no
         -o StrictHostKeyChecking=yes
         -o "UserKnownHostsFile=$TMP_KNOWN_HOSTS"
     )
@@ -937,11 +939,13 @@ if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]]; t
     [[ -f "$ADMIN_SSH_DELIVERY_KEY" ]] || die "Ansible did not create the per-node SSH delivery key: $ADMIN_SSH_DELIVERY_KEY"
     REMOTE_SSH_USER="admiral-ssh"
     if ! ssh -i "$ADMIN_SSH_DELIVERY_KEY" -o BatchMode=yes \
+        -o ControlMaster=no -o ControlPersist=no \
         -o StrictHostKeyChecking=yes -o "UserKnownHostsFile=$TMP_KNOWN_HOSTS" \
         "${REMOTE_SSH_USER}@${INSTALL_PUBLIC_IP}" true >/dev/null 2>&1; then
         die "Per-node SSH login verification failed for ${REMOTE_SSH_USER}; bootstrap access remains available for recovery."
     fi
     if ! ssh -i "$ADMIN_SSH_DELIVERY_KEY" -o BatchMode=yes \
+        -o ControlMaster=no -o ControlPersist=no \
         -o StrictHostKeyChecking=yes -o "UserKnownHostsFile=$TMP_KNOWN_HOSTS" \
         "${REMOTE_SSH_USER}@${INSTALL_PUBLIC_IP}" "sudo -n true" >/dev/null 2>&1; then
         die "Per-node sudo verification failed for ${REMOTE_SSH_USER}; bootstrap access remains available for recovery."
@@ -949,6 +953,8 @@ if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]]; t
     SSH_OPTIONS=(
         -i "$ADMIN_SSH_DELIVERY_KEY"
         -o BatchMode=yes
+        -o ControlMaster=no
+        -o ControlPersist=no
         -o StrictHostKeyChecking=yes
         -o "UserKnownHostsFile=$TMP_KNOWN_HOSTS"
     )
