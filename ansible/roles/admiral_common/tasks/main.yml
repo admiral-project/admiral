@@ -158,7 +158,6 @@
 
       [Path]
       PathExists=/run/caddy/admin.sock
-      PathChanged=/run/caddy/admin.sock
       Unit=admiral-caddy-socket-permissions.service
 
       [Install]

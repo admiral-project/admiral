@@ -73,6 +73,12 @@ fuente fueron validadas. Se utilizará para las instalaciones restantes.
    aplicar la ACL al socket ya existente y se repetirá la convergencia antes
    de aprobar la plataforma.
 
+Actualización: la tarea explícita reparó la ACL correctamente. Durante esa
+prueba, `PathChanged` se disparó por la misma modificación del ACL y produjo
+un bucle de arranques del servicio auxiliar. El watcher queda limitado a
+`PathExists`, que cubre la recreación del socket por Caddy sin reactivarse por
+su propia reparación. Falta repetir la convergencia con este ajuste final.
+
 ## Criterio de salida
 
 beta19 queda validado únicamente cuando las tres instalaciones single-node y el

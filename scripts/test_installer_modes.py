@@ -366,6 +366,8 @@ class InstallerModeTests(unittest.TestCase):
 
         self.assertIn("Apply Caddy admin socket permissions to the current socket", common_tasks)
         self.assertIn("name: admiral-caddy-socket-permissions.service", common_tasks)
+        self.assertIn("PathExists=/run/caddy/admin.sock", common_tasks)
+        self.assertNotIn("PathChanged=/run/caddy/admin.sock", common_tasks)
 
     def test_rpm_baseline_configuration_is_not_treated_as_existing_installation(self) -> None:
         installer = INSTALLER.read_text(encoding="utf-8")
