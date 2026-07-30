@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: William Moreno Reyes CP | MBA
 # SPDX-License-Identifier: Apache-2.0
 
-%global commit 613b2651497fd5032d4ce2f80a23928605d81147
+%global commit e62dd7e50fe06d33310307471351d15d6161978b
 
 Name:    admiral-common
 Version: 0.0.1beta18
@@ -141,6 +141,10 @@ semanage fcontext -a -t container_file_t "/var/lib/admiral-apps/.local/share/con
 restorecon -R /var/lib/admiral-apps/.local/share/containers/storage/ 2>/dev/null || :
 
 %changelog
+* Thu Jul 30 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta18-30
+- Install operational helper scripts in /usr/bin
+- Include the known-host YAML resolver in admiral-common
+
 * Wed Jul 29 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta18-28
 - Converge spoke SSH and disable inherited Cockpit listeners
 
