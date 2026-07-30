@@ -622,6 +622,77 @@
   when:
     - admiral_install_mode in ['worker-node', 'portal-node']
 
+- name: Prepare per-node SSH administration identity on spoke profiles
+  when: admiral_install_mode in ['worker-node', 'portal-node']
+  block:
+    - name: Determine spoke SSH delivery identifier
+      set_fact:
+        admiral_ssh_delivery_id: >-
+          {{ (fleet_node_id | default(harbor_node_id | default(ansible_hostname)))
+             | regex_replace('[^A-Za-z0-9_.-]', '_') }}
+
+    - name: Create SSH delivery directory on the Admin controller for spoke
+      file:
+        path: /var/lib/admiral/ssh-delivery
+        state: directory
+        owner: root
+        group: root
+        mode: "0700"
+      delegate_to: localhost
+
+    - name: Generate spoke administrative SSH identity on the Admin controller
+      command:
+        argv:
+          - ssh-keygen
+          - -t
+          - ed25519
+          - -f
+          - "/var/lib/admiral/ssh-delivery/{{ admiral_ssh_delivery_id }}.ed25519"
+          - -C
+          - "admiral-ssh@{{ admiral_ssh_delivery_id }}"
+          - -N
+          - ""
+        creates: "/var/lib/admiral/ssh-delivery/{{ admiral_ssh_delivery_id }}.ed25519"
+      register: admiral_spoke_ssh_identity_generated
+      delegate_to: localhost
+      changed_when: admiral_spoke_ssh_identity_generated.rc == 0
+      no_log: true
+
+    - name: Read spoke administrative SSH public key
+      slurp:
+        src: "/var/lib/admiral/ssh-delivery/{{ admiral_ssh_delivery_id }}.ed25519.pub"
+      register: admiral_spoke_ssh_delivery_public_key
+      delegate_to: localhost
+      no_log: true
+
+    - name: Select spoke administrative SSH identity
+      set_fact:
+        admiral_ssh_admin_user: "admiral-ssh"
+        admiral_ssh_pub_key: "{{ admiral_spoke_ssh_delivery_public_key.content | b64decode | trim }}"
+        admiral_ssh_delivery_private_key: "/var/lib/admiral/ssh-delivery/{{ admiral_ssh_delivery_id }}.ed25519"
+      no_log: true
+
+    - name: Calculate spoke administrative SSH fingerprint
+      command:
+        argv:
+          - ssh-keygen
+          - -lf
+          - "/var/lib/admiral/ssh-delivery/{{ admiral_ssh_delivery_id }}.ed25519.pub"
+          - -E
+          - sha256
+      register: admiral_spoke_ssh_delivery_fingerprint
+      delegate_to: localhost
+      changed_when: false
+      no_log: true
+
+    - name: Report spoke administrative SSH delivery artifact
+      debug:
+        msg:
+          node_id: "{{ admiral_ssh_delivery_id }}"
+          user: admiral-ssh
+          private_key: "/var/lib/admiral/ssh-delivery/{{ admiral_ssh_delivery_id }}.ed25519"
+          public_key_fingerprint: "{{ admiral_spoke_ssh_delivery_fingerprint.stdout | trim }}"
+
 - name: Manage dedicated portal-local PostgreSQL credential
   when:
     - admiral_install_mode == 'portal-node'
