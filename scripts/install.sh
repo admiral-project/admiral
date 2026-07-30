@@ -655,6 +655,14 @@ if ! rpm -q dnf-plugins-core >/dev/null 2>&1; then
     dnf install -y dnf-plugins-core
 fi
 
+# EL10 packages used by Admiral are split between EPEL and CRB. Enable CRB
+# explicitly on every supported EL derivative so a fresh installation does not
+# depend on an operator having prepared the host repositories beforehand.
+if [[ "$ID" == "rhel" || "$ID" == "centos" || "$ID" == "rocky" || "$ID" == "almalinux" ]]; then
+    info "Enabling EL10 CRB repository..."
+    dnf config-manager --set-enabled crb
+fi
+
 # --- 6. enable COPR repos ---
 info "Enabling Caddy COPR repository..."
 dnf copr enable -y "@caddy/caddy"

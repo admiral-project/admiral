@@ -3,6 +3,9 @@
 Fecha de inicio: 2026-07-30  
 Responsable: William Moreno Reyes <williamjmorenor@gmail.com>
 
+Esta bitácora es viva: se actualiza al terminar cada hito de validación, al
+encontrar un bloqueo y al corregir un defecto que pueda afectar el lanzamiento.
+
 ## Alcance
 
 - RPMs locales beta19 de Admiral; no se compilan paquetes Python.
@@ -49,6 +52,15 @@ Los RPMs se usan desde `packaging/build/RPMS/`:
    `fix(installer): accept clean RPM baseline in playbook`.
 3. Los comandos instalados tenían guion bajo cuando la interfaz documentada usa
    guiones. Corregido en `fix(cli): standardize installed command names`.
+
+## Hallazgos en curso
+
+4. En EL10, una instalación nueva necesita el repositorio CRB además de EPEL
+   para resolver dependencias de instalación. Rocky y Alma se prepararon con
+   CRB explícitamente para continuar la matriz. El bootstrap shell y el rol
+   Ansible ahora habilitan CRB de forma explícita antes de instalar paquetes de
+   Admiral; la prueba de regresión pasó (46 pruebas). Falta reconstruir el RPM
+   `admiral-common` y repetir la validación en una instalación EL10 limpia.
 
 ## Criterio de salida
 

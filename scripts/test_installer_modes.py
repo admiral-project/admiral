@@ -349,6 +349,18 @@ class InstallerModeTests(unittest.TestCase):
         self.assertLess(installer.index('preflight_remote_node_role "$REQUESTED_NODE_ROLE"'), mutation_offset)
         self.assertIn("Refusing to modify packages or repositories", installer)
 
+    def test_el10_bootstrap_enables_crb_before_installing_admiral_packages(self) -> None:
+        installer = INSTALLER.read_text(encoding="utf-8")
+        common_tasks = COMMON_TASKS.read_text(encoding="utf-8")
+
+        self.assertIn("dnf config-manager --set-enabled crb", installer)
+        self.assertLess(
+            installer.index("dnf config-manager --set-enabled crb"),
+            installer.index("dnf install -y admiral-common"),
+        )
+        self.assertIn("Enable EL10 CRB repository", common_tasks)
+        self.assertIn("cmd: dnf config-manager --set-enabled crb", common_tasks)
+
     def test_rpm_baseline_configuration_is_not_treated_as_existing_installation(self) -> None:
         installer = INSTALLER.read_text(encoding="utf-8")
         playbook = PLAYBOOK.read_text(encoding="utf-8")

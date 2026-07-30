@@ -15,6 +15,14 @@
     state: present
   when: ansible_distribution in ['RedHat', 'CentOS', 'Rocky', 'AlmaLinux']
 
+- name: Enable EL10 CRB repository
+  command:
+    cmd: dnf config-manager --set-enabled crb
+  changed_when: false
+  when:
+    - ansible_distribution in ['RedHat', 'CentOS', 'Rocky', 'AlmaLinux']
+    - ansible_distribution_major_version | int == 10
+
 - name: Enable Caddy COPR repository
   command:
     cmd: dnf copr enable -y @caddy/caddy
