@@ -1139,12 +1139,11 @@ if [[ "$INSTALL_DEV_MODE" != "true" ]]; then
     run_target_cmd() {
         local cmd="$1"
         if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]]; then
-            local quoted_cmd
-            printf -v quoted_cmd '%q' "$cmd"
             ssh "${SSH_OPTIONS[@]}" \
-                "${INSTALL_TARGET_SSH_USER}@${INSTALL_PUBLIC_IP}" "sudo bash -lc $quoted_cmd" 2>/dev/null || true
+                "${INSTALL_TARGET_SSH_USER}@${INSTALL_PUBLIC_IP}" "sudo bash -s --" \
+                <<< "$cmd" 2>/dev/null || true
         else
-            bash -lc "$cmd" 2>/dev/null || true
+            bash -c "$cmd" 2>/dev/null || true
         fi
     }
 
@@ -1220,7 +1219,8 @@ if [[ "$INSTALL_DEV_MODE" != "true" ]]; then
     fi
 
     FAIL2BAN_STATUS="$(run_target_cmd "fail2ban-client ping && fail2ban-client status sshd" || true)"
-    if [[ "$FAIL2BAN_STATUS" != *"Server replied: pong"* || "$FAIL2BAN_STATUS" != *"Status for the jail"* ]]; then
+    if ! [[ "$FAIL2BAN_STATUS" == *"Server replied: pong"* &&
+        "$FAIL2BAN_STATUS" == *"Status for the jail"* ]]; then
         SECURITY_WARNINGS+=("fail2ban is not responding with the expected sshd jail.")
     fi
     FAIL2BAN_ACTIONS="$(run_target_cmd "fail2ban-client get sshd actions" || true)"
