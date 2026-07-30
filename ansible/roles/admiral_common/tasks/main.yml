@@ -173,6 +173,15 @@
     daemon_reload: true
   when: admiral_install_mode in ['single-node', 'admin-node', 'admin-portal-node']
 
+# The path unit only reacts to future socket changes. Apply the ACL once for
+# the socket Caddy already created during this convergence as well; otherwise
+# the ACL mask can remain empty after a Caddy restart and block Admirald.
+- name: Apply Caddy admin socket permissions to the current socket
+  systemd:
+    name: admiral-caddy-socket-permissions.service
+    state: started
+  when: admiral_install_mode in ['single-node', 'admin-node', 'admin-portal-node']
+
 - name: Install managed Caddyfile for Admiral
   copy:
     dest: /etc/caddy/Caddyfile

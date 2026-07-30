@@ -66,6 +66,13 @@ Actualización: el RPM local `admiral-common-0.0.1beta19-34.el10.noarch.rpm`
 fue reconstruido correctamente con la corrección de CRB y sus referencias de
 fuente fueron validadas. Se utilizará para las instalaciones restantes.
 
+5. En Alma, la primera convergencia dejó una máscara ACL vacía en el socket
+   administrativo de Caddy, con lo cual Admirald no podía reconciliar rutas.
+   El token de Fleet sí quedó correcto tras el registro del nodo; los `401`
+   iniciales fueron previos a ese registro. Se añade una tarea explícita para
+   aplicar la ACL al socket ya existente y se repetirá la convergencia antes
+   de aprobar la plataforma.
+
 ## Criterio de salida
 
 beta19 queda validado únicamente cuando las tres instalaciones single-node y el
