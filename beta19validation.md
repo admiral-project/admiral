@@ -37,8 +37,8 @@ Los RPMs se usan desde `packaging/build/RPMS/`:
 | Pruebas Go | Host de validación | Aprobado | `go test ./admirald/... ./admiral-fleet/... ./admiralctl/...` correcto. |
 | Single node | Rocky Linux 10 | Aprobado | `admiral-install --single-node` terminó con `ok=214`, `changed=104`, `failed=0`; servicios activos. |
 | WordPress | Rocky Linux 10 | Aprobado | Operación `op_45a77d013a8fdd86` correcta; instancia `inst_e8c7b3742bb647a5` sana y en ejecución. El HTTP local respondió 301 y los contenedores se ejecutaron como `admiral-apps` con Podman rootless. |
-| Single node | AlmaLinux 10 | En curso | Dependencias del sistema y COPR ya preparados; falta instalar RPMs locales y ejecutar el instalador. |
-| Single node | CentOS Stream 10 | Pendiente | Falta iniciar y validar la VM. |
+| Single node | AlmaLinux 10 | Aprobado | Reinstalados los RPM locales actuales y convergencia `admiral-install --single-node` correcta. Caddy responde `200` en `127.0.0.1:2019`, los cinco servicios están activos, `harborctl ping` y ambos nodos informan estado saludable. No hubo errores de reconciliación de rutas posteriores al reinicio de Admirald. |
+| Single node | CentOS Stream 10 | Pendiente | Debe realizarse desde una VM limpia con los nuevos RPM locales de `admirald` y `admiral-common` que cambian la Admin API de Caddy a loopback TCP. |
 | Multinodo | Nube local simulada | Pendiente | Falta crear red aislada, instalar nodo administrativo y enrolar el worker. |
 | SSH y handshake | Multinodo | Pendiente | La revisión estática confirma identidad SSH por nodo y autenticación Fleet--Admirald por token; falta evidencia de ejecución y revocación de la llave bootstrap. |
 | Issues de GitHub | `admiral-project/admiral` | En curso | #3 cerrado fuera de alcance (PayPal real); #12 cerrado tras corregir los nombres de comandos RPM. |
