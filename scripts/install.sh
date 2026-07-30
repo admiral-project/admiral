@@ -248,6 +248,7 @@ Options:
   --ssh-fingerprint   Expected SSH host key fingerprint (SHA256:...) for verification.
   --s3-credentials-file  File containing ADMIRAL_S3_ACCESS_KEY_ID and ADMIRAL_S3_SECRET_ACCESS_KEY.
   --yes               Confirm non-interactive dangerous operations such as --dev-node.
+  --no-revoke-ssh-key Do not revoke the bootstrap SSH key after spoke onboarding.
   -h, --help          Show this help message.
 
 Note: --worker-node and --portal-node are mutually exclusive by design.
@@ -271,6 +272,7 @@ BOOTSTRAP_SSH_PUB_KEY=""
 BOOTSTRAP_SSH_USER=""
 ADMIN_SSH_DELIVERY_KEY=""
 INSTALL_S3_CREDENTIALS_FILE=""
+INSTALL_NO_REVOKE_SSH_KEY="false"
 INSTALL_YES="false"
 INSTALLER_TEMP_BASE=""
 EXTRA_VARS_FILE=""
@@ -369,6 +371,9 @@ while [[ $# -gt 0 ]]; do
             ;;
         --yes)
             INSTALL_YES="true"
+            ;;
+        --no-revoke-ssh-key)
+            INSTALL_NO_REVOKE_SSH_KEY="true"
             ;;
         -h|--help)
             usage
@@ -1336,7 +1341,8 @@ if [[ "$INSTALL_DEV_MODE" != "true" ]]; then
 fi
 
 # --- 11c. revoke bootstrap SSH access only after complete onboarding ---
-if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]]; then
+if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]] &&
+    [[ "$INSTALL_NO_REVOKE_SSH_KEY" != "true" ]]; then
     [[ -n "$BOOTSTRAP_SSH_PUB_KEY" ]] || die "Bootstrap public key is unavailable; refusing to claim onboarding completion."
     [[ -n "$BOOTSTRAP_SSH_USER" ]] || die "Bootstrap SSH user is unavailable; refusing to revoke bootstrap access."
     printf -v QUOTED_BOOTSTRAP_USER '%q' "$BOOTSTRAP_SSH_USER"

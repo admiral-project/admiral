@@ -1,0 +1,201 @@
+.TH ADMIRAL\-INSTALL 1 "July 2026" "Admiral" "Admiral PaaS"
+.SH NAME
+admiral\-install \- bootstrap an Admiral platform node
+.SH SYNOPSIS
+.B admiral-install
+\fB--single-node\fR [\fIOPTIONS\fR]
+.P
+.B admiral-install
+\fB--dev-node\fR [\fIOPTIONS\fR]
+.P
+.B admiral-install
+\fB--admin-node\fR [\fIOPTIONS\fR]
+.P
+.B admiral-install
+\fB--admin-portal-node\fR [\fIOPTIONS\fR]
+.P
+.B admiral-install
+\fB--worker-node\fR \fB--public-ip\fR \fIIP\fR [\fIOPTIONS\fR]
+.P
+.B admiral-install
+\fB--portal-node\fR \fB--public-ip\fR \fIIP\fR [\fIOPTIONS\fR]
+.SH DESCRIPTION
+.B admiral-install
+provisions a fresh Enterprise Linux 10 host as an Admiral node. It selects the
+Ansible playbook and security baseline based on the installation mode and
+applies all required services, firewall rules, SELinux policy, WireGuard,
+Podman rootless, and monitoring.
+.P
+The installer is idempotent for
+.B \-\-single-node
+and
+.B \-\-admin-node
+modes. Spoke modes
+.RB ( \-\-worker-node ,
+.BR \-\-portal-node )
+revoke the bootstrap SSH key after onboarding; use
+.B \-\-no-revoke-ssh-key
+to preserve it for reconvergence.
+.SH INSTALLATION MODES
+.TP
+\fB\-\-single-node\fR
+All-in-one deployment. Installs admirald, admiral-fleet, admiralctl,
+admiral-flagship, admiral-harbor, PostgreSQL, Caddy, and all supporting
+services on a single host. Recommended for evaluation and small deployments.
+.TP
+\fB\-\-dev-node\fR
+Single-node evaluation mode with relaxed security. WSGI servers are exposed
+directly on ports 5000 and 5001. Cockpit is exposed on port 9090. Local
+self-signed certificates are used. Not suitable for production.
+.TP
+\fB\-\-admin-node\fR
+Control plane only. Installs admirald, admiralctl, PostgreSQL, WireGuard hub,
+and supporting services. Does not install Caddy, flagship, or harbor.
+.TP
+\fB\-\-admin-portal-node\fR
+Control plane and customer portal on one host. Installs all admin-node
+components plus Caddy, admiral-flagship, and admiral-harbor. The typical
+multi-node admin topology.
+.TP
+\fB\-\-worker-node\fR
+Worker node for running customer workloads. Installs admiral-fleet, WireGuard
+spoke, Podman rootless, and supporting services. Requires
+.B \-\-public-ip
+and a reachable admin node. Run this command from the admin node, which SSHs
+into the target worker host.
+.TP
+\fB\-\-portal-node\fR
+Standalone portal node. Installs admiral-harbor, WireGuard spoke, and
+supporting services. Mutually exclusive with
+.BR \-\-worker-node .
+.SH OPTIONS
+.TP
+\fB\-\-public-ip\fR \fIIP\fR
+Public IP address of the node being configured. Required for spoke modes
+.RB ( \-\-worker-node ,
+.BR \-\-portal-node ).
+Optional for single-node and admin modes (defaults to detected IP).
+.TP
+\fB\-\-wireguard-ip\fR \fIIP\fR
+WireGuard tunnel IP for a spoke node. Assigned from 10.99.0.0/24. If omitted,
+the installer assigns the next available address via the admin hub.
+.TP
+\fB\-\-node-id\fR \fIID\fR
+Custom node identifier. Defaults to the hostname. Must be unique within the
+Admiral deployment.
+.TP
+\fB\-\-admin-endpoint\fR \fIURL\fR
+Override the admin API endpoint that spokes use to connect. Detected
+automatically in most topologies.
+.TP
+\fB\-\-ssh-user\fR \fIUSER\fR
+SSH user for remote spoke bootstrap. Defaults to
+.BR root .
+During spoke installs the installer connects as this user, creates a dedicated
+bootstrap account with NOPASSWD sudo, runs Ansible, then revokes the bootstrap
+key and disables PermitRootLogin.
+.TP
+\fB\-\-ssh-key\fR \fIPATH\fR
+SSH private key for remote spoke configuration. Defaults to the invoking
+user\[cq]s default key.
+.TP
+\fB\-\-ssh-public-key\fR \fIPATH\fR
+Public key to authorize for the generated administrator user on the target
+node.
+.TP
+\fB\-\-ssh-fingerprint\fR \fISHA256:...\fR
+Expected SSH host key fingerprint. The installer verifies this fingerprint
+via ssh-keyscan before trusting the host. Strongly recommended for spoke
+installs.
+.TP
+\fB\-\-s3-credentials-file\fR \fIPATH\fR
+File containing ADMIRAL_S3_ACCESS_KEY_ID and ADMIRAL_S3_SECRET_ACCESS_KEY for
+backup storage. Must be mode 0600.
+.TP
+\fB\-\-no-revoke-ssh-key\fR
+Preserve the bootstrap SSH key after spoke onboarding. By default, the
+installer revokes the operator\[cq]s SSH key from the bootstrap user and
+disables PermitRootLogin after the Fleet\[en]Admirald handshake completes.
+Use this flag when reconverging a spoke that already has a working
+admiral-ssh identity, or when the handshake must be verified manually before
+locking down root SSH access.
+.TP
+\fB\-\-yes\fR
+Confirm non-interactive dangerous operations such as
+.BR \-\-dev-node .
+.TP
+\fB\-h\fR, \fB\-\-help\fR
+Display usage information and exit.
+.SH BOOTSTRAP SSH FLOW
+For spoke modes, the bootstrap SSH sequence is:
+.P
+1. SSH to target as
+.B \-\-ssh-user
+(default root) using
+.BR \-\-ssh-key .
+.P
+2. Create a temporary bootstrap user with the operator\[cq]s public key and
+NOPASSWD sudo.
+.P
+3. Verify the spoke node ID via
+.B \-\-node-id
+or remote role inspection.
+.P
+4. Run Ansible to install and configure all spoke services.
+.P
+5. Verify WireGuard handshake between hub and spoke.
+.P
+6. Verify the Fleet\[en]Admirald control-plane handshake via
+.BR "admiralctl nodes ready" .
+.P
+7. Apply the security checklist (SELinux, firewall, auditd, fail2ban, etc.).
+.P
+8. Unless
+.B \-\-no-revoke-ssh-key
+was given, revoke the bootstrap SSH key from the bootstrap user and apply
+PermitRootLogin no.
+.SH EXIT STATUS
+.TP
+0
+Installation completed successfully.
+.TP
+1
+A fatal error occurred. The installer prints a diagnostic message prefixed
+with [FATAL].
+.SH FILES
+.TP
+.I /etc/admiral/role
+Persisted node role. Written after first successful installation.
+.TP
+.I /etc/admiral/install.env
+Installation state used to detect existing deployments.
+.TP
+.I /etc/admiral/secrets
+Admiral secrets (mode 0600).
+.TP
+.I /etc/admirald.ini
+Admirald configuration.
+.TP
+.I /etc/admiral/fleet.env
+Fleet agent configuration.
+.TP
+.I /etc/admiral/harbor.env
+Harbor portal configuration.
+.SH ENVIRONMENT
+.TP
+.B ADMIRAL_INSECURE_SKIP_VERIFY
+Set to 1 to skip TLS certificate verification. Required on Fedora with
+self-signed CAs due to strict OpenSSL 3.4 key usage validation. Do not use
+in production.
+.SH SEE ALSO
+.BR admiralctl (1),
+.BR admiralctl-admin (8),
+.BR admiral-install (8),
+.BR harborctl (8)
+.P
+Full documentation and installation guide:
+.UR https://github.com/admiral-project/admiral
+.br
+.UE
+.SH AUTHOR
+William Moreno Reyes <williamjmorenor@gmail.com>

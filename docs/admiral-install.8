@@ -1,0 +1,237 @@
+.TH ADMIRAL\-INSTALL 8 "July 2026" "Admiral" "Admiral Administration"
+.SH NAME
+admiral\-install \- Admiral platform installation and administration
+.SH DESCRIPTION
+.B admiral-install
+bootstraps and converges Admiral nodes. This manual covers administration
+workflows, security considerations, and common deployment scenarios.
+.SH DEPLOYMENT TOPOLOGIES
+.SS Single-node (evaluation or small production)
+A single host runs all Admiral services: control plane, portal, worker,
+database, and reverse proxy. Suitable for teams evaluating Admiral or
+running a small number of customer instances.
+.SS Multi-node with admin-portal and workers
+The control plane and customer portal share one host
+.RB ( \-\-admin-portal-node ).
+Dedicated worker nodes
+.RB ( \-\-worker-node )
+run customer workloads via Podman rootless. Communication between nodes
+uses WireGuard on 10.99.0.0/24.
+.SS Split admin and portal
+.B \-\-admin-node
+installs only the control plane.
+.B \-\-portal-node
+installs the customer portal on a separate host. Each spoke requires its
+own WireGuard peer and admiral-ssh identity.
+.SH SECURITY MODEL
+.SS Bootstrap SSH
+During spoke installation the operator connects as root via SSH, creates a
+temporary bootstrap user, and runs Ansible. After the Fleet\[en]Admirald
+handshake is verified, the installer:
+.P
+  \[bu] Revokes the operator\[cq]s SSH key from the bootstrap user.
+.P
+  \[bu] Applies PermitRootLogin no via a drop-in configuration.
+.P
+  \[bu] Confirms that only the per-node admiral-ssh identity works.
+.P
+To preserve the bootstrap key for re-convergence, pass
+.BR \-\-no-revoke-ssh-key .
+.SS WireGuard isolation
+Each spoke has a /32 route to the hub only. Lateral spoke\[en]spoke
+communication is blocked. The WireGuard firewalld zone uses target DROP.
+.SS Service hardening
+All Admiral services run with systemd hardening:
+.NoNewPrivileges ,
+.PrivateTmp ,
+.ProtectHome ,
+and
+.ProtectSystem .
+Secrets are stored mode 0600 owned by root:admiral.
+Admiral-fleet runs as root (required for Podman rootless management) but
+drops capabilities via CapabilityBoundingSet.
+.SH WORKFLOWS
+.SS Fresh single-node deployment
+.RS
+.IP 1.
+Install the admiral-common RPM and its dependencies:
+.IP
+.B dnf install admiral-common
+.IP 2.
+Run the installer:
+.IP
+.B admiral-install --single-node
+.IP 3.
+Wait for completion. The installer prints "Admiral installation completed"
+and the Ansible PLAY RECAP with failed=0.
+.IP 4.
+Verify services:
+.IP
+.B systemctl status admirald caddy admiral-fleet admiral-flagship admiral-harbor
+.RE
+.SS Deploy admin-portal node
+.RS
+.IP
+.B admiral-install --admin-portal-node --public-ip 203.0.113.10
+.RE
+.SS Add a worker node
+.RS
+.IP
+From the admin node, SSH into the target worker host and run:
+.IP
+.B admiral-install --worker-node --public-ip 203.0.113.20
+.B \ \ \ \ \ \ --ssh-key ~/.ssh/id_ed25519
+.B \ \ \ \ \ \ --ssh-fingerprint SHA256:...
+.IP
+The installer connects as root, provisions the node, verifies the WireGuard
+and Fleet handshakes, then revokes the bootstrap key.
+.RE
+.SS Add a worker node without revoking the bootstrap key
+.RS
+.IP
+When reconverging a spoke that already has a healthy admiral-ssh identity:
+.IP
+.B admiral-install --worker-node --public-ip 203.0.113.20
+.B \ \ \ \ \ \ --ssh-key ~/.ssh/id_ed25519
+.B \ \ \ \ \ \ --no-revoke-ssh-key
+.IP
+The installer skips the revocation step and PermitRootLogin lockdown.
+The operator key remains in the bootstrap user\[cq]s authorized_keys
+for subsequent reconvergence runs.
+.RE
+.SS Deploy a portal node
+.RS
+.IP
+.B admiral-install --portal-node --public-ip 203.0.113.30
+.B \ \ \ \ \ \ --ssh-fingerprint SHA256:...
+.RE
+.SS Development evaluation node
+.RS
+.IP
+.B admiral-install --dev-node --yes
+.IP
+WARNING: Exposes WSGI servers directly on ports 5000/5001. Not for
+production.
+.RE
+.SH RECONVERGENCE
+.B \-\-single-node
+and
+.B \-\-admin-node
+are idempotent: running the installer again reconciles the node state.
+.P
+For spoke modes
+.RB ( \-\-worker-node ,
+.BR \-\-portal-node ),
+reconvergence requires either:
+.P
+  \[bu] Passing
+.B \-\-no-revoke-ssh-key
+from the second run onward (recommended), or
+.P
+  \[bu] SSHing as the per-node admiral-ssh user with the delivery key stored
+in /var/lib/admiral/ssh-delivery/<node-id>.ed25519 on the admin node.
+.SH POST-INSTALLATION VERIFICATION
+.SS Service health
+.RS
+.IP
+.B admiralctl status
+.IP
+.B harborctl ping
+.RE
+.SSS Security checklist
+The installer enforces a blocking security checklist on all secure modes:
+.RS
+.IP 1.
+SELinux Enforcing with required boolean values.
+.IP 2.
+firewalld zones: public (ssh/http/https), admiral (DROP for WireGuard).
+.IP 3.
+nftables egress policy with default reject.
+.IP 4.
+auditd with Admiral-specific rules.
+.IP 5.
+fail2ban with sshd jail using nftables backend.
+.IP 6.
+chronyd with synchronized clock.
+.IP 7.
+Podman rootless with correct subuid/subgid, linger, user bus, and storage.
+.RE
+.SS Verify a running workload
+On an admin or single-node host:
+.RS
+.IP
+.B admiralctl instances list
+.IP
+.B admiralctl instances status <instance-id>
+.RE
+.SH TROUBLESHOOTING
+.SS Installer fails with "Could not inspect the existing Admiral role"
+The spoke has a previous installation whose operator SSH key was revoked.
+Use
+.B \-\-no-revoke-ssh-key
+and the original
+.B \-\-ssh-key
+to reconverge.
+.SS WireGuard handshake timeout
+Check that UDP port 51820 is reachable on the hub public IP. Verify the
+WireGuard private key on the spoke matches the peer public key on the hub.
+.SS Fleet not registering with Admirald
+On the worker node, check:
+.RS
+.IP
+.B journalctl -u admiral-fleet
+.IP
+.B systemctl status admiral-fleet
+.RE
+Verify the fleet token in /etc/admiral/fleet.env matches the token in
+/etc/admirald.ini on the admin node.
+.SS Caddy admin API unreachable
+Caddy listens on 127.0.0.1:2019. Confirm the service is active:
+.RS
+.IP
+.B systemctl status caddy
+.IP
+.B curl -s http://127.0.0.1:2019/config/
+.RE
+.SH FILES
+.TP
+.I /etc/admiral/role
+Persisted node role identifier.
+.TP
+.I /var/lib/admiral/ssh-delivery/
+Per-node SSH delivery keys, one per enrolled spoke.
+.TP
+.I /etc/wireguard/
+WireGuard configuration including wg-admiral.conf and peers.d/.
+.TP
+.I /etc/admiral/secrets
+Sensitive deployment secrets (mode 0600, root:admiral).
+.SH ENVIRONMENT
+.TP
+.B ADMIRAL_ADMIN_TOKEN
+Authentication token for admiralctl.
+.TP
+.B ADMIRAL_INSECURE_SKIP_VERIFY
+Skip TLS verification (Fedora dev mode only).
+.SH NOTES
+The installer requires:
+.P
+  \[bu] Enterprise Linux 10 (CentOS Stream 10, Rocky Linux 10, AlmaLinux 10).
+.P
+  \[bu] EPEL and CRB repositories enabled.
+.P
+  \[bu] KVM CPU support for rootless Podman (virtualization is acceptable).
+.P
+  \[bu] At least 2 GiB RAM and 20 GiB free disk for single-node.
+.SH SEE ALSO
+.BR admiral-install (1),
+.BR admiralctl (1),
+.BR admiralctl-admin (8),
+.BR harborctl (8)
+.P
+Multi-node setup guide:
+.UR https://github.com/admiral-project/admiral/docs/multi_node_setup_v1.md
+.br
+.UE
+.SH AUTHOR
+William Moreno Reyes <williamjmorenor@gmail.com>

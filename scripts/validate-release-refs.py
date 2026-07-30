@@ -20,6 +20,8 @@ COMMON_PAYLOAD_PATHS = (
     "scripts/install.sh",
     "scripts/admiral_https_setup.py",
     "scripts/admiral_revoke_bootstrap_key.py",
+    "docs/admiral-install.1",
+    "docs/admiral-install.8",
     "packaging/systemd",
     "packaging/config",
     "packaging/bin",

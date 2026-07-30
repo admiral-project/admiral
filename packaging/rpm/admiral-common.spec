@@ -5,7 +5,7 @@
 
 Name:    admiral-common
 Version: 0.0.1beta19
-Release: 34%{?dist}
+Release: 35%{?dist}
 Summary: Common files and utilities for Admiral PaaS
 
 License: Apache-2.0
@@ -47,6 +47,10 @@ cp -r ansible/* %{buildroot}%{_datadir}/admiral/ansible/
 install -Dm0755 scripts/install.sh %{buildroot}%{_bindir}/admiral-install
 install -Dm0755 scripts/admiral_known_host.py %{buildroot}%{_bindir}/admiral-known-host
 install -Dm0755 scripts/admiral_revoke_bootstrap_key.py %{buildroot}%{_bindir}/admiral-revoke-bootstrap-key
+
+# Man pages
+install -Dm0644 docs/admiral-install.1 %{buildroot}%{_mandir}/man1/admiral-install.1
+install -Dm0644 docs/admiral-install.8 %{buildroot}%{_mandir}/man8/admiral-install.8
 
 # Rootless subordinate ID allocator (operator-facing helper invoked by the installer)
 install -Dm0755 scripts/admiral_rootless_subids.py %{buildroot}%{_bindir}/admiral-rootless-subids
@@ -94,6 +98,9 @@ install -D -m 0644 %{SOURCE1} %{buildroot}%{_sysusersdir}/%{name}.conf
 %{_bindir}/admiral-revoke-bootstrap-key
 %{_bindir}/admiral-rootless-subids
 %{_datadir}/admiral/ansible/
+
+%{_mandir}/man1/admiral-install.1*
+%{_mandir}/man8/admiral-install.8*
 
 %post
 # Set ownership of log directory
@@ -162,6 +169,10 @@ if [ "$1" -eq 0 ]; then
 fi
 
 %changelog
+* Thu Jul 30 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta19-35
+- Install admiral-install man pages (man1 and man8)
+- Add --no-revoke-ssh-key flag to preserve bootstrap SSH key
+
 * Thu Jul 30 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta18-34
 - Skip absent hub WireGuard configuration during peer extraction
 
