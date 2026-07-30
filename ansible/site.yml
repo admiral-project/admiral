@@ -175,7 +175,7 @@
     - role: admiral_fleet
       when: admiral_install_mode in ['single-node', 'worker-node']
     - role: admiral_cockpit
-      when: admiral_install_mode in ['single-node', 'admin-node', 'admin-portal-node', 'worker-node', 'portal-node']
+      when: admiral_install_mode in ['single-node', 'admin-node', 'admin-portal-node', 'worker-node', 'portal-node', 'dev-node']
     - role: admiral_ssh_tunnel
       when:
         - admiral_install_mode == 'worker-node'
