@@ -33,7 +33,7 @@ Los RPMs se usan desde `packaging/build/RPMS/`:
 
 | Área | Entorno | Estado | Evidencia |
 |---|---|---|---|
-| Pruebas de instalador | Host de validación | Aprobado | `python3 -m unittest discover -s scripts -p 'test_*.py'`: 45 pruebas correctas. |
+| Pruebas de instalador | Host de validación | Aprobado | `python3 -m unittest discover -s scripts -p 'test_*.py'`: 47 pruebas correctas. |
 | Pruebas Go | Host de validación | Aprobado | `go test ./admirald/... ./admiral-fleet/... ./admiralctl/...` correcto. |
 | Single node | Rocky Linux 10 | Aprobado | `admiral-install --single-node` terminó con `ok=214`, `changed=104`, `failed=0`; servicios activos. |
 | WordPress | Rocky Linux 10 | Aprobado | Operación `op_45a77d013a8fdd86` correcta; instancia `inst_e8c7b3742bb647a5` sana y en ejecución. El HTTP local respondió 301 y los contenedores se ejecutaron como `admiral-apps` con Podman rootless. |
@@ -69,17 +69,18 @@ fuente fueron validadas. Se utilizará para las instalaciones restantes.
 5. En Alma, la primera convergencia dejó una máscara ACL vacía en el socket
    administrativo de Caddy, con lo cual Admirald no podía reconciliar rutas.
    El token de Fleet sí quedó correcto tras el registro del nodo; los `401`
-   iniciales fueron previos a ese registro. Se añade una tarea explícita para
-   aplicar la ACL al socket ya existente y se repetirá la convergencia antes
-   de aprobar la plataforma.
+   iniciales fueron previos a ese registro. Los intentos de reparar el socket
+   con un watcher y con `ExecStartPost` no son robustos: Caddy recrea el socket
+   al recibir `/load` y vuelve a perder los ACL aplicados.
 
-Actualización: la tarea explícita reparó la ACL correctamente. Durante esa
-prueba, `PathChanged` se disparó por la misma modificación del ACL y produjo
-un bucle de arranques del servicio auxiliar. `PathExists` también reprograma
-un servicio oneshot mientras el socket existe. La solución final elimina el
-watcher, aplica los permisos como root en `ExecStartPost` de Caddy y los
-reafirma durante la convergencia. Falta repetir la convergencia con este
-ajuste final.
+Actualización: se descarta el socket Unix como transporte de la Admin API.
+`admirald` y Caddy se ejecutan en el mismo host; la API queda ligada únicamente
+a `127.0.0.1:2019`, no se publica en el firewall y el VPS se administra por
+SSH. En esta topología el socket Unix no añade una capa de protección material
+frente a loopback, pero sí añade complejidad operativa y riesgo de regresión
+durante las recargas de Caddy. El playbook elimina los overrides y ACL
+anteriores, y configura explícitamente el puerto loopback. Falta reconstruir
+los RPM locales afectados y repetir Alma.
 
 ## Criterio de salida
 

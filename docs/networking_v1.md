@@ -25,6 +25,13 @@ Puertos internos no soportados como edge público:
 - `5432/tcp` PostgreSQL
 - `2019/tcp` Caddy Admin API
 
+La Admin API de Caddy se liga exclusivamente a `127.0.0.1:2019`. `admirald` y
+Caddy residen en el mismo host y el puerto no se expone en el firewall. En el
+modelo operativo actual, con VPS administrado por SSH, un socket Unix no aporta
+una protección material adicional frente a loopback y sí introduce complejidad
+de permisos que puede romperse durante una recarga de Caddy. Por ello Admiral
+usa el puerto local como contrato soportado.
+
 `admiral-harbor` es el único servicio HTTP orientado al cliente, pero debe publicarse detrás de Caddy. `admirald` y `admiral-flagship` tienen autenticación y controles de sesión, pero siguen siendo servicios de plano de control y no un edge público soportado.
 
 ### 1.1 Diagrama de Red (Multinodo)
