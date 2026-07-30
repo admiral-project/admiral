@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
 """Allocate and validate subordinate IDs for Admiral's rootless workload user."""
 
 from __future__ import annotations

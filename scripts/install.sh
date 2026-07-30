@@ -380,7 +380,8 @@ S3_SECRET_KEY_VALUE=""
 if [[ -n "$INSTALL_S3_CREDENTIALS_FILE" ]]; then
     [[ -f "$INSTALL_S3_CREDENTIALS_FILE" ]] ||
         die "S3 credentials file not found: $INSTALL_S3_CREDENTIALS_FILE"
-    S3_CREDENTIALS_MODE="$(stat -c '%a' "$INSTALL_S3_CREDENTIALS_FILE" 2>/dev/null || printf '777')"
+    S3_CREDENTIALS_MODE="$(stat -c '%a' "$INSTALL_S3_CREDENTIALS_FILE")" ||
+        die "Cannot inspect S3 credentials file permissions: $INSTALL_S3_CREDENTIALS_FILE"
     if (( 10#$S3_CREDENTIALS_MODE % 100 != 0 )); then
         die "S3 credentials file must not be readable by group or other users: $INSTALL_S3_CREDENTIALS_FILE"
     fi
@@ -408,8 +409,8 @@ if missing:
 print(json.dumps(values))
 PY
 ) || die "Invalid S3 credentials file: $INSTALL_S3_CREDENTIALS_FILE"
-    S3_ACCESS_KEY_VALUE=$(S3_CREDENTIALS_JSON="$S3_CREDENTIALS_JSON" python3 -c 'import json, os; print(json.loads(os.environ["S3_CREDENTIALS_JSON"])["ADMIRAL_S3_ACCESS_KEY_ID"])')
-    S3_SECRET_KEY_VALUE=$(S3_CREDENTIALS_JSON="$S3_CREDENTIALS_JSON" python3 -c 'import json, os; print(json.loads(os.environ["S3_CREDENTIALS_JSON"])["ADMIRAL_S3_SECRET_ACCESS_KEY"])')
+    S3_ACCESS_KEY_VALUE=$(printf '%s' "$S3_CREDENTIALS_JSON" | python3 -c 'import json, sys; print(json.load(sys.stdin)["ADMIRAL_S3_ACCESS_KEY_ID"])')
+    S3_SECRET_KEY_VALUE=$(printf '%s' "$S3_CREDENTIALS_JSON" | python3 -c 'import json, sys; print(json.load(sys.stdin)["ADMIRAL_S3_SECRET_ACCESS_KEY"])')
     unset S3_CREDENTIALS_JSON
 fi
 
@@ -683,11 +684,17 @@ if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]]; t
     if [[ -z "$INSTALL_NODE_ID" || -z "$INSTALL_WIREGUARD_IP" ]]; then
         if [[ -f /var/lib/admiral/know_host.yaml ]]; then
             if [[ -z "$INSTALL_NODE_ID" ]]; then
-                INSTALL_NODE_ID=$(admiral-known-host "$ROLE_KEY" node_id || true)
+                if ! INSTALL_NODE_ID=$(admiral-known-host "$ROLE_KEY" node_id); then
+                    warn "Could not resolve node ID for role '$ROLE_KEY' from know_host.yaml."
+                    INSTALL_NODE_ID=""
+                fi
                 [[ -n "$INSTALL_NODE_ID" ]] && info "Resolved node ID from know_host.yaml: $INSTALL_NODE_ID"
             fi
             if [[ -z "$INSTALL_WIREGUARD_IP" ]]; then
-                INSTALL_WIREGUARD_IP=$(admiral-known-host "$ROLE_KEY" wireguard_ip || true)
+                if ! INSTALL_WIREGUARD_IP=$(admiral-known-host "$ROLE_KEY" wireguard_ip); then
+                    warn "Could not resolve WireGuard IP for role '$ROLE_KEY' from know_host.yaml."
+                    INSTALL_WIREGUARD_IP=""
+                fi
                 [[ -n "$INSTALL_WIREGUARD_IP" ]] && info "Resolved WireGuard IP from know_host.yaml: $INSTALL_WIREGUARD_IP"
             fi
         fi
@@ -976,7 +983,8 @@ if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]]; t
     fi
     SPOKE_WG_IP=""
     for attempt in $(seq 1 30); do
-        SPOKE_WG_IP=$(admiralctl nodes list --output json 2>/dev/null | SPOKE_NODE_ID="$SPOKE_NODE_ID" python3 -c "
+        WG_LOOKUP_ERROR_FILE="$(mktemp)"
+        SPOKE_WG_IP=$(admiralctl nodes list --output json 2>"$WG_LOOKUP_ERROR_FILE" | SPOKE_NODE_ID="$SPOKE_NODE_ID" python3 -c "
 import os, sys, json
 target = os.environ['SPOKE_NODE_ID']
 data = json.load(sys.stdin)
@@ -984,7 +992,11 @@ for n in data if isinstance(data, list) else data.get('nodes', []):
     if n.get('node_id') == target or n.get('id') == target:
         sys.stdout.write(n.get('wireguard_ip', n.get('wg_ip', '')))
         break
-" 2>/dev/null || true)
+" 2>>"$WG_LOOKUP_ERROR_FILE" || true)
+        if [[ -s "$WG_LOOKUP_ERROR_FILE" ]]; then
+            warn "WireGuard IP lookup attempt $attempt reported: $(tr '\n' ' ' < "$WG_LOOKUP_ERROR_FILE")"
+        fi
+        rm -f "$WG_LOOKUP_ERROR_FILE"
         [[ -n "$SPOKE_WG_IP" ]] && break
         sleep 1
     done
@@ -999,7 +1011,6 @@ for n in data if isinstance(data, list) else data.get('nodes', []):
     printf '[Peer]\nPublicKey = %s\nAllowedIPs = %s/32\n' \
         "$SPOKE_KEY" "$SPOKE_WG_IP" > "$PEER_FRAGMENT_TMP"
     mv -f "$PEER_FRAGMENT_TMP" "/etc/wireguard/peers.d/${PEER_FRAGMENT_NAME}.conf"
-    wg-quick save wg-admiral
     info "WireGuard peer added for spoke node ($SPOKE_WG_IP) on hub."
     handshake_ok=false
     for _ in {1..12}; do
@@ -1247,8 +1258,9 @@ if [[ "$INSTALL_DEV_MODE" != "true" ]]; then
     fi
 
     if [[ "$INSTALL_MODE" != "single-node" ]]; then
-        FORWARDING_STATE="$(run_target_cmd "sysctl -n net.ipv4.ip_forward; sysctl -n net.ipv6.conf.all.forwarding" || true)"
-        if [[ "$FORWARDING_STATE" != $'0\n0' ]]; then
+        IPV4_FORWARDING="$(run_target_cmd "sysctl -n net.ipv4.ip_forward | tr -d '[:space:]'" || true)"
+        IPV6_FORWARDING="$(run_target_cmd "sysctl -n net.ipv6.conf.all.forwarding | tr -d '[:space:]'" || true)"
+        if [[ "$IPV4_FORWARDING" != "0" || "$IPV6_FORWARDING" != "0" ]]; then
             SECURITY_WARNINGS+=("IP forwarding is not disabled on the VPN node.")
         fi
 

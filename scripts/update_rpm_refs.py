@@ -55,4 +55,7 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except (OSError, RuntimeError, ValueError) as exc:
+        raise SystemExit(f"update RPM refs failed: {exc}") from exc

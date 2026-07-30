@@ -50,7 +50,7 @@ def revoke(username: str, bootstrap_key: str) -> bool:
         with os.fdopen(fd, "w", encoding="utf-8") as stream:
             stream.writelines(kept)
         os.replace(temporary, authorized)
-    except BaseException:
+    except (OSError, ValueError):
         try:
             os.unlink(temporary)
         except FileNotFoundError:
