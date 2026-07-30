@@ -22,7 +22,7 @@ encontrar un bloqueo y al corregir un defecto que pueda afectar el lanzamiento.
 
 Los RPMs se usan desde `packaging/build/RPMS/`:
 
-- `admiral-common-0.0.1beta19-34.el10.noarch.rpm`
+- `admiral-common-0.0.1beta19-35.el10.noarch.rpm`
 - `admirald-0.0.1beta19-4.el10.x86_64.rpm`
 - `admiral-fleet-0.0.1beta19-2.el10.x86_64.rpm`
 - `admiralctl-0.0.1beta19-1.el10.x86_64.rpm`
@@ -41,9 +41,11 @@ Los RPMs se usan desde `packaging/build/RPMS/`:
 | Single node | CentOS Stream 10 | Aprobado | VM limpia con los RPM locales actuales. La convergencia `admiral-install --single-node` dejó los cinco servicios activos, Caddy respondió `200` en `127.0.0.1:2019`, Harbor respondió correctamente y los nodos portal/worker quedaron `active` y `healthy`. |
 | WordPress | CentOS Stream 10 | Aprobado | Operación `op_6fa5f77057b0536a` correcta; instancia `inst_60611fa4ffdfa938` con estado técnico `running`. `podman ps` bajo `admiral-apps` mostró los servicios rootless y `curl http://127.0.0.1:40000/` respondió `301`. |
 | WordPress | AlmaLinux 10 | Aprobado | Operación `op_e29c08a4012626d8` correcta; instancia `inst_c8bda6f60fb27eba` con estado técnico `running`. Los cuatro contenedores rootless se ejecutaron como `admiral-apps` y `curl http://127.0.0.1:40000/` respondió `301`. |
-| Multinodo | Nube local simulada | Pendiente | Falta crear red aislada, instalar nodo administrativo y enrolar el worker. |
-| SSH y handshake | Multinodo | Pendiente | La revisión estática confirma identidad SSH por nodo y autenticación Fleet--Admirald por token; falta evidencia de ejecución y revocación de la llave bootstrap. |
-| Issues de GitHub | `admiral-project/admiral` | En curso | #3 cerrado fuera de alcance (PayPal real); #12 cerrado tras corregir los nombres de comandos RPM. |
+| Multinodo | Rocky Linux 10 admin + CentOS Stream 10 worker en red local aislada | Aprobado | `--admin-portal-node` en `192.168.100.93` y `--worker-node` en `192.168.100.94`; reconciliación Ansible final `failed=0`; RPMs beta19 locales instalados en ambos nodos. |
+| SSH y handshake | Multinodo | Aprobado | WireGuard `10.99.0.1`--`10.99.0.2` con handshake activo; `worker-beta19` registró `fleet_version=0.0.1beta19`, `health_status=healthy` y `available_for_provisioning=true`. La llave bootstrap se conservó intencionalmente con `--no-revoke-ssh-key` para recuperación del laboratorio. |
+| WordPress | Multinodo | Aprobado | Provision `op_d269c72819eaf2b9`, instancia `inst_c4e0a2cb67a47ab2` sana, `setup_completed=true`, técnica `running`; HTTP sobre VPN respondió `301`; los cuatro contenedores permanecieron rootless bajo `admiral-apps`. |
+| Backup y ciclo de vida | Multinodo | Aprobado | Backup DB `op_b58ab1d6fc02e8c2` correcto; pausa `op_0932f222007181ad` y resume `op_c1e80121a6f3fd0b` correctos; la instancia quedó saludable tras reanudar. |
+| Issues de GitHub | `admiral-project/admiral` | En curso | #3 y #12 están cerrados. Permanecen abiertos #4, #5, #6, #10, #14, #16 y #17; no se modifican desde esta validación y requieren resolución o decisión explícita de release. |
 
 ## Hallazgos corregidos antes de continuar
 
@@ -96,5 +98,14 @@ evidencia o una justificación explícita de fuera de alcance.
 La matriz single-node queda cerrada el 2026-07-30. Rocky Linux 10, AlmaLinux
 10 y CentOS Stream 10 completaron la instalación con los RPM locales beta19;
 en los tres se verificó Caddy por `127.0.0.1:2019` y un despliegue real
-WordPress/MariaDB rootless. La siguiente fase es exclusivamente el escenario
-multinodo local y el cierre fundamentado de los issues restantes.
+WordPress/MariaDB rootless.
+
+## Hito cerrado: multinodo beta19
+
+El escenario multinodo queda validado el 2026-07-30 con los RPMs locales beta19.
+El worker ejecutó Podman con `rootless=true`, almacenamiento en
+`/var/lib/admiral-apps/.local/share/containers/storage`, cgroup `systemd` y
+`Linger=yes`. La instancia WordPress fue creada en el worker, respaldada,
+pausada y reanudada sin fallos persistentes. El primer intento de bootstrap no
+se contabiliza porque mezcló RPMs beta18 del COPR; se corrigió instalando el
+conjunto local beta19 completo antes de repetir la prueba.
