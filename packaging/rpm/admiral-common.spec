@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: William Moreno Reyes CP | MBA
 # SPDX-License-Identifier: Apache-2.0
 
-%global commit e62dd7e50fe06d33310307471351d15d6161978b
+%global commit dc0b12c48746b1f992003d511e5347eff1e2a0ea
 
 Name:    admiral-common
 Version: 0.0.1beta18
@@ -144,6 +144,9 @@ semanage fcontext -a -t container_file_t "/var/lib/admiral-apps/.local/share/con
 restorecon -R /var/lib/admiral-apps/.local/share/containers/storage/ 2>/dev/null || :
 
 %changelog
+* Thu Jul 30 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta18-31
+- Generate per-node SSH identities and revoke bootstrap keys after onboarding
+
 * Thu Jul 30 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta18-30
 - Install operational helper scripts in /usr/bin
 - Include the known-host YAML resolver in admiral-common
