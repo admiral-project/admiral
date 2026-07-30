@@ -351,10 +351,13 @@ class InstallerModeTests(unittest.TestCase):
 
     def test_rpm_baseline_configuration_is_not_treated_as_existing_installation(self) -> None:
         installer = INSTALLER.read_text(encoding="utf-8")
+        playbook = PLAYBOOK.read_text(encoding="utf-8")
 
         self.assertIn("rpm -q admiral-common", installer)
         self.assertIn("[[ ! -e /etc/admiral/secrets ]]", installer)
         self.assertIn("printf %s __ADMIRAL_NEW__", installer)
+        self.assertIn("Detect fresh admiral-common RPM baseline", playbook)
+        self.assertIn("admiral_common_package.rc == 0", playbook)
 
     def test_secure_role_preflight_preserves_dev_mode_behavior(self) -> None:
         installer = INSTALLER.read_text(encoding="utf-8")

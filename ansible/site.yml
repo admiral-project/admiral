@@ -41,6 +41,13 @@
         admiral_persisted_node_role: "{{ admiral_node_role_contents.content | b64decode | trim }}"
       when: admiral_node_role_file.stat.exists
 
+    - name: Detect fresh admiral-common RPM baseline
+      command: rpm -q admiral-common
+      register: admiral_common_package
+      changed_when: false
+      failed_when: false
+      when: not admiral_node_role_file.stat.exists
+
     - name: Check for legacy Admiral installation state
       stat:
         path: "{{ item }}"
@@ -55,7 +62,12 @@
     - name: Reject unprofiled legacy Admiral installations
       assert:
         that:
-          - (admiral_legacy_state.results | selectattr('stat.exists') | list | length) == 0
+          - >-
+            (admiral_legacy_state.results | selectattr('stat.exists') | list | length) == 0 or
+            (admiral_common_package.rc == 0 and
+            (admiral_legacy_state.results |
+            selectattr('item', 'equalto', '/etc/admiral/secrets') |
+            selectattr('stat.exists') | list | length) == 0)
         fail_msg: >-
           This host has an Admiral installation without /etc/admiral/role.
           Reprovision the host or complete the documented manual migration
