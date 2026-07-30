@@ -198,7 +198,28 @@ class InstallerModeTests(unittest.TestCase):
         self.assertIn("UserKnownHostsFile=$TMP_KNOWN_HOSTS", content)
         self.assertIn("UserKnownHostsFile={os.environ['TMP_KNOWN_HOSTS']}", content)
         self.assertNotIn('KNOWN_HOSTS_FILE="$HOME/.ssh/known_hosts"', content)
-        self.assertNotIn('ssh -i "$INSTALL_TARGET_SSH_KEY"', content)
+        self.assertIn("ADMIN_SSH_DELIVERY_KEY=", content)
+        self.assertIn('REMOTE_SSH_USER="admiral-ssh"', content)
+        self.assertIn("BOOTSTRAP_SSH_PUB_KEY=", content)
+
+    def test_remote_bootstrap_is_retained_until_handshake_then_revoked(self) -> None:
+        content = INSTALLER.read_text(encoding="utf-8")
+
+        self.assertIn("seq 1 12", content)
+        self.assertIn("systemctl restart admiral-fleet", content)
+        self.assertIn("systemctl restart admiral-harbor", content)
+        self.assertIn("revoke bootstrap SSH access only after complete onboarding", content)
+        self.assertIn("Bootstrap SSH credential is still accepted after revocation", content)
+        self.assertIn('<<<"PermitRootLogin no"', content)
+
+    def test_spoke_uses_fixed_per_node_administrative_identity(self) -> None:
+        common = COMMON_TASKS.read_text(encoding="utf-8")
+        installer = INSTALLER.read_text(encoding="utf-8")
+
+        self.assertIn('admiral_ssh_admin_user: "admiral-ssh"', common)
+        self.assertIn("Generate per-node administrative SSH identity on the Admin controller", common)
+        self.assertIn("/var/lib/admiral/ssh-delivery/", common)
+        self.assertNotIn('SECRETS_SSH_USER=$(read_admiral_secret "ADMIRAL_SSH_USER")', installer)
 
     def test_spoke_extra_vars_exclude_controller_admin_token(self) -> None:
         installer = INSTALLER.read_text(encoding="utf-8")
@@ -294,9 +315,10 @@ class InstallerModeTests(unittest.TestCase):
     def test_dedicated_portal_verifies_harbor_authentication_remotely(self) -> None:
         installer = INSTALLER.read_text(encoding="utf-8")
 
-        self.assertIn('portal-node)\n        info "Verifying remote Harbor authentication', installer)
+        self.assertIn('if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]]', installer)
+        self.assertIn("for attempt in $(seq 1 12)", installer)
         self.assertIn('"sudo -n /usr/bin/harborctl ping"', installer)
-        self.assertIn("Remote Harbor cannot authenticate with the Admiral API", installer)
+        self.assertIn("restarting admiral-harbor once before retrying", installer)
 
     def test_sysadmin_guide_provisions_spokes_from_admin(self) -> None:
         content = SYSADMIN_GUIDE.read_text(encoding="utf-8")

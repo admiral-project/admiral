@@ -450,13 +450,80 @@
       changed_when: true
       no_log: true
 
-    - name: Generate Admiral SSH admin username
+    - name: Determine stable SSH delivery identifier
+      set_fact:
+        admiral_ssh_delivery_id: >-
+          {{ (fleet_node_id | default(harbor_node_id | default(ansible_hostname)))
+             | regex_replace('[^A-Za-z0-9_.-]', '_') }}
+      when: admiral_install_mode in ['single-node', 'admin-node', 'admin-portal-node', 'worker-node', 'portal-node']
+
+    - name: Create temporary SSH delivery directory on the Admin controller
+      file:
+        path: /var/lib/admiral/ssh-delivery
+        state: directory
+        owner: root
+        group: root
+        mode: "0700"
+      delegate_to: localhost
+      when: admiral_install_mode in ['single-node', 'admin-node', 'admin-portal-node', 'worker-node', 'portal-node']
+
+    - name: Generate per-node administrative SSH identity on the Admin controller
       command:
-        cmd: openssl rand -hex 5
-      register: admiral_ssh_admin_user_generated
-      when: admiral_existing_ssh_admin_user == ''
-      changed_when: true
+        argv:
+          - ssh-keygen
+          - -t
+          - ed25519
+          - -f
+          - "/var/lib/admiral/ssh-delivery/{{ admiral_ssh_delivery_id }}.ed25519"
+          - -C
+          - "admiral-ssh@{{ admiral_ssh_delivery_id }}"
+          - -N
+          - ""
+        creates: "/var/lib/admiral/ssh-delivery/{{ admiral_ssh_delivery_id }}.ed25519"
+      register: admiral_ssh_identity_generated
+      delegate_to: localhost
+      when: admiral_install_mode in ['single-node', 'admin-node', 'admin-portal-node', 'worker-node', 'portal-node']
+      changed_when: admiral_ssh_identity_generated.rc == 0
       no_log: true
+
+    - name: Read per-node administrative public key from the Admin controller
+      slurp:
+        src: "/var/lib/admiral/ssh-delivery/{{ admiral_ssh_delivery_id }}.ed25519.pub"
+      register: admiral_ssh_delivery_public_key
+      delegate_to: localhost
+      when: admiral_install_mode in ['single-node', 'admin-node', 'admin-portal-node', 'worker-node', 'portal-node']
+      no_log: true
+
+    - name: Select generated per-node public key for SSH administration
+      set_fact:
+        admiral_ssh_admin_user: "admiral-ssh"
+        admiral_ssh_pub_key: "{{ admiral_ssh_delivery_public_key.content | b64decode | trim }}"
+        admiral_ssh_delivery_private_key: "/var/lib/admiral/ssh-delivery/{{ admiral_ssh_delivery_id }}.ed25519"
+      when: admiral_install_mode in ['single-node', 'admin-node', 'admin-portal-node', 'worker-node', 'portal-node']
+      no_log: true
+
+    - name: Calculate administrative SSH key fingerprint
+      command:
+        argv:
+          - ssh-keygen
+          - -lf
+          - "/var/lib/admiral/ssh-delivery/{{ admiral_ssh_delivery_id }}.ed25519.pub"
+          - -E
+          - sha256
+      register: admiral_ssh_delivery_fingerprint
+      delegate_to: localhost
+      changed_when: false
+      when: admiral_install_mode in ['single-node', 'admin-node', 'admin-portal-node', 'worker-node', 'portal-node']
+      no_log: true
+
+    - name: Report administrative SSH delivery artifact
+      debug:
+        msg:
+          node_id: "{{ admiral_ssh_delivery_id }}"
+          user: admiral-ssh
+          private_key: "/var/lib/admiral/ssh-delivery/{{ admiral_ssh_delivery_id }}.ed25519"
+          public_key_fingerprint: "{{ admiral_ssh_delivery_fingerprint.stdout | trim }}"
+      when: admiral_install_mode in ['single-node', 'admin-node', 'admin-portal-node', 'worker-node', 'portal-node']
 
     - name: Generate persistent session HMAC key
       command:
@@ -468,6 +535,7 @@
 
     - name: Consolidate Admiral installation secrets
       set_fact:
+        admiral_legacy_ssh_admin_user: "{{ admiral_existing_ssh_admin_user if admiral_existing_ssh_admin_user not in ['', 'admiral-ssh'] else '' }}"
         admiral_postgres_password: "{{ admiral_existing_postgres_password if admiral_existing_postgres_password != '' else (admiral_postgres_password_generated.stdout | default('')) }}"
         admiral_admin_token_value: "{{ admiral_existing_admin_token if admiral_existing_admin_token != '' else (admiral_admin_token_generated.stdout | default('')) }}"
         admiral_token_pepper_value: "{{ admiral_existing_token_pepper if admiral_existing_token_pepper != '' else (admiral_token_pepper_generated.stdout | default('')) }}"
@@ -488,7 +556,7 @@
         admiral_task_public_key_value: "{{ admiral_existing_task_public_key if admiral_existing_task_public_key != '' else (admiral_task_public_key_generated | default('')) }}"
         admiral_task_encryption_key_value: "{{ admiral_existing_task_encryption_key if admiral_existing_task_encryption_key != '' else (admiral_task_encryption_key_generated.stdout | default('')) }}"
         admiral_session_hmac_key_value: "{{ admiral_existing_session_hmac_key if admiral_existing_session_hmac_key != '' else (admiral_session_hmac_key_generated.stdout | default('')) }}"
-        admiral_ssh_admin_user: "{{ admiral_existing_ssh_admin_user if admiral_existing_ssh_admin_user != '' else ('opsa_' ~ (admiral_ssh_admin_user_generated.stdout | default(''))) }}"
+        admiral_ssh_admin_user: "admiral-ssh"
       no_log: true
 
     - name: Persist bootstrap secret inventory
@@ -624,6 +692,36 @@
     - admiral_install_mode in ['single-node', 'admin-node', 'admin-portal-node', 'worker-node', 'portal-node']
     - admiral_ssh_pub_key is defined
     - admiral_ssh_pub_key | length > 0
+
+- name: Validate legacy SSH admin identity before retirement
+  assert:
+    that:
+      - admiral_legacy_ssh_admin_user is match('^[a-z_][a-z0-9_-]{0,31}$')
+    fail_msg: "The legacy Admiral SSH username is invalid; refusing to migrate its access."
+  when:
+    - admiral_legacy_ssh_admin_user | default('') | length > 0
+
+- name: Remove legacy SSH admin sudo privilege
+  file:
+    path: "/etc/sudoers.d/{{ admiral_legacy_ssh_admin_user }}"
+    state: absent
+  when:
+    - admiral_legacy_ssh_admin_user | default('') | length > 0
+
+- name: Disable legacy SSH admin account
+  user:
+    name: "{{ admiral_legacy_ssh_admin_user }}"
+    shell: /usr/sbin/nologin
+    password_lock: true
+  when:
+    - admiral_legacy_ssh_admin_user | default('') | length > 0
+
+- name: Remove legacy SSH admin authorized keys
+  file:
+    path: "/home/{{ admiral_legacy_ssh_admin_user }}/.ssh/authorized_keys"
+    state: absent
+  when:
+    - admiral_legacy_ssh_admin_user | default('') | length > 0
 
 - name: Determine TLS SAN string including public IP and WireGuard IP
   set_fact:

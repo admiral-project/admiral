@@ -19,6 +19,7 @@ COMMON_PAYLOAD_PATHS = (
     "ansible",
     "scripts/install.sh",
     "scripts/admiral_https_setup.py",
+    "scripts/admiral_revoke_bootstrap_key.py",
     "packaging/systemd",
     "packaging/config",
     "packaging/bin",

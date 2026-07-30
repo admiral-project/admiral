@@ -158,9 +158,12 @@ As with a portal, the worker node ID and WireGuard address may be omitted when
 the correct `next.worker` assignment exists in `know_host.yaml`.
 
 The installer performs the complete remote flow: verifies the SSH host key,
-runs Ansible, installs the shared `opsa_*` operator account, verifies
-passwordless sudo, disables root SSH login, exchanges WireGuard peers, and
-checks the expected services and security profile.
+uses the bootstrap key only for the Ansible connection, creates the fixed
+`admiral-ssh` account and a unique Ed25519 identity on the Admin controller,
+then retries the Fleet/Harbor handshake and service checks. The bootstrap
+credential remains usable during this entire flow. Only after the new SSH
+identity, onboarding, WireGuard, service, and security checks succeed does the
+installer revoke the bootstrap key and disable root SSH login.
 
 ### 5. Verify the New Host from Admin
 
@@ -172,13 +175,18 @@ sudo wg show wg-admiral
 sudo systemctl is-active admirald caddy
 ```
 
-Use the `opsa_*` username printed by the installer for an optional direct
-administrative check:
+Use the `admiral-ssh` username and the per-node private key artifact printed by
+the installer for an optional direct administrative check:
 
 ```bash
-ssh -i /root/.ssh/id_ed25519 \
-  opsa_REPLACE@198.51.100.20 'sudo -n systemctl is-active admiral-fleet'
+ssh -i /var/lib/admiral/ssh-delivery/worker-01.ed25519 \
+  admiral-ssh@198.51.100.20 'sudo -n systemctl is-active admiral-fleet'
 ```
+
+The private key is a temporary delivery artifact on the Admin node. Extract it
+to secure administrator storage, verify its fingerprint and delete the local
+copy. Admiral does not use this key for normal Fleet, WireGuard, API, or TLS
+operations, and each Worker or Portal receives a different key pair.
 
 For a portal, replace the final service with `admiral-harbor`.
 
@@ -217,9 +225,9 @@ Do not change this file before Harbor has been moved and stopped.
 
 ### SSH Admin User
 
-The installer creates a non-root SSH admin user on every node. This user:
+The installer creates the `admiral-ssh` non-root SSH admin user on every node. This user:
 
-- Has a generated username (prefixed `opsa_`) stored in `/etc/admiral/secrets`
+- Has an identity generated exclusively for that node by Ansible on the Admin controller
 - Belongs to the `wheel` group with NOPASSWD sudo access. This is full root
   access and is required for unattended provisioning; protect the SSH private
   key as a root-equivalent credential.
@@ -244,7 +252,8 @@ target node. The installer uses SSH keys to:
 
 #### Key selection
 
-The installer selects the administrator public key in the following order:
+For local installation modes, the installer selects the operator public key in
+the following order:
 
 | Mode | Detection order |
 |------|----------------|
@@ -252,8 +261,7 @@ The installer selects the administrator public key in the following order:
 | | 2. Public key extracted from `--ssh-key <path>` if provided |
 | | 3. Root's `id_ed25519.pub`, `id_rsa.pub`, or `authorized_keys` |
 | | 4. The invoking sudo user's `authorized_keys` |
-| `--worker-node`, `--portal-node` | 1. `--ssh-public-key <path>` for the generated administrator, if provided |
-| | 2. Public key extracted from the required bootstrap `--ssh-key <path>` |
+| `--worker-node`, `--portal-node` | The bootstrap `--ssh-key <path>` is used only for temporary transport. |
 
 **Important**: Spoke provisioning still needs a private key accessible by root
 to establish the remote SSH connection. Local installation does not need the
@@ -284,8 +292,9 @@ private key using `ssh-keygen -y -f <private_key>`. This means:
 
 An explicitly supplied public-key file and discovered `authorized_keys` entries
 are parsed to remove authorization options and validated with `ssh-keygen`
-before Ansible writes the selected key. The installer never copies a private
-key into the generated administrator account.
+before Ansible writes the selected local key. For a spoke, Ansible generates a
+new Ed25519 pair on the Admin controller and writes only its public half to the
+remote node. The bootstrap private key is never copied into `admiral-ssh`.
 
 #### Spoke node flow
 
@@ -293,14 +302,19 @@ For `--worker-node` and `--portal-node`:
 
 1. The installer is run on the admin node and verifies the spoke host key.
 2. Initial bootstrap may connect as **root** using the SSH key.
-3. Ansible creates the cluster `opsa_<random>` user on the spoke.
-4. The public key is extracted from the private key and deployed to
-   the new user's `authorized_keys`
-5. The installer verifies `sudo -n` through that account and then sets
-   effective `PermitRootLogin no`.
-6. After installation, you can SSH as the admin user:
+3. Ansible installs `admiral-common`, including the bootstrap-revocation helper,
+   and creates `admiral-ssh`.
+4. Ansible generates a unique per-node key pair on the Admin controller and
+   deploys only its public key to the spoke.
+5. The installer retries registration, WireGuard, Fleet/Harbor readiness and
+   service checks; it may restart the workload service once after initial
+   handshake attempts.
+6. After all checks pass, the helper removes the exact bootstrap public key,
+   and the installer applies `PermitRootLogin no`.
+7. After installation, you can SSH as the admin user:
    ```bash
-   ssh opsa_a1b2c3d4e5@198.51.100.20
+   ssh -i /var/lib/admiral/ssh-delivery/worker-01.ed25519 \
+     admiral-ssh@198.51.100.20
    ```
 
 If the non-root login or passwordless sudo check fails, installation stops

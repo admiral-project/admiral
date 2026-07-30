@@ -261,6 +261,9 @@ INSTALL_TARGET_SSH_USER_EXPLICIT="false"
 INSTALL_TARGET_SSH_KEY=""
 INSTALL_SSH_PUBLIC_KEY_FILE=""
 INSTALL_SSH_FINGERPRINT=""
+BOOTSTRAP_SSH_PUB_KEY=""
+BOOTSTRAP_SSH_USER=""
+ADMIN_SSH_DELIVERY_KEY=""
 INSTALL_S3_CREDENTIALS_FILE=""
 INSTALL_YES="false"
 INSTALLER_TEMP_BASE=""
@@ -536,6 +539,11 @@ if [[ -z "$INSTALL_SSH_PUB_KEY" ]] &&
 fi
 printf '%s\n' "$INSTALL_SSH_PUB_KEY" | ssh-keygen -lf - >/dev/null 2>&1 ||
     die "The selected administrator SSH public key is invalid."
+if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]]; then
+    BOOTSTRAP_SSH_PUB_KEY=$(ssh-keygen -y -f "$INSTALL_TARGET_SSH_KEY" 2>/dev/null || true)
+    printf '%s\n' "$BOOTSTRAP_SSH_PUB_KEY" | ssh-keygen -lf - >/dev/null 2>&1 ||
+        die "Could not derive the public key for the bootstrap credential."
+fi
 
 # --- 0c. populate known_hosts before first SSH connection ---
 # ssh-keyscan is read-only and transmits no credentials.
@@ -581,6 +589,7 @@ if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]]; t
             info "Using persisted non-root SSH user: $INSTALL_TARGET_SSH_USER"
         fi
     fi
+    BOOTSTRAP_SSH_USER="$INSTALL_TARGET_SSH_USER"
     preflight_remote_node_role "$REQUESTED_NODE_ROLE"
 fi
 
@@ -727,7 +736,6 @@ if [[ "$INSTALL_MODE" == "portal-node" ]]; then
     SECRETS_HARBOR_API_TOKEN=$(read_admiral_secret "ADMIRAL_HARBOR_API_TOKEN") || true
 fi
 if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]]; then
-    SECRETS_SSH_USER=$(read_admiral_secret "ADMIRAL_SSH_USER") || true
     SECRETS_TASK_PUBLIC_KEY=$(read_admiral_secret "ADMIRAL_TASK_PUBLIC_KEY") || true
 fi
 
@@ -807,10 +815,6 @@ hb_api_token = os.environ.get("SECRETS_HARBOR_API_TOKEN", "")
 if hb_api_token:
     d["admiral_harbor_api_token_value"] = hb_api_token
 
-ssh_user = os.environ.get("SECRETS_SSH_USER", "")
-if ssh_user:
-    d["admiral_ssh_admin_user"] = ssh_user
-
 task_public_key = os.environ.get("SECRETS_TASK_PUBLIC_KEY", "")
 if task_public_key:
     d["admiral_task_public_key_value"] = task_public_key
@@ -824,8 +828,12 @@ if s3_secret_key:
     d["admiral_s3_secret_key_value"] = s3_secret_key
 
 ssh_pub_key = os.environ.get("INSTALL_SSH_PUB_KEY", "")
-if ssh_pub_key:
+if ssh_pub_key and os.environ["INSTALL_MODE"] not in ("worker-node", "portal-node"):
     d["admiral_ssh_pub_key"] = ssh_pub_key
+
+delivery_id = os.environ.get("INSTALL_NODE_ID", "") or os.environ.get("INSTALL_PUBLIC_IP", "")
+if delivery_id:
+    d["admiral_ssh_delivery_id"] = delivery_id
 
 mode = os.environ["INSTALL_MODE"]
 if mode in ("worker-node", "portal-node"):
@@ -916,21 +924,27 @@ fi
 
 # --- 9b. verify non-root recovery before disabling root SSH ---
 if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]]; then
-    REMOTE_SSH_USER="$(read_admiral_secret ADMIRAL_SSH_USER || true)"
-    [[ "$REMOTE_SSH_USER" =~ ^[a-z_][a-z0-9_-]{0,31}$ ]] || die "Remote installation did not produce a valid non-root SSH user. Root login remains available for recovery."
-    if ! ssh "${SSH_OPTIONS[@]}" \
+    DELIVERY_ID="${INSTALL_NODE_ID:-$INSTALL_PUBLIC_IP}"
+    DELIVERY_ID="${DELIVERY_ID//[^A-Za-z0-9_.-]/_}"
+    ADMIN_SSH_DELIVERY_KEY="/var/lib/admiral/ssh-delivery/${DELIVERY_ID}.ed25519"
+    [[ -f "$ADMIN_SSH_DELIVERY_KEY" ]] || die "Ansible did not create the per-node SSH delivery key: $ADMIN_SSH_DELIVERY_KEY"
+    REMOTE_SSH_USER="admiral-ssh"
+    if ! ssh -i "$ADMIN_SSH_DELIVERY_KEY" -o BatchMode=yes \
+        -o StrictHostKeyChecking=yes -o "UserKnownHostsFile=$TMP_KNOWN_HOSTS" \
         "${REMOTE_SSH_USER}@${INSTALL_PUBLIC_IP}" true >/dev/null 2>&1; then
-        die "Non-root SSH login verification failed for ${REMOTE_SSH_USER}; root login was not disabled."
+        die "Per-node SSH login verification failed for ${REMOTE_SSH_USER}; bootstrap access remains available for recovery."
     fi
-    if ! ssh "${SSH_OPTIONS[@]}" \
+    if ! ssh -i "$ADMIN_SSH_DELIVERY_KEY" -o BatchMode=yes \
+        -o StrictHostKeyChecking=yes -o "UserKnownHostsFile=$TMP_KNOWN_HOSTS" \
         "${REMOTE_SSH_USER}@${INSTALL_PUBLIC_IP}" "sudo -n true" >/dev/null 2>&1; then
-        die "Non-root sudo verification failed for ${REMOTE_SSH_USER}; root login was not disabled."
+        die "Per-node sudo verification failed for ${REMOTE_SSH_USER}; bootstrap access remains available for recovery."
     fi
-    ssh "${SSH_OPTIONS[@]}" \
-        "${REMOTE_SSH_USER}@${INSTALL_PUBLIC_IP}" \
-        "sudo sh -c 'tmp=/etc/ssh/sshd_config.d/.49-admiral-root-lockdown.conf.tmp; install -m 0644 /dev/stdin \"\$tmp\" && mv \"\$tmp\" /etc/ssh/sshd_config.d/49-admiral-root-lockdown.conf && { sshd -t && systemctl reload sshd || { rm -f /etc/ssh/sshd_config.d/49-admiral-root-lockdown.conf; exit 1; }; }'" \
-        <<<"PermitRootLogin no" \
-        || die "Could not validate and apply PermitRootLogin no; root login remains available for recovery."
+    SSH_OPTIONS=(
+        -i "$ADMIN_SSH_DELIVERY_KEY"
+        -o BatchMode=yes
+        -o StrictHostKeyChecking=yes
+        -o "UserKnownHostsFile=$TMP_KNOWN_HOSTS"
+    )
     INSTALL_TARGET_SSH_USER="$REMOTE_SSH_USER"
 fi
 
@@ -1033,23 +1047,65 @@ case "$INSTALL_MODE" in
 esac
 
 for service in "${REQUIRED_SERVICES[@]}"; do
-    if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]]; then
-        ssh "${SSH_OPTIONS[@]}" "${INSTALL_TARGET_SSH_USER}@${INSTALL_PUBLIC_IP}" "systemctl is-active --quiet '$service'" || die "Service $service is not active after remote setup."
-    else
-        systemctl is-active --quiet "$service" || die "Service $service is not active after setup."
-    fi
+    service_ready=false
+    for _ in {1..6}; do
+        if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]]; then
+            if ssh "${SSH_OPTIONS[@]}" "${INSTALL_TARGET_SSH_USER}@${INSTALL_PUBLIC_IP}" "systemctl is-active --quiet '$service'"; then
+                service_ready=true
+                break
+            fi
+        elif systemctl is-active --quiet "$service"; then
+            service_ready=true
+            break
+        fi
+        sleep 5
+    done
+    [[ "$service_ready" == true ]] || die "Service $service is not active after remote setup."
 done
+
+# Fleet and Harbor may need a few seconds to establish their first control
+# plane handshake after WireGuard and their systemd units become available.
+# Retry before failing, and restart the workload service once if the first
+# attempts show a startup race.
+if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]]; then
+    handshake_ok=false
+    for attempt in $(seq 1 12); do
+        ready_ok=false
+        auth_ok=true
+        if admiralctl nodes ready --node "$SPOKE_NODE_ID" >/dev/null 2>&1; then
+            ready_ok=true
+        fi
+        if [[ "$INSTALL_MODE" == "portal-node" ]]; then
+            if ! ssh "${SSH_OPTIONS[@]}" "${INSTALL_TARGET_SSH_USER}@${INSTALL_PUBLIC_IP}" \
+                "sudo -n /usr/bin/harborctl ping" >/dev/null 2>&1; then
+                auth_ok=false
+            fi
+        fi
+        if [[ "$ready_ok" == true && "$auth_ok" == true ]]; then
+            handshake_ok=true
+            info "${INSTALL_MODE} control-plane handshake verified on attempt ${attempt}."
+            break
+        fi
+        if [[ "$attempt" == 3 ]]; then
+            if [[ "$INSTALL_MODE" == "worker-node" ]]; then
+                info "Handshake is still pending; restarting admiral-fleet once before retrying."
+                ssh "${SSH_OPTIONS[@]}" "${INSTALL_TARGET_SSH_USER}@${INSTALL_PUBLIC_IP}" \
+                    "sudo -n systemctl restart admiral-fleet" || true
+            else
+                info "Handshake is still pending; restarting admiral-harbor once before retrying."
+                ssh "${SSH_OPTIONS[@]}" "${INSTALL_TARGET_SSH_USER}@${INSTALL_PUBLIC_IP}" \
+                    "sudo -n systemctl restart admiral-harbor" || true
+            fi
+        fi
+        sleep 5
+    done
+    [[ "$handshake_ok" == true ]] || die "${INSTALL_MODE} did not complete the Admiral control-plane handshake after retries."
+fi
 
 case "$INSTALL_MODE" in
     single-node|admin-portal-node)
         info "Verifying Harbor authentication with the Admiral API..."
         harborctl ping || die "Harbor cannot authenticate with the Admiral API. Check ADMIRAL_HARBOR_API_TOKEN in /etc/admiral/harbor.env and harbor_api_token in /etc/admirald.ini."
-        ;;
-    portal-node)
-        info "Verifying remote Harbor authentication with the Admiral API..."
-        ssh "${SSH_OPTIONS[@]}" "${INSTALL_TARGET_SSH_USER}@${INSTALL_PUBLIC_IP}" \
-            "sudo -n /usr/bin/harborctl ping" || \
-            die "Remote Harbor cannot authenticate with the Admiral API. Check ADMIRAL_HARBOR_API_TOKEN on the portal and harbor_api_token on the admin node."
         ;;
 esac
 
@@ -1087,9 +1143,8 @@ if [[ "$INSTALL_DEV_MODE" != "true" ]]; then
 
     SSHD_EFFECTIVE="$(run_target_cmd "sshd -T")"
     EXPECTED_ROOT_LOGIN="prohibit-password"
-    if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]]; then
-        EXPECTED_ROOT_LOGIN="no"
-    fi
+    # Spokes retain bootstrap root access until all onboarding, handshake, and
+    # security checks have passed. The final root lockdown is applied below.
     ROOT_LOGIN_OK=false
     if [[ "$SSHD_EFFECTIVE" == *"permitrootlogin $EXPECTED_ROOT_LOGIN"* ]]; then
         ROOT_LOGIN_OK=true
@@ -1242,6 +1297,29 @@ if [[ "$INSTALL_DEV_MODE" != "true" ]]; then
     fi
 fi
 
+# --- 11c. revoke bootstrap SSH access only after complete onboarding ---
+if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]]; then
+    [[ -n "$BOOTSTRAP_SSH_PUB_KEY" ]] || die "Bootstrap public key is unavailable; refusing to claim onboarding completion."
+    [[ -n "$BOOTSTRAP_SSH_USER" ]] || die "Bootstrap SSH user is unavailable; refusing to revoke bootstrap access."
+    printf -v QUOTED_BOOTSTRAP_USER '%q' "$BOOTSTRAP_SSH_USER"
+    printf -v QUOTED_BOOTSTRAP_KEY '%q' "$BOOTSTRAP_SSH_PUB_KEY"
+    ssh "${SSH_OPTIONS[@]}" "${INSTALL_TARGET_SSH_USER}@${INSTALL_PUBLIC_IP}" \
+        "sudo -n /usr/bin/admiral-revoke-bootstrap-key $QUOTED_BOOTSTRAP_USER $QUOTED_BOOTSTRAP_KEY" \
+        || die "Could not revoke the bootstrap SSH credential from authorized_keys."
+    if ssh -i "$INSTALL_TARGET_SSH_KEY" -o BatchMode=yes \
+        -o StrictHostKeyChecking=yes -o "UserKnownHostsFile=$TMP_KNOWN_HOSTS" \
+        "${BOOTSTRAP_SSH_USER}@${INSTALL_PUBLIC_IP}" true >/dev/null 2>&1; then
+        die "Bootstrap SSH credential is still accepted after revocation."
+    fi
+    ssh "${SSH_OPTIONS[@]}" "${INSTALL_TARGET_SSH_USER}@${INSTALL_PUBLIC_IP}" \
+        "sudo sh -c 'tmp=/etc/ssh/sshd_config.d/.49-admiral-root-lockdown.conf.tmp; install -m 0644 /dev/stdin \"\$tmp\" && mv \"\$tmp\" /etc/ssh/sshd_config.d/49-admiral-root-lockdown.conf && { sshd -t && systemctl reload sshd || { rm -f /etc/ssh/sshd_config.d/49-admiral-root-lockdown.conf; exit 1; }; }'" \
+        <<<"PermitRootLogin no" \
+        || die "Could not validate and apply PermitRootLogin no after bootstrap revocation."
+    ssh "${SSH_OPTIONS[@]}" "${INSTALL_TARGET_SSH_USER}@${INSTALL_PUBLIC_IP}" "sudo -n true" >/dev/null 2>&1 ||
+        die "Per-node SSH identity stopped working after bootstrap revocation."
+    info "Bootstrap SSH credential revoked; per-node admiral-ssh identity is now authoritative."
+fi
+
 # --- 12. final message ---
 cat <<EOF
 
@@ -1302,6 +1380,27 @@ This user has sudo NOPASSWD access.
 Root login is restricted to key-based authentication only.
 EOF
     fi
+fi
+
+if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]]; then
+    DELIVERY_ID="${INSTALL_NODE_ID:-$INSTALL_PUBLIC_IP}"
+    DELIVERY_ID="${DELIVERY_ID//[^A-Za-z0-9_.-]/_}"
+    ADMIN_SSH_DELIVERY_KEY="/var/lib/admiral/ssh-delivery/${DELIVERY_ID}.ed25519"
+    ADMIN_SSH_FINGERPRINT=$(ssh-keygen -lf "${ADMIN_SSH_DELIVERY_KEY}.pub" -E sha256 | awk '{$1=$1; print}' || true)
+    cat <<EOF
+
+Administrative SSH credential for this node:
+  Node ID:       ${DELIVERY_ID}
+  Host:          ${INSTALL_PUBLIC_IP}
+  User:          admiral-ssh
+  Private key:   ${ADMIN_SSH_DELIVERY_KEY}
+  Public key:    ${ADMIN_SSH_DELIVERY_KEY}.pub
+  Fingerprint:   ${ADMIN_SSH_FINGERPRINT}
+
+Extract this private key to secure administrator storage and delete both
+delivery artifacts from the Admin node after verification. Admiral will not
+use this key for normal control-plane operations.
+EOF
 fi
 
 if [[ "$INSTALL_MODE" == "single-node" || "$INSTALL_MODE" == "portal-node" ]]; then

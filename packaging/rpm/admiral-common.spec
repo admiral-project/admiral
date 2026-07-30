@@ -46,6 +46,7 @@ cp -r ansible/* %{buildroot}%{_datadir}/admiral/ansible/
 # Installer command
 install -Dm0755 scripts/install.sh %{buildroot}%{_bindir}/admiral_install
 install -Dm0755 scripts/admiral_known_host.py %{buildroot}%{_bindir}/admiral-known-host
+install -Dm0755 scripts/admiral_revoke_bootstrap_key.py %{buildroot}%{_bindir}/admiral-revoke-bootstrap-key
 
 # Rootless subordinate ID allocator (operator-facing helper invoked by the installer)
 install -Dm0755 scripts/admiral_rootless_subids.py %{buildroot}%{_bindir}/admiral-rootless-subids
@@ -90,6 +91,7 @@ install -D -m 0644 %{SOURCE1} %{buildroot}%{_sysusersdir}/%{name}.conf
 %{_bindir}/admiral_https_setup
 %{_bindir}/admiral_install
 %{_bindir}/admiral-known-host
+%{_bindir}/admiral-revoke-bootstrap-key
 %{_bindir}/admiral-rootless-subids
 %{_datadir}/admiral/ansible/
 
@@ -132,6 +134,7 @@ restorecon -R %{_localstatedir}/lib/admiral-apps 2>/dev/null || :
 restorecon -F %{_bindir}/admiral_https_setup 2>/dev/null || :
 restorecon -F %{_bindir}/admiral_install 2>/dev/null || :
 restorecon -F %{_bindir}/admiral-known-host 2>/dev/null || :
+restorecon -F %{_bindir}/admiral-revoke-bootstrap-key 2>/dev/null || :
 restorecon -F %{_bindir}/admiral-rootless-subids 2>/dev/null || :
 
 # Set default SELinux context for rootless container storage
