@@ -62,6 +62,10 @@ Los RPMs se usan desde `packaging/build/RPMS/`:
    Admiral; la prueba de regresión pasó (46 pruebas). Falta reconstruir el RPM
    `admiral-common` y repetir la validación en una instalación EL10 limpia.
 
+Actualización: el RPM local `admiral-common-0.0.1beta19-34.el10.noarch.rpm`
+fue reconstruido correctamente con la corrección de CRB y sus referencias de
+fuente fueron validadas. Se utilizará para las instalaciones restantes.
+
 ## Criterio de salida
 
 beta19 queda validado únicamente cuando las tres instalaciones single-node y el
