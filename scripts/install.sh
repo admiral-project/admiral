@@ -137,6 +137,12 @@ preflight_local_node_role() {
         validate_node_role "$persisted_role" "$requested_role" "This host"
         return
     fi
+    # The RPM installs baseline configuration files before the first run.
+    # Treat that package-only state as new; secrets mark a real installation.
+    if command -v rpm >/dev/null 2>&1 && rpm -q admiral-common >/dev/null 2>&1 &&
+        [[ ! -e /etc/admiral/secrets ]]; then
+        return
+    fi
     for legacy_path in /etc/admiral/secrets /etc/admiral/harbor.env /etc/admiral/fleet.env /etc/admirald.ini; do
         [[ ! -e "$legacy_path" ]] || die "This host has an unprofiled Admiral installation. Refusing to modify packages or repositories."
     done
@@ -147,7 +153,7 @@ preflight_remote_node_role() {
     local quoted_probe=""
     local persisted_role=""
 
-    probe_command='if [ -f /etc/admiral/role ]; then tr -d "\r\n" < /etc/admiral/role; elif [ -e /etc/admiral/secrets ] || [ -e /etc/admiral/harbor.env ] || [ -e /etc/admiral/fleet.env ] || [ -e /etc/admirald.ini ]; then printf %s __ADMIRAL_LEGACY__; else printf %s __ADMIRAL_NEW__; fi'
+    probe_command='if [ -f /etc/admiral/role ]; then tr -d "\r\n" < /etc/admiral/role; elif rpm -q admiral-common >/dev/null 2>&1 && [ ! -e /etc/admiral/secrets ]; then printf %s __ADMIRAL_NEW__; elif [ -e /etc/admiral/secrets ] || [ -e /etc/admiral/harbor.env ] || [ -e /etc/admiral/fleet.env ] || [ -e /etc/admirald.ini ]; then printf %s __ADMIRAL_LEGACY__; else printf %s __ADMIRAL_NEW__; fi'
     printf -v quoted_probe '%q' "$probe_command"
     if [[ "$INSTALL_TARGET_SSH_USER" == "root" ]]; then
         persisted_role=$(ssh "${SSH_OPTIONS[@]}" "root@${INSTALL_PUBLIC_IP}" "bash -lc $quoted_probe") ||

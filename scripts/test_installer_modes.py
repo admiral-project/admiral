@@ -349,6 +349,13 @@ class InstallerModeTests(unittest.TestCase):
         self.assertLess(installer.index('preflight_remote_node_role "$REQUESTED_NODE_ROLE"'), mutation_offset)
         self.assertIn("Refusing to modify packages or repositories", installer)
 
+    def test_rpm_baseline_configuration_is_not_treated_as_existing_installation(self) -> None:
+        installer = INSTALLER.read_text(encoding="utf-8")
+
+        self.assertIn("rpm -q admiral-common", installer)
+        self.assertIn("[[ ! -e /etc/admiral/secrets ]]", installer)
+        self.assertIn("printf %s __ADMIRAL_NEW__", installer)
+
     def test_secure_role_preflight_preserves_dev_mode_behavior(self) -> None:
         installer = INSTALLER.read_text(encoding="utf-8")
 
