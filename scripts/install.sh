@@ -673,13 +673,12 @@ if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]]; t
     [[ "$INSTALL_MODE" == "portal-node" ]] && ROLE_KEY="portal"
     if [[ -z "$INSTALL_NODE_ID" || -z "$INSTALL_WIREGUARD_IP" ]]; then
         if [[ -f /var/lib/admiral/know_host.yaml ]]; then
-            # grep -A2 after "  worker:" or "  portal:" under the "next:" section
             if [[ -z "$INSTALL_NODE_ID" ]]; then
-                INSTALL_NODE_ID=$(grep -A2 "^  ${ROLE_KEY}:" /var/lib/admiral/know_host.yaml | grep "node_id:" | awk '{print $2}')
+                INSTALL_NODE_ID=$(admiral-known-host "$ROLE_KEY" node_id || true)
                 [[ -n "$INSTALL_NODE_ID" ]] && info "Resolved node ID from know_host.yaml: $INSTALL_NODE_ID"
             fi
             if [[ -z "$INSTALL_WIREGUARD_IP" ]]; then
-                INSTALL_WIREGUARD_IP=$(grep -A2 "^  ${ROLE_KEY}:" /var/lib/admiral/know_host.yaml | grep "wireguard_ip:" | awk '{print $2}')
+                INSTALL_WIREGUARD_IP=$(admiral-known-host "$ROLE_KEY" wireguard_ip || true)
                 [[ -n "$INSTALL_WIREGUARD_IP" ]] && info "Resolved WireGuard IP from know_host.yaml: $INSTALL_WIREGUARD_IP"
             fi
         fi
@@ -1017,13 +1016,13 @@ fi
 
 case "$INSTALL_MODE" in
     single-node)
-        REQUIRED_SERVICES=(postgresql caddy admirald admiral-fleet admiral-flagship admiral-harbor admiral-harbor-worker.timer admiral-harbor-catalog-sync.timer cockpit.socket firewalld auditd fail2ban)
+        REQUIRED_SERVICES=(postgresql caddy admirald admiral-fleet admiral-flagship admiral-harbor admiral-harbor-worker.timer admiral-harbor-catalog-sync.timer firewalld auditd fail2ban)
         ;;
     admin-node)
-        REQUIRED_SERVICES=(postgresql caddy admirald admiral-flagship cockpit.socket firewalld auditd fail2ban wg-quick@wg-admiral)
+        REQUIRED_SERVICES=(postgresql caddy admirald admiral-flagship firewalld auditd fail2ban wg-quick@wg-admiral)
         ;;
     admin-portal-node)
-        REQUIRED_SERVICES=(postgresql caddy admirald admiral-flagship admiral-harbor admiral-harbor-worker.timer admiral-harbor-catalog-sync.timer cockpit.socket firewalld auditd fail2ban wg-quick@wg-admiral)
+        REQUIRED_SERVICES=(postgresql caddy admirald admiral-flagship admiral-harbor admiral-harbor-worker.timer admiral-harbor-catalog-sync.timer firewalld auditd fail2ban wg-quick@wg-admiral)
         ;;
     worker-node)
         REQUIRED_SERVICES=(admiral-fleet firewalld auditd fail2ban wg-quick@wg-admiral)
@@ -1169,7 +1168,7 @@ if [[ "$INSTALL_DEV_MODE" != "true" ]]; then
     if [[ "$INSTALL_MODE" == "single-node" || "$INSTALL_MODE" == "worker-node" ]]; then
         ROOTLESS_STATE="$(run_target_cmd '
             uid=$(id -u admiral-apps) || exit 1
-            /usr/libexec/admiral-rootless-subids --user admiral-apps || exit 1
+            /usr/bin/admiral-rootless-subids --user admiral-apps || exit 1
             test \"$(loginctl show-user admiral-apps -p Linger --value)\" = yes || exit 1
             systemctl is-active --quiet \"user@${uid}.service\" || exit 1
             systemctl is-active --quiet systemd-machined.service || exit 1

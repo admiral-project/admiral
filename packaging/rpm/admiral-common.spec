@@ -45,9 +45,10 @@ cp -r ansible/* %{buildroot}%{_datadir}/admiral/ansible/
 
 # Installer command
 install -Dm0755 scripts/install.sh %{buildroot}%{_bindir}/admiral_install
+install -Dm0755 scripts/admiral_known_host.py %{buildroot}%{_bindir}/admiral-known-host
 
-# Rootless subordinate ID allocator
-install -Dm0755 scripts/admiral_rootless_subids.py %{buildroot}%{_libexecdir}/admiral-rootless-subids
+# Rootless subordinate ID allocator (operator-facing helper invoked by the installer)
+install -Dm0755 scripts/admiral_rootless_subids.py %{buildroot}%{_bindir}/admiral-rootless-subids
 
 # HTTPS setup script
 install -Dm0755 scripts/admiral_https_setup.py %{buildroot}%{_bindir}/admiral_https_setup
@@ -88,7 +89,8 @@ install -D -m 0644 %{SOURCE1} %{buildroot}%{_sysusersdir}/%{name}.conf
 
 %{_bindir}/admiral_https_setup
 %{_bindir}/admiral_install
-%{_libexecdir}/admiral-rootless-subids
+%{_bindir}/admiral-known-host
+%{_bindir}/admiral-rootless-subids
 %{_datadir}/admiral/ansible/
 
 %post
@@ -129,6 +131,8 @@ restorecon -R %{_localstatedir}/lib/admiral/instances 2>/dev/null || :
 restorecon -R %{_localstatedir}/lib/admiral-apps 2>/dev/null || :
 restorecon -F %{_bindir}/admiral_https_setup 2>/dev/null || :
 restorecon -F %{_bindir}/admiral_install 2>/dev/null || :
+restorecon -F %{_bindir}/admiral-known-host 2>/dev/null || :
+restorecon -F %{_bindir}/admiral-rootless-subids 2>/dev/null || :
 
 # Set default SELinux context for rootless container storage
 # Files under admiral-apps' podman storage inherit var_lib_t from /var/lib,

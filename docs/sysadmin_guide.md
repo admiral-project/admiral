@@ -323,9 +323,9 @@ remote provisioning:
 
 | Mode | Services started by the installer |
 |------|-----------------------------------|
-| single-node | `postgresql`, `caddy`, `admirald`, `admiral-fleet`, `admiral-flagship`, `admiral-harbor`, `cockpit.socket` |
-| admin-node | `postgresql`, `caddy`, `admirald`, `admiral-flagship`, `cockpit.socket` |
-| admin-portal-node | `postgresql`, `caddy`, `admirald`, `admiral-flagship`, `admiral-harbor`, `cockpit.socket` |
+| single-node | `postgresql`, `caddy`, `admirald`, `admiral-fleet`, `admiral-flagship`, `admiral-harbor` |
+| admin-node | `postgresql`, `caddy`, `admirald`, `admiral-flagship` |
+| admin-portal-node | `postgresql`, `caddy`, `admirald`, `admiral-flagship`, `admiral-harbor` |
 | worker-node | `admiral-fleet` |
 | portal-node | `postgresql`, `admiral-harbor` |
 

@@ -31,7 +31,7 @@
 - name: Allocate non-overlapping subordinate IDs for rootless workloads
   command:
     argv:
-      - /usr/libexec/admiral-rootless-subids
+      - /usr/bin/admiral-rootless-subids
       - --user
       - admiral-apps
   changed_when: false
@@ -211,9 +211,9 @@
     --wireguard-ip "{{ admiral_wireguard_ip | default('') }}"
     --public-ip "{{ fleet_public_ip | default('') }}"
     --os "{{ ansible_distribution ~ ' ' ~ ansible_distribution_version }}"
-    --token "{{ fleet_node_token_value }}"
   delegate_to: localhost
   environment:
     ADMIRAL_SERVER_URL: "{{ admiral_control_plane_url }}"
     ADMIRAL_TLS_CA_FILE: /etc/admiral/tls/ca.pem
+    ADMIRAL_NODE_TOKEN: "{{ fleet_node_token_value }}"
   no_log: true

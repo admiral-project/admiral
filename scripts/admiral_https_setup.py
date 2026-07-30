@@ -421,7 +421,7 @@ Environment=ADMIRAL_NETWORKING_TLS_KEY_FILE={deployed_key_file}
     try:
         subprocess.run(["systemctl", "daemon-reload"], capture_output=True, check=True)
         subprocess.run(["systemd-analyze", "verify", "admirald.service"], check=True, capture_output=True, text=True)
-        for service in ("cockpit.socket", "caddy", "admirald"):
+        for service in ("caddy", "admirald"):
             subprocess.run(["systemctl", "restart", service], capture_output=True, check=True)
             subprocess.run(["systemctl", "is-active", "--quiet", service], check=True)
         _verify_public_https(domain)
@@ -440,12 +440,12 @@ Environment=ADMIRAL_NETWORKING_TLS_KEY_FILE={deployed_key_file}
                 with open(path, "wb") as f:
                     f.write(content)
                 os.chmod(path, 0o640 if path.endswith("privkey.pem") else 0o644)
-        for service in ("cockpit.socket", "caddy", "admirald"):
+        for service in ("caddy", "admirald"):
             subprocess.run(["systemctl", "restart", service], capture_output=True)
         fail(f"HTTPS activation failed and previous configuration was restored: {exc}")
 
     # admirald will push the full config including TLS cert to Caddy Admin API
-    ok("cockpit.socket, caddy, and admirald restarted — routes and TLS will resync automatically")
+    ok("caddy and admirald restarted — routes and TLS will resync automatically")
 
 
 def print_summary(domain, apps_domain):

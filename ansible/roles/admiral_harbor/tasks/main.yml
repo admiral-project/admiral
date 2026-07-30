@@ -198,12 +198,12 @@
     --wireguard-ip "{{ admiral_wireguard_ip | default('') }}"
     --public-ip "{{ fleet_public_ip | default('') }}"
     --role portal
-    --token "{{ harbor_node_token_value }}"
     --os "{{ ansible_distribution ~ ' ' ~ ansible_distribution_version }}"
   delegate_to: localhost
   environment:
     ADMIRAL_SERVER_URL: "{{ admiral_control_plane_url }}"
     ADMIRAL_TLS_CA_FILE: /etc/admiral/tls/ca.pem
+    ADMIRAL_NODE_TOKEN: "{{ harbor_node_token_value }}"
   no_log: true
 
 - name: Ensure admirald systemd override directory exists on admin host

@@ -395,7 +395,7 @@ class InstallerModeTests(unittest.TestCase):
         self.assertIn("Start persistent rootless user manager", fleet)
         self.assertIn("Wait for rootless user D-Bus", fleet)
         self.assertIn("Verify rootless Podman storage ownership", fleet)
-        self.assertIn("/usr/libexec/admiral-rootless-subids", installer)
+        self.assertIn("/usr/bin/admiral-rootless-subids", installer)
         self.assertIn("systemd-machined.service", installer)
         self.assertIn("DBUS_SESSION_BUS_ADDRESS", installer)
         self.assertNotIn("echo 'admiral-apps:100000:131072'", common_spec)
@@ -445,14 +445,14 @@ class InstallerModeTests(unittest.TestCase):
         self.assertIn("nft list ruleset", fail2ban)
         self.assertIn("gpgcheck", installer)
 
-    def test_cockpit_password_is_not_exposed_in_process_arguments(self) -> None:
+    def test_cockpit_bridge_is_installed_without_web_service(self) -> None:
         cockpit = (
             ROOT / "ansible" / "roles" / "admiral_cockpit" / "tasks" / "main.yml"
         ).read_text(encoding="utf-8")
 
-        self.assertIn("cmd: openssl passwd -6 -stdin", cockpit)
-        self.assertIn('stdin: "{{ admiral_cockpit_admin_password }}"', cockpit)
-        self.assertNotIn('mkpasswd --method=sha-512 "{{ admiral_cockpit_admin_password }}"', cockpit)
+        self.assertIn("name: cockpit-bridge", cockpit)
+        self.assertNotIn("name: cockpit\n", cockpit)
+        self.assertNotIn("cockpit.socket", cockpit)
 
 
 if __name__ == "__main__":
