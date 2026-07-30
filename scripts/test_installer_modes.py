@@ -264,7 +264,10 @@ class InstallerModeTests(unittest.TestCase):
     def test_audit_fallback_and_all_expected_keys_are_blocking(self) -> None:
         content = AUDIT_TASKS.read_text(encoding="utf-8")
 
-        self.assertIn("when: audit_augenrules.rc != 0", content)
+        self.assertIn(
+            "augenrules_available.rc != 0 or (audit_augenrules.rc | default(1)) != 0",
+            content,
+        )
         for key in (
             "admiral_config",
             "admiral_secrets",
@@ -375,7 +378,7 @@ class InstallerModeTests(unittest.TestCase):
         self.assertIn("tcp dport 53 accept", template)
         self.assertIn("udp dport 53 accept", template)
         self.assertIn("udp dport 123 accept", template)
-        self.assertIn("tcp dport { 443, 587 } accept", template)
+        self.assertIn("tcp dport { 443, 587, 9000 } accept", template)
         self.assertIn("Kubernetes model", template)
         self.assertIn("ip daddr 10.99.0.0/24 accept", template)
 
@@ -399,7 +402,7 @@ class InstallerModeTests(unittest.TestCase):
         self.assertIn("value: '0'", wireguard_tasks)
         self.assertIn("default('10.99.0.1') }}/32", wireguard_template)
         self.assertNotIn("AllowedIPs = 10.99.0.0/24", wireguard_template)
-        self.assertIn("firewall-cmd --zone=admiral --get-target", installer)
+        self.assertIn("firewall-cmd --permanent --zone=admiral --get-target", installer)
         self.assertIn("firewall-cmd --zone=trusted --list-interfaces", installer)
         self.assertIn("wg show wg-admiral allowed-ips", installer)
         self.assertIn("10.99.0.1/32", installer)
@@ -453,7 +456,7 @@ class InstallerModeTests(unittest.TestCase):
         fail2ban = FAIL2BAN_TASKS.read_text(encoding="utf-8")
 
         self.assertIn("Apply available security updates", common)
-        self.assertIn("security: true", common)
+        self.assertIn("value: security", common)
         self.assertIn("name: dnf-automatic", common)
         self.assertIn("name: dnf-automatic.timer", common)
         self.assertIn("ansible_distribution in ['RedHat', 'CentOS', 'Rocky', 'AlmaLinux']", common)
