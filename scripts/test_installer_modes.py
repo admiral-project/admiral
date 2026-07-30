@@ -455,6 +455,17 @@ class InstallerModeTests(unittest.TestCase):
         self.assertIn("DBUS_SESSION_BUS_ADDRESS", installer)
         self.assertNotIn("echo 'admiral-apps:100000:131072'", common_spec)
 
+    def test_common_rpm_removes_generated_rootless_runtime_state(self) -> None:
+        common_spec = (
+            ROOT / "packaging" / "rpm" / "admiral-common.spec"
+        ).read_text(encoding="utf-8")
+
+        self.assertIn("%preun", common_spec)
+        self.assertIn("rm -f /usr/lib/tmpfiles.d/admiral-apps.conf", common_spec)
+        self.assertIn("semanage fcontext -d -t container_file_t", common_spec)
+        self.assertIn("loginctl disable-linger admiral-apps", common_spec)
+        self.assertIn("%postun", common_spec)
+
     def test_secure_checklist_validates_runtime_controls(self) -> None:
         installer = INSTALLER.read_text(encoding="utf-8")
         common = COMMON_TASKS.read_text(encoding="utf-8")

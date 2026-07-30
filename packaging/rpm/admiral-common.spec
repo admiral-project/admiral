@@ -143,6 +143,24 @@ restorecon -F %{_bindir}/admiral-rootless-subids 2>/dev/null || :
 semanage fcontext -a -t container_file_t "/var/lib/admiral-apps/.local/share/containers/storage(/.*)?" 2>/dev/null || :
 restorecon -R /var/lib/admiral-apps/.local/share/containers/storage/ 2>/dev/null || :
 
+%preun
+# Only remove runtime state on final package removal. On upgrade, %post creates
+# the current tmpfiles rule and SELinux mapping again.
+if [ "$1" -eq 0 ]; then
+    rm -f /usr/lib/tmpfiles.d/admiral-apps.conf
+    semanage fcontext -d -t container_file_t "/var/lib/admiral-apps/.local/share/containers/storage(/.*)?" 2>/dev/null || :
+    if getent passwd admiral-apps >/dev/null 2>&1; then
+        ADMIRAL_APPS_UID=$(id -u admiral-apps)
+        loginctl disable-linger admiral-apps >/dev/null 2>&1 || :
+        rm -rf /run/user/${ADMIRAL_APPS_UID}/libpod
+    fi
+fi
+
+%postun
+if [ "$1" -eq 0 ]; then
+    systemd-tmpfiles --remove /usr/lib/tmpfiles.d/admiral-apps.conf >/dev/null 2>&1 || :
+fi
+
 %changelog
 * Thu Jul 30 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta18-34
 - Skip absent hub WireGuard configuration during peer extraction
