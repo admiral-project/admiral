@@ -116,6 +116,10 @@ restorecon -F %{_bindir}/admirald 2>/dev/null || :
 * Tue Jul 07 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta15-2
 - Update source commit refs to include security audit fixes
 
+* Sun Jul 05 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta14-9
+- Add private_key, encryption_key, signing_key to logger sensitiveKeys
+- Block newlines in setup_command validation
+
 * Sun Jul 05 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta14-8
 - Update source commit ref to include gofmt fix
 
@@ -207,10 +211,6 @@ restorecon -F %{_bindir}/admirald 2>/dev/null || :
 
 * Sun Jun 14 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1alpha5-2
 - Update source commit to latest alpha5
-
-* Sun Jul 05 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta14-9
-- Add private_key, encryption_key, signing_key to logger sensitiveKeys
-- Block newlines in setup_command validation
 
 * Sun Jun 14 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1alpha5-1
 - Bump to alpha5
