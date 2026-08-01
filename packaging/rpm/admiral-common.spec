@@ -1,11 +1,11 @@
 # SPDX-FileCopyrightText: William Moreno Reyes CP | MBA
 # SPDX-License-Identifier: Apache-2.0
 
-%global commit b12efae36dcda38246cececaa46b8f62f2c5d15d
+%global commit eb3d5917164bc584f5ebe25dc7aa9380591e8f4d
 
 Name:    admiral-common
 Version: 0.0.1beta19
-Release: 35%{?dist}
+Release: 36%{?dist}
 Summary: Common files and utilities for Admiral PaaS
 
 License: Apache-2.0
@@ -169,6 +169,10 @@ if [ "$1" -eq 0 ]; then
 fi
 
 %changelog
+* Sat Aug 01 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta19-36
+- Make spoke reconvergence use per-node delivery keys after bootstrap revocation
+- Make bootstrap-key revocation idempotent and harden private listener checks
+
 * Thu Jul 30 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta19-35
 - Install admiral-install man pages (man1 and man8)
 - Add --no-revoke-ssh-key flag to preserve bootstrap SSH key
