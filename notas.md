@@ -81,7 +81,7 @@ existentes desde `/etc/wireguard/peers.d/*.conf` (igual que hace
 | I5 | `install.sh:370-399` | **Sin verificación de permisos del archivo S3 credentials.** El archivo podría ser world-readable (`0644`) y el instalador lo acepta sin advertencia. Se recomienda verificar que no sea legible por grupo/otros. | **Media** |
 | I6 | `install.sh:397-398` | **`S3_ACCESS_KEY_VALUE` y `S3_SECRET_KEY_VALUE` nunca se eliminan del entorno.** El bloque `unset` en líneas 843-847 limpia los secrets Harbor pero omite las variables S3. Permanecen en `/proc/<pid>/environ` hasta que el script termina. | **Baja** |
 | I7 | `install.sh:67-73` | `is_loopback_host` solo verifica `127.0.0.1`, `localhost`, `::1`. No cubre `127.0.0.2`–`127.255.255.255` (toda la red `127.0.0.0/8` es loopback). Un valor como `127.0.0.2` se trataría como IP pública. | **Baja** |
-| I8 | `install.sh:182-197` | `public_listeners` excluye `127.*`, `::1`, y `10.99.0.*` pero **no excluye** `172.16.0.0/12`, `192.168.0.0/16` ni `169.254.0.0/16`. En hosts multi-homed con redes privadas adicionales, el checklist de seguridad daría falsos positivos. | **Baja** |
+| I8 | `install.sh:193-210` | El checklist de listeners debe excluir loopback, WireGuard, RFC-1918 y link-local; el contrato se mantiene directamente en el `awk` remoto del checklist. | **Baja** |
 | I9 | `install.sh:958-970` | Indentación inconsistente (8 espacios vs 4 del bloque circundante). No es un bug funcional (bash no depende de indentación) pero dificulta la revisión y puede ocultar errores. | **Info** |
 | I10 | `install.sh:116` | `install.env` se escribe con `0640` — contiene solo `ADMIRAL_PUBLIC_IP`, no es crítico. | **Info** |
 
@@ -297,7 +297,7 @@ endurecimiento o limpieza de empaquetado; no bloquean el golden WordPress.
 |---|--------|-------------------|
 | L1 | **Shell inline frágil en spoke WG key exchange**: extraer la public key por SCP en lugar de `ssh cmd \| wg pubkey`. | `install.sh:937` |
 | L2 | **`is_loopback_host` incompleto**: cubrir `127.0.0.0/8`. | `install.sh:67-73` |
-| L3 | **`public_listeners` no excluye RFC-1918**: agregar `172.16.0.0/12`, `192.168.0.0/16`, `169.254.0.0/16`. | `install.sh:182-197` |
+| L3 | **El checklist de listeners debe excluir RFC-1918 y link-local**: mantener un único contrato en el `awk` remoto y cubrirlo con tests. | `install.sh:1228-1240` |
 | L4 | **`%post` en spec frágil**: guards para `admiral-apps`, empaquetar tmpfiles.d como archivo, agregar `%preun` para limpieza. | `admiral-common.spec` |
 | L5 | **`fleet.env` default con `ADMIRAL_QUEUE_DATABASE_URL` no usado**: remover del default del RPM. | `packaging/config/fleet.env` |
 | L6 | **`ReadWritePaths=/var/lib/admiral` en flagship**: restringir a subdirectorio específico. | `admiral-flagship.service` |

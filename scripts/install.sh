@@ -190,24 +190,6 @@ expected_public_listeners() {
     esac
     printf '%s\n' "$listeners" | sort -u | tr '\n' ' ' | sed 's/[[:space:]]*$//'
 }
-public_listeners() {
-    # Loopback and WireGuard (10.99.0.0/24) sockets are not public surface:
-    # internal services bind to them by design on spoke nodes.
-    ss -H -lntu 2>/dev/null | awk '
-        {
-            address = $5
-            port = address
-            sub(/^.*:/, "", port)
-            host = address
-            sub(/:[^:]*$/, "", host)
-            gsub(/^\[/, "", host)
-            gsub(/\]$/, "", host)
-            if (host !~ /^(127\.|::1$)/ && host !~ /^10\.99\.0\./ &&
-                host !~ /^172\.(1[6-9]|2[0-9]|3[0-1])\./ &&
-                host !~ /^192\.168\./ && host !~ /^169\.254\./) print $1 "/" port
-        }
-    ' | sort -u | tr '\n' ' ' | sed 's/[[:space:]]*$//'
-}
 require_exact_public_listeners() {
     local actual="$1" expected="$2"
     [[ "$actual" == "$expected" ]] || {

@@ -230,6 +230,8 @@ class InstallerModeTests(unittest.TestCase):
     def test_public_listener_check_excludes_private_and_link_local_ranges(self) -> None:
         content = INSTALLER.read_text(encoding="utf-8")
 
+        self.assertNotIn("\npublic_listeners() {", content)
+
         for pattern in (
             r"^172\\.(1[6-9]|2[0-9]|3[0-1])\\.",
             r"^192\\.168\\.",
