@@ -72,6 +72,9 @@ restorecon -F %{_bindir}/admirald 2>/dev/null || :
 %systemd_postun_with_restart admirald.service
 
 %changelog
+* Sat Aug 01 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta19-5
+- Align the control-plane package documentation with idempotent spoke reconvergence
+
 * Thu Jul 30 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta18-4
 - Centralize single-node routing detection and enable production S3 TLS policy
 

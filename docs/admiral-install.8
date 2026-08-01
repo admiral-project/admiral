@@ -86,18 +86,22 @@ From the admin node, SSH into the target worker host and run:
 The installer connects as root, provisions the node, verifies the WireGuard
 and Fleet handshakes, then revokes the bootstrap key.
 .RE
-.SS Add a worker node without revoking the bootstrap key
+.SS Reconcile a worker node
 .RS
 .IP
-When reconverging a spoke that already has a healthy admiral-ssh identity:
+When reconverging a spoke that already has a healthy admiral-ssh identity,
+the installer first tries the bootstrap key. If bootstrap access has already
+been revoked, it automatically falls back to the matching per-node delivery
+key stored on the admin node:
 .IP
 .B admiral-install --worker-node --public-ip 203.0.113.20
 .B \ \ \ \ \ \ --ssh-key ~/.ssh/id_ed25519
-.B \ \ \ \ \ \ --no-revoke-ssh-key
 .IP
-The installer skips the revocation step and PermitRootLogin lockdown.
-The operator key remains in the bootstrap user\[cq]s authorized_keys
-for subsequent reconvergence runs.
+The delivery key remains available under
+/var/lib/admiral/ssh-delivery/<node-id>.ed25519 on the admin node until
+spoke reconvergence is complete. Use
+.B --no-revoke-ssh-key
+only when the operator intentionally wants to retain bootstrap access.
 .RE
 .SS Deploy a portal node
 .RS
@@ -122,14 +126,14 @@ are idempotent: running the installer again reconciles the node state.
 For spoke modes
 .RB ( \-\-worker-node ,
 .BR \-\-portal-node ),
-reconvergence requires either:
+the installer automatically selects the per-node delivery key when the
+bootstrap key is no longer usable. The operator must retain that key at
+/var/lib/admiral/ssh-delivery/<node-id>.ed25519 on the admin node. The
+alternative is:
 .P
   \[bu] Passing
 .B \-\-no-revoke-ssh-key
-from the second run onward (recommended), or
-.P
-  \[bu] SSHing as the per-node admiral-ssh user with the delivery key stored
-in /var/lib/admiral/ssh-delivery/<node-id>.ed25519 on the admin node.
+to retain the bootstrap key during subsequent runs.
 .SH POST-INSTALLATION VERIFICATION
 .SS Service health
 .RS
@@ -166,12 +170,12 @@ On an admin or single-node host:
 .RE
 .SH TROUBLESHOOTING
 .SS Installer fails with "Could not inspect the existing Admiral role"
-The spoke has a previous installation whose operator SSH key was revoked.
-Use
+The spoke has a previous installation whose bootstrap SSH key was revoked.
+Keep the per-node delivery key on the admin node and rerun the installer;
+it will select that key automatically. If the delivery key is unavailable,
+restore it from the protected installation backup or use
 .B \-\-no-revoke-ssh-key
-and the original
-.B \-\-ssh-key
-to reconverge.
+before revoking bootstrap access again.
 .SS WireGuard handshake timeout
 Check that UDP port 51820 is reachable on the hub public IP. Verify the
 WireGuard private key on the spoke matches the peer public key on the hub.
