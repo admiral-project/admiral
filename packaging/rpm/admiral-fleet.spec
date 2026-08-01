@@ -2,11 +2,11 @@
 # SPDX-License-Identifier: Apache-2.0
 
 %global debug_package %{nil}
-%global commit a7bc85d79d2b268a3e7544326dbb91fc6e7b084a
+%global commit 92650d6429626d838a37bd242d2ae77615de5450
 
 Name:    admiral-fleet
 Version: 0.0.1beta19
-Release: 6%{?dist}
+Release: 7%{?dist}
 Summary: Admiral Fleet Worker Agent
 
 License: Apache-2.0
@@ -77,6 +77,10 @@ loginctl enable-linger admiral-apps 2>/dev/null || :
 %systemd_postun_with_restart admiral-fleet.service
 
 %changelog
+* Sat Aug 01 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta19-7
+- Hand storage trees to the rootless user without following symlinks
+- Skip symlinks during tree migration (Lchown, no TOCTOU dereference)
+
 * Sat Aug 01 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta19-6
 - Hand pre-existing backup/restore trees to the rootless user
 
