@@ -2,11 +2,11 @@
 # SPDX-License-Identifier: Apache-2.0
 
 %global debug_package %{nil}
-%global commit 56a0cc556caea5a932b94a53c4ccb37cac0c3850
+%global commit 162b7b128c970db741f65abc5bf700ba7b7f8cd2
 
 Name:    admiral-fleet
 Version: 0.0.1beta19
-Release: 2%{?dist}
+Release: 3%{?dist}
 Summary: Admiral Fleet Worker Agent
 
 License: Apache-2.0
@@ -73,6 +73,10 @@ loginctl enable-linger admiral-apps 2>/dev/null || :
 %systemd_postun_with_restart admiral-fleet.service
 
 %changelog
+* Sat Aug 01 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta19-3
+- Make restore staging dirs and artifacts readable by the rootless user
+- Fix S3/HTTPS database restore "permission denied" on podman cp
+
 * Wed Jul 29 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta18-2
 - Probe published workload address for multinode healthchecks
 
