@@ -2,11 +2,11 @@
 # SPDX-License-Identifier: Apache-2.0
 
 %global debug_package %{nil}
-%global commit 92650d6429626d838a37bd242d2ae77615de5450
+%global commit 9182b441d450da61adfc4b517d33f4f76be9eb7e
 
 Name:    admiral-fleet
 Version: 0.0.1beta19
-Release: 7%{?dist}
+Release: 9%{?dist}
 Summary: Admiral Fleet Worker Agent
 
 License: Apache-2.0
@@ -42,11 +42,15 @@ cd admiral-fleet
 export GOCACHE=%{_tmppath}/go-cache
 mkdir -p "$GOCACHE"
 go build -trimpath -buildmode=pie -ldflags="-s -w" -o admiral-fleet ./cmd/admiral-fleet/
+go build -trimpath -buildmode=pie -ldflags="-s -w" -o admiral-fleet-lifecycle ./cmd/admiral-fleet-lifecycle/
+go build -trimpath -buildmode=pie -ldflags="-s -w" -o admiral-fleet-setup ./cmd/admiral-fleet-setup/
 go build -trimpath -buildmode=pie -ldflags="-s -w" -o admiral-fleet-backup ./cmd/admiral-fleet-backup/
 
 %install
 cd admiral-fleet
 install -Dm0755 admiral-fleet %{buildroot}%{_bindir}/admiral-fleet
+install -Dm0755 admiral-fleet-lifecycle %{buildroot}%{_bindir}/admiral-fleet-lifecycle
+install -Dm0755 admiral-fleet-setup %{buildroot}%{_bindir}/admiral-fleet-setup
 install -Dm0755 admiral-fleet-backup %{buildroot}%{_bindir}/admiral-fleet-backup
 install -Dm0644 %{SOURCE1} %{buildroot}%{_unitdir}/admiral-fleet.service
 install -Dm0600 %{SOURCE2} %{buildroot}%{_sysconfdir}/admiral/fleet.env
@@ -60,6 +64,8 @@ mkdir -p "$GOCACHE"
 %files
 %license admiral-fleet/LICENSE
 %{_bindir}/admiral-fleet
+%{_bindir}/admiral-fleet-lifecycle
+%{_bindir}/admiral-fleet-setup
 %{_bindir}/admiral-fleet-backup
 %{_unitdir}/admiral-fleet.service
 %attr(0600, root, root) %config(noreplace) %{_sysconfdir}/admiral/fleet.env
@@ -67,6 +73,8 @@ mkdir -p "$GOCACHE"
 %post
 %systemd_post admiral-fleet.service
 restorecon -F %{_bindir}/admiral-fleet 2>/dev/null || :
+restorecon -F %{_bindir}/admiral-fleet-lifecycle 2>/dev/null || :
+restorecon -F %{_bindir}/admiral-fleet-setup 2>/dev/null || :
 restorecon -F %{_bindir}/admiral-fleet-backup 2>/dev/null || :
 loginctl enable-linger admiral-apps 2>/dev/null || :
 
@@ -77,6 +85,13 @@ loginctl enable-linger admiral-apps 2>/dev/null || :
 %systemd_postun_with_restart admiral-fleet.service
 
 %changelog
+* Sat Aug 01 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta19-8
+- Delegate all Podman operations through specialized rootless helpers
+- Share one systemd user-session transport across lifecycle, setup and backup
+
+* Sat Aug 01 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta19-9
+- Preserve rootless ownership for delegated temporary environment files
+
 * Sat Aug 01 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta19-7
 - Hand storage trees to the rootless user without following symlinks
 - Skip symlinks during tree migration (Lchown, no TOCTOU dereference)

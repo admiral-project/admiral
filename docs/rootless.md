@@ -17,10 +17,14 @@ Admiral separa dos responsabilidades:
   aplicación como root.
 - `admiral-apps` es el usuario local sin privilegios que ejecuta Podman, los pods,
   los contenedores y sus unidades systemd de usuario.
-- `admiral-fleet-backup` es el helper del plano de datos. Se ejecuta como
-  `admiral-apps`, recibe la tarea autorizada por stdin y ejecuta el backup/restore
-  real de la base de datos y los volúmenes contra Podman rootless. Fleet conserva
-  la orquestación de contenedores y el helper no necesita privilegios de host.
+- Fleet delega todas las operaciones Podman a helpers especializados que se
+  ejecutan como `admiral-apps`:
+  - `admiral-fleet-lifecycle` para existencia, inspección, puertos y eliminación
+    de pods, contenedores y volúmenes;
+  - `admiral-fleet-setup` para `exec`, `cp`, `run --rm`, login y secrets;
+  - `admiral-fleet-backup` para backup, restore y artefactos de almacenamiento.
+- Los helpers reciben tareas por stdin y comparten el mismo runtime rootless.
+  Ninguno tiene privilegios de host ni constituye una API de shell remoto.
 
 Por tanto, encontrar `User=root` —o la ausencia de `User=`— en
 `admiral-fleet.service` no demuestra que los contenedores sean rootful. Tampoco se
@@ -34,7 +38,45 @@ El límite de confianza es deliberado: Fleet recibe tareas autenticadas de
 es una API de shell remoto y no debe construir comandos arbitrarios a partir de
 entrada del cliente.
 
-## Modelo de procesos
+## Arquitectura y modelo de procesos
+
+### Enfoque final: binarios especializados y una sola ruta rootless
+
+La migración no introduce un binario monolítico. El contrato de ejecución se
+divide por responsabilidad:
+
+| Binario | Responsabilidad | Puede ejecutar |
+|---|---|---|
+| `admiral-fleet-lifecycle` | Estado y ciclo de vida | `version`, `port`, `pod`, `ps`, `container`, `volume`, `rm` |
+| `admiral-fleet-setup` | Provisionado y operaciones efímeras | `exec`, `cp`, `run`, `login`, `secret` |
+| `admiral-fleet-backup` | Plan de datos | dump, restore, checksum y S3 |
+
+Los tres son ejecutables independientes, instalados por RPM con permisos
+normales de usuario y lanzados directamente como `admiral-apps`. Comparten sólo
+el protocolo pequeño, la validación del dominio y el transporte rootless; no
+comparten un ejecutable grande ni una API de shell.
+
+La ruta única de producción es:
+
+```text
+Fleet (root; host/systemd/storage)
+  └─ runuser -u admiral-apps
+       └─ helper especializado
+            └─ systemd-run --user --wait --collect --pipe
+                 └─ podman rootless
+```
+
+Fleet no invoca `podman` directamente para lifecycle, setup, healthchecks,
+secrets, backup o restore. La compatibilidad de bajo nivel que permanece en el
+paquete Podman sólo sirve a dobles de prueba y a constructores explícitos; no
+es una ruta seleccionable por el servicio Fleet en producción. Así se evita
+que una operación cambie silenciosamente entre dos contextos de permisos.
+
+Cada solicitud contiene versión, operación, argumentos estructurados y, cuando
+corresponde, stdin binario. Los secretos viajan por stdin o por el entorno
+controlado del helper, nunca como argumentos visibles en `ps`. El helper sólo
+acepta operaciones de su tabla y rechaza cualquier primera operación fuera de
+su dominio.
 
 El flujo normal es:
 
@@ -43,21 +85,24 @@ admirald
   │ tarea autenticada y auditable
   ▼
 admiral-fleet.service                  UID 0, servicio de sistema
-  │ prepara archivos, escribe Quadlets, entra en la sesión del usuario
+  │ prepara archivos, escribe Quadlets y administra systemd
   ├─ orquestación de contenedores ──► systemctl --machine=<usuario>@ --user
-  └─ plano de datos (backup/restore) ─► runuser -u admiral-apps, tarea por stdin
-                                              ▼
-                                    admiral-fleet-backup        UID de admiral-apps
+  └─ operaciones Podman ───────────► runuser -u admiral-apps, tarea por stdin
+                                      │
+                                      ├─ admiral-fleet-lifecycle
+                                      ├─ admiral-fleet-setup
+                                      └─ admiral-fleet-backup
+                                              │ runtime rootless común
                                               │ systemd-run --user --wait --collect --pipe
                                               ▼
-                                    user@<uid>.service          UID de admiral-apps
+                                      user@<uid>.service
                                               │ transient unit
                                               ▼
-                                    podman / conmon / pasta / crun
+                                      podman / conmon / pasta / crun
                                                                 UID de admiral-apps
                                               │ user namespace rootless
                                               ▼
-                                    proceso dentro del contenedor
+                                      proceso dentro del contenedor
                                                                 no es root del host
 ```
 
@@ -121,16 +166,29 @@ los workloads probados usan puertos altos asignados por Admiral.
 
 ## Cómo ejecuta cada clase de operación
 
-No existe un wrapper universal fiable para todas las operaciones de Podman en
-EL10. La ruta se selecciona por semántica:
+Fleet no ejecuta Podman directamente. La única ruta permitida para operaciones
+Podman es:
 
-| Operación | Ruta de ejecución | Motivo |
+```text
+admiral-fleet (root)
+  └─ runuser -u admiral-apps
+       └─ helper especializado
+            └─ runtime rootless común
+                 └─ systemd-run --user --wait --collect --pipe
+                      └─ podman
+```
+
+| Operación | Helper | Responsabilidad de Fleet |
 |---|---|---|
-| `podman run --rm` | `runuser` + `XDG_RUNTIME_DIR` | Helper rootless efímero; no requiere transient unit |
-| `podman exists`, `inspect`, `port` | `runuser` + `XDG_RUNTIME_DIR` | Consulta directa al almacenamiento del usuario |
-| `podman exec` | `runuser` + bus del usuario + `systemd-run --user` | Debe conservar la sesión/cgroup systemd del usuario |
-| `podman secret create/rm` | `runuser` + bus del usuario + `systemd-run --user` | El secret pertenece al almacenamiento rootless |
-| `systemctl --user` para Quadlet | `systemctl --machine=<usuario>@ --user` | Administración remota del user manager persistente |
+| existencia, inspect, port y eliminación | `admiral-fleet-lifecycle` | Validar tarea y reportar resultado |
+| `exec`, `cp`, `run --rm`, login y secrets | `admiral-fleet-setup` | Preparar archivos y coordinar systemd |
+| backup y restore de base/volúmenes | `admiral-fleet-backup` | Preparar storage, pause/resume y coordinar systemd |
+| Quadlet, daemon-reload, start, stop y restart | `systemctl --machine=<usuario>@ --user` | Ejecutar la orquestación de unidades |
+
+Los tres helpers utilizan el mismo runtime para configurar `HOME`,
+`XDG_RUNTIME_DIR`, `DBUS_SESSION_BUS_ADDRESS`, timeouts, stdin/stdout, errores y
+sanitización. No existe una segunda implementación `runuser + podman` dentro de
+Fleet ni fallback a Podman root si un helper no está instalado.
 
 Para la ruta del bus de usuario, Fleet establece:
 
@@ -161,12 +219,20 @@ user manager, por lo que el transient unit no podría abrir el archivo. Los
 valores sensibles no deben aparecer en logs, argumentos mostrados al operador ni
 mensajes de error sin redacción.
 
-## Plano de datos: `admiral-fleet-backup`
+## Helpers rootless especializados
 
-El backup y el restore del plano de datos (dump de base y volúmenes) no los
-ejecuta Fleet como root: los delega a `admiral-fleet-backup`, que corre como
-`admiral-apps`. Fleet conserva la orquestación de contenedores (re-render de
-Quadlets, pause/resume de la pod) y el helper ejecuta sólo el trabajo de datos.
+Cada helper es un binario pequeño con un dominio limitado. La lógica común de
+transporte y seguridad vive en un paquete interno compartido; no se duplica en
+los binarios.
+
+- `admiral-fleet-lifecycle` ejecuta consultas y operaciones Podman de lifecycle.
+- `admiral-fleet-setup` ejecuta operaciones interactivas, setup, secrets y
+  contenedores efímeros.
+- `admiral-fleet-backup` ejecuta dumps, restores, checksum y almacenamiento S3.
+
+Fleet conserva la orquestación de unidades: renderiza Quadlets, solicita
+`daemon-reload`, inicia o detiene unidades y coordina pause/resume. El helper
+especializado ejecuta solamente la operación Podman asignada.
 
 ### Transporte
 
@@ -193,6 +259,10 @@ admiral-fleet (root)
   para que el helper localice los árboles y al usuario sin argumentos
   adicionales.
 
+El mismo transporte se usa para `admiral-fleet-lifecycle` y
+`admiral-fleet-setup`; cada helper acepta únicamente las acciones de su propio
+dominio.
+
 ### Entrega de árboles de almacenamiento
 
 El usuario rootless debe poder crear y borrar artefactos y staging sin root. Por
@@ -210,16 +280,16 @@ redirija a root a cambiar el propietario de un archivo arbitrario del host).
 `lchown` además es inmune a una carrera TOCTOU de swap directorio→symlink porque
 no dereferencia: como máximo cambia el propietario del propio enlace.
 
-### Garantías y límites del helper
+### Garantías y límites de los helpers
 
-- Ejecuta exactamente la acción autorizada del payload validado; no es una API de
-  shell remoto y no construye comandos arbitrarios desde la tarea.
-- Escribe únicamente en los árboles que Fleet le entrega como propietario; no
-  tiene privilegios de host.
+- Cada helper ejecuta exactamente las acciones autorizadas de su dominio; no son
+  una API de shell remoto y no construyen comandos arbitrarios desde la tarea.
+- Los helpers escriben únicamente en los árboles que Fleet les entrega como
+  propietario y no tienen privilegios de host.
 - No toma decisiones de negocio: si un backup o restore procede lo decide
-  `admirald`, no el helper.
-- El binario se empaqueta en el RPM de Fleet y `restorecon` lo etiqueta en
-  `%post` para SELinux.
+  `admirald`, no los helpers.
+- Los tres helpers se empaquetan en el RPM de Fleet y `restorecon` los etiqueta
+  en `%post` para SELinux.
 
 ## Perfil systemd validado para Fleet
 
@@ -322,6 +392,9 @@ Rootless no sustituye SELinux. Las pruebas válidas se realizan con SELinux
 
 ```bash
 restorecon -RF /usr/bin/admiral-fleet \
+  /usr/bin/admiral-fleet-backup \
+  /usr/bin/admiral-fleet-lifecycle \
+  /usr/bin/admiral-fleet-setup \
   /usr/lib/systemd/system/admiral-fleet.service \
   /etc/admiral /var/lib/admiral /var/lib/admiral-apps
 getenforce
@@ -346,6 +419,10 @@ válido cuando supera, como mínimo:
 8. Backup real de base de datos o volumen, según la app.
 9. Pause/resume o stop/start y nueva comprobación funcional.
 10. Revisión de AVC y de propietario/cgroup de los procesos.
+11. Comprobar que los tres helpers se ejecutan como `admiral-apps`, reciben la
+    tarea por stdin y no exponen secretos en argv.
+12. Comprobar por separado `run`, `inspect`, `exec`, `cp`, secrets, backup y
+    restore; todas deben usar el runtime rootless común.
 
 Para cambios sensibles se usa WordPress/MariaDB y el golden test de ERPNext. Una
 app mínima resulta útil para diagnóstico, pero por sí sola no valida setup,
@@ -396,19 +473,28 @@ contenedores pasaron a estado `running`.
 
 ## Validación viva del 1 de agosto de 2026: migración al helper rootless
 
-Entorno: CentOS Stream 10, `admiral-fleet-0.0.1beta19-6.el10.x86_64` instalado
+Entorno: CentOS Stream 10, `admiral-fleet-0.0.1beta19-9.el10.x86_64` instalado
 desde el RPM local, SELinux `Enforcing`, `admiral-apps` con UID 991.
 
 Ciclo E2E con WordPress/MariaDB sobre el plano de datos delegado:
 
 | Comprobación | Evidencia |
 |---|---|
-| Backup manual delegado | Operación `op_c981ae9901386cad` `succeeded`; backup `bk_a9026335dfedcafb` (`s3`, checksum sha256 `470b391335e4e761f4709060b9bdf61d67512274c9bfdea630b38a735bb4191f`). |
+| Backup manual delegado | Operación `op_8f43a9e89de06c99` `succeeded`; backup `bk_7c69fe302c83c465` (`s3`, checksum sha256 `d0bb538b28a355fc17086c8c727bcb9736764f52ed4f890c1ef003237979f56f`). |
 | Propiedad de los artefactos | El tar.gz resultante pertenece a `admiral-apps` y se creó bajo `backups/`, no por un chown posterior de root. |
-| Restore delegado desde S3 | Operación `op_340723750a8dbcff` `succeeded` con verificación de checksum. Un cambio a `wp_options.blogname` posterior al backup quedó revertido tras pause/restore/resume, confirmando que el dump se aplicó. |
-| Estado final | Instancia `technical_status=running` y `health_status=healthy`. |
+| Restore delegado desde S3 | Pause `op_d57bce9a26b3173e`, restore `op_c99924894e0a9e7f` y start `op_23c7693e30475c28`, todos `succeeded`; el restore verificó checksum. |
+| Estado final | Inspección `op_6cb1de70ddb621be` confirmó `technical_status=running` y `health_status=healthy`; WordPress respondió HTTP 301. |
 | Entrega de árboles antiguos | Migración recursiva de `backups/`, `restore/` y `tmp/` al usuario rootless con `lchown` y sin seguir symlinks. |
 | TLS | El flujo S3 mantiene `ADMIRAL_INSECURE_SKIP_VERIFY=0`. |
+
+El ciclo E2E final sólo se considera válido cuando lifecycle, inspect, setup,
+secrets, backup y restore utilizan los helpers especializados y el mismo runtime
+rootless, sin fallback a la ruta Podman ejecutada por Fleet como root.
+
+La corrección de ownership de los archivos temporales de entorno queda incluida
+en `admiral-fleet-0.0.1beta19-9`: Fleet conserva el archivo bajo el UID rootless
+antes de entregarlo al helper, de modo que `podman run --env-file` puede abrirlo
+desde el transient unit de usuario.
 
 Fallos corregidos durante esta migración (ya resueltos en el RPM instalado):
 
