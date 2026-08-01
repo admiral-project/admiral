@@ -24,7 +24,7 @@ Los RPMs se usan desde `packaging/build/RPMS/`:
 
 - `admiral-common-0.0.1beta19-35.el10.noarch.rpm`
 - `admirald-0.0.1beta19-4.el10.x86_64.rpm`
-- `admiral-fleet-0.0.1beta19-2.el10.x86_64.rpm`
+- `admiral-fleet-0.0.1beta19-6.el10.x86_64.rpm`
 - `admiralctl-0.0.1beta19-1.el10.x86_64.rpm`
 - `admiral-flagship-0.0.1beta19-1.el10.noarch.rpm`
 - `admiral-harbor-0.0.1beta19-2.el10.noarch.rpm`
@@ -45,7 +45,8 @@ Los RPMs se usan desde `packaging/build/RPMS/`:
 | SSH y handshake | Multinodo | Aprobado | WireGuard `10.99.0.1`--`10.99.0.2` con handshake activo; `worker-beta19` registró `fleet_version=0.0.1beta19`, `health_status=healthy` y `available_for_provisioning=true`. La llave bootstrap se conservó intencionalmente con `--no-revoke-ssh-key` para recuperación del laboratorio. |
 | WordPress | Multinodo | Aprobado | Provision `op_d269c72819eaf2b9`, instancia `inst_c4e0a2cb67a47ab2` sana, `setup_completed=true`, técnica `running`; HTTP sobre VPN respondió `301`; los cuatro contenedores permanecieron rootless bajo `admiral-apps`. |
 | Backup y ciclo de vida | Multinodo | Aprobado | Backup DB `op_b58ab1d6fc02e8c2` correcto; pausa `op_0932f222007181ad` y resume `op_c1e80121a6f3fd0b` correctos; la instancia quedó saludable tras reanudar. |
-| Issues de GitHub | `admiral-project/admiral` | En curso | #3 y #12 están cerrados. Permanecen abiertos #4, #5, #6, #10, #14, #16 y #17; no se modifican desde esta validación y requieren resolución o decisión explícita de release. |
+| Backup y restore de datos como `admiral-apps` | Single node (CentOS Stream 10) | Aprobado | El plan de datos (dump de base y artefactos de restauración) se ejecuta con el helper `admiral-fleet-backup` bajo `admiral-apps` (uid 991), de modo que los archivos quedan propiedad de ese usuario y no de root. Backup manual `op_c981ae9901386cad` correcto → `bk_a9026335dfedcafb` (mariadb, `size_bytes 20601`, `checksum_sha256 470b391335e4e761f4709060b9bdf61d67512274c9bfdea630b38a735bb4191f`, `storage_backend s3`, `triggered_by manual`). Restore `op_340723750a8dbcff` correcto desde S3 con verificación de checksum: tras reanudar, un cambio a `wp_options.blogname` realizado después del backup quedó revertido, evidencia de que el dump se aplicó sobre los datos en ejecución. La instancia quedó `technical_status=running` y `health_status=healthy`. |
+| Issues de GitHub | `admiral-project/admiral` | En curso | #3, #4 y #12 están cerrados. Permanecen abiertos #5, #6, #10, #14, #16 y #17; no se modifican desde esta validación y requieren resolución o decisión explícita de release. |
 
 ## Hallazgos corregidos antes de continuar
 
@@ -56,6 +57,15 @@ Los RPMs se usan desde `packaging/build/RPMS/`:
    `fix(installer): accept clean RPM baseline in playbook`.
 3. Los comandos instalados tenían guion bajo cuando la interfaz documentada usa
    guiones. Corregido en `fix(cli): standardize installed command names`.
+4. Al delegar el backup/restore del plan de datos al helper
+   `admiral-fleet-backup`, el primer intento falló porque el helper usaba
+   `systemctl --user` con opciones que solo acepta `systemd-run`
+   (`--collect`). Corregido en `fix(backup): run helper podman via systemd-run
+   and keep task errors`.
+5. Tras corregir lo anterior, el segundo intento falló con "permission denied"
+   al escribir el artefacto porque los árboles `backups/restore/tmp` creados
+   antes por root no eran propiedad del usuario rootless. Corregido en
+   `fix(backup): hand pre-existing storage trees to the rootless user`.
 
 ## Hallazgos en curso
 

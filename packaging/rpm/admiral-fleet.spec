@@ -2,11 +2,11 @@
 # SPDX-License-Identifier: Apache-2.0
 
 %global debug_package %{nil}
-%global commit 162b7b128c970db741f65abc5bf700ba7b7f8cd2
+%global commit a7bc85d79d2b268a3e7544326dbb91fc6e7b084a
 
 Name:    admiral-fleet
 Version: 0.0.1beta19
-Release: 3%{?dist}
+Release: 6%{?dist}
 Summary: Admiral Fleet Worker Agent
 
 License: Apache-2.0
@@ -42,10 +42,12 @@ cd admiral-fleet
 export GOCACHE=%{_tmppath}/go-cache
 mkdir -p "$GOCACHE"
 go build -trimpath -buildmode=pie -ldflags="-s -w" -o admiral-fleet ./cmd/admiral-fleet/
+go build -trimpath -buildmode=pie -ldflags="-s -w" -o admiral-fleet-backup ./cmd/admiral-fleet-backup/
 
 %install
 cd admiral-fleet
 install -Dm0755 admiral-fleet %{buildroot}%{_bindir}/admiral-fleet
+install -Dm0755 admiral-fleet-backup %{buildroot}%{_bindir}/admiral-fleet-backup
 install -Dm0644 %{SOURCE1} %{buildroot}%{_unitdir}/admiral-fleet.service
 install -Dm0600 %{SOURCE2} %{buildroot}%{_sysconfdir}/admiral/fleet.env
 
@@ -58,12 +60,14 @@ mkdir -p "$GOCACHE"
 %files
 %license admiral-fleet/LICENSE
 %{_bindir}/admiral-fleet
+%{_bindir}/admiral-fleet-backup
 %{_unitdir}/admiral-fleet.service
 %attr(0600, root, root) %config(noreplace) %{_sysconfdir}/admiral/fleet.env
 
 %post
 %systemd_post admiral-fleet.service
 restorecon -F %{_bindir}/admiral-fleet 2>/dev/null || :
+restorecon -F %{_bindir}/admiral-fleet-backup 2>/dev/null || :
 loginctl enable-linger admiral-apps 2>/dev/null || :
 
 %preun
@@ -73,6 +77,18 @@ loginctl enable-linger admiral-apps 2>/dev/null || :
 %systemd_postun_with_restart admiral-fleet.service
 
 %changelog
+* Sat Aug 01 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta19-6
+- Hand pre-existing backup/restore trees to the rootless user
+
+* Sat Aug 01 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta19-5
+- Route helper podman operations through systemd-run for the rootless session
+- Preserve the helper's structured error on task failure
+
+* Sat Aug 01 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta19-4
+- Run backup/restore data plane as the rootless user via admiral-fleet-backup
+- Ship the admiral-fleet-backup helper binary in the fleet package
+- Remove root-to-rootless chown workarounds from the restore data path
+
 * Sat Aug 01 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta19-3
 - Make restore staging dirs and artifacts readable by the rootless user
 - Fix S3/HTTPS database restore "permission denied" on podman cp
