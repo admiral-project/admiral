@@ -24,7 +24,7 @@ Los RPMs se usan desde `packaging/build/RPMS/`:
 
 - `admiral-common-0.0.1beta19-35.el10.noarch.rpm`
 - `admirald-0.0.1beta19-4.el10.x86_64.rpm`
-- `admiral-fleet-0.0.1beta19-6.el10.x86_64.rpm`
+- `admiral-fleet-0.0.1beta19-7.el10.x86_64.rpm`
 - `admiralctl-0.0.1beta19-1.el10.x86_64.rpm`
 - `admiral-flagship-0.0.1beta19-1.el10.noarch.rpm`
 - `admiral-harbor-0.0.1beta19-2.el10.noarch.rpm`
@@ -46,6 +46,7 @@ Los RPMs se usan desde `packaging/build/RPMS/`:
 | WordPress | Multinodo | Aprobado | Provision `op_d269c72819eaf2b9`, instancia `inst_c4e0a2cb67a47ab2` sana, `setup_completed=true`, técnica `running`; HTTP sobre VPN respondió `301`; los cuatro contenedores permanecieron rootless bajo `admiral-apps`. |
 | Backup y ciclo de vida | Multinodo | Aprobado | Backup DB `op_b58ab1d6fc02e8c2` correcto; pausa `op_0932f222007181ad` y resume `op_c1e80121a6f3fd0b` correctos; la instancia quedó saludable tras reanudar. |
 | Backup y restore de datos como `admiral-apps` | Single node (CentOS Stream 10) | Aprobado | El plan de datos (dump de base y artefactos de restauración) se ejecuta con el helper `admiral-fleet-backup` bajo `admiral-apps` (uid 991), de modo que los archivos quedan propiedad de ese usuario y no de root. Backup manual `op_c981ae9901386cad` correcto → `bk_a9026335dfedcafb` (mariadb, `size_bytes 20601`, `checksum_sha256 470b391335e4e761f4709060b9bdf61d67512274c9bfdea630b38a735bb4191f`, `storage_backend s3`, `triggered_by manual`). Restore `op_340723750a8dbcff` correcto desde S3 con verificación de checksum: tras reanudar, un cambio a `wp_options.blogname` realizado después del backup quedó revertido, evidencia de que el dump se aplicó sobre los datos en ejecución. La instancia quedó `technical_status=running` y `health_status=healthy`. |
+| Entrega de árboles sin seguir symlinks | Single node (CentOS Stream 10) | Aprobado | Se plantó un symlink `planted-link → /etc/hostname` dentro del árbol `backups/` y se ejecutó un backup real con `admiral-fleet-0.0.1beta19-7`: la operación `op_bbad52b90bd513fa` terminó `succeeded`, el symlink quedó intacto y sin tocar, y `/etc/hostname` conservó el propietario `root:root`. La migración de propiedad se realiza con `lchown` y salta los symlinks, por lo que un árbol modificable por el usuario rootless no puede redirigir a root a cambiar el propietario de un archivo arbitrario del host. |
 | Issues de GitHub | `admiral-project/admiral` | En curso | #3, #4 y #12 están cerrados. Permanecen abiertos #5, #6, #10, #14, #16 y #17; no se modifican desde esta validación y requieren resolución o decisión explícita de release. |
 
 ## Hallazgos corregidos antes de continuar
@@ -66,6 +67,14 @@ Los RPMs se usan desde `packaging/build/RPMS/`:
    al escribir el artefacto porque los árboles `backups/restore/tmp` creados
    antes por root no eran propiedad del usuario rootless. Corregido en
    `fix(backup): hand pre-existing storage trees to the rootless user`.
+6. La migración de propiedad de los árboles de almacenamiento usaba `os.Chown`
+   dentro de un `Walk`, que sigue symlinks. Una vez que el árbol queda
+   modificable por el usuario rootless, un symlink plantado podía redirigir a
+   root (Fleet) a cambiar el propietario de un archivo arbitrario del host, y
+   además con una ventana TOCTOU de swap directorio→symlink. Corregido usando
+   `lchown` y saltando las entradas symlink, incluido el chown de la raíz, en
+   `fix(executor): hand storage trees to rootless without following symlinks`
+   (commit `92650d6`, RPM `admiral-fleet-0.0.1beta19-7`).
 
 ## Hallazgos en curso
 
