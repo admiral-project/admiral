@@ -1,10 +1,10 @@
 # SPDX-FileCopyrightText: William Moreno Reyes CP | MBA
 # SPDX-License-Identifier: Apache-2.0
 
-%global commit 1158eeec046fce0bb01ed6242116b8d2dcf07adc
+%global commit bfa889ad3da699b58347261fb7ed22f964d1bdbc
 
 Name:    admiral-common
-Version: 0.0.1beta19
+Version: 0.0.1beta20
 Release: 36%{?dist}
 Summary: Common files and utilities for Admiral PaaS
 
@@ -169,6 +169,9 @@ if [ "$1" -eq 0 ]; then
 fi
 
 %changelog
+* Sat Aug 01 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta20-36
+- Bump to beta20: security hardening fixes (task ownership, resize rollback, rate limiter cleanup, error leakage prevention)
+
 * Sat Aug 01 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta19-36
 - Make spoke reconvergence use per-node delivery keys after bootstrap revocation
 - Make bootstrap-key revocation idempotent and harden private listener checks
