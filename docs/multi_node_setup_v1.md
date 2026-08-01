@@ -266,6 +266,23 @@ schedulable
 
 without manual intervention.
 
+## 7. Spoke reconvergence
+
+`admiral-install --worker-node` and `admiral-install --portal-node` are
+re-runnable. On a previously onboarded spoke the installer:
+
+1. verifies the supplied SSH host fingerprint;
+2. tries the persisted `admiral-ssh` identity;
+3. if the bootstrap key has already been revoked, uses the matching
+   `/var/lib/admiral/ssh-delivery/<node-id>.ed25519` key automatically;
+4. runs Ansible through that non-root account with `sudo -n`;
+5. treats removal of an already absent bootstrap key as success.
+
+The operator must keep the per-node delivery key until reconvergence is no
+longer required. `--no-revoke-ssh-key` remains available for the first
+onboarding run when the operator explicitly needs to preserve bootstrap access,
+but is not required for normal subsequent runs.
+
 ---
 
 7. Node registration contract

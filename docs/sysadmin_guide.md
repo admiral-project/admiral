@@ -194,11 +194,13 @@ For a portal, replace the final service with `admiral-harbor`.
 
 Re-run the same `admiral-install --worker-node` or
 `admiral-install --portal-node` command from the admin node. The installer
-detects the persisted `opsa_*` account, connects with that non-root account,
-uses `sudo -n` for privileged operations, and preserves existing secrets and
-registrations. Supply the currently verified SSH host fingerprint on every
-run. If the host key changed, stop and verify the new key through the provider
-console before retrying.
+first tries the persisted `admiral-ssh` account and, when the bootstrap key was
+already revoked, automatically falls back to the per-node delivery key in
+`/var/lib/admiral/ssh-delivery/`. It uses `sudo -n` for privileged operations,
+preserves existing secrets and registrations, and treats bootstrap-key
+revocation as idempotent. Supply the currently verified SSH host fingerprint on
+every run. If the host key changed, stop and verify the new key through the
+provider console before retrying.
 
 `--single-node` and `--dev-node` are local co-located setups, not commands for
 adding remote cluster hosts. `--single-node` is the secure beta profile

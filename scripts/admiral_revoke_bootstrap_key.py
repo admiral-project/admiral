@@ -73,7 +73,7 @@ def main() -> int:
         return 1
     if not removed:
         print("bootstrap public key was not found in authorized_keys", file=sys.stderr)
-        return 1
+        return 0
     return 0
 
 

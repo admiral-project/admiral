@@ -22,6 +22,7 @@ ADMIRALD_TASKS = ROOT / "ansible" / "roles" / "admirald" / "tasks" / "main.yml"
 FLAGSHIP_TASKS = ROOT / "ansible" / "roles" / "admiral_flagship" / "tasks" / "main.yml"
 SYSADMIN_GUIDE = ROOT / "docs" / "sysadmin_guide.md"
 MAKEFILE = ROOT / "Makefile"
+FLEET_CONFIG = ROOT / "packaging" / "config" / "fleet.env"
 
 
 class InstallerModeTests(unittest.TestCase):
@@ -211,6 +212,35 @@ class InstallerModeTests(unittest.TestCase):
         self.assertIn("revoke bootstrap SSH access only after complete onboarding", content)
         self.assertIn("Bootstrap SSH credential is still accepted after revocation", content)
         self.assertIn('<<<"PermitRootLogin no"', content)
+
+    def test_spoke_reconvergence_uses_delivery_key_and_skips_bootstrap_probe(self) -> None:
+        content = INSTALLER.read_text(encoding="utf-8")
+
+        self.assertIn('INSTALL_RECONVERGE_SSH_KEY="true"', content)
+        self.assertIn("/var/lib/admiral/ssh-delivery/", content)
+        self.assertIn("Using per-node delivery key for spoke reconvergence", content)
+        self.assertIn('[[ "$INSTALL_RECONVERGE_SSH_KEY" != "true" ]] && ssh -i', content)
+
+    def test_bootstrap_key_revocation_is_idempotent(self) -> None:
+        content = (ROOT / "scripts" / "admiral_revoke_bootstrap_key.py").read_text(encoding="utf-8")
+
+        self.assertIn('print("bootstrap public key was not found in authorized_keys", file=sys.stderr)', content)
+        self.assertIn("return 0", content)
+
+    def test_public_listener_check_excludes_private_and_link_local_ranges(self) -> None:
+        content = INSTALLER.read_text(encoding="utf-8")
+
+        for pattern in (
+            r"^172\\.(1[6-9]|2[0-9]|3[0-1])\\.",
+            r"^192\\.168\\.",
+            r"^169\\.254\\.",
+        ):
+            self.assertIn(pattern, content)
+
+    def test_fleet_defaults_do_not_declare_unused_queue_database_url(self) -> None:
+        content = FLEET_CONFIG.read_text(encoding="utf-8")
+
+        self.assertNotIn("ADMIRAL_QUEUE_DATABASE_URL", content)
 
     def test_spoke_uses_fixed_per_node_administrative_identity(self) -> None:
         common = COMMON_TASKS.read_text(encoding="utf-8")

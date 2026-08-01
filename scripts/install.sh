@@ -270,6 +270,7 @@ INSTALL_SSH_PUBLIC_KEY_FILE=""
 INSTALL_SSH_FINGERPRINT=""
 BOOTSTRAP_SSH_PUB_KEY=""
 BOOTSTRAP_SSH_USER=""
+INSTALL_RECONVERGE_SSH_KEY="false"
 ADMIN_SSH_DELIVERY_KEY=""
 INSTALL_S3_CREDENTIALS_FILE=""
 INSTALL_NO_REVOKE_SSH_KEY="false"
@@ -594,16 +595,39 @@ if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]]; t
         -o "UserKnownHostsFile=$TMP_KNOWN_HOSTS"
     )
 
+    BOOTSTRAP_SSH_USER="$INSTALL_TARGET_SSH_USER"
     if [[ "$INSTALL_TARGET_SSH_USER_EXPLICIT" != "true" ]]; then
         PERSISTED_SSH_USER="$(read_admiral_secret ADMIRAL_SSH_USER || true)"
+        PERSISTED_SSH_USER="${PERSISTED_SSH_USER:-admiral-ssh}"
         if [[ -n "$PERSISTED_SSH_USER" ]] &&
             ssh "${SSH_OPTIONS[@]}" \
                 "${PERSISTED_SSH_USER}@${INSTALL_PUBLIC_IP}" true >/dev/null 2>&1; then
             INSTALL_TARGET_SSH_USER="$PERSISTED_SSH_USER"
             info "Using persisted non-root SSH user: $INSTALL_TARGET_SSH_USER"
+        else
+            DELIVERY_ID="${INSTALL_NODE_ID:-$INSTALL_PUBLIC_IP}"
+            DELIVERY_ID="${DELIVERY_ID//[^A-Za-z0-9_.-]/_}"
+            DELIVERY_KEY_CANDIDATE="/var/lib/admiral/ssh-delivery/${DELIVERY_ID}.ed25519"
+            if [[ -f "$DELIVERY_KEY_CANDIDATE" ]] &&
+                ssh -i "$DELIVERY_KEY_CANDIDATE" \
+                    -o BatchMode=yes -o ControlMaster=no -o ControlPersist=no \
+                    -o StrictHostKeyChecking=yes -o "UserKnownHostsFile=$TMP_KNOWN_HOSTS" \
+                    "${PERSISTED_SSH_USER}@${INSTALL_PUBLIC_IP}" true >/dev/null 2>&1; then
+                INSTALL_TARGET_SSH_KEY="$DELIVERY_KEY_CANDIDATE"
+                INSTALL_TARGET_SSH_USER="$PERSISTED_SSH_USER"
+                INSTALL_RECONVERGE_SSH_KEY="true"
+                SSH_OPTIONS=(
+                    -i "$INSTALL_TARGET_SSH_KEY"
+                    -o BatchMode=yes
+                    -o ControlMaster=no
+                    -o ControlPersist=no
+                    -o StrictHostKeyChecking=yes
+                    -o "UserKnownHostsFile=$TMP_KNOWN_HOSTS"
+                )
+                info "Using per-node delivery key for spoke reconvergence as $INSTALL_TARGET_SSH_USER"
+            fi
         fi
     fi
-    BOOTSTRAP_SSH_USER="$INSTALL_TARGET_SSH_USER"
     preflight_remote_node_role "$REQUESTED_NODE_ROLE"
 fi
 
@@ -1216,7 +1240,7 @@ if [[ "$INSTALL_DEV_MODE" != "true" ]]; then
         SECURITY_WARNINGS+=("sshd MaxAuthTries differs from recommended value 3.")
     fi
 
-    PUBLIC_LISTENERS="$(run_target_cmd "ss -H -lntu 2>/dev/null | awk '{ address=\$5; port=address; sub(/^.*:/, \"\", port); host=address; sub(/:[^:]*$/, \"\", host); gsub(/^\\[/, \"\", host); gsub(/\\]$/, \"\", host); if (host !~ /^(127\\.|::1\$)/ && host !~ /^10\\.99\\.0\\./) print \$1 \"/\" port }' | sort -u | tr '\\n' ' ' | sed 's/[[:space:]]*\$//'" || true)"
+    PUBLIC_LISTENERS="$(run_target_cmd "ss -H -lntu 2>/dev/null | awk '{ address=\$5; port=address; sub(/^.*:/, \"\", port); host=address; sub(/:[^:]*$/, \"\", host); gsub(/^\\[/, \"\", host); gsub(/\\]$/, \"\", host); if (host !~ /^(127\\.|::1\$)/ && host !~ /^10\\.99\\.0\\./ && host !~ /^172\\.(1[6-9]|2[0-9]|3[0-1])\\./ && host !~ /^192\\.168\\./ && host !~ /^169\\.254\\./) print \$1 \"/\" port }' | sort -u | tr '\\n' ' ' | sed 's/[[:space:]]*\$//'" || true)"
     EXPECTED_LISTENERS="$(expected_public_listeners "$INSTALL_MODE")"
     if ! require_exact_public_listeners "$PUBLIC_LISTENERS" "$EXPECTED_LISTENERS"; then
         SECURITY_WARNINGS+=("Public listening sockets do not match the declared host profile.")
@@ -1350,7 +1374,7 @@ if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]] &&
     ssh "${SSH_OPTIONS[@]}" "${INSTALL_TARGET_SSH_USER}@${INSTALL_PUBLIC_IP}" \
         "sudo -n /usr/bin/admiral-revoke-bootstrap-key $QUOTED_BOOTSTRAP_USER $QUOTED_BOOTSTRAP_KEY" \
         || die "Could not revoke the bootstrap SSH credential from authorized_keys."
-    if ssh -i "$INSTALL_TARGET_SSH_KEY" -o BatchMode=yes \
+    if [[ "$INSTALL_RECONVERGE_SSH_KEY" != "true" ]] && ssh -i "$INSTALL_TARGET_SSH_KEY" -o BatchMode=yes \
         -o StrictHostKeyChecking=yes -o "UserKnownHostsFile=$TMP_KNOWN_HOSTS" \
         "${BOOTSTRAP_SSH_USER}@${INSTALL_PUBLIC_IP}" true >/dev/null 2>&1; then
         die "Bootstrap SSH credential is still accepted after revocation."
