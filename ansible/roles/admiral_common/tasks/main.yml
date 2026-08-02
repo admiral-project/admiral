@@ -1068,8 +1068,8 @@
     - { src: "/etc/admiral/tls/admirald.pem", dest: "/var/lib/pgsql/data/server.crt", mode: "0600" }
     - { src: "/etc/admiral/tls/admirald-key.pem", dest: "/var/lib/pgsql/data/server.key", mode: "0600" }
   when:
-    - admiral_install_mode in ['single-node', 'admin-node', 'admin-portal-node']
-    - admiral_wireguard_role == 'hub'
+    - admiral_install_mode in ['single-node', 'admin-node', 'admin-portal-node', 'portal-node']
+    - admiral_wireguard_role == 'hub' or admiral_install_mode == 'portal-node'
 
 - name: Enable SSL in PostgreSQL configuration
   lineinfile:
@@ -1082,8 +1082,8 @@
     - { param: "ssl_cert_file", value: "server.crt" }
     - { param: "ssl_key_file", value: "server.key" }
   when:
-    - admiral_install_mode in ['single-node', 'admin-node', 'admin-portal-node']
-    - admiral_wireguard_role == 'hub'
+    - admiral_install_mode in ['single-node', 'admin-node', 'admin-portal-node', 'portal-node']
+    - admiral_wireguard_role == 'hub' or admiral_install_mode == 'portal-node'
 
 - name: Ensure PostgreSQL is enabled and restarted (applies pg_hba and SSL changes)
   systemd:

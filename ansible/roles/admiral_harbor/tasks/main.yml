@@ -83,6 +83,31 @@
           | regex_findall('(?m)^HARBOR_NODE_TOKEN=(.*)$') | first | default('')) }}
   no_log: true
 
+- name: Preserve operator-managed Harbor commercial settings
+  set_fact:
+    harbor_existing_paypal_client_id: >-
+      {{ (harbor_existing_env.content | default('') | b64decode
+          | regex_findall('(?m)^HARBOR_PAYPAL_CLIENT_ID=(.*)$') | first | default('')) }}
+    harbor_existing_paypal_client_secret: >-
+      {{ (harbor_existing_env.content | default('') | b64decode
+          | regex_findall('(?m)^HARBOR_PAYPAL_CLIENT_SECRET=(.*)$') | first | default('')) }}
+    harbor_existing_paypal_webhook_id: >-
+      {{ (harbor_existing_env.content | default('') | b64decode
+          | regex_findall('(?m)^HARBOR_PAYPAL_WEBHOOK_ID=(.*)$') | first | default('')) }}
+    harbor_existing_paypal_mode: >-
+      {{ (harbor_existing_env.content | default('') | b64decode
+          | regex_findall('(?m)^HARBOR_PAYPAL_MODE=(.*)$') | first | default('')) }}
+    harbor_existing_paypal_return_url: >-
+      {{ (harbor_existing_env.content | default('') | b64decode
+          | regex_findall('(?m)^HARBOR_PAYPAL_RETURN_URL=(.*)$') | first | default('')) }}
+    harbor_existing_paypal_cancel_url: >-
+      {{ (harbor_existing_env.content | default('') | b64decode
+          | regex_findall('(?m)^HARBOR_PAYPAL_CANCEL_URL=(.*)$') | first | default('')) }}
+    harbor_existing_external_url: >-
+      {{ (harbor_existing_env.content | default('') | b64decode
+          | regex_findall('(?m)^HARBOR_EXTERNAL_URL=(.*)$') | first | default('')) }}
+  no_log: true
+
 - name: Generate random Harbor node token
   set_fact:
     harbor_node_token_value: "{{ harbor_existing_node_token if harbor_existing_node_token else lookup('ansible.builtin.pipe', 'openssl rand -hex 32') }}"
@@ -108,14 +133,14 @@
       HARBOR_NODE_ID={{ harbor_node_id_effective }}
       HARBOR_NODE_TOKEN={{ harbor_node_token_value }}
       ADMIRAL_API_URL={{ admiral_api_url_for_harbor | default(admiral_control_plane_url) }}
-      HARBOR_PAYPAL_CLIENT_ID=
-      HARBOR_PAYPAL_CLIENT_SECRET=
-      HARBOR_PAYPAL_WEBHOOK_ID=
-      HARBOR_PAYPAL_MODE={{ 'sandbox' if not (admiral_dev_mode | default(false) | bool) else 'mock' }}
-      HARBOR_PAYPAL_RETURN_URL=https://{{ admiral_harbor_external_host | default('portal.localhost.invalid') }}/billing/return
-      HARBOR_PAYPAL_CANCEL_URL=https://{{ admiral_harbor_external_host | default('portal.localhost.invalid') }}/billing/cancel
+      HARBOR_PAYPAL_CLIENT_ID={{ harbor_existing_paypal_client_id | default('') }}
+      HARBOR_PAYPAL_CLIENT_SECRET={{ harbor_existing_paypal_client_secret | default('') }}
+      HARBOR_PAYPAL_WEBHOOK_ID={{ harbor_existing_paypal_webhook_id | default('') }}
+      HARBOR_PAYPAL_MODE={{ harbor_existing_paypal_mode if harbor_existing_paypal_mode | default('') else ('sandbox' if not (admiral_dev_mode | default(false) | bool) else 'mock') }}
+      HARBOR_PAYPAL_RETURN_URL={{ harbor_existing_paypal_return_url if harbor_existing_paypal_return_url | default('') else 'https://' ~ (admiral_harbor_external_host | default('portal.localhost.invalid')) ~ '/billing/return' }}
+      HARBOR_PAYPAL_CANCEL_URL={{ harbor_existing_paypal_cancel_url if harbor_existing_paypal_cancel_url | default('') else 'https://' ~ (admiral_harbor_external_host | default('portal.localhost.invalid')) ~ '/billing/cancel' }}
       HARBOR_SMTP_FROM=noreply@example.com
-      HARBOR_EXTERNAL_URL=https://{{ admiral_harbor_external_host | default('portal.localhost.invalid') }}
+      HARBOR_EXTERNAL_URL={{ harbor_existing_external_url if harbor_existing_external_url | default('') else 'https://' ~ (admiral_harbor_external_host | default('portal.localhost.invalid')) }}
       HARBOR_OVERDUE_POLICY_VERSION=overdue-policy-v1
       HARBOR_OVERDUE_SUSPEND_AFTER_DAYS=5
       HARBOR_OVERDUE_DEPROVISION_AFTER_DAYS=10

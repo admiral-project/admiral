@@ -152,6 +152,16 @@
           | regex_findall('(?m)^ADMIRAL_FLEET_TOKEN=(.*)$') | first | default('')) }}
   no_log: true
 
+- name: Preserve existing Fleet storage credentials
+  set_fact:
+    fleet_existing_s3_access_key: >-
+      {{ (fleet_existing_env.content | default('') | b64decode
+          | regex_findall('(?m)^ADMIRAL_S3_ACCESS_KEY_ID=(.*)$') | first | default('')) }}
+    fleet_existing_s3_secret_key: >-
+      {{ (fleet_existing_env.content | default('') | b64decode
+          | regex_findall('(?m)^ADMIRAL_S3_SECRET_ACCESS_KEY=(.*)$') | first | default('')) }}
+  no_log: true
+
 - name: Generate random Fleet node token
   set_fact:
     fleet_node_token_value: >-
@@ -178,9 +188,11 @@
       ADMIRAL_FLEET_ADMIN_WIREGUARD_IP={{ admiral_admin_wireguard_ip | default('') }}
       ADMIRAL_FLEET_ROOTLESS_USER={{ fleet_rootless_user | default('admiral-apps') }}
       ADMIRAL_TASK_PUBLIC_KEY={{ admiral_task_public_key_value }}
-      {% if (admiral_s3_access_key_value | default('')) != '' and (admiral_s3_secret_key_value | default('')) != '' %}
-      ADMIRAL_S3_ACCESS_KEY_ID={{ admiral_s3_access_key_value }}
-      ADMIRAL_S3_SECRET_ACCESS_KEY={{ admiral_s3_secret_key_value }}
+      {% set s3_access_key = admiral_s3_access_key_value | default(fleet_existing_s3_access_key | default('')) %}
+      {% set s3_secret_key = admiral_s3_secret_key_value | default(fleet_existing_s3_secret_key | default('')) %}
+      {% if s3_access_key != '' and s3_secret_key != '' %}
+      ADMIRAL_S3_ACCESS_KEY_ID={{ s3_access_key }}
+      ADMIRAL_S3_SECRET_ACCESS_KEY={{ s3_secret_key }}
       {% endif %}
     mode: "0600"
     owner: root
