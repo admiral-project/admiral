@@ -695,10 +695,10 @@ if ! rpm -q ansible-core >/dev/null 2>&1; then
     dnf install -y ansible-core
 fi
 
-# Install or update admiral-common first so reconciliation always uses the
-# playbooks from the currently enabled Admiral repository.
-info "Installing the current admiral-common package..."
-dnf install -y admiral-common
+# Install or update the complete Admiral release set in one transaction so
+# the playbooks cannot be paired with older component binaries.
+info "Installing the current Admiral component packages..."
+dnf install -y admiral-common admirald admiralctl admiral-fleet admiral-harbor admiral-flagship
 
 # --- 7b. resolve spoke node defaults from know_host.yaml (without copying topology) ---
 # Extract only the wireguard_ip and node_id needed for this specific spoke.
@@ -796,7 +796,7 @@ EXTRA_VARS_JSON=$(
     S3_SECRET_KEY_VALUE="$S3_SECRET_KEY_VALUE" \
     INSTALL_SSH_PUB_KEY="$INSTALL_SSH_PUB_KEY" \
     python3 -c '
-import json, os
+import ipaddress, json, os
 
 d = {
     "admiral_install_mode": os.environ["INSTALL_MODE"],
@@ -811,6 +811,11 @@ if os.environ.get("INSTALL_NODE_ID"):
 
 if os.environ.get("INSTALL_PUBLIC_IP"):
     d["fleet_public_ip"] = os.environ["INSTALL_PUBLIC_IP"]
+    try:
+        ipaddress.ip_address(os.environ["INSTALL_PUBLIC_IP"])
+        d["fleet_public_ip_is_ip"] = True
+    except ValueError:
+        d["fleet_public_ip_is_ip"] = False
 
 if os.environ.get("INSTALL_WIREGUARD_IP"):
     d["admiral_wireguard_ip"] = os.environ["INSTALL_WIREGUARD_IP"]

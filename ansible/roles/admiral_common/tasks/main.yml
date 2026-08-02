@@ -471,7 +471,9 @@
         admiral_ssh_admin_user: "admiral-ssh"
         admiral_ssh_pub_key: "{{ admiral_ssh_delivery_public_key.content | b64decode | trim }}"
         admiral_ssh_delivery_private_key: "/var/lib/admiral/ssh-delivery/{{ admiral_ssh_delivery_id }}.ed25519"
-      when: admiral_install_mode in ['single-node', 'admin-node', 'admin-portal-node', 'worker-node', 'portal-node']
+      when:
+        - admiral_install_mode in ['single-node', 'admin-node', 'admin-portal-node', 'worker-node', 'portal-node']
+        - admiral_ssh_pub_key | default('') | length == 0
       no_log: true
 
     - name: Calculate administrative SSH key fingerprint
@@ -640,6 +642,9 @@
         admiral_ssh_pub_key: "{{ admiral_spoke_ssh_delivery_public_key.content | b64decode | trim }}"
         admiral_ssh_delivery_private_key: "/var/lib/admiral/ssh-delivery/{{ admiral_ssh_delivery_id }}.ed25519"
       no_log: true
+      when:
+        - admiral_install_mode in ['single-node', 'admin-node', 'admin-portal-node', 'worker-node', 'portal-node']
+        - admiral_ssh_pub_key | default('') | length == 0
 
     - name: Calculate spoke administrative SSH fingerprint
       command:
@@ -771,7 +776,7 @@
     admiral_tls_san: >-
       {%- set san = 'DNS:localhost,IP:127.0.0.1' -%}
       {%- if fleet_public_ip is defined and fleet_public_ip != '' and fleet_public_ip != '127.0.0.1' -%}
-      {%-   set san = san ~ ',IP:' ~ fleet_public_ip -%}
+      {%-   set san = san ~ (',IP:' if (fleet_public_ip_is_ip | default(false) | bool) else ',DNS:') ~ fleet_public_ip -%}
       {%- endif -%}
       {%- if admiral_wireguard_ip is defined and admiral_wireguard_ip != '' -%}
       {%-   set san = san ~ ',IP:' ~ admiral_wireguard_ip -%}
