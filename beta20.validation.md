@@ -41,7 +41,7 @@ dnf install 'admiral*'
 admiral-install --single-node --yes
 ```
 
-Result: PASS. Ansible completed with `ok=213 changed=99 failed=0`, and the
+Result: PASS. Ansible completed with `ok=182 changed=23 failed=0`, and the
 installer completed its Harbor API verification. `admirald`, `admiral-fleet`,
 `admiral-harbor`, Caddy, and PostgreSQL were active after installation. No
 systemd units were failed.
@@ -52,23 +52,23 @@ kernel initramfs images before Ansible ran.
 ## Golden WordPress lifecycle
 
 Application: `examples/apps/wordpress.yaml`  
-Customer: `beta20-golden`  
-Instance: `inst_37cef2c9d3886535`  
+Customer: `beta20-rc1-final`  
+Instance: `inst_946e67049d529abd`  
 Node: `rocky-linux-s-2vcpu-4gb-nyc1`  
 Tier: `small`
 
 | Stage | Evidence | Result |
 | --- | --- | --- |
 | Apply definition | `admiralctl apps apply` | PASS |
-| Provision and setup | `op_a34fff1c3d2715fe`, `setup_completed=true` | PASS |
+| Provision and setup | `op_28a736749304d9ad`, `setup_completed=true` | PASS |
 | Rootless runtime | Containers owned by `admiral-apps`; cgroup under `user-991.slice` | PASS |
-| HTTP | WordPress returned HTTP 200 with `Host: localhost` on mapped port 40000 | PASS |
-| Backup | `op_5fbb3ecb40fa611c`, backup `bk_d0de777533c8e3d7`, status `succeeded` | PASS |
-| Backup checksum | `7c9f6a0bdb576edb011081ce6f0ad4f15a26e2ffa1df55415072fb89aadb695a` matched the file | PASS |
+| HTTP | WordPress returned HTTP 200 with `Host: localhost` on mapped port 40002 | PASS |
+| Backup | `op_9fe9b45775ab9d1d`, backup `bk_766ea7261b002639`, status `succeeded` | PASS |
+| Backup checksum | `655584962c1d054adc1e3e8ace9fb1ed9aad505d1a4c08945d3b0f91e1182f80` matched the file | PASS |
 | Backup ownership | `admiral-apps:admiral-apps`, mode `0600` | PASS |
-| Pause | `op_3d78f86854c9b2a1`, endpoint unavailable while paused | PASS |
-| Resume | `op_7bf465162a9ff3e4`, HTTP 200 restored | PASS |
-| Deprovision | `op_9ceb5c113f804467`, `technical_status=deprovisioned` | PASS |
+| Pause | `op_6e6fed951b900d2c`, endpoint unavailable while paused | PASS |
+| Resume | `op_02a9c14cb4586f21`, HTTP 200 restored | PASS |
+| Deprovision | `op_172d8104ec6b82ff`, `technical_status=deprovisioned` | PASS |
 | Runtime cleanup | No instance containers or user units remained | PASS |
 
 The backup artifact is gzip-compressed MariaDB SQL despite its historical
