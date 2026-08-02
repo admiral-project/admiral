@@ -15,12 +15,12 @@ the package releases for the final local RC1 candidate build:
 
 | Package | Candidate |
 | --- | --- |
-| admiral-common | `0.0.1beta20-41.el10.noarch` |
-| admirald | `0.0.1beta20-9.el10.x86_64` |
-| admiral-fleet | `0.0.1beta20-14.el10.x86_64` |
-| admiralctl | `0.0.1beta20-7.el10.x86_64` |
-| admiral-flagship | `0.0.1beta20-6.el10.noarch` |
-| admiral-harbor | `0.0.1beta20-8.el10.noarch` |
+| admiral-common | `0.0.1beta20-42.el10.noarch` |
+| admirald | `0.0.1beta20-10.el10.x86_64` |
+| admiral-fleet | `0.0.1beta20-15.el10.x86_64` |
+| admiralctl | `0.0.1beta20-8.el10.x86_64` |
+| admiral-flagship | `0.0.1beta20-7.el10.noarch` |
+| admiral-harbor | `0.0.1beta20-9.el10.noarch` |
 
 `python3-flask-login`, `python3-flask-sqlalchemy`, and
 `python3-flask-alembic` were built only as local build dependencies; they are
@@ -87,8 +87,9 @@ Flagship's full test suite passed with 240 tests after the BFF fixes in
 `737b921`: node maintenance uses the node action API, resize validates the
 tier whitelist, and restore sends the required service field.
 
-The final local installation also contains the node CLI and signing-key
-hardening commits `b65cd11` and `1481c61`, packaged as releases 7 and 9.
+The final local installation also contains the node CLI, signing-key, and
+fleet inspect redaction commits `b65cd11`, `1481c61`, and `5d8bf2e`, packaged
+as releases 8, 10, and 15 respectively.
 
 The unprivileged `scripts/install.sh --help` contract and installer test suite
 passed: 52 tests, with `--help` returning exit code 0 for `nobody`.
