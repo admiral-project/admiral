@@ -29,6 +29,14 @@ COMMON_PAYLOAD_PATHS = (
 )
 
 
+def make_ref(variable: str) -> str:
+    text = (ROOT / "Makefile").read_text()
+    match = re.search(rf"^{re.escape(variable)} := ([0-9a-f]{{40}})$", text, re.MULTILINE)
+    if not match:
+        raise ValueError(f"Makefile has no {variable} reference")
+    return match.group(1)
+
+
 def head(path: str) -> str:
     return subprocess.check_output(["git", "-C", str(ROOT / path), "rev-parse", "HEAD"], text=True).strip()
 
@@ -55,6 +63,16 @@ def main() -> int:
         expected, actual = head(path), spec_ref(name)
         if expected != actual:
             failures.append(f"{name}: spec={actual}, checkout={expected}")
+        variable = {
+            "admirald": "ADMIRALD_COMMIT",
+            "admiral-fleet": "FLEET_COMMIT",
+            "admiralctl": "ADMIRALCTL_COMMIT",
+            "admiral-flagship": "FLAGSHIP_COMMIT",
+            "admiral-harbor": "HARBOR_COMMIT",
+        }[name]
+        make = make_ref(variable)
+        if make != actual:
+            failures.append(f"{name}: Makefile={make}, spec={actual}")
     common = common_ref()
     common_diff = subprocess.run(
         ["git", "diff", "--quiet", common, "HEAD", "--", *COMMON_PAYLOAD_PATHS],

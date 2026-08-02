@@ -6,7 +6,7 @@
 
 Name:    admiral-fleet
 Version: 0.0.1beta20
-Release: 9%{?dist}
+Release: 11%{?dist}
 Summary: Admiral Fleet Worker Agent
 
 License: Apache-2.0
@@ -39,6 +39,7 @@ node-level resources.
 
 %build
 cd admiral-fleet
+export PATH=/usr/lib/golang/bin:%{_bindir}:$PATH
 export GOCACHE=%{_tmppath}/go-cache
 mkdir -p "$GOCACHE"
 go build -trimpath -buildmode=pie -ldflags="-s -w" -o admiral-fleet ./cmd/admiral-fleet/
@@ -57,6 +58,7 @@ install -Dm0600 %{SOURCE2} %{buildroot}%{_sysconfdir}/admiral/fleet.env
 
 %check
 cd admiral-fleet
+export PATH=/usr/lib/golang/bin:%{_bindir}:$PATH
 export GOCACHE=%{_tmppath}/go-cache
 mkdir -p "$GOCACHE"
     go test ./...

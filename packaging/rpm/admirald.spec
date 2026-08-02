@@ -6,7 +6,7 @@
 
 Name:    admirald
 Version: 0.0.1beta20
-Release: 4%{?dist}
+Release: 6%{?dist}
 Summary: Admiral Control Plane - Core API and orchestration service
 
 License: Apache-2.0
@@ -37,6 +37,7 @@ dispatches tasks to fleet workers, and maintains auditability.
 
 %build
 cd admirald
+export PATH=/usr/lib/golang/bin:%{_bindir}:$PATH
 export GOCACHE=%{_tmppath}/go-cache
 mkdir -p "$GOCACHE"
 go build -trimpath -buildmode=pie -ldflags="-s -w -X main.Version=%{version}" -o admirald ./cmd/admirald/
@@ -50,6 +51,7 @@ install -d %{buildroot}/etc/systemd/system/admirald.service.d
 
 %check
 cd admirald
+export PATH=/usr/lib/golang/bin:%{_bindir}:$PATH
 export GOCACHE=%{_tmppath}/go-cache
 mkdir -p "$GOCACHE"
     go test ./...

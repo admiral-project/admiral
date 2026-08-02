@@ -2,11 +2,11 @@
 # SPDX-License-Identifier: Apache-2.0
 
 %global debug_package %{nil}
-%global commit db3d29a1fcbe55d94d8fa9ab537b4af5230eb1da
+%global commit 4718c3cbaebdd06b03dcf4282a55e8d76778df3a
 
 Name:    admiralctl
 Version: 0.0.1beta20
-Release: 1%{?dist}
+Release: 4%{?dist}
 Summary: Admiral Command-Line Interface
 
 License: Apache-2.0
@@ -31,6 +31,7 @@ management, backup operations, and troubleshooting.
 
 %build
 cd admiralctl
+export PATH=/usr/lib/golang/bin:%{_bindir}:$PATH
 export GOCACHE=%{_tmppath}/go-cache
 mkdir -p "$GOCACHE"
 go build -trimpath -buildmode=pie -ldflags="-s -w -X main.Version=%{version}" -o admiralctl ./cmd/admiralctl/
@@ -44,6 +45,7 @@ install -Dm0644 docs/admiralctl-admin.8 %{buildroot}%{_mandir}/man8/admiralctl-a
 
 %check
 cd admiralctl
+export PATH=/usr/lib/golang/bin:%{_bindir}:$PATH
 export GOCACHE=%{_tmppath}/go-cache
 mkdir -p "$GOCACHE"
     go test ./...

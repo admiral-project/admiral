@@ -4,8 +4,6 @@
 
 set -euo pipefail
 
-[[ $EUID -eq 0 ]] || { echo "[FATAL] This script must be run as root." >&2; exit 1; }
-
 # --- helpers ---
 die() { echo "[FATAL] $*" >&2; exit 1; }
 info() { echo "[INFO] $*"; }
