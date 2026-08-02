@@ -15,12 +15,12 @@ the package releases for the final local RC1 candidate build:
 
 | Package | Candidate |
 | --- | --- |
-| admiral-common | `0.0.1beta20-43.el10.noarch` |
-| admirald | `0.0.1beta20-11.el10.x86_64` |
-| admiral-fleet | `0.0.1beta20-16.el10.x86_64` |
-| admiralctl | `0.0.1beta20-9.el10.x86_64` |
-| admiral-flagship | `0.0.1beta20-8.el10.noarch` |
-| admiral-harbor | `0.0.1beta20-10.el10.noarch` |
+| admiral-common | `0.0.1beta20-45.el10.noarch` |
+| admirald | `0.0.1beta20-13.el10.x86_64` |
+| admiral-fleet | `0.0.1beta20-18.el10.x86_64` |
+| admiralctl | `0.0.1beta20-11.el10.x86_64` |
+| admiral-flagship | `0.0.1beta20-10.el10.noarch` |
+| admiral-harbor | `0.0.1beta20-12.el10.noarch` |
 
 `python3-flask-login`, `python3-flask-sqlalchemy`, and
 `python3-flask-alembic` were built only as local build dependencies; they are
@@ -90,7 +90,8 @@ tier whitelist, and restore sends the required service field.
 The final local installation also contains the node CLI, signing-key, fleet
 inspect redaction, and billing/restore hardening commits `b65cd11`, `1481c61`,
 `5d8bf2e`, `96bc83c`, `bb2084f`, `b216870`, and `000343d`, packaged as the
-latest releases above.
+latest releases above. The installer changes were validated with
+`ansible-playbook --syntax-check ansible/site.yml` and the 46 installer tests.
 
 The unprivileged `scripts/install.sh --help` contract and installer test suite
 passed: 52 tests, with `--help` returning exit code 0 for `nobody`.
