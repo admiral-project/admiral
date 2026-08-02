@@ -15,12 +15,12 @@ the package releases for this build:
 
 | Package | Candidate |
 | --- | --- |
-| admiral-common | `0.0.1beta20-38.el10.noarch` |
-| admirald | `0.0.1beta20-6.el10.x86_64` |
-| admiral-fleet | `0.0.1beta20-11.el10.x86_64` |
-| admiralctl | `0.0.1beta20-3.el10.x86_64` |
-| admiral-flagship | `0.0.1beta20-3.el10.noarch` |
-| admiral-harbor | `0.0.1beta20-5.el10.noarch` |
+| admiral-common | `0.0.1beta20-39.el10.noarch` |
+| admirald | `0.0.1beta20-7.el10.x86_64` |
+| admiral-fleet | `0.0.1beta20-12.el10.x86_64` |
+| admiralctl | `0.0.1beta20-5.el10.x86_64` |
+| admiral-flagship | `0.0.1beta20-4.el10.noarch` |
+| admiral-harbor | `0.0.1beta20-6.el10.noarch` |
 
 `python3-flask-login`, `python3-flask-sqlalchemy`, and
 `python3-flask-alembic` were built only as local build dependencies; they are
@@ -76,10 +76,12 @@ The backup artifact is gzip-compressed MariaDB SQL despite its historical
 
 ## Test observations
 
-`admiralctl instances provision --output json` still writes a human-readable
-operation line before the JSON document. The operation itself succeeded, but
-this violates the JSON-only CLI contract and remains an open follow-up issue
-(admiralctl#24).
+The first golden provision reproduced admiralctl#24: the installed binary
+prefixed `--output json` with a human-readable operation line. The fix was
+committed in `admiralctl` as `4718c3c`, rebuilt as
+`admiralctl-0.0.1beta20-5`, and installed from `admiral-local`. A second
+provision (`op_7ea3b6b6a095b378`) was parsed as one JSON document with no
+prefix, then deprovisioned successfully (`op_27cfa2dafb2b4bf0`).
 
 The unprivileged `scripts/install.sh --help` contract and installer test suite
 passed: 52 tests, with `--help` returning exit code 0 for `nobody`.
