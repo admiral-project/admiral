@@ -11,16 +11,16 @@ superproject. The local repository was built from those commits and the
 superproject source tree.
 
 The six Admiral RPMs were built with `make rpm-admiral-no-test` after raising
-the package releases for this build:
+the package releases for the final local RC1 candidate build:
 
 | Package | Candidate |
 | --- | --- |
-| admiral-common | `0.0.1beta20-39.el10.noarch` |
-| admirald | `0.0.1beta20-7.el10.x86_64` |
-| admiral-fleet | `0.0.1beta20-12.el10.x86_64` |
-| admiralctl | `0.0.1beta20-5.el10.x86_64` |
-| admiral-flagship | `0.0.1beta20-4.el10.noarch` |
-| admiral-harbor | `0.0.1beta20-6.el10.noarch` |
+| admiral-common | `0.0.1beta20-40.el10.noarch` |
+| admirald | `0.0.1beta20-8.el10.x86_64` |
+| admiral-fleet | `0.0.1beta20-13.el10.x86_64` |
+| admiralctl | `0.0.1beta20-6.el10.x86_64` |
+| admiral-flagship | `0.0.1beta20-5.el10.noarch` |
+| admiral-harbor | `0.0.1beta20-7.el10.noarch` |
 
 `python3-flask-login`, `python3-flask-sqlalchemy`, and
 `python3-flask-alembic` were built only as local build dependencies; they are
@@ -79,9 +79,13 @@ The backup artifact is gzip-compressed MariaDB SQL despite its historical
 The first golden provision reproduced admiralctl#24: the installed binary
 prefixed `--output json` with a human-readable operation line. The fix was
 committed in `admiralctl` as `4718c3c`, rebuilt as
-`admiralctl-0.0.1beta20-5`, and installed from `admiral-local`. A second
+`admiralctl-0.0.1beta20-6`, and installed from `admiral-local`. A second
 provision (`op_7ea3b6b6a095b378`) was parsed as one JSON document with no
 prefix, then deprovisioned successfully (`op_27cfa2dafb2b4bf0`).
+
+Flagship's full test suite passed with 240 tests after the BFF fixes in
+`737b921`: node maintenance uses the node action API, resize validates the
+tier whitelist, and restore sends the required service field.
 
 The unprivileged `scripts/install.sh --help` contract and installer test suite
 passed: 52 tests, with `--help` returning exit code 0 for `nobody`.
