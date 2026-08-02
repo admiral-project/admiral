@@ -1,11 +1,11 @@
 # SPDX-FileCopyrightText: William Moreno Reyes CP | MBA
 # SPDX-License-Identifier: Apache-2.0
 
-%global commit 5a9f1a2d94485112c4ef45a4d11fda488465184b
+%global commit 836f63d962b5e8ad0519f888984d1e60e465b357
 
 Name:    admiral-common
 Version: 0.0.1beta20
-Release: 46%{?dist}
+Release: 47%{?dist}
 Summary: Common files and utilities for Admiral PaaS
 
 License: Apache-2.0
