@@ -214,6 +214,19 @@
     state: started
     daemon_reload: true
 
+- name: Read persisted Harbor node token for registration
+  slurp:
+    src: /etc/admiral/harbor.env
+  register: harbor_registration_env
+  no_log: true
+
+- name: Resolve persisted Harbor node token for registration
+  set_fact:
+    harbor_registration_token: >-
+      {{ harbor_registration_env.content | b64decode
+         | regex_findall('(?m)^HARBOR_NODE_TOKEN=(.*)$') | first | default('') | trim }}
+  no_log: true
+
 - name: Register portal node with admirald
   command: >
     /usr/bin/admiralctl nodes register
@@ -228,7 +241,7 @@
   environment:
     ADMIRAL_SERVER_URL: "{{ admiral_control_plane_url }}"
     ADMIRAL_TLS_CA_FILE: /etc/admiral/tls/ca.pem
-    ADMIRAL_NODE_TOKEN: "{{ harbor_node_token_value }}"
+    ADMIRAL_NODE_TOKEN: "{{ harbor_registration_token }}"
   register: harbor_node_registration
   retries: 6
   delay: 5
