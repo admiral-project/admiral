@@ -15,12 +15,12 @@ the package releases for the final local RC1 candidate build:
 
 | Package | Candidate |
 | --- | --- |
-| admiral-common | `0.0.1beta20-50.el10.noarch` |
-| admirald | `0.0.1beta20-18.el10.x86_64` |
-| admiral-fleet | `0.0.1beta20-23.el10.x86_64` |
-| admiralctl | `0.0.1beta20-16.el10.x86_64` |
-| admiral-flagship | `0.0.1beta20-15.el10.noarch` |
-| admiral-harbor | `0.0.1beta20-17.el10.noarch` |
+| admiral-common | `0.0.1beta20-51.el10.noarch` |
+| admirald | `0.0.1beta20-19.el10.x86_64` |
+| admiral-fleet | `0.0.1beta20-24.el10.x86_64` |
+| admiralctl | `0.0.1beta20-17.el10.x86_64` |
+| admiral-flagship | `0.0.1beta20-16.el10.noarch` |
+| admiral-harbor | `0.0.1beta20-18.el10.noarch` |
 
 `python3-flask-login`, `python3-flask-sqlalchemy`, and
 `python3-flask-alembic` were built only as local build dependencies; they are
@@ -52,27 +52,31 @@ kernel initramfs images before Ansible ran.
 ## Golden WordPress lifecycle
 
 Application: `examples/apps/wordpress.yaml`
-Customer: `beta20-rc1-20260803d`
-Instance: `inst_c6df276d4a7bd859`
+Customer: `beta20-rc1-20260803e`
+Instance: `inst_0b09a53c2d576931`
 Node: `rocky-linux-s-2vcpu-4gb-nyc1`  
 Tier: `small`
 
 | Stage | Evidence | Result |
 | --- | --- | --- |
 | Apply definition | `admiralctl apps apply` | PASS |
-| Provision and setup | `op_d3bf6b6ea6d570f9`, `setup_completed=true` | PASS |
+| Provision and setup | `op_4ae2ddb65ef54ee7`, `setup_completed=true` | PASS |
 | Rootless runtime | Containers owned by `admiral-apps`; cgroup under `user-991.slice` | PASS |
-| HTTP | WordPress returned HTTP 200 with `Host: localhost` on mapped port 40006 | PASS |
-| Backup | `op_0c8ea49aa3446710`, backup `bk_6eb2221535a476f5`, status `succeeded` | PASS |
-| Backup checksum | `697a6f60c855ede98d35df36196b071b64e145d13df3f7aa493821d06fa33fea` matched the file | PASS |
+| HTTP | WordPress returned HTTP 200 with `Host: localhost` on mapped port 40007 | PASS |
+| Backup | `op_cdf81bbb97e0f195`, backup `bk_4e4f5ebdf50b1ffa`, status `succeeded` | PASS |
+| Backup checksum | `763409d31f73fd3096752f7c9889bac04dba1729d8a9df04ccb92c4827cc1f4c` matched the file | PASS |
 | Backup ownership | `admiral-apps:admiral-apps`, mode `0600` | PASS |
-| Pause | `op_87f0362599d24fdc`, endpoint unavailable while paused | PASS |
-| Resume | `op_0a1c8c9d15b25f60`, HTTP 200 restored | PASS |
-| Deprovision | `op_bce3df28561b8a6c`, `technical_status=deprovisioned` | PASS |
+| Pause | `op_95721f38288a3e24`, endpoint unavailable while paused | PASS |
+| Resume | `op_0c7aaec261209b28`, HTTP 200 restored | PASS |
+| Deprovision | `op_131cc10acdd15360`, `technical_status=deprovisioned` | PASS |
 | Runtime cleanup | No instance containers or user units remained | PASS |
 
 The backup artifact is gzip-compressed MariaDB SQL despite its historical
 `.tar.gz` storage suffix; its recorded and recalculated SHA-256 values match.
+
+Fleet's authenticated OCI image pre-pull endpoint was included in this
+candidate: `GET /api/v1/fleet/oci_images` is served by `admirald`, and the
+worker accepts only the `pull` operation through its rootless lifecycle helper.
 
 ## Test observations
 
