@@ -16,7 +16,9 @@ is still in progress and is not a release-wide PASS.
 
 Current new-host status: PREPARATION COMPLETE; RPM BUILD PASS; CENTOS
 STREAM 10, ROCKY LINUX 10, AND ALMALINUX 10 SINGLE-NODE PASS; MULTINODE
-PENDING.
+PENDING. CentOS admin, dedicated portal, and worker playbooks reached
+`failed=0`; final wrapper peer exchange is being re-run with the corrected
+controller endpoint and token handling.
 
 ### New-host local RPM build
 
@@ -27,12 +29,12 @@ authentication fixes and incremented all six package releases.
 
 | Package | NEVRA | SHA-256 |
 | --- | --- | --- |
-| admiral-common | `admiral-common-0.0.1beta20-65.el10.noarch` | `ea53634c80a133cb7538c410137fd0f553efcc523508e3ed79cbfcb87735afac` |
-| admirald | `admirald-0.0.1beta20-33.el10.x86_64` | `cdffa5827b8ec801eca18817aaf8582bba023c9f46e2e830e3e59d1c8f4f2fb2` |
-| admiral-fleet | `admiral-fleet-0.0.1beta20-38.el10.x86_64` | `2f634efe01b2c0ed3e3eb4358d41c2221639d450823b6bd7d2c8c0faa14c5b1d` |
-| admiralctl | `admiralctl-0.0.1beta20-31.el10.x86_64` | `0f9cab58a6a62f239c680a9ece54dd59e836ec68d8454ff1e7e618b0304f4045` |
-| admiral-flagship | `admiral-flagship-0.0.1beta20-30.el10.noarch` | `bc64abf67fe2c2c83a10b2ba1b599653b01ac33e38077f9d7b73579377c62b90` |
-| admiral-harbor | `admiral-harbor-0.0.1beta20-32.el10.noarch` | `695c0fbe3f16c9c72341e33dc36b5579e76567c4f1853ff221ab5d70417f7424` |
+| admiral-common | `admiral-common-0.0.1beta20-72.el10.noarch` | `2e4d660407d34df0cbc96c06b346558eb28ed0267e209b2fd5e9e63e03a7e31c` |
+| admirald | `admirald-0.0.1beta20-40.el10.x86_64` | `90bf806021ec1e6b85f8e82fdae9da395c09185382b6040a2155b301a0979efc` |
+| admiral-fleet | `admiral-fleet-0.0.1beta20-45.el10.x86_64` | `cf87ec34e4d0a99d076d9a5308e185eb4669be4e1e303517c1bc7c6396267fac` |
+| admiralctl | `admiralctl-0.0.1beta20-38.el10.x86_64` | `f16cb3913769f6de0354857abdd0503132fb064e568dd20af2f6a2506e6694c4` |
+| admiral-flagship | `admiral-flagship-0.0.1beta20-37.el10.noarch` | `a2ba897dca40fcbbfc35c2334732e62abdf6c9c25bd717374c3fa974b01cecb7` |
+| admiral-harbor | `admiral-harbor-0.0.1beta20-39.el10.noarch` | `94157576be5bf4b1cd9b424e6c99ce9cd214d8a4dda52e6e6a73a4bda78c360b` |
 
 The local repository at `/var/lib/admiral/rpm-local` contains these six
 candidate RPMs plus five locally built Python dependency RPMs.
