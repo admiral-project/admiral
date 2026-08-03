@@ -275,6 +275,14 @@ Packaging
 
 The final software must be suitable for RPM packaging.
 
+Before every Admiral RPM build, synchronize each component submodule with its
+latest `origin/main` commit. Pin those exact SHAs in the root `Makefile` and
+the corresponding RPM specs, then run `python3 scripts/validate-release-refs.py`.
+Every rebuild of the six Admiral RPMs must increment the `Release` field for
+all six packages, including packages whose source did not change. The local
+RPM repository and validation record must identify the resulting NEVRA and
+SHA-256 values.
+
 When adding files, consider:
 
 systemd unit files.

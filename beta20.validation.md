@@ -8,6 +8,9 @@ RC1 validation target is EL10 x86_64. aarch64 is a secondary platform and is
 deferred from this RC1 validation gate; this document does not infer aarch64
 coverage from the x86_64 run.
 
+The package pins are the latest `origin/main` commits of every component. The
+Fleet and Harbor pins were advanced after their GitHub CI runs passed.
+
 ## Source and package candidate
 
 The five component submodules were initialized at the commits pinned by the
@@ -19,23 +22,23 @@ the package releases for the final local RC1 candidate build:
 
 | Package | Candidate |
 | --- | --- |
-| admiral-common | `0.0.1beta20-53.el10.noarch` |
-| admirald | `0.0.1beta20-21.el10.x86_64` |
-| admiral-fleet | `0.0.1beta20-26.el10.x86_64` |
-| admiralctl | `0.0.1beta20-19.el10.x86_64` |
-| admiral-flagship | `0.0.1beta20-18.el10.noarch` |
-| admiral-harbor | `0.0.1beta20-20.el10.noarch` |
+| admiral-common | `0.0.1beta20-54.el10.noarch` |
+| admirald | `0.0.1beta20-22.el10.x86_64` |
+| admiral-fleet | `0.0.1beta20-27.el10.x86_64` |
+| admiralctl | `0.0.1beta20-20.el10.x86_64` |
+| admiral-flagship | `0.0.1beta20-19.el10.noarch` |
+| admiral-harbor | `0.0.1beta20-21.el10.noarch` |
 
 SHA-256 of the six RPMs in `/var/lib/admiral/rpm-local`:
 
 | Package | SHA-256 |
 | --- | --- |
-| admiral-common | `0ee0c4bd2f32d99e680debeb3bf71714a249f3523faeca19eeeea4d20f0a9925` |
-| admirald | `f8187603cc648c3e38378f3c4de1493a22c395d2b4be87146ae8b656eb8da6f6` |
-| admiral-fleet | `d3725a31aec9b578b6caa4106622d3dbaced67074d14fd70329139168d73e03c` |
-| admiralctl | `35324ea230f6143fccfcc1ca84c673d5cdc69c43318fe0845f66bb435b977ee8` |
-| admiral-flagship | `62642e5d05312055294855838ae5b40420a82b1ae6291045108ba6dacd595d27` |
-| admiral-harbor | `cf15aa249bb0da2f53e271fd802bedd1dfb37adcc3dd555b2317f84d7b29580a` |
+| admiral-common | `5dca69503a074673635bcb9b6cce99768ccd6527d129b441924d278ab322fa7b` |
+| admirald | `18959fe0f334efcaab027b9a2993f6ba5517ea9613cc5c78c27261cd79592479` |
+| admiral-fleet | `21c826c618e8c27f27ceed3d83be7ac35ed5ba6f26504553831405096ac712e7` |
+| admiralctl | `26432427c0667d26e6180ec2a100bf682ca5ea933fe4a7ad80bf32abedc602fd` |
+| admiral-flagship | `40b2151b76427f36497006f29e09d16b044b93f73988fcae2092c3ffda026f61` |
+| admiral-harbor | `8dcb5254c4c8677b1be0320abd5c919105037fe0d68e8e9bd2734409731d73b7` |
 
 `python3-flask-login`, `python3-flask-sqlalchemy`, and
 `python3-flask-alembic` were built only as local build dependencies; they are
@@ -44,8 +47,8 @@ not Admiral release candidates.
 The repository is available at `/var/lib/admiral/rpm-local` and is exposed as
 the enabled `admiral-local` DNF repository in `/etc/yum.repos.d/admiral-local.repo`.
 `dnf install 'admiral*' --assumeno` selected all six candidates from
-`admiral-local`, not COPR. The real transaction installed all six candidates
-successfully.
+`admiral-local`, not COPR. The real transaction upgraded and installed all six
+latest candidates successfully (`54/22/27/20/19/21`).
 
 ## Installer validation
 
@@ -130,6 +133,23 @@ certificate/key matching, permissions, service restart, and healthcheck
 contract were covered by `scripts/test_admiral_https_setup.py` (7 passed).
 
 The full Harbor test suite passed with 287 tests (16 warnings).
+
+## Real restore run
+
+Source instance `inst_ed864bf0cd2c31fa` was provisioned, then produced a
+database backup `bk_b988264b924a68a3` (checksum
+`7d8783bd03eec344fff766e3a079fd3b605469e41b640437c4e5417eaea30195`) and a
+volume backup `bk_ee103382b94c6f62` (checksum
+`b6c495bb271ce9cddb24ecfb2c70fbcecea984dd6d5fc1f9b99bffbe0452aa8d`).
+
+The destination `inst_da5444304144b614` was provisioned and paused. Database
+restore succeeded with operation `op_a1eadf15a3d7fcd9` and checksum
+verification enabled. Volume restore was attempted with operation
+`op_65d779bfb9a34e27` but failed while creating `.htaccess` because the
+rootless Podman volume data was owned by an unmapped container UID and was not
+writable by `admiral-apps`. Both lab instances were subsequently deprovisioned
+successfully (`op_36b0bf9e8e34f8f4`, `op_a0801ca241a367e0`). This is recorded as
+a restore-volume defect, not as a passing full restore.
 
 The RC1 security disposition is recorded in `notas.md`: node registration
 tokens are passed through the task environment with `no_log`, bootstrap SSH is
