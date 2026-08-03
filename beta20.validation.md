@@ -15,23 +15,23 @@ the package releases for the final local RC1 candidate build:
 
 | Package | Candidate |
 | --- | --- |
-| admiral-common | `0.0.1beta20-52.el10.noarch` |
-| admirald | `0.0.1beta20-20.el10.x86_64` |
-| admiral-fleet | `0.0.1beta20-25.el10.x86_64` |
-| admiralctl | `0.0.1beta20-18.el10.x86_64` |
-| admiral-flagship | `0.0.1beta20-17.el10.noarch` |
-| admiral-harbor | `0.0.1beta20-19.el10.noarch` |
+| admiral-common | `0.0.1beta20-53.el10.noarch` |
+| admirald | `0.0.1beta20-21.el10.x86_64` |
+| admiral-fleet | `0.0.1beta20-26.el10.x86_64` |
+| admiralctl | `0.0.1beta20-19.el10.x86_64` |
+| admiral-flagship | `0.0.1beta20-18.el10.noarch` |
+| admiral-harbor | `0.0.1beta20-20.el10.noarch` |
 
 SHA-256 of the six RPMs in `/var/lib/admiral/rpm-local`:
 
 | Package | SHA-256 |
 | --- | --- |
-| admiral-common | `56e832c5e223b1c24007af67c315a2340a457770c23cda44d9182c4357b2c2c1` |
-| admirald | `866765dc17ba341e56fbe4aaa91aa16a022e5837fdcbb12d33e54b77989ebf31` |
-| admiral-fleet | `ede4a4cfca871f238496a33a1005dfabe4875efd7f430b58048e221ae6f3cf07` |
-| admiralctl | `147e98f03f5d521cb99e8aee0024f508e9ea8771cdac9eea25fb01fdf4f03cc5` |
-| admiral-flagship | `ffae1c40bef21109ab0fc6a5d12916432e5db7ba72bfc3803de36335a3db2f6b` |
-| admiral-harbor | `27c6b5e1d5261e2ee6c81a49f5f57da1dd36aa35e41b2d72453c2f8a29161b3e` |
+| admiral-common | `0ee0c4bd2f32d99e680debeb3bf71714a249f3523faeca19eeeea4d20f0a9925` |
+| admirald | `f8187603cc648c3e38378f3c4de1493a22c395d2b4be87146ae8b656eb8da6f6` |
+| admiral-fleet | `d3725a31aec9b578b6caa4106622d3dbaced67074d14fd70329139168d73e03c` |
+| admiralctl | `35324ea230f6143fccfcc1ca84c673d5cdc69c43318fe0845f66bb435b977ee8` |
+| admiral-flagship | `62642e5d05312055294855838ae5b40420a82b1ae6291045108ba6dacd595d27` |
+| admiral-harbor | `cf15aa249bb0da2f53e271fd802bedd1dfb37adcc3dd555b2317f84d7b29580a` |
 
 `python3-flask-login`, `python3-flask-sqlalchemy`, and
 `python3-flask-alembic` were built only as local build dependencies; they are
@@ -63,23 +63,23 @@ kernel initramfs images before Ansible ran.
 ## Golden WordPress lifecycle
 
 Application: `examples/apps/wordpress.yaml`
-Customer: `beta20-rc1-20260803f`
-Instance: `inst_69947c932cdcf1aa`
+Customer: `beta20-stream-20260803`
+Instance: `inst_2729889e87aa5ccc`
 Node: `rocky-linux-s-2vcpu-4gb-nyc1`  
 Tier: `small`
 
 | Stage | Evidence | Result |
 | --- | --- | --- |
 | Apply definition | `admiralctl apps apply` | PASS |
-| Provision and setup | `op_e4be819db383d675`, `setup_completed=true` | PASS |
+| Provision and setup | `op_6cd826e1840d7e7c`, `setup_completed=true` | PASS |
 | Rootless runtime | Containers owned by `admiral-apps`; cgroup under `user-991.slice` | PASS |
-| HTTP | WordPress returned HTTP 200 with `Host: localhost` on mapped port 40009 | PASS |
-| Backup | `op_18f9964981459f39`, backup `bk_468b83e1030038cd`, status `succeeded` | PASS |
-| Backup checksum | `e4923ffad378e030137bc4416d05b870179b192937abb0e23509522c59e3c26a` matched the file | PASS |
+| HTTP | WordPress returned HTTP 200 with `Host: localhost` on mapped port 40010 | PASS |
+| Backup | `op_55efdd0e2ff797e4`, backup `bk_889bc8c1f54d327f`, status `succeeded` | PASS |
+| Backup checksum | `de3c7a1b53b17ded485b57a5a3e7c9c61e2b716cf45ec5e72e020e6596605532` matched the file | PASS |
 | Backup ownership | `admiral-apps:admiral-apps`, mode `0600` | PASS |
-| Pause | `op_e90b49eb36b1312a`, endpoint unavailable while paused | PASS |
-| Resume | `op_ff9adde6077fc678`, HTTP 200 restored after runtime readiness | PASS |
-| Deprovision | `op_c4b0cbd2830f6188`, `technical_status=deprovisioned` | PASS |
+| Pause | `op_076cd00f2c0f3afd`, endpoint unavailable while paused | PASS |
+| Resume | `op_5d61b8468af4e042`, HTTP 200 restored | PASS |
+| Deprovision | `op_5af1284648dee015`, `technical_status=deprovisioned` | PASS |
 | Runtime cleanup | No instance containers or user units remained | PASS |
 
 The backup artifact is gzip-compressed MariaDB SQL despite its historical
