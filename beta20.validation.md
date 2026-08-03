@@ -1,5 +1,49 @@
 # Admiral beta20 validation
 
+## New-host validation run (2026-08-03)
+
+This section records the validation started on the new Rocky Linux 10.2
+x86_64 host. Results from earlier hosts below are historical and are not
+counted as evidence for this run.
+
+Initial state: the five submodule working trees were empty. They were
+initialized at the exact commits pinned by the superproject, and
+`python3 scripts/validate-release-refs.py` then passed. The host had KVM
+available at `/dev/kvm`, but no libvirt tooling; KVM/libvirt, `virt-install`,
+and guest tooling were installed for this validation. A persistent 4 GiB
+`/swapfile` was added because the host has 8 GiB RAM. VM product validation
+has not completed yet.
+
+Current new-host status: PREPARATION COMPLETE; RPM BUILD PASS; VM TESTS
+IN PROGRESS (not yet a product PASS).
+
+### New-host local RPM build
+
+`make rpm-admiral-no-test` completed successfully after building the local
+Python dependency RPMs required by Harbor. `python3 scripts/validate-release-refs.py`
+passed before each Admiral component build.
+
+| Package | NEVRA | SHA-256 |
+| --- | --- | --- |
+| admiral-common | `admiral-common-0.0.1beta20-60.el10.noarch` | `4ad76f696e9de3a6661208245d4ad0393a6d620358302f5833c39511e13dec13` |
+| admirald | `admirald-0.0.1beta20-28.el10.x86_64` | `2999098a22bb1362dbee7b93e6926980adcbe932036c383cf8d4eea8953930f6` |
+| admiral-fleet | `admiral-fleet-0.0.1beta20-33.el10.x86_64` | `bc9c09a8d58c32dd34583f7498c2194d2fbb26066f0f7a5ee84e685aa95ebd72` |
+| admiralctl | `admiralctl-0.0.1beta20-26.el10.x86_64` | `8c5b889dbd3a68fea8e6903924f5ba9fcd3493d3966390121f06a077a994e944` |
+| admiral-flagship | `admiral-flagship-0.0.1beta20-25.el10.noarch` | `a6f9f02ddb9cead81c5b3b25652934a4454acd43123370992278f9bdc6f1bd2a` |
+| admiral-harbor | `admiral-harbor-0.0.1beta20-27.el10.noarch` | `94e8092102f2c8ebd197268ea2ed85a819b37540ccc313c1ba1cde04f4b163eb` |
+
+The local repository at `/var/lib/admiral/rpm-local` contains these six
+candidate RPMs plus five locally built Python dependency RPMs.
+
+### New-host VM harness status
+
+Official CentOS Stream 10, Rocky Linux 10, and AlmaLinux 10 GenericCloud
+images were downloaded and cloned into three 20 GiB qcow2 guests with 2 GiB
+RAM each. BIOS boot was not usable in this nested KVM host; UEFI was enabled.
+Rocky reached SSH once at `192.168.122.11`, confirming the UEFI guest path and
+host NAT. CentOS and Alma still need a stable boot/network harness before any
+installer result can be counted. All VM product validation remains PENDING.
+
 Date: 2026-08-03
 Host: Rocky Linux 10 (EL10), x86_64  
 Scope: local RC1 candidate packages and single-node WordPress golden test
