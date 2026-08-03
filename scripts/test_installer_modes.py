@@ -381,6 +381,26 @@ class InstallerModeTests(unittest.TestCase):
         self.assertLess(installer.index('preflight_remote_node_role "$REQUESTED_NODE_ROLE"'), mutation_offset)
         self.assertIn("Refusing to modify packages or repositories", installer)
 
+    def test_spoke_identity_is_resolved_before_local_mutations(self) -> None:
+        installer = INSTALLER.read_text(encoding="utf-8")
+
+        resolve_offset = installer.index("Resolve the spoke identity before any local package")
+        delivery_offset = installer.index('DELIVERY_KEY_CANDIDATE=')
+        mutation_offset = installer.index("dnf install -y epel-release")
+        self.assertLess(resolve_offset, delivery_offset)
+        self.assertLess(resolve_offset, mutation_offset)
+        self.assertIn("Could not resolve node ID for role", installer)
+        self.assertIn("admiral-known-host", installer)
+
+    def test_spoke_mode_does_not_mutate_controller_packages_or_repositories(self) -> None:
+        installer = INSTALLER.read_text(encoding="utf-8")
+
+        self.assertIn('Spoke mode: leaving local repositories and packages unchanged.', installer)
+        self.assertIn('command -v ansible-playbook', installer)
+        self.assertIn('rpm -q admiral-common', installer)
+        self.assertIn('INSTALL_MODE" != "worker-node"', installer)
+        self.assertIn('INSTALL_MODE" != "portal-node"', installer)
+
     def test_el10_bootstrap_enables_crb_before_installing_admiral_packages(self) -> None:
         installer = INSTALLER.read_text(encoding="utf-8")
         common_tasks = COMMON_TASKS.read_text(encoding="utf-8")

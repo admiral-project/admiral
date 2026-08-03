@@ -4,6 +4,8 @@
 
 set -euo pipefail
 
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+
 # --- helpers ---
 die() { echo "[FATAL] $*" >&2; exit 1; }
 info() { echo "[INFO] $*"; }
@@ -486,6 +488,39 @@ if [[ -n "$INSTALL_TARGET_SSH_USER" && ! "$INSTALL_TARGET_SSH_USER" =~ ^[a-z_][a
 fi
 
 REQUESTED_NODE_ROLE=$(expected_node_role "$INSTALL_MODE") || die "Unsupported installation mode: $INSTALL_MODE"
+
+# Resolve the spoke identity before any local package or repository mutation.
+# The delivery key is named after node_id when the admin controller has already
+# onboarded the node; falling back to the public address here would make a
+# reconvergence without --node-id look for the wrong key.
+if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]] &&
+    [[ -z "$INSTALL_NODE_ID" || -z "$INSTALL_WIREGUARD_IP" ]]; then
+    ROLE_KEY="worker"
+    [[ "$INSTALL_MODE" == "portal-node" ]] && ROLE_KEY="portal"
+    resolve_known_host_value() {
+        local role="$1" field="$2"
+        if command -v admiral-known-host >/dev/null 2>&1; then
+            admiral-known-host "$role" "$field"
+        elif [[ -f "$SCRIPT_DIR/admiral_known_host.py" ]]; then
+            python3 "$SCRIPT_DIR/admiral_known_host.py" "$role" "$field"
+        else
+            return 1
+        fi
+    }
+    if [[ -z "$INSTALL_NODE_ID" ]]; then
+        INSTALL_NODE_ID=$(resolve_known_host_value "$ROLE_KEY" node_id || true)
+        [[ -n "$INSTALL_NODE_ID" ]] ||
+            die "Could not resolve node ID for role '$ROLE_KEY' from know_host.yaml before spoke bootstrap. Pass --node-id explicitly."
+        info "Resolved node ID from know_host.yaml: $INSTALL_NODE_ID"
+    fi
+    if [[ -z "$INSTALL_WIREGUARD_IP" ]]; then
+        INSTALL_WIREGUARD_IP=$(resolve_known_host_value "$ROLE_KEY" wireguard_ip || true)
+        [[ -n "$INSTALL_WIREGUARD_IP" ]] ||
+            die "Could not resolve WireGuard IP for role '$ROLE_KEY' from know_host.yaml before spoke bootstrap. Pass --wireguard-ip explicitly."
+        info "Resolved WireGuard IP from know_host.yaml: $INSTALL_WIREGUARD_IP"
+    fi
+fi
+
 if [[ "$INSTALL_DEV_MODE" != "true" ]] &&
     [[ "$INSTALL_MODE" == "single-node" || "$INSTALL_MODE" == "admin-node" || "$INSTALL_MODE" == "admin-portal-node" ]]; then
     preflight_local_node_role "$REQUESTED_NODE_ROLE"
@@ -641,7 +676,7 @@ esac
 # Admiral packages. EL10 repositories can temporarily expose split package
 # updates (for example vim-minimal/vim-data); allow DNF to replace the stale
 # member so the rest of the setup starts from a consistent transaction state.
-if [[ "$ID" != "amzn" ]]; then
+if [[ "$ID" != "amzn" && "$INSTALL_MODE" != "worker-node" && "$INSTALL_MODE" != "portal-node" ]]; then
     info "Applying available system updates before Admiral setup..."
     dnf -y update --refresh --allowerasing
 fi
@@ -650,7 +685,7 @@ fi
 command -v python3 >/dev/null 2>&1 || die "Python 3 is required but not installed."
 
 # --- 4. enable EPEL (Enterprise Linux only) ---
-if [[ "$ID" != "fedora" && "$ID" != "amzn" ]]; then
+if [[ "$ID" != "fedora" && "$ID" != "amzn" && "$INSTALL_MODE" != "worker-node" && "$INSTALL_MODE" != "portal-node" ]]; then
     if ! rpm -q epel-release >/dev/null 2>&1; then
         info "Installing EPEL repository..."
         dnf install -y epel-release
@@ -660,45 +695,58 @@ if [[ "$ID" != "fedora" && "$ID" != "amzn" ]]; then
 fi
 
 # --- 5. install dnf-plugins-core (for copr) ---
-if ! rpm -q dnf-plugins-core >/dev/null 2>&1; then
+if [[ "$INSTALL_MODE" != "worker-node" && "$INSTALL_MODE" != "portal-node" ]] &&
+    ! rpm -q dnf-plugins-core >/dev/null 2>&1; then
     dnf install -y dnf-plugins-core
 fi
 
 # EL10 packages used by Admiral are split between EPEL and CRB. Enable CRB
 # explicitly on every supported EL derivative so a fresh installation does not
 # depend on an operator having prepared the host repositories beforehand.
-if [[ "$ID" == "rhel" || "$ID" == "centos" || "$ID" == "rocky" || "$ID" == "almalinux" ]]; then
+if [[ "$INSTALL_MODE" != "worker-node" && "$INSTALL_MODE" != "portal-node" ]] &&
+    [[ "$ID" == "rhel" || "$ID" == "centos" || "$ID" == "rocky" || "$ID" == "almalinux" ]]; then
     info "Enabling EL10 CRB repository..."
     dnf config-manager --set-enabled crb
 fi
 
-# --- 6. enable COPR repos ---
-info "Enabling Caddy COPR repository..."
-dnf copr enable -y "@caddy/caddy"
+if [[ "$INSTALL_MODE" != "worker-node" && "$INSTALL_MODE" != "portal-node" ]]; then
+    # --- 6. enable COPR repos ---
+    info "Enabling Caddy COPR repository..."
+    dnf copr enable -y "@caddy/caddy"
 
-info "Enabling Admiral COPR repository..."
-dnf copr enable -y "admiral-project/admiral"
+    info "Enabling Admiral COPR repository..."
+    dnf copr enable -y "admiral-project/admiral"
 
-for copr_repo in \
-    /etc/yum.repos.d/_copr:copr.fedorainfracloud.org:group_caddy:caddy.repo \
-    /etc/yum.repos.d/_copr:copr.fedorainfracloud.org:admiral-project:admiral.repo; do
-    [[ -f "$copr_repo" ]] || die "Expected COPR repository file is missing: $copr_repo"
-    grep -Eq '^[[:space:]]*gpgcheck[[:space:]]*=[[:space:]]*1[[:space:]]*$' "$copr_repo" ||
-        die "Refusing repository without GPG metadata verification: $copr_repo"
-done
+    for copr_repo in \
+        /etc/yum.repos.d/_copr:copr.fedorainfracloud.org:group_caddy:caddy.repo \
+        /etc/yum.repos.d/_copr:copr.fedorainfracloud.org:admiral-project:admiral.repo; do
+        [[ -f "$copr_repo" ]] || die "Expected COPR repository file is missing: $copr_repo"
+        grep -Eq '^[[:space:]]*gpgcheck[[:space:]]*=[[:space:]]*1[[:space:]]*$' "$copr_repo" ||
+            die "Refusing repository without GPG metadata verification: $copr_repo"
+    done
 
-dnf clean all 2>/dev/null || true
-
-# --- 7. install ansible-core and admiral-common ---
-if ! rpm -q ansible-core >/dev/null 2>&1; then
-    info "Installing ansible-core..."
-    dnf install -y ansible-core
+    dnf clean all 2>/dev/null || true
+else
+    info "Spoke mode: leaving local repositories and packages unchanged."
 fi
 
-# Install or update the complete Admiral release set in one transaction so
-# the playbooks cannot be paired with older component binaries.
-info "Installing the current Admiral component packages..."
-dnf install -y admiral-common admirald admiralctl admiral-fleet admiral-harbor admiral-flagship
+# --- 7. install ansible-core and admiral-common ---
+if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]]; then
+    command -v ansible-playbook >/dev/null 2>&1 ||
+        die "Spoke mode requires ansible-playbook on the admin controller; install admiral-common first."
+    rpm -q admiral-common >/dev/null 2>&1 ||
+        die "Spoke mode requires admiral-common on the admin controller; install the Admiral release first."
+else
+    if ! rpm -q ansible-core >/dev/null 2>&1; then
+        info "Installing ansible-core..."
+        dnf install -y ansible-core
+    fi
+
+    # Install or update the complete Admiral release set in one transaction so
+    # the playbooks cannot be paired with older component binaries.
+    info "Installing the current Admiral component packages..."
+    dnf install -y admiral-common admirald admiralctl admiral-fleet admiral-harbor admiral-flagship
+fi
 
 # --- 7b. resolve spoke node defaults from know_host.yaml (without copying topology) ---
 # Extract only the wireguard_ip and node_id needed for this specific spoke.
