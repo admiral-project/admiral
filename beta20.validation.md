@@ -102,11 +102,13 @@ Fleet's authenticated OCI image pre-pull endpoint was included in this
 candidate: `GET /api/v1/fleet/oci_images` is served by `admirald`, and the
 worker accepts only the `pull` operation through its rootless lifecycle helper.
 
-The image-update marker was exercised on instance
+The control-plane image-update marker was exercised on instance
 `inst_51d8fdd5e77ad618`: applying a changed MariaDB image set
 `need_restarting=true`; successful stop/start operations
 `op_4046cce2adf7d4a1` and `op_bd5286dc333ae75e` cleared it back to `false`,
-then deprovision `op_4bea5440f3ba11ff` succeeded.
+then deprovision `op_4bea5440f3ba11ff` succeeded. This is only a state and
+callback test: no before/after image ID or digest was captured, so it is not
+accepted as proof that the workload restarted with the new image.
 
 ## Test observations
 
