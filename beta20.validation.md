@@ -15,12 +15,12 @@ the package releases for the final local RC1 candidate build:
 
 | Package | Candidate |
 | --- | --- |
-| admiral-common | `0.0.1beta20-49.el10.noarch` |
-| admirald | `0.0.1beta20-17.el10.x86_64` |
-| admiral-fleet | `0.0.1beta20-22.el10.x86_64` |
-| admiralctl | `0.0.1beta20-15.el10.x86_64` |
-| admiral-flagship | `0.0.1beta20-14.el10.noarch` |
-| admiral-harbor | `0.0.1beta20-16.el10.noarch` |
+| admiral-common | `0.0.1beta20-50.el10.noarch` |
+| admirald | `0.0.1beta20-18.el10.x86_64` |
+| admiral-fleet | `0.0.1beta20-23.el10.x86_64` |
+| admiralctl | `0.0.1beta20-16.el10.x86_64` |
+| admiral-flagship | `0.0.1beta20-15.el10.noarch` |
+| admiral-harbor | `0.0.1beta20-17.el10.noarch` |
 
 `python3-flask-login`, `python3-flask-sqlalchemy`, and
 `python3-flask-alembic` were built only as local build dependencies; they are
@@ -96,7 +96,7 @@ latest releases above. The installer changes were validated with
 
 The wildcard renewal hook was syntax-checked and its atomic deployment,
 certificate/key matching, permissions, service restart, and healthcheck
-contract were covered by `scripts/test_admiral_https_setup.py` (6 passed).
+contract were covered by `scripts/test_admiral_https_setup.py` (7 passed).
 
 The full Harbor test suite passed with 287 tests (16 warnings).
 
@@ -106,7 +106,7 @@ accepted as a temporary per-node design with explicit mitigation, and S3
 production TLS remains a pre-1.0 gate rather than a claim of local validation.
 
 The unprivileged `scripts/install.sh --help` contract and installer test suite
-passed: 52 tests, with `--help` returning exit code 0 for `nobody`.
+passed: 48 tests, with `--help` returning exit code 0 for `nobody`.
 
 Release reference validation passed after checking the Makefile pins, RPM
 spec pins, and submodule HEADs.
