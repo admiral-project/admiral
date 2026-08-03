@@ -11,8 +11,8 @@ initialized at the exact commits pinned by the superproject, and
 `python3 scripts/validate-release-refs.py` then passed. The host had KVM
 available at `/dev/kvm`, but no libvirt tooling; KVM/libvirt, `virt-install`,
 and guest tooling were installed for this validation. A persistent 4 GiB
-`/swapfile` was added because the host has 8 GiB RAM. VM product validation
-The requested Tier 1 VM validation is complete; final repository, CI, push,
+`/swapfile` was added because the host has 8 GiB RAM. The requested Tier 1 VM
+validation is complete; final repository, CI, push,
 and VM-shutdown gates are recorded below.
 
 Current new-host status: RPM BUILD PASS; CENTOS STREAM 10, ROCKY LINUX 10,
@@ -31,12 +31,12 @@ authentication fixes and incremented all six package releases.
 
 | Package | NEVRA | SHA-256 |
 | --- | --- | --- |
-| admiral-common | `admiral-common-0.0.1beta20-75.el10.noarch` | `f241e328a4fc094c7e66d964151d1ad045b467632fc91ca8d675721225ebd30d` |
-| admirald | `admirald-0.0.1beta20-43.el10.x86_64` | `9e131e5f003a180a1177b1f431f331dcfc81a95ad241b5bcc58345e92680d2a7` |
-| admiral-fleet | `admiral-fleet-0.0.1beta20-48.el10.x86_64` | `726ddbe86eb3ccdeab0cfc041b7e6884e149c997c4d40f987c0ba3bda56851e7` |
-| admiralctl | `admiralctl-0.0.1beta20-41.el10.x86_64` | `d3dcbae48bfe653d109126c10c9ad84b58399a801f07ee0c5e2a6a8254f56f9a` |
-| admiral-flagship | `admiral-flagship-0.0.1beta20-40.el10.noarch` | `c5baeabb60ea4594724314f4641e080030b8a0eda0f2ccc7d41b21ee93d88aef` |
-| admiral-harbor | `admiral-harbor-0.0.1beta20-42.el10.noarch` | `64307b8b0e5561fc6cc4b93b2725ec54b950c52ccb0dc5656885b2418de01293` |
+| admiral-common | `admiral-common-0.0.1beta20-77.el10.noarch` | `f8ccb97dabc0defcf50945422923b6788c8083cd35283314cdfbfaef24ac2705` |
+| admirald | `admirald-0.0.1beta20-45.el10.x86_64` | `57535d131ae52c60a50304d5a5e6c15ea93030df2498181a591af57c2808b2ad` |
+| admiral-fleet | `admiral-fleet-0.0.1beta20-50.el10.x86_64` | `bb8d53d64df51598aca3830d6f84078ce450d8e50a8b631627a546c7c8a6299b` |
+| admiralctl | `admiralctl-0.0.1beta20-43.el10.x86_64` | `ea762fa7675931bad36826c5e67be95fa082587559e725434932e2e6b8361912` |
+| admiral-flagship | `admiral-flagship-0.0.1beta20-42.el10.noarch` | `5d22e84a85affdbe1883774ebeddfa1294cac8459c8ab9ad8fe364a87fdc4138` |
+| admiral-harbor | `admiral-harbor-0.0.1beta20-44.el10.noarch` | `2a2b534cbee7e1c20e2282dc22d4bef04da79d0703cc21416a322c638f3e71c6` |
 
 The local repository at `/var/lib/admiral/rpm-local` contains these six
 candidate RPMs plus five locally built Python dependency RPMs. A 17 MiB
@@ -44,8 +44,24 @@ latest-package subset was copied into the guests as `file://` repositories
 when the libvirt bridge rejected guest-to-host TCP/8080 connections.
 
 Component CI is green for the exact pinned commits used in this build:
-admirald `4e7d728b`, admiral-fleet `ebf906e5`, admiralctl `492ddb02`,
+admirald `4e7d728b`, admiral-fleet `81d2383a`, admiralctl `492ddb02`,
 admiral-flagship `7238cedc`, and admiral-harbor `3eec3aaa`.
+
+### New-host backup/restore closure
+
+On Rocky Linux 10.2 single-node, with the new Fleet RPM
+`admiral-fleet-0.0.1beta20-50.el10`, a real WordPress volume backup was created
+as `bk_083b210de160a03c`, checksum verification was enabled, the instance was
+paused, and restore operation `op_6381ddfd15d3272c` completed with `succeeded`.
+The instance returned to `technical=running` and `storage=ok`. A post-restore
+container check successfully created and read a file in `/var/www/html`, and
+verified that `.htaccess` was present.
+
+The preceding Fleet-49 attempt failed as expected during this investigation
+because archive host IDs were passed unchanged to `podman unshare`. Fleet-50
+translates the archive UID/GID through the effective rootless `uid_map` and
+`gid_map`; the same real restore then passed. This closes the previously known
+volume-restore defect for the validated rootless Podman path.
 
 ### New-host multinode evidence
 
