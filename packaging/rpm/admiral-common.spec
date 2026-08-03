@@ -27,7 +27,7 @@ Requires: policycoreutils-python-utils
 Requires: openssl
 
 Source1: admiral-common.sysusers
-Source2: admiral-letsencrypt-deploy-hook.sh
+Source2: admiral_letsencrypt_deploy_hook.sh
 
 %description
 Common configuration files, Ansible playbooks, and utility scripts
