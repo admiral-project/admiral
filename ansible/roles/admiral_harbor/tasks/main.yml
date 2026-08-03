@@ -71,7 +71,7 @@
 
 - name: Check for existing Harbor node token
   slurp:
-    src: /etc/admiral/secrets
+    src: /etc/admiral/harbor.env
   register: harbor_existing_env
   failed_when: false
   no_log: true

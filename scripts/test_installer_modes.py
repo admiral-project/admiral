@@ -263,8 +263,12 @@ class InstallerModeTests(unittest.TestCase):
         self.assertNotIn("ADMIRAL_TASK_ENCRYPTION_KEY", fleet)
         self.assertNotIn('read_admiral_secret "ADMIRAL_POSTGRES_PASSWORD"', installer)
         self.assertIn('SECRETS_HARBOR_POSTGRES_USER="admiral_portal"', installer)
-        self.assertNotIn("ADMIRAL_ADMIN_TOKEN", fleet)
-        self.assertNotIn("ADMIRAL_ADMIN_TOKEN", harbor)
+        # The controller token is needed only for the registration command;
+        # it must not be rendered into the spoke service configuration.
+        self.assertIn("ADMIRAL_ADMIN_TOKEN", fleet)
+        self.assertIn("ADMIRAL_ADMIN_TOKEN", harbor)
+        self.assertIn('environment:\n    ADMIRAL_SERVER_URL:', fleet)
+        self.assertIn("ADMIRAL_API_URL=", harbor)
         self.assertIn("ADMIRAL_TASK_PUBLIC_KEY={{ admiral_task_public_key_value }}", fleet)
         self.assertIn("fleet_existing_node_token not in ['', '__REQUIRED__']", fleet)
         self.assertIn("admiral_fleet_token_value | default", fleet)

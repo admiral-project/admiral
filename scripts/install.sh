@@ -1099,7 +1099,8 @@ for n in data if isinstance(data, list) else data.get('nodes', []):
     mv -f "$PEER_FRAGMENT_TMP" "/etc/wireguard/peers.d/${PEER_FRAGMENT_NAME}.conf"
     info "WireGuard peer added for spoke node ($SPOKE_WG_IP) on hub."
     handshake_ok=false
-    for _ in {1..12}; do
+    for attempt in {1..30}; do
+        info "Waiting for WireGuard handshake with ${SPOKE_WG_IP} (attempt ${attempt}/30)."
         if wg show wg-admiral latest-handshakes | awk -v now="$(date +%s)" -v key="$SPOKE_KEY" '$1 == key && $2 > now-120 { found=1 } END { exit(found ? 0 : 1) }'; then
             handshake_ok=true
             break
