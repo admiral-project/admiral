@@ -6,6 +6,7 @@ Wants=network-online.target systemd-machined.service
 
 [Service]
 Type=simple
+Environment=ENV=production
 ExecStart=/usr/bin/admiral-fleet
 Restart=on-failure
 RestartSec=10
@@ -13,6 +14,7 @@ StandardOutput=journal
 StandardError=journal
 EnvironmentFile=/etc/admiral/fleet.env
 Environment=ADMIRAL_SYSTEMD_TIMEOUT=300
+Environment=ENV=production
 
 # Runtime directories
 ReadWritePaths=/etc/containers/systemd/admiral /var/lib/admiral /etc/containers/systemd/users /var/lib/admiral-apps /run/user
