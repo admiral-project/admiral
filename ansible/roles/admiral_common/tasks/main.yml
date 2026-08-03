@@ -682,8 +682,8 @@
       set_fact:
         admiral_existing_portal_postgres_password: >-
           {{ (admiral_existing_harbor_env.content | default('') | b64decode
-              | regex_search('(?m)^HARBOR_DATABASE_URL=postgresql://admiral_portal:([^@]+)@', '\1')
-              | first | default('')) }}
+              | regex_findall('(?m)^HARBOR_DATABASE_URL=postgresql://admiral_portal:([^@]+)@')
+              | first | default('', true)) }}
       no_log: true
 
     - name: Generate portal-local PostgreSQL credential
