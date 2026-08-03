@@ -145,6 +145,7 @@ source-support-files: | $(SOURCEDIR)
 	cp $(BINDIR)/harbor-gunicorn $(SOURCEDIR)/
 	cp $(BINDIR)/harbor-migrate $(SOURCEDIR)/
 	cp $(SPECSDIR)/admiral-common.sysusers $(SOURCEDIR)/
+	cp $(CURDIR)/scripts/admiral_letsencrypt_deploy_hook.sh $(SOURCEDIR)/
 
 # -- RPM build flags -----------------------------------------------------
 
