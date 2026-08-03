@@ -26,6 +26,26 @@ La bitácora beta18 registra qué fixes fueron aplicados y cuáles fueron
 validados en una topología completa; no se marcarán como resueltos los segundos
 hasta cerrar el multinodo y el golden test correspondiente.
 
+## Disposición formal RC1 — 2026-08-03
+
+Esta tabla supersede el estado histórico anterior para el corte beta20/RC1.
+El propietario de las aceptaciones de riesgo es William Moreno Reyes; la
+revisión de los riesgos aceptados queda fijada para 2026-09-01.
+
+| Hallazgo | Disposición RC1 | Evidencia o mitigación |
+|---|---|---|
+| H1/B10, token en `argv` | Corregido | Fleet y Harbor registran usando `ADMIRAL_NODE_TOKEN` en el entorno de la tarea, con `no_log: true`; no usan `--token`. |
+| H3/B9, SSH con `NOPASSWD` | Aceptado por diseño | Bootstrap temporal, identidad `admiral-ssh` por nodo, revocación idempotente y `PermitRootLogin no` al completar onboarding; blast radius pendiente de rediseño posterior a RC1. |
+| M1/M2, secretos en env/config | Aceptado temporalmente | Archivos con permisos restringidos, `no_log` en tareas sensibles, y secretos fuera de la bitácora; migración a `systemd-creds` queda para post-RC1. |
+| M3, exposición transitoria en `/proc` | Aceptado temporalmente | El instalador limpia variables después de generar extra-vars y el proceso ocurre solo durante bootstrap root; revisión de credenciales de systemd queda post-RC1. |
+| M6/B1, S3 sin TLS | Diferido, no aprobado para producción | El laboratorio local usa backend local; producción debe usar endpoint HTTPS y prueba S3-compatible TLS antes del gate 1.0. |
+| D1/D3/L8, URLs PayPal/Harbor | Corregido | `packaging/config/harbor.env` y la plantilla Ansible usan puerto 5001 para Harbor. |
+| B6/L12, parser de `know_host.yaml` | Corregido | `admiral-known-host` usa YAML validado y el instalador resuelve identidad antes de mutar paquetes o seleccionar delivery key. |
+
+La validación RC1 no publicó tokens, claves privadas, contraseñas ni valores de
+secreto en sus artefactos; la bitácora solo registra IDs de operaciones,
+NEVRA, checksums y estados operativos.
+
 ---
 
 ## 1. Hallazgo crítico nuevo

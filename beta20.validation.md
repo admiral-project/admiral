@@ -100,6 +100,11 @@ contract were covered by `scripts/test_admiral_https_setup.py` (6 passed).
 
 The full Harbor test suite passed with 287 tests (16 warnings).
 
+The RC1 security disposition is recorded in `notas.md`: node registration
+tokens are passed through the task environment with `no_log`, bootstrap SSH is
+accepted as a temporary per-node design with explicit mitigation, and S3
+production TLS remains a pre-1.0 gate rather than a claim of local validation.
+
 The unprivileged `scripts/install.sh --help` contract and installer test suite
 passed: 52 tests, with `--help` returning exit code 0 for `nobody`.
 
