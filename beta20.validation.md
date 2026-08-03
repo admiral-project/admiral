@@ -4,6 +4,10 @@ Date: 2026-08-03
 Host: Rocky Linux 10 (EL10), x86_64  
 Scope: local RC1 candidate packages and single-node WordPress golden test
 
+RC1 validation target is EL10 x86_64. aarch64 is a secondary platform and is
+deferred from this RC1 validation gate; this document does not infer aarch64
+coverage from the x86_64 run.
+
 ## Source and package candidate
 
 The five component submodules were initialized at the commits pinned by the
