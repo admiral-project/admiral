@@ -305,6 +305,7 @@
   environment:
     ADMIRAL_SERVER_URL: "{{ admiral_control_plane_url }}"
     ADMIRAL_TLS_CA_FILE: /etc/admiral/tls/ca.pem
+    ADMIRAL_ADMIN_TOKEN: "{{ admiral_admin_token_value }}"
   no_log: true
   when: admiral_install_mode in ['portal-node', 'admin-portal-node']
 
