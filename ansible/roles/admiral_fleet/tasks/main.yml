@@ -213,6 +213,22 @@
 # Fleet uses the bare hostname in --single-node.
 # Remote worker-node installs use either an explicit --node-id or the next
 # worker assignment from know_host.yaml.
+- name: Read admin token from controller environment for worker registration
+  slurp:
+    src: /etc/admiral/secrets
+  delegate_to: localhost
+  register: admiral_controller_fleet_env
+  no_log: true
+  when: admiral_install_mode == 'worker-node'
+
+- name: Resolve admin token from controller environment for worker registration
+  set_fact:
+    admiral_admin_token_value: >-
+      {{ admiral_controller_fleet_env.content | b64decode
+         | regex_findall('(?m)^ADMIRAL_ADMIN_TOKEN=(.*)$') | first | default('', true) | trim }}
+  no_log: true
+  when: admiral_install_mode == 'worker-node'
+
 - name: Register node with admirald (admin-to-node)
   command: >
     /usr/bin/admiralctl nodes register

@@ -229,7 +229,7 @@
 
 - name: Read admin token from controller environment for portal registration
   slurp:
-    src: /etc/admiral/harbor.env
+    src: /etc/admiral/secrets
   delegate_to: localhost
   register: admiral_controller_harbor_env
   no_log: true
