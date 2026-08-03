@@ -99,6 +99,7 @@
   dnf:
     name:
       - admiral-common
+      - acl
     state: present
 
 - name: Install admin-plane packages

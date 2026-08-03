@@ -227,6 +227,20 @@
          | regex_findall('(?m)^HARBOR_NODE_TOKEN=(.*)$') | first | default('') | trim }}
   no_log: true
 
+- name: Read admin token from controller environment for portal registration
+  slurp:
+    src: /etc/admiral/harbor.env
+  delegate_to: localhost
+  register: admiral_controller_harbor_env
+  no_log: true
+
+- name: Resolve admin token from controller environment for portal registration
+  set_fact:
+    admiral_admin_token_value: >-
+      {{ admiral_controller_harbor_env.content | b64decode
+         | regex_findall('(?m)^ADMIRAL_ADMIN_TOKEN=(.*)$') | first | default('', true) | trim }}
+  no_log: true
+
 - name: Register portal node with admirald
   command: >
     /usr/bin/admiralctl nodes register
