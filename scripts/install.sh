@@ -1055,6 +1055,8 @@ fi
 # --- 10b. exchange WireGuard peers for spoke installs ---
 if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]]; then
     info "Exchanging WireGuard peers between hub and spoke..."
+    export ADMIRAL_ADMIN_TOKEN="$(read_admiral_secret ADMIRAL_ADMIN_TOKEN)"
+    [[ -n "$ADMIRAL_ADMIN_TOKEN" ]] || die "Controller admin token is unavailable for WireGuard peer exchange."
     SPOKE_KEY=$(ssh "${SSH_OPTIONS[@]}" "${INSTALL_TARGET_SSH_USER}@${INSTALL_PUBLIC_IP}" "sudo sh -c 'wg pubkey < /etc/wireguard/admiral.key'" 2>/dev/null || true)
     SPOKE_NODE_ID="${INSTALL_NODE_ID:-$(ssh "${SSH_OPTIONS[@]}" "${INSTALL_TARGET_SSH_USER}@${INSTALL_PUBLIC_IP}" "sudo sh -c \"grep -hE '^(ADMIRAL_FLEET_NODE_ID|HARBOR_NODE_ID)=' /etc/admiral/*.env 2>/dev/null | tail -n1 | cut -d= -f2-\"" 2>/dev/null || true)}"
     if [[ -z "$SPOKE_KEY" ]]; then
