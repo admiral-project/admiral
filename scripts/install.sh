@@ -1057,7 +1057,7 @@ if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]]; t
     info "Exchanging WireGuard peers between hub and spoke..."
     export ADMIRAL_ADMIN_TOKEN="$(read_admiral_secret ADMIRAL_ADMIN_TOKEN)"
     [[ -n "$ADMIRAL_ADMIN_TOKEN" ]] || die "Controller admin token is unavailable for WireGuard peer exchange."
-    export ADMIRAL_SERVER_URL="https://${INSTALL_ADMIN_ENDPOINT}:8080"
+    export ADMIRAL_SERVER_URL="https://${INSTALL_ADMIN_WIREGUARD_IP}:8080"
     export ADMIRAL_TLS_CA_FILE="/etc/admiral/tls/ca.pem"
     SPOKE_KEY=$(ssh "${SSH_OPTIONS[@]}" "${INSTALL_TARGET_SSH_USER}@${INSTALL_PUBLIC_IP}" "sudo sh -c 'wg pubkey < /etc/wireguard/admiral.key'" 2>/dev/null || true)
     SPOKE_NODE_ID="${INSTALL_NODE_ID:-$(ssh "${SSH_OPTIONS[@]}" "${INSTALL_TARGET_SSH_USER}@${INSTALL_PUBLIC_IP}" "sudo sh -c \"grep -hE '^(ADMIRAL_FLEET_NODE_ID|HARBOR_NODE_ID)=' /etc/admiral/*.env 2>/dev/null | tail -n1 | cut -d= -f2-\"" 2>/dev/null || true)}"
