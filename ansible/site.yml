@@ -48,6 +48,13 @@
       failed_when: false
       when: not admiral_node_role_file.stat.exists
 
+    - name: Detect placeholder Admirald configuration baseline
+      command: grep -q '__REQUIRED__' /etc/admirald.ini
+      register: admirald_placeholder_config
+      changed_when: false
+      failed_when: false
+      when: not admiral_node_role_file.stat.exists
+
     - name: Check for legacy Admiral installation state
       stat:
         path: "{{ item }}"
