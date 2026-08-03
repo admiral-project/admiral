@@ -229,6 +229,10 @@
     ADMIRAL_SERVER_URL: "{{ admiral_control_plane_url }}"
     ADMIRAL_TLS_CA_FILE: /etc/admiral/tls/ca.pem
     ADMIRAL_NODE_TOKEN: "{{ harbor_node_token_value }}"
+  register: harbor_node_registration
+  retries: 6
+  delay: 5
+  until: harbor_node_registration.rc == 0
   no_log: true
 
 - name: Ensure admirald systemd override directory exists on admin host
