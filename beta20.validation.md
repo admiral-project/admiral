@@ -15,22 +15,24 @@ and guest tooling were installed for this validation. A persistent 4 GiB
 is still in progress and is not a release-wide PASS.
 
 Current new-host status: PREPARATION COMPLETE; RPM BUILD PASS; CENTOS
-STREAM 10 SINGLE-NODE PASS; ROCKY/ALMA SINGLE-NODE AND MULTINODE PENDING.
+STREAM 10, ROCKY LINUX 10, AND ALMALINUX 10 SINGLE-NODE PASS; MULTINODE
+PENDING.
 
 ### New-host local RPM build
 
 `make rpm-admiral-no-test` completed successfully after building the local
 Python dependency RPMs required by Harbor. `python3 scripts/validate-release-refs.py`
-passed before each Admiral component build.
+passed before the build. The final build includes the Harbor/Fleet registration
+authentication fixes and incremented all six package releases.
 
 | Package | NEVRA | SHA-256 |
 | --- | --- | --- |
-| admiral-common | `admiral-common-0.0.1beta20-60.el10.noarch` | `4ad76f696e9de3a6661208245d4ad0393a6d620358302f5833c39511e13dec13` |
-| admirald | `admirald-0.0.1beta20-28.el10.x86_64` | `2999098a22bb1362dbee7b93e6926980adcbe932036c383cf8d4eea8953930f6` |
-| admiral-fleet | `admiral-fleet-0.0.1beta20-33.el10.x86_64` | `bc9c09a8d58c32dd34583f7498c2194d2fbb26066f0f7a5ee84e685aa95ebd72` |
-| admiralctl | `admiralctl-0.0.1beta20-26.el10.x86_64` | `8c5b889dbd3a68fea8e6903924f5ba9fcd3493d3966390121f06a077a994e944` |
-| admiral-flagship | `admiral-flagship-0.0.1beta20-25.el10.noarch` | `a6f9f02ddb9cead81c5b3b25652934a4454acd43123370992278f9bdc6f1bd2a` |
-| admiral-harbor | `admiral-harbor-0.0.1beta20-27.el10.noarch` | `94e8092102f2c8ebd197268ea2ed85a819b37540ccc313c1ba1cde04f4b163eb` |
+| admiral-common | `admiral-common-0.0.1beta20-65.el10.noarch` | `ea53634c80a133cb7538c410137fd0f553efcc523508e3ed79cbfcb87735afac` |
+| admirald | `admirald-0.0.1beta20-33.el10.x86_64` | `cdffa5827b8ec801eca18817aaf8582bba023c9f46e2e830e3e59d1c8f4f2fb2` |
+| admiral-fleet | `admiral-fleet-0.0.1beta20-38.el10.x86_64` | `2f634efe01b2c0ed3e3eb4358d41c2221639d450823b6bd7d2c8c0faa14c5b1d` |
+| admiralctl | `admiralctl-0.0.1beta20-31.el10.x86_64` | `0f9cab58a6a62f239c680a9ece54dd59e836ec68d8454ff1e7e618b0304f4045` |
+| admiral-flagship | `admiral-flagship-0.0.1beta20-30.el10.noarch` | `bc64abf67fe2c2c83a10b2ba1b599653b01ac33e38077f9d7b73579377c62b90` |
+| admiral-harbor | `admiral-harbor-0.0.1beta20-32.el10.noarch` | `695c0fbe3f16c9c72341e33dc36b5579e76567c4f1853ff221ab5d70417f7424` |
 
 The local repository at `/var/lib/admiral/rpm-local` contains these six
 candidate RPMs plus five locally built Python dependency RPMs.
@@ -52,11 +54,21 @@ evidence after convergence: `postgresql`, `caddy`, `admirald`,
 ports; and `admiralctl --help` succeeded. This is a single-node PASS for
 CentOS only.
 
-Rocky Linux 10.2 reached package installation and partial Ansible convergence,
-but the installer run exceeded the test timeout during the EL10 system update
-and did not leave Admiral services active. This is recorded as pending/failing
-evidence, not as a PASS. AlmaLinux single-node and all multinode role tests
-have not yet run. All product-wide validation remains PENDING.
+Rocky Linux 10.2 completed the detached installer run with
+`ok=186 changed=24 failed=0 unreachable=0 skipped=148`, including the
+single-node worker/portal registration assertions and Harbor API verification.
+`postgresql`, `caddy`, `admirald`, `admiral-fleet`, `admiral-flagship`, and
+`admiral-harbor` were all active and enabled; `admiralctl --help` succeeded.
+
+AlmaLinux 10 completed the same single-node checks: all six services were
+active and enabled, expected loopback listeners were present, and
+`admiralctl --help` succeeded. Multinode role tests have not yet run.
+
+The multinode harness was then prepared with three same-distribution CentOS
+Stream 10 clones (admin, portal, worker). The fresh UEFI clones stopped at the
+firmware boot manager instead of selecting the guest disk and therefore never
+obtained DHCP. This is a harness failure, not Admiral product evidence; no
+multinode PASS is claimed until the VM boot path is corrected.
 
 Date: 2026-08-03
 Host: Rocky Linux 10 (EL10), x86_64  
