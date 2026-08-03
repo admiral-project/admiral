@@ -57,6 +57,10 @@ The instance returned to `technical=running` and `storage=ok`. A post-restore
 container check successfully created and read a file in `/var/www/html`, and
 verified that `.htaccess` was present.
 
+With the same Fleet-50 binary, database backup `bk_f45e95b273a59646` completed
+successfully and database restore operation `op_3320c8f44ba3f935` also completed
+with `succeeded` and checksum verification enabled.
+
 The preceding Fleet-49 attempt failed as expected during this investigation
 because archive host IDs were passed unchanged to `podman unshare`. Fleet-50
 translates the archive UID/GID through the effective rootless `uid_map` and
