@@ -12,10 +12,10 @@ initialized at the exact commits pinned by the superproject, and
 available at `/dev/kvm`, but no libvirt tooling; KVM/libvirt, `virt-install`,
 and guest tooling were installed for this validation. A persistent 4 GiB
 `/swapfile` was added because the host has 8 GiB RAM. VM product validation
-has not completed yet.
+is still in progress and is not a release-wide PASS.
 
-Current new-host status: PREPARATION COMPLETE; RPM BUILD PASS; VM TESTS
-IN PROGRESS (not yet a product PASS).
+Current new-host status: PREPARATION COMPLETE; RPM BUILD PASS; CENTOS
+STREAM 10 SINGLE-NODE PASS; ROCKY/ALMA SINGLE-NODE AND MULTINODE PENDING.
 
 ### New-host local RPM build
 
@@ -40,9 +40,23 @@ candidate RPMs plus five locally built Python dependency RPMs.
 Official CentOS Stream 10, Rocky Linux 10, and AlmaLinux 10 GenericCloud
 images were downloaded and cloned into three 20 GiB qcow2 guests with 2 GiB
 RAM each. BIOS boot was not usable in this nested KVM host; UEFI was enabled.
-Rocky reached SSH once at `192.168.122.11`, confirming the UEFI guest path and
-host NAT. CentOS and Alma still need a stable boot/network harness before any
-installer result can be counted. All VM product validation remains PENDING.
+All three guests now boot, obtain DHCP leases, accept the lab SSH key, and see
+the candidate repository. The repository is copied into the guests as a local
+file repository because the libvirt bridge does not reliably permit guest to
+host TCP/8080 access.
+
+CentOS Stream 10 single-node was installed from the candidate RPMs. Direct
+evidence after convergence: `postgresql`, `caddy`, `admirald`,
+`admiral-fleet`, `admiral-flagship`, and `admiral-harbor` were all `active` and
+`enabled`; expected listeners were present on Caddy and the loopback service
+ports; and `admiralctl --help` succeeded. This is a single-node PASS for
+CentOS only.
+
+Rocky Linux 10.2 reached package installation and partial Ansible convergence,
+but the installer run exceeded the test timeout during the EL10 system update
+and did not leave Admiral services active. This is recorded as pending/failing
+evidence, not as a PASS. AlmaLinux single-node and all multinode role tests
+have not yet run. All product-wide validation remains PENDING.
 
 Date: 2026-08-03
 Host: Rocky Linux 10 (EL10), x86_64  
