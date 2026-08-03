@@ -5,7 +5,7 @@
 
 Name:    admiral-common
 Version: 0.0.1beta20
-Release: 51%{?dist}
+Release: 52%{?dist}
 Summary: Common files and utilities for Admiral PaaS
 
 License: Apache-2.0
