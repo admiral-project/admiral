@@ -57,6 +57,12 @@ installer completed its Harbor API verification. `admirald`, `admiral-fleet`,
 `admiral-harbor`, Caddy, and PostgreSQL were active after installation. No
 systemd units were failed.
 
+A second `admiral-install --single-node --yes` run against the already
+installed candidate also completed successfully. Its Ansible recap was
+`ok=183 changed=19 failed=0 unreachable=0 skipped=148 rescued=0 ignored=0`;
+this provides local idempotency/reconvergence evidence for the single-node
+installation.
+
 The installer update phase upgraded the EL10 host packages and regenerated
 kernel initramfs images before Ansible ran.
 
