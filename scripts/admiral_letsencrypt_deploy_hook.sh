@@ -19,7 +19,7 @@ cert_pub=$(openssl x509 -in "$source_cert" -pubkey -noout) || die "cannot parse 
 key_pub=$(openssl pkey -in "$source_key" -pubout) || die "cannot parse renewed private key"
 [[ "$cert_pub" == "$key_pub" ]] || die "renewed certificate and private key do not match"
 
-deploy_dir=/etc/admiral/tls/letsencrypt
+deploy_dir=${ADMIRAL_LETSENCRYPT_DEPLOY_DIR:-/etc/admiral/tls/letsencrypt}
 install -d -o root -g caddy -m 0750 "$deploy_dir"
 
 tmp_cert=$(mktemp "$deploy_dir/fullchain.pem.XXXXXX")

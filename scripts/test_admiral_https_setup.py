@@ -1,5 +1,6 @@
 import importlib.util
 import os
+import subprocess
 from pathlib import Path
 from types import SimpleNamespace
 from unittest import mock
@@ -49,6 +50,69 @@ def test_letsencrypt_deploy_hook_replaces_the_admiral_copy_atomically():
     assert "systemctl restart caddy admirald" in hook
     assert "systemctl is-active --quiet caddy" in hook
     assert "systemctl is-active --quiet admirald" in hook
+
+
+def test_letsencrypt_deploy_hook_updates_a_renewed_pair(tmp_path):
+    lineage = tmp_path / "letsencrypt" / "live" / "apps.example.com"
+    lineage.mkdir(parents=True)
+    subprocess.run(
+        [
+            "openssl",
+            "req",
+            "-x509",
+            "-newkey",
+            "rsa:2048",
+            "-nodes",
+            "-days",
+            "1",
+            "-subj",
+            "/CN=apps.example.com",
+            "-addext",
+            "subjectAltName=DNS:apps.example.com",
+            "-keyout",
+            str(lineage / "privkey.pem"),
+            "-out",
+            str(lineage / "fullchain.pem"),
+        ],
+        check=True,
+        capture_output=True,
+    )
+    deployed = tmp_path / "deployed"
+    (deployed / "fullchain.pem").parent.mkdir()
+    (deployed / "fullchain.pem").write_text("old certificate")
+    (deployed / "privkey.pem").write_text("old key")
+    fake_bin = tmp_path / "bin"
+    fake_bin.mkdir()
+    calls = tmp_path / "systemctl.calls"
+    systemctl = fake_bin / "systemctl"
+    systemctl.write_text(f"#!/bin/sh\nprintf '%s\\n' \"$*\" >> {calls}\n")
+    systemctl.chmod(0o755)
+
+    env = os.environ.copy()
+    env.update(
+        {
+            "CERTBOT_RENEWED_LINEAGE": str(lineage),
+            "ADMIRAL_LETSENCRYPT_DEPLOY_DIR": str(deployed),
+            "PATH": f"{fake_bin}:{env['PATH']}",
+        }
+    )
+    result = subprocess.run(
+        ["bash", str(Path(__file__).with_name("admiral_letsencrypt_deploy_hook.sh"))],
+        env=env,
+        capture_output=True,
+        text=True,
+    )
+    assert result.returncode == 0, result.stderr
+    assert (deployed / "fullchain.pem").read_bytes() == (lineage / "fullchain.pem").read_bytes()
+    assert (deployed / "privkey.pem").read_bytes() == (lineage / "privkey.pem").read_bytes()
+    assert (deployed / "fullchain.pem").stat().st_mode & 0o777 == 0o644
+    assert (deployed / "privkey.pem").stat().st_mode & 0o777 == 0o640
+    assert calls.read_text().splitlines() == [
+        "daemon-reload",
+        "restart caddy admirald",
+        "is-active --quiet caddy",
+        "is-active --quiet admirald",
+    ]
 
 
 @pytest.mark.parametrize(
