@@ -12,13 +12,15 @@ initialized at the exact commits pinned by the superproject, and
 available at `/dev/kvm`, but no libvirt tooling; KVM/libvirt, `virt-install`,
 and guest tooling were installed for this validation. A persistent 4 GiB
 `/swapfile` was added because the host has 8 GiB RAM. VM product validation
-is still in progress and is not a release-wide PASS.
+The requested Tier 1 VM validation is complete; final repository, CI, push,
+and VM-shutdown gates are recorded below.
 
-Current new-host status: PREPARATION COMPLETE; RPM BUILD PASS; CENTOS
-STREAM 10, ROCKY LINUX 10, AND ALMALINUX 10 SINGLE-NODE PASS; MULTINODE
-PENDING. CentOS admin, dedicated portal, and worker playbooks reached
-`failed=0`; final wrapper peer exchange is being re-run with the corrected
-controller endpoint and token handling.
+Current new-host status: RPM BUILD PASS; CENTOS STREAM 10, ROCKY LINUX 10,
+AND ALMALINUX 10 SINGLE-NODE PASS; MULTINODE PASS for all three Tier 1
+distributions. Every multinode role completed with `failed=0`, and the final
+admin-side `admiralctl nodes list` check showed both spokes `active healthy
+true` for Rocky and Alma. CentOS reached the same state during its final
+peer-exchange run.
 
 ### New-host local RPM build
 
@@ -29,15 +31,54 @@ authentication fixes and incremented all six package releases.
 
 | Package | NEVRA | SHA-256 |
 | --- | --- | --- |
-| admiral-common | `admiral-common-0.0.1beta20-72.el10.noarch` | `2e4d660407d34df0cbc96c06b346558eb28ed0267e209b2fd5e9e63e03a7e31c` |
-| admirald | `admirald-0.0.1beta20-40.el10.x86_64` | `90bf806021ec1e6b85f8e82fdae9da395c09185382b6040a2155b301a0979efc` |
-| admiral-fleet | `admiral-fleet-0.0.1beta20-45.el10.x86_64` | `cf87ec34e4d0a99d076d9a5308e185eb4669be4e1e303517c1bc7c6396267fac` |
-| admiralctl | `admiralctl-0.0.1beta20-38.el10.x86_64` | `f16cb3913769f6de0354857abdd0503132fb064e568dd20af2f6a2506e6694c4` |
-| admiral-flagship | `admiral-flagship-0.0.1beta20-37.el10.noarch` | `a2ba897dca40fcbbfc35c2334732e62abdf6c9c25bd717374c3fa974b01cecb7` |
-| admiral-harbor | `admiral-harbor-0.0.1beta20-39.el10.noarch` | `94157576be5bf4b1cd9b424e6c99ce9cd214d8a4dda52e6e6a73a4bda78c360b` |
+| admiral-common | `admiral-common-0.0.1beta20-75.el10.noarch` | `f241e328a4fc094c7e66d964151d1ad045b467632fc91ca8d675721225ebd30d` |
+| admirald | `admirald-0.0.1beta20-43.el10.x86_64` | `9e131e5f003a180a1177b1f431f331dcfc81a95ad241b5bcc58345e92680d2a7` |
+| admiral-fleet | `admiral-fleet-0.0.1beta20-48.el10.x86_64` | `726ddbe86eb3ccdeab0cfc041b7e6884e149c997c4d40f987c0ba3bda56851e7` |
+| admiralctl | `admiralctl-0.0.1beta20-41.el10.x86_64` | `d3dcbae48bfe653d109126c10c9ad84b58399a801f07ee0c5e2a6a8254f56f9a` |
+| admiral-flagship | `admiral-flagship-0.0.1beta20-40.el10.noarch` | `c5baeabb60ea4594724314f4641e080030b8a0eda0f2ccc7d41b21ee93d88aef` |
+| admiral-harbor | `admiral-harbor-0.0.1beta20-42.el10.noarch` | `64307b8b0e5561fc6cc4b93b2725ec54b950c52ccb0dc5656885b2418de01293` |
 
 The local repository at `/var/lib/admiral/rpm-local` contains these six
-candidate RPMs plus five locally built Python dependency RPMs.
+candidate RPMs plus five locally built Python dependency RPMs. A 17 MiB
+latest-package subset was copied into the guests as `file://` repositories
+when the libvirt bridge rejected guest-to-host TCP/8080 connections.
+
+Component CI is green for the exact pinned commits used in this build:
+admirald `4e7d728b`, admiral-fleet `ebf906e5`, admiralctl `492ddb02`,
+admiral-flagship `7238cedc`, and admiral-harbor `3eec3aaa`.
+
+### New-host multinode evidence
+
+Each distribution used one admin VM, one dedicated portal VM, and one worker
+VM, with 2 GiB RAM per guest. CentOS Stream 10 completed the final portal and
+worker playbooks with `failed=0` (`ok=178 changed=33 skipped=160` and
+`ok=134 changed=16 skipped=204` respectively); both peer exchanges and the admin node list
+reported healthy spokes.
+
+Rocky Linux 10.2 completed the admin, portal, and worker playbooks with:
+
+| Role | Ansible recap | Peer exchange |
+| --- | --- | --- |
+| admin | `ok=190 changed=97 unreachable=0 failed=0 skipped=151` | controller installed |
+| portal | `ok=187 changed=84 unreachable=0 failed=0 skipped=152` | verified on attempt 1 |
+| worker | `ok=142 changed=55 unreachable=0 failed=0 skipped=197` | verified on attempt 1 |
+
+The final Rocky `admiralctl nodes list` showed both `portal-01` and `worker-01`
+as `active healthy true`.
+
+AlmaLinux 10 completed the admin, portal, and worker playbooks with:
+
+| Role | Ansible recap | Peer exchange |
+| --- | --- | --- |
+| admin | `ok=165 changed=46 unreachable=0 failed=0 skipped=175` | controller installed |
+| portal | `ok=183 changed=52 unreachable=0 failed=0 skipped=156` | verified on attempt 1 |
+| worker | `ok=136 changed=20 unreachable=0 failed=0 skipped=202` | verified on attempt 1 |
+
+The final Alma `admiralctl nodes list` showed both `portal-01` and `worker-01`
+as `active healthy true`. The intermediate Alma retries were caused by the
+test host's restrictive egress policy blocking EL10 mirror HTTP traffic; the
+successful final runs completed after the required packages were available
+and retained the normal installer firewall configuration.
 
 ### New-host VM harness status
 
@@ -64,13 +105,14 @@ single-node worker/portal registration assertions and Harbor API verification.
 
 AlmaLinux 10 completed the same single-node checks: all six services were
 active and enabled, expected loopback listeners were present, and
-`admiralctl --help` succeeded. Multinode role tests have not yet run.
+`admiralctl --help` succeeded. Its multinode role evidence is recorded below.
 
 The multinode harness was then prepared with three same-distribution CentOS
 Stream 10 clones (admin, portal, worker). The fresh UEFI clones stopped at the
 firmware boot manager instead of selecting the guest disk and therefore never
-obtained DHCP. This is a harness failure, not Admiral product evidence; no
-multinode PASS is claimed until the VM boot path is corrected.
+obtained DHCP. This was an intermediate harness failure, not Admiral product
+evidence. The UEFI clone path was corrected and the final CentOS multinode
+evidence is recorded above.
 
 Date: 2026-08-03
 Host: Rocky Linux 10 (EL10), x86_64  
