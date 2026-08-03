@@ -22,23 +22,23 @@ the package releases for the final local RC1 candidate build:
 
 | Package | Candidate |
 | --- | --- |
-| admiral-common | `0.0.1beta20-54.el10.noarch` |
-| admirald | `0.0.1beta20-22.el10.x86_64` |
-| admiral-fleet | `0.0.1beta20-27.el10.x86_64` |
-| admiralctl | `0.0.1beta20-20.el10.x86_64` |
-| admiral-flagship | `0.0.1beta20-19.el10.noarch` |
-| admiral-harbor | `0.0.1beta20-21.el10.noarch` |
+| admiral-common | `0.0.1beta20-57.el10.noarch` |
+| admirald | `0.0.1beta20-25.el10.x86_64` |
+| admiral-fleet | `0.0.1beta20-30.el10.x86_64` |
+| admiralctl | `0.0.1beta20-23.el10.x86_64` |
+| admiral-flagship | `0.0.1beta20-22.el10.noarch` |
+| admiral-harbor | `0.0.1beta20-24.el10.noarch` |
 
 SHA-256 of the six RPMs in `/var/lib/admiral/rpm-local`:
 
 | Package | SHA-256 |
 | --- | --- |
-| admiral-common | `5dca69503a074673635bcb9b6cce99768ccd6527d129b441924d278ab322fa7b` |
-| admirald | `18959fe0f334efcaab027b9a2993f6ba5517ea9613cc5c78c27261cd79592479` |
-| admiral-fleet | `21c826c618e8c27f27ceed3d83be7ac35ed5ba6f26504553831405096ac712e7` |
-| admiralctl | `26432427c0667d26e6180ec2a100bf682ca5ea933fe4a7ad80bf32abedc602fd` |
-| admiral-flagship | `40b2151b76427f36497006f29e09d16b044b93f73988fcae2092c3ffda026f61` |
-| admiral-harbor | `8dcb5254c4c8677b1be0320abd5c919105037fe0d68e8e9bd2734409731d73b7` |
+| admiral-common | `cb6ec09875b59b2a92ee17bcff04690f56d5aefbc9f5699ecc49344dcc0574aa` |
+| admirald | `ce19b83498e7453551ff2d2e7f3f143a6a0e92da4fc13fd1301de51b030ede0b` |
+| admiral-fleet | `dc7629e33aaa87fa9f122402ed22b4819ef91403dce0997c1d93f53aabb63b29` |
+| admiralctl | `2e7ab8c2891dcb1a40ade2a314d30c878ab9a1dd076cf7664762802c55362cee` |
+| admiral-flagship | `a195b832ebd73e01537d4aeeb52f9451841937f488e6403833a3227d4e144311` |
+| admiral-harbor | `a1108330c426629e6650db780369c75f43f0f619a5eccb95cd74835af56723fa` |
 
 `python3-flask-login`, `python3-flask-sqlalchemy`, and
 `python3-flask-alembic` were built only as local build dependencies; they are
@@ -48,7 +48,7 @@ The repository is available at `/var/lib/admiral/rpm-local` and is exposed as
 the enabled `admiral-local` DNF repository in `/etc/yum.repos.d/admiral-local.repo`.
 `dnf install 'admiral*' --assumeno` selected all six candidates from
 `admiral-local`, not COPR. The real transaction upgraded and installed all six
-latest candidates successfully (`54/22/27/20/19/21`).
+latest candidates successfully (`57/25/30/23/22/24`).
 
 ## Installer validation
 
@@ -109,6 +109,36 @@ The control-plane image-update marker was exercised on instance
 then deprovision `op_4bea5440f3ba11ff` succeeded. This is only a state and
 callback test: no before/after image ID or digest was captured, so it is not
 accepted as proof that the workload restarted with the new image.
+
+## Security image restart verification
+
+The complete security-update flow was verified on the local EL10 host with a
+temporary definition `wp-restart-test` and instance
+`inst_1eabc8f2defe26cf`. The definition was first applied with
+`docker.io/library/mariadb:10.11`; provision operation
+`op_70675a92624e815e` succeeded. The running DB container reported image ID
+`37b9f8bf6fe12f7d493c8aa55e97dd0205367e7b29445166e661a2739fdbae02` and the
+old image reference.
+
+The definition was then updated only to `docker.io/library/mariadb:11.4`.
+Admiral reported `need_restarting=true` before the restart. A real stop
+(`op_5e611e474227f7e9`) followed by start (`op_0c27e15d172227ae`) succeeded.
+Fleet's authenticated callback verified the image reference and immutable
+image ID for each running service; the DB container then reported image ID
+`5eb84d23187c27447ef6ddfec3f0332bbbc12c09fd5818b7d6b5bbef1da35772` with
+`docker.io/library/mariadb:11.4`. The old and new IDs differ, proving the
+instance restarted with the new image. Admiral subsequently reported
+`need_restarting=false` and `technical_status=running`.
+
+The first implementation attempt was rejected because it tried to inspect the
+transient `setup` helper after provisioning. The corrected implementation skips
+only that non-running helper and normalizes Podman's 64-character image ID to
+the `sha256:` OCI form. A normal pause/resume flow does not request image
+verification; verification is enabled only when Admiral dispatches a
+start/resume/reactivate task while `need_restarting=true`.
+
+The temporary instance was then deprovisioned successfully with
+`op_ff6ff2eaad5bf74b`, and the temporary app definition was deactivated.
 
 ## Test observations
 
