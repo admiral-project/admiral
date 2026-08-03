@@ -22,6 +22,17 @@ the package releases for the final local RC1 candidate build:
 | admiral-flagship | `0.0.1beta20-16.el10.noarch` |
 | admiral-harbor | `0.0.1beta20-18.el10.noarch` |
 
+SHA-256 of the six RPMs in `/var/lib/admiral/rpm-local`:
+
+| Package | SHA-256 |
+| --- | --- |
+| admiral-common | `e1777f71b7639a9afebe0063a6548f23bf60146b3c47583c187d4c5dae01fcac` |
+| admirald | `d678075fe9fc790821440780739aaa4a853a42010c09b573c89a9f90131c78e4` |
+| admiral-fleet | `ddce1d60c6f9e2f79f8f52c4cc5710915f17db47a1ce7775f5269d60c719a031` |
+| admiralctl | `95eb69edd214d8cd16ce022bcc3c4d947268861beadb0fdc1a097b3bc9a46a59` |
+| admiral-flagship | `ec6394db669044e94ac7f3c503675a80b4862cc1eb3d2d99ec8fc101a2afda6d` |
+| admiral-harbor | `e712b61bae3f6c90bb0d81c45009af42c68f5dac2255f549f3104bf3e8384064` |
+
 `python3-flask-login`, `python3-flask-sqlalchemy`, and
 `python3-flask-alembic` were built only as local build dependencies; they are
 not Admiral release candidates.
