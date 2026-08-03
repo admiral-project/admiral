@@ -27,6 +27,7 @@ Requires: policycoreutils-python-utils
 Requires: openssl
 
 Source1: admiral-common.sysusers
+Source2: admiral-letsencrypt-deploy-hook.sh
 
 %description
 Common configuration files, Ansible playbooks, and utility scripts
@@ -57,6 +58,7 @@ install -Dm0755 scripts/admiral_rootless_subids.py %{buildroot}%{_bindir}/admira
 
 # HTTPS setup script
 install -Dm0755 scripts/admiral_https_setup.py %{buildroot}%{_bindir}/admiral-https-setup
+install -Dm0755 %{SOURCE2} %{buildroot}%{_libexecdir}/admiral-letsencrypt-deploy-hook
 
 # Configuration directory (owned by root, 755)
 mkdir -p %{buildroot}%{_sysconfdir}/admiral
@@ -98,6 +100,7 @@ install -D -m 0644 %{SOURCE1} %{buildroot}%{_sysusersdir}/%{name}.conf
 %{_bindir}/admiral-revoke-bootstrap-key
 %{_bindir}/admiral-rootless-subids
 %{_datadir}/admiral/ansible/
+%{_libexecdir}/admiral-letsencrypt-deploy-hook
 
 %{_mandir}/man1/admiral-install.1*
 %{_mandir}/man8/admiral-install.8*

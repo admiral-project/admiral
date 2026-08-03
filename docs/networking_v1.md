@@ -673,3 +673,5 @@ Para renovación automática sin intervención: instalar plugin DNS del proveedo
 - `docs/configuration-v1.md` — configuración completa de admirald
 - `docs/admiral-installation-guide.md` — guía de instalación completa
 - `scripts/admiral_https_setup.py` — script automatizado de post-instalación
+- `/usr/libexec/admiral-letsencrypt-deploy-hook` — deploy hook para renovar la
+  copia TLS usada por Admiral
