@@ -22,23 +22,23 @@ the package releases for the final local RC1 candidate build:
 
 | Package | Candidate |
 | --- | --- |
-| admiral-common | `0.0.1beta20-57.el10.noarch` |
-| admirald | `0.0.1beta20-25.el10.x86_64` |
-| admiral-fleet | `0.0.1beta20-30.el10.x86_64` |
-| admiralctl | `0.0.1beta20-23.el10.x86_64` |
-| admiral-flagship | `0.0.1beta20-22.el10.noarch` |
-| admiral-harbor | `0.0.1beta20-24.el10.noarch` |
+| admiral-common | `0.0.1beta20-58.el10.noarch` |
+| admirald | `0.0.1beta20-26.el10.x86_64` |
+| admiral-fleet | `0.0.1beta20-31.el10.x86_64` |
+| admiralctl | `0.0.1beta20-24.el10.x86_64` |
+| admiral-flagship | `0.0.1beta20-23.el10.noarch` |
+| admiral-harbor | `0.0.1beta20-25.el10.noarch` |
 
 SHA-256 of the six RPMs in `/var/lib/admiral/rpm-local`:
 
 | Package | SHA-256 |
 | --- | --- |
-| admiral-common | `cb6ec09875b59b2a92ee17bcff04690f56d5aefbc9f5699ecc49344dcc0574aa` |
-| admirald | `ce19b83498e7453551ff2d2e7f3f143a6a0e92da4fc13fd1301de51b030ede0b` |
-| admiral-fleet | `dc7629e33aaa87fa9f122402ed22b4819ef91403dce0997c1d93f53aabb63b29` |
-| admiralctl | `2e7ab8c2891dcb1a40ade2a314d30c878ab9a1dd076cf7664762802c55362cee` |
-| admiral-flagship | `a195b832ebd73e01537d4aeeb52f9451841937f488e6403833a3227d4e144311` |
-| admiral-harbor | `a1108330c426629e6650db780369c75f43f0f619a5eccb95cd74835af56723fa` |
+| admiral-common | `cac417ee9dfa4d781aaad50176ff7c1ef914f3578084ea07bcfe806ec2ee4fbd` |
+| admirald | `71e157b34644c930a966998420dd171d20a1ce81ca862933c07445e8cbddf040` |
+| admiral-fleet | `0c4961ab18b178b8f27b377e25356f6a4d0783944a4190e66b5244cfa3288d83` |
+| admiralctl | `48be8717aa8e5a4e2623f42d797e9cacb3509e6ea0658a7348a7552433ff2d19` |
+| admiral-flagship | `830ca46e1f3a9e49e58fbc6c85b78446d1b07da0c9ad7e7125085ec32c7403ea` |
+| admiral-harbor | `6a7292ee252f06ec7f36f294958eba77ab1b2077dd27e27ca1a5878602595901` |
 
 `python3-flask-login`, `python3-flask-sqlalchemy`, and
 `python3-flask-alembic` were built only as local build dependencies; they are
@@ -48,7 +48,7 @@ The repository is available at `/var/lib/admiral/rpm-local` and is exposed as
 the enabled `admiral-local` DNF repository in `/etc/yum.repos.d/admiral-local.repo`.
 `dnf install 'admiral*' --assumeno` selected all six candidates from
 `admiral-local`, not COPR. The real transaction upgraded and installed all six
-latest candidates successfully (`57/25/30/23/22/24`).
+latest candidates successfully (`58/26/31/24/23/25`).
 
 ## Installer validation
 

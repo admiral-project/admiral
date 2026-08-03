@@ -2,11 +2,11 @@
 # SPDX-License-Identifier: Apache-2.0
 
 %global debug_package %{nil}
-%global commit 560aed34d93e7a09575cac26fa8d62b33d6b83d7
+%global commit e2de79a011f36d3658420586ba0a0f668c44f24a
 
 Name:    admiral-fleet
 Version: 0.0.1beta20
-Release: 30%{?dist}
+Release: 31%{?dist}
 Summary: Admiral Fleet Worker Agent
 
 License: Apache-2.0
