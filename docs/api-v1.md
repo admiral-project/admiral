@@ -313,6 +313,14 @@ Soporta filtro por ID para obtener una operación concreta:
 
 Recibe el resultado de una tarea ejecutada por `admiral-fleet`.
 
+El callback se autentica con la clave dedicada de Fleet mediante HMAC-SHA256.
+Fleet envía `X-Admiral-Task-Timestamp` como Unix timestamp en segundos y
+`X-Admiral-Task-Signature` como `sha256=` seguido del HMAC de
+`timestamp + "." + cuerpo JSON`. Admirald acepta únicamente timestamps dentro
+de una ventana de 15 minutos para limitar la reutilización de callbacks
+capturados. Las instalaciones de desarrollo que no configuran una clave
+dedicada conservan compatibilidad con la firma HMAC del cuerpo sin timestamp.
+
 Request:
 
 ```json

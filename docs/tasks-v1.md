@@ -266,6 +266,13 @@ Para restores de tipo `volume`, si `service` no se especifica, el worker restaur
 
 Callback a `POST /api/v1/fleet/callback`:
 
+En producción, Fleet autentica este callback con HMAC-SHA256. La cabecera
+`X-Admiral-Task-Timestamp` contiene Unix seconds y
+`X-Admiral-Task-Signature` contiene `sha256=` seguido del HMAC de
+`timestamp + "." + cuerpo JSON`. Admirald rechaza timestamps ausentes,
+inválidos o fuera de una ventana de 15 minutos. Esto complementa la
+idempotencia por `task_id`; no se deben reutilizar firmas antiguas.
+
 ```json
 {
   "task_id": "task_123",
