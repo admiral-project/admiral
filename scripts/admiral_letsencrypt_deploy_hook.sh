@@ -19,6 +19,17 @@ cert_pub=$(openssl x509 -in "$source_cert" -pubkey -noout) || die "cannot parse 
 key_pub=$(openssl pkey -in "$source_key" -pubout) || die "cannot parse renewed private key"
 [[ "$cert_pub" == "$key_pub" ]] || die "renewed certificate and private key do not match"
 
+if [[ -n "${ADMIRAL_NETWORKING_APPS_DOMAIN:-}" ]]; then
+    openssl x509 -in "$source_cert" -noout -checkhost "$ADMIRAL_NETWORKING_APPS_DOMAIN" \
+        >/dev/null || die "renewed certificate does not cover the configured apps domain"
+    openssl x509 -in "$source_cert" -noout -checkhost "probe.${ADMIRAL_NETWORKING_APPS_DOMAIN}" \
+        >/dev/null || die "renewed certificate does not cover the configured apps probe hostname"
+fi
+
+openssl x509 -in "$source_cert" -noout -purpose \
+    | grep -Fq "SSL server : Yes" \
+    || die "renewed certificate is not valid for TLS server authentication"
+
 deploy_dir=${ADMIRAL_LETSENCRYPT_DEPLOY_DIR:-/etc/admiral/tls/letsencrypt}
 install -d -o root -g caddy -m 0750 "$deploy_dir"
 
@@ -44,7 +55,7 @@ if [[ -n "${ADMIRAL_RENEWAL_HEALTHCHECK_URL:-}" ]]; then
     command -v curl >/dev/null 2>&1 || die "curl is required for ADMIRAL_RENEWAL_HEALTHCHECK_URL"
     curl --fail --silent --show-error --max-time 15 \
         "$ADMIRAL_RENEWAL_HEALTHCHECK_URL" >/dev/null \
-        || die "renewal healthcheck failed: $ADMIRAL_RENEWAL_HEALTHCHECK_URL"
+        || die "renewal healthcheck failed"
 fi
 
 echo "admiral-letsencrypt-deploy-hook: renewed certificate deployed and services healthy"

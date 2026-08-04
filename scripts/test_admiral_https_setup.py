@@ -44,6 +44,8 @@ def test_letsencrypt_deploy_hook_replaces_the_admiral_copy_atomically():
     assert "CERTBOT_RENEWED_LINEAGE" in hook
     assert "openssl x509" in hook
     assert "openssl pkey" in hook
+    assert "SSL server : Yes" in hook
+    assert "renewal healthcheck failed\"" in hook
     assert "mktemp \"$deploy_dir/fullchain.pem." in hook
     assert "mv -f -- \"$tmp_cert\" \"$deploy_dir/fullchain.pem\"" in hook
     assert "install -o root -g caddy -m 0640" in hook
