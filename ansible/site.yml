@@ -54,6 +54,12 @@
       changed_when: false
       failed_when: false
 
+    - name: Detect missing Fleet callback key in Admirald configuration
+      command: grep -Eq '^fleet_callback_key[[:space:]]*=' /etc/admirald.ini
+      register: admirald_callback_key_configured
+      changed_when: false
+      failed_when: false
+
     - name: Check for legacy Admiral installation state
       stat:
         path: "{{ item }}"
