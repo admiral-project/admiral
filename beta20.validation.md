@@ -1,5 +1,46 @@
 # Admiral beta20 validation
 
+## Final host session (2026-08-04)
+
+The release sources were checked out at the latest published `origin/main`
+heads, all five component CI workflows were green for those exact SHAs, and
+`python3 scripts/validate-release-refs.py` passed. COPR was queried with
+`dnf`; its six current EL10 NEVRAs exactly matched the six release specs:
+
+| Package | NEVRA |
+| --- | --- |
+| admiral-common | `admiral-common-0.0.1beta20-112.el10.noarch` |
+| admirald | `admirald-0.0.1beta20-45.el10.x86_64` |
+| admiral-fleet | `admiral-fleet-0.0.1beta20-50.el10.x86_64` |
+| admiralctl | `admiralctl-0.0.1beta20-43.el10.x86_64` |
+| admiral-flagship | `admiral-flagship-0.0.1beta20-76.el10.noarch` |
+| admiral-harbor | `admiral-harbor-0.0.1beta20-44.el10.noarch` |
+
+The host received a persistent `/var/swap/admiral-test.swap` 4 GiB swap file.
+Three KVM guests were created with 1843 MiB each, leaving more than 2 GiB of
+host memory available while all three were running. They used an isolated
+libvirt NAT network and the official Rocky Linux 10.2 GenericCloud image;
+the image SHA-256 matched the official `CHECKSUM` file.
+
+### Current-session Rocky Linux 10.2 single-node
+
+The admin guest (`192.168.220.175`) installed the exact six COPR packages and
+completed `admiral-install --single-node --yes` with:
+
+```text
+ok=220 changed=98 unreachable=0 failed=0 skipped=125 rescued=0 ignored=0
+```
+
+The installer Harbor API verification passed. Rocky Linux reported SELinux
+`Enforcing`; `admiralctl --help` passed; all six services (`postgresql`,
+`caddy`, `admirald`, `admiral-fleet`, `admiral-flagship`, and
+`admiral-harbor`) were active; and `systemctl --failed` was empty.
+
+The portal and worker guests booted Rocky Linux 10.2 with SELinux enforcing
+and cloud-init complete. They remain infrastructure slots for the sequential
+AlmaLinux and CentOS single-node runs; no product source or RPM spec was
+changed during this session.
+
 ## New-host validation run (2026-08-03)
 
 This section records the validation started on the new Rocky Linux 10.2
