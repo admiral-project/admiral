@@ -117,6 +117,44 @@ Campos soportados por servicio:
 | `registry` | YAMLRegistry | no | Credenciales para registro privado |
 | `user` | string | no | UID o nombre de usuario con el que ejecutar el contenedor (`--user` de podman) |
 
+### Política de imágenes y registros
+
+Las referencias de imagen deben ser explícitas y reproducibles. Usa una
+etiqueta fijada (por ejemplo `docker.io/library/nginx:1.27.4`) o un digest
+(`docker.io/library/nginx@sha256:...`). No uses `:latest` ni una referencia sin
+etiqueta; Fleet las rechaza por defecto. El ajuste operativo
+`ADMIRAL_FLEET_ALLOW_MUTABLE_REFS=1` permite referencias mutables únicamente
+cuando el operador lo habilita de forma explícita.
+
+Fleet aplica además una segunda validación local contra
+`ADMIRAL_FLEET_ALLOWED_REGISTRIES`, una lista separada por comas de hosts
+permitidos. El servicio RPM instalado usa por defecto:
+
+```text
+docker.io,quay.io,registry.redhat.io
+```
+
+Una app que use un registro privado debe declarar `registry.server` y ese host
+debe estar incluido en la allowlist configurada en todos los nodos Fleet. La
+referencia de `image` y el registro usado para `registry` se rechazan antes de
+renderizar Quadlet o ejecutar `podman login` si no cumplen la política.
+
+Ejemplo válido:
+
+```yaml
+services:
+  web:
+    image: quay.io/example/web:1.4.2
+```
+
+Ejemplos rechazados por defecto:
+
+```yaml
+image: attacker.example/web:1
+image: docker.io/library/nginx:latest
+image: docker.io/library/nginx
+```
+
 ### `public: true`
 
 Si un servicio tiene `public: true`, `admirald` puede crear una ruta publica

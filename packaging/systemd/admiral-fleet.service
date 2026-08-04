@@ -15,6 +15,7 @@ StandardError=journal
 EnvironmentFile=/etc/admiral/fleet.env
 Environment=ADMIRAL_SYSTEMD_TIMEOUT=300
 Environment=ENV=production
+Environment=ADMIRAL_FLEET_ALLOWED_REGISTRIES=docker.io,quay.io,registry.redhat.io
 
 # Runtime directories
 ReadWritePaths=/etc/containers/systemd/admiral /var/lib/admiral /etc/containers/systemd/users /var/lib/admiral-apps /run/user
