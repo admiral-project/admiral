@@ -6,7 +6,7 @@
 
 Name:    admirald
 Version: 0.0.1beta20
-Release: 69%{?dist}
+Release: 70%{?dist}
 Summary: Admiral Control Plane - Core API and orchestration service
 
 License: Apache-2.0
