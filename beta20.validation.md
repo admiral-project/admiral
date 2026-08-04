@@ -41,6 +41,19 @@ and cloud-init complete. They remain infrastructure slots for the sequential
 AlmaLinux and CentOS single-node runs; no product source or RPM spec was
 changed during this session.
 
+### Current-session AlmaLinux 10.2 single-node
+
+The Rocky overlay was replaced with a fresh official AlmaLinux 10.2
+GenericCloud overlay. The same six COPR NEVRAs were installed and
+`admiral-install --single-node --yes` completed with:
+
+```text
+ok=221 changed=100 unreachable=0 failed=0 skipped=124 rescued=0 ignored=0
+```
+
+The Harbor API verification passed. AlmaLinux reported SELinux `Enforcing`,
+and all six Admiral services were active with no failed systemd units.
+
 ## New-host validation run (2026-08-03)
 
 This section records the validation started on the new Rocky Linux 10.2
