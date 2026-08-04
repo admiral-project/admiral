@@ -12,10 +12,10 @@ Restart=on-failure
 RestartSec=10
 StandardOutput=journal
 StandardError=journal
-EnvironmentFile=/etc/admiral/fleet.env
 Environment=ADMIRAL_SYSTEMD_TIMEOUT=300
 Environment=ENV=production
 Environment=ADMIRAL_FLEET_ALLOWED_REGISTRIES=docker.io,quay.io,registry.redhat.io
+EnvironmentFile=/etc/admiral/fleet.env
 
 # Runtime directories
 ReadWritePaths=/etc/containers/systemd/admiral /var/lib/admiral /etc/containers/systemd/users /var/lib/admiral-apps /run/user
