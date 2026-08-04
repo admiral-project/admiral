@@ -1,5 +1,5 @@
 %global debug_package %{nil}
-%global commit 1a164ef6a4a381c76f8ff0b888bb4cc2fc4d4208
+%global commit 1a164ef38dbc276777f5898f00326aa5eac2430d
 
 Name:    admiral-harbor
 Version: 0.0.1beta20
