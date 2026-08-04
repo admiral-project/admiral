@@ -54,6 +54,46 @@ ok=221 changed=100 unreachable=0 failed=0 skipped=124 rescued=0 ignored=0
 The Harbor API verification passed. AlmaLinux reported SELinux `Enforcing`,
 and all six Admiral services were active with no failed systemd units.
 
+### Current-session CentOS Stream 10 single-node and complete app lifecycle
+
+The CentOS Stream 10 guest installed the same six COPR NEVRAs and completed
+`admiral-install --single-node --yes` with:
+
+```text
+ok=220 changed=100 unreachable=0 failed=0 skipped=125 rescued=0 ignored=0
+```
+
+The installer Harbor API verification passed, SELinux was `Enforcing`, and
+the six Admiral services were active. CentOS also reported a pre-existing
+guest `kdump.service` failure; this is recorded as an environment observation,
+not hidden as a clean `systemctl --failed` result.
+
+The example app lifecycle was completed with the published packages. App
+definition `wp` was applied from `examples/apps/wordpress.yaml`, and instance
+`inst_42246a8d3c99b892` reached `healthy`, `setup_completed=true`, and
+`technical_status=running`. HTTP returned 200 from the published local port.
+The database backup succeeded as operation `op_c9a413fb5acc6bae`, producing
+backup `bk_abbbceee22676b36` with SHA-256
+`7cfec52a4134ecaef18efd35b14bd4065e0cb0a1c79cd5cb51d2e5831c0f7ac7`.
+Pause (`op_65efcdb0e4f6d96b`) and resume (`op_532a68c7b8516c65`) both
+succeeded, with HTTP restored after resume. Deprovision completed as
+`op_372212ac3b6ffa74`; the instance ended in `technical_status=deprovisioned`.
+
+This is the first current-session Tier 1 result meeting the full
+`--single-node` lifecycle criterion; Rocky and Alma installation evidence is
+recorded above, but their lifecycle gate remains to be rerun on their saved
+installed overlays before declaring the three-tier matrix complete.
+
+### Lifecycle gate disposition for the remaining Tier 1 overlays
+
+The saved Rocky overlay was booted to avoid reinstalling the already verified
+RPM set. Its services started, but its persisted control-plane state retained
+the previous guest's node metrics. The worker remained `offline` with
+`heartbeat_timeout`, and provision was rejected with HTTP 503 and
+`metrics_stale`. This is not counted as a lifecycle pass. Alma's lifecycle was
+not run after this finding. No source or RPM change was made; the complete
+three-Tier-1 `--single-node` gate therefore remains open.
+
 ## New-host validation run (2026-08-03)
 
 This section records the validation started on the new Rocky Linux 10.2
