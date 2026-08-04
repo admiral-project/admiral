@@ -29,6 +29,7 @@
       secrets_key = {{ admirald_secrets_key | default(admiral_secrets_key_value) }}
       signing_key = {{ admirald_signing_key | default(admiral_ed25519_private_key_value) }}
       task_encryption_key = {{ admirald_task_encryption_key | default(admiral_task_encryption_key_value) }}
+      fleet_callback_key = {{ admirald_fleet_callback_key | default(admiral_fleet_callback_key_value) }}
       session_hmac_key = {{ admirald_session_hmac_key | default(admiral_session_hmac_key_value) }}
       flagship_admin_user = {{ admirald_flagship_admin_user | default(admiral_flagship_bootstrap_user) }}
       flagship_admin_pswd = {{ admirald_flagship_admin_pswd | default(admiral_flagship_bootstrap_password) }}

@@ -242,6 +242,7 @@
         admiral_existing_ed25519_private_key: "{{ admiral_secrets_text | regex_findall('(?m)^ADMIRAL_ED25519_PRIVATE_KEY=(.*)$') | first | default('') }}"
         admiral_existing_task_public_key: "{{ admiral_secrets_text | regex_findall('(?m)^ADMIRAL_TASK_PUBLIC_KEY=(.*)$') | first | default('') }}"
         admiral_existing_task_encryption_key: "{{ admiral_secrets_text | regex_findall('(?m)^ADMIRAL_TASK_ENCRYPTION_KEY=(.*)$') | first | default('') }}"
+        admiral_existing_fleet_callback_key: "{{ admiral_secrets_text | regex_findall('(?m)^ADMIRAL_FLEET_CALLBACK_KEY=(.*)$') | first | default('') }}"
         admiral_existing_session_hmac_key: "{{ admiral_secrets_text | regex_findall('(?m)^ADMIRAL_SESSION_HMAC_KEY=(.*)$') | first | default('') }}"
         admiral_existing_ssh_admin_user: "{{ admiral_secrets_text | regex_findall('(?m)^ADMIRAL_SSH_USER=(.*)$') | first | default('') }}"
       no_log: true
@@ -423,6 +424,14 @@
       changed_when: true
       no_log: true
 
+    - name: Generate Fleet callback HMAC key
+      command:
+        cmd: openssl rand -hex 32
+      register: admiral_fleet_callback_key_generated
+      when: admiral_existing_fleet_callback_key == ''
+      changed_when: true
+      no_log: true
+
     - name: Determine stable SSH delivery identifier
       set_fact:
         admiral_ssh_delivery_id: >-
@@ -530,6 +539,7 @@
         admiral_ed25519_private_key_value: "{{ admiral_existing_ed25519_private_key if admiral_existing_ed25519_private_key != '' else (admiral_ed25519_private_key_generated | default('')) }}"
         admiral_task_public_key_value: "{{ admiral_existing_task_public_key if admiral_existing_task_public_key != '' else (admiral_task_public_key_generated | default('')) }}"
         admiral_task_encryption_key_value: "{{ admiral_existing_task_encryption_key if admiral_existing_task_encryption_key != '' else (admiral_task_encryption_key_generated.stdout | default('')) }}"
+        admiral_fleet_callback_key_value: "{{ admiral_existing_fleet_callback_key if admiral_existing_fleet_callback_key != '' else (admiral_fleet_callback_key_generated.stdout | default('')) }}"
         admiral_session_hmac_key_value: "{{ admiral_existing_session_hmac_key if admiral_existing_session_hmac_key != '' else (admiral_session_hmac_key_generated.stdout | default('')) }}"
         admiral_ssh_admin_user: "admiral-ssh"
       no_log: true
@@ -568,6 +578,7 @@
           ADMIRAL_ED25519_PRIVATE_KEY={{ admiral_ed25519_private_key_value }}
           ADMIRAL_TASK_PUBLIC_KEY={{ admiral_task_public_key_value }}
           ADMIRAL_TASK_ENCRYPTION_KEY={{ admiral_task_encryption_key_value }}
+          ADMIRAL_FLEET_CALLBACK_KEY={{ admiral_fleet_callback_key_value }}
           ADMIRAL_SESSION_HMAC_KEY={{ admiral_session_hmac_key_value }}
           ADMIRAL_SSH_USER={{ admiral_ssh_admin_user }}
       no_log: true

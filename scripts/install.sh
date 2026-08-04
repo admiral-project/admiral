@@ -1309,8 +1309,7 @@ if [[ "$INSTALL_DEV_MODE" != "true" ]]; then
         SECURITY_WARNINGS+=("fail2ban sshd jail is not using the required nftables action.")
     fi
 
-    AUTOMATIC_UPDATES="$(run_target_cmd "systemctl is-enabled dnf-automatic.timer && systemctl is-active dnf-automatic.timer" || true)"
-    if [[ "$AUTOMATIC_UPDATES" != *"enabled"* || "$AUTOMATIC_UPDATES" != *"active"* ]]; then
+    if ! run_target_cmd "systemctl is-enabled --quiet dnf-automatic.timer && systemctl is-active --quiet dnf-automatic.timer"; then
         SECURITY_WARNINGS+=("automatic security updates are not enabled and active.")
     fi
 
