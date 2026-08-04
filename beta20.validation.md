@@ -94,6 +94,17 @@ the previous guest's node metrics. The worker remained `offline` with
 not run after this finding. No source or RPM change was made; the complete
 three-Tier-1 `--single-node` gate therefore remains open.
 
+### Fresh-VM follow-up (2026-08-04)
+
+A clean Rocky Linux 10.2 overlay was booted to rerun the lifecycle without
+reusing persisted Admiral state. After enabling EPEL, CRB, and the published
+Admiral/Caddy COPRs, `dnf` could not resolve the required beta20 NEVRAs: the
+repo metadata exposed older Admiral builds and no
+`admiral-common-0.0.1beta20-112` (nor the corresponding beta20 component
+packages). Installation therefore stopped before `admiral-install` and no
+Rocky lifecycle result was claimed. This is an external repository-state
+blocker; no source, spec, or RPM was changed in response.
+
 ## New-host validation run (2026-08-03)
 
 This section records the validation started on the new Rocky Linux 10.2
