@@ -105,6 +105,42 @@ packages). Installation therefore stopped before `admiral-install` and no
 Rocky lifecycle result was claimed. This is an external repository-state
 blocker; no source, spec, or RPM was changed in response.
 
+### Final clean Tier 1 lifecycle session (2026-08-05)
+
+The COPR metadata was rechecked directly. It contains the six beta20 NEVRAs;
+the earlier clean-VM failure was caused by stale guest DNF metadata. Fresh
+Rocky and Alma overlays were then installed from the exact six COPR RPMs.
+
+Rocky Linux 10.2 completed `admiral-install --single-node --yes` with:
+
+```text
+ok=221 changed=100 unreachable=0 failed=0 skipped=124 rescued=0 ignored=0
+```
+
+The Harbor API check passed, SELinux was `Enforcing`, all six required
+services were active, and `systemctl --failed` was empty. Instance
+`inst_2cbc50fbba5bb08c` reached `setup_completed=true` and `running`; HTTP
+returned 200 before pause. Its database backup succeeded as
+`bk_88450e189742fda7`, SHA-256
+`3a8005118fca0722abc82e3f9cdb68cfc2c649fce98e847ded3c9a4248b53ede`.
+Pause `op_dbd07ab4bc10da28` returned HTTP 000 while paused; resume
+`op_f7dcfa893e1ce28e` returned HTTP 200 after the normal transient startup
+period; deprovision completed successfully. A second Rocky instance also
+repeated pause/resume with HTTP 000/200 (`op_8ad1147de112a6a3`,
+`op_33bf8774cdc88a3b`) and deprovisioned successfully.
+
+AlmaLinux 10.2 completed `admiral-install --single-node --yes` with the same
+recap (`ok=221 changed=100 unreachable=0 failed=0 skipped=124 rescued=0
+ignored=0`), Harbor API pass, SELinux `Enforcing`, all six services active,
+and no failed systemd units. On single lifecycle instance
+`inst_48e9aeff4ae79b7f`, HTTP returned 200 before pause, database backup
+`bk_5580234813186d24` succeeded with SHA-256
+`fb7cf602138a09a5e809c13f69ea1b083352cb8fc04c7035adc08f8ef1b91fa1`,
+pause returned HTTP 000, resume returned a transient HTTP 500 followed by
+HTTP 200 after polling, and deprovision succeeded. This completes the
+full example-app lifecycle gate for all three Tier 1 distributions when
+combined with the CentOS lifecycle recorded above.
+
 ## New-host validation run (2026-08-03)
 
 This section records the validation started on the new Rocky Linux 10.2
