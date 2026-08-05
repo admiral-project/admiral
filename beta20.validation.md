@@ -210,6 +210,35 @@ volume-restore defect for the validated rootless Podman path.
 
 ### New-host multinode evidence
 
+#### Explicit installer-mode gate
+
+This is a separate multinode gate from the single-node lifecycle above. Each
+distribution used three dedicated VMs and these exact installer modes:
+
+```text
+admin VM  : admiral-install --admin-node  --public-ip <admin-ip>
+portal VM : admiral-install --portal-node --public-ip <portal-ip> --wireguard-ip <portal-wg-ip>
+worker VM : admiral-install --worker-node --public-ip <worker-ip> --wireguard-ip <worker-wg-ip>
+```
+
+The admin VM was the control plane, the portal VM was a dedicated portal
+spoke, and the worker VM was a dedicated Fleet spoke. The portal and worker
+commands were launched from the admin node using the bootstrap SSH delivery
+path. `--portal-node` and `--worker-node` were never combined on one guest.
+
+The final admin-side assertion for each distribution was:
+
+```text
+admiralctl nodes list --output json
+portal-01: status=active health_status=healthy available_for_provisioning=true
+worker-01: status=active health_status=healthy available_for_provisioning=true
+```
+
+The role-specific Ansible recaps below are the authoritative results for this
+gate; every role has `unreachable=0` and `failed=0`. This evidence is dated
+2026-08-03 and is intentionally kept distinct from the fresh single-node
+session dated 2026-08-04/05.
+
 Each distribution used one admin VM, one dedicated portal VM, and one worker
 VM, with 2 GiB RAM per guest. CentOS Stream 10 completed the final portal and
 worker playbooks with `failed=0` (`ok=178 changed=33 skipped=160` and
