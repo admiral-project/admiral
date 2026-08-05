@@ -43,10 +43,16 @@ if [[ -n "${ADMIRAL_NETWORKING_APPS_DOMAIN:-}" ]]; then
         die "renewed lineage is not the expected apps-domain lineage"
     fi
 
-    openssl x509 -in "$source_cert" -noout -checkhost "$ADMIRAL_NETWORKING_APPS_DOMAIN" \
-        >/dev/null || die "renewed certificate does not cover the configured apps domain"
-    openssl x509 -in "$source_cert" -noout -checkhost "probe.${ADMIRAL_NETWORKING_APPS_DOMAIN}" \
-        >/dev/null || die "renewed certificate does not cover the configured apps probe hostname"
+    san_output=$(openssl x509 -in "$source_cert" -noout -ext subjectAltName) \
+        || die "cannot read renewed certificate subject alternative names"
+    apps_domain_pattern=${ADMIRAL_NETWORKING_APPS_DOMAIN//./\\.}
+    probe_domain_pattern="probe.${apps_domain_pattern}"
+    grep -Eq "DNS:${apps_domain_pattern}([,[:space:]]|$)" <<<"$san_output" \
+        || die "renewed certificate does not cover the configured apps domain"
+    if ! grep -Eq "DNS:${probe_domain_pattern}([,[:space:]]|$)" <<<"$san_output" \
+        && ! grep -Eq "DNS:\\\*.${apps_domain_pattern}([,[:space:]]|$)" <<<"$san_output"; then
+        die "renewed certificate does not cover the configured apps probe hostname"
+    fi
 fi
 
 openssl x509 -in "$source_cert" -noout -purpose \

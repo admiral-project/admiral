@@ -45,6 +45,8 @@ def test_letsencrypt_deploy_hook_replaces_the_admiral_copy_atomically():
     assert "renewed lineage is not the expected apps-domain lineage" in hook
     assert "openssl x509" in hook
     assert "openssl pkey" in hook
+    assert "-ext subjectAltName" in hook
+    assert "-checkhost" not in hook
     assert "SSL server : Yes" in hook
     assert "renewal healthcheck failed\"" in hook
     assert "mktemp \"$deploy_dir/fullchain.pem." in hook
