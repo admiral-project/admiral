@@ -52,6 +52,19 @@ Additional regression checks: `python3 -m pytest -q
 scripts/test_admiral_https_setup.py scripts/test_installer_modes.py` passed
 with 60 tests and 10 subtests; `bash -n` passed for the deploy hook.
 
+## COPR publication handoff
+
+The operator reported that the six beta21 SRPMs were imported into COPR. COPR
+build completion has not yet been independently verified. Validation is paused
+until the operator confirms that all six builds completed; no COPR build result
+is treated as a release PASS before that confirmation.
+
+For interim retrieval, the last local SRPM build remains available at
+`http://142.93.2.122:8888/`, served by the transient systemd unit
+`admiral-beta21-srpm-http.service`. It contains exactly six files: the
+`0.0.1beta21` SRPMs for common, admirald, fleet, admiralctl, flagship and
+harbor. The server is not evidence of COPR publication.
+
 ## Release matrix
 
 | Escenario | Resultado beta21 | Evidence / classification |
