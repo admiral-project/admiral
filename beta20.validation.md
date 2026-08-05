@@ -508,3 +508,54 @@ passed: 48 tests, with `--help` returning exit code 0 for `nobody`.
 
 Release reference validation passed after checking the Makefile pins, RPM
 spec pins, and submodule HEADs.
+
+## Fedora single-node smoke run — 2026-08-04
+
+The real `admiral-install --single-node` command was **not executed** on a
+Fedora VM in this session: the lab contained only EL10 Rocky guests, and no
+Fedora guest was available. Therefore this is not Fedora runtime evidence and
+must not be reported as a Fedora single-node pass.
+
+The available automated installer smoke run completed with 48 tests passing
+(`python3 -m unittest scripts.test_installer_modes`). It validates installer
+argument and policy behavior, including Fedora's `--dev-node` restriction;
+it does not validate the installed binaries or a Fedora single-node lifecycle.
+
+## Current-RPM multinode WordPress lifecycle — 2026-08-05
+
+The three-node EL10 lab used the current beta20 RPMs recorded above. The
+admin and portal installers completed with `failed=0` and
+`unreachable=0`. The portal registered as `portal-01`, became `active` and
+`healthy`, and established a WireGuard handshake at `10.99.0.100`.
+
+The first worker installer run reached `admiral-fleet` configuration but
+failed with `failed=1`, `unreachable=0`, leaving the RPM-provided placeholder
+configuration in `/etc/admiral/fleet.env`. The worker was then reconciled
+with the admin's current signing/callback keys and WireGuard peer, registered
+as `worker-01`, and became `active` and `healthy`. This is recorded as an
+installer-gate defect; it is not evidence that the worker installer exited
+successfully.
+
+The functional workload lifecycle completed on the worker:
+
+| Check | Evidence | Result |
+|---|---|---|
+| App definition | `wp` applied from `examples/apps/wordpress.yaml` | PASS |
+| Provision | `op_c95f6b9688e46a07`, instance `inst_5d79d6116d40419f`, `node_id=worker-01` | PASS |
+| Setup/health | `setup_completed=true`, `technical_status=running`, `health_status=healthy` | PASS |
+| Worker HTTP | `http://10.99.0.2:40000` returned HTTP 301 from the admin path | PASS |
+| MariaDB backup | `op_cb26e418fa481f4f`, backup `bk_f85a25ddca15942f`, SHA-256 `08a771336518f82a56ddaac28e27e03eba782ed182376f749137b2caef0f18c6` | PASS |
+| WordPress volume backup | `op_5c6d4cfb7380d970`, backup `bk_819e115262f660ed`, SHA-256 `cd94fde3ee77744a9eabab4784f67dea966cb9a42191d7b5bb48481479cb117e` | PASS |
+| Pause/resume | Pause `op_1ba2900602e06d50` made the worker endpoint unavailable; resume `op_e9f89d530765c988` restored `running` and HTTP 301 | PASS |
+| Deprovision | `op_8fd4e94d9ce3572f` succeeded on `worker-01` | PASS |
+
+The dedicated portal catalog timer was active. After clearing the stale
+bootstrap `in_progress` audit record, the service completed successfully:
+`sync_b7456bb4c8134930`, `success`, `1 new`, `0 updated`, `0 marked missing`.
+The portal catalog contains `wp` with `sync_status=synced` and
+`upstream_present=true`.
+
+Conclusion: the current-RPM multinode WordPress workload and portal catalog
+functional gates PASS. The overall multinode installer gate remains NOT PASS
+until the worker `--worker-node` run completes without the configuration
+failure; no source or RPM change was made in this lab session.
