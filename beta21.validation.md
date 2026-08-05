@@ -62,7 +62,7 @@ with 60 tests and 10 subtests; `bash -n` passed for the deploy hook.
 | Fedora smoke and WordPress attempt | FAIL, non-blocking Tier 2 expected limitation; no fix applied | Official Fedora 44 Generic Cloud image `Fedora-Cloud-Base-Generic-44-1.7.x86_64.qcow2`, SHA256 `28680fe5b371a5a82ebf43a31926e086a168e59949d03969c5093e7071f90b7f`; guest `beta21-fedora-smoke` at `192.168.122.47`. RPM installation and `--dev-node` installer completed; SELinux Enforcing. `admiral-harbor-worker` and `admiral-harbor-catalog-sync` fail with `ADMIRAL_INSECURE_SKIP_VERIFY must be false in production`; this matches the documented Fedora/Python 3.14/OpenSSL limitation and was not changed. WordPress `admiralctl instances provision` was attempted four times and failed safely with HTTP 503; persisted operations report `node_provisioning_rejected_no_capacity` with `metrics_stale`, `node_unhealthy`, and Fleet evidence of `wireguard_ip_mismatch`/HTTP 403. Classified EXPECTED LIMITATION for the documented Tier 2 dev-node path, not a Tier 1 release blocker. |
 | Admin/Portal/Worker multi-node | BLOCKED by validation environment before installation | Rocky Admin was retained as the control-plane VM. Fresh AlmaLinux and CentOS Stream guests were created from checksum-verified GenericCloud images, first as backing overlays and then as full qcow2 copies; both stopped at `GRUB -> Booting kernel` without DHCP/SSH. The same pre-Admiral behavior reproduced with direct `/usr/libexec/qemu-kvm -enable-kvm` boot and with Rocky powered off. Classified ENVIRONMENTAL BLOCKER; no product installation result or PASS is inferred. |
 | WordPress Golden Test | PASS Rocky, AlmaLinux and CentOS Stream; Fedora non-blocking failure documented | Rocky, AlmaLinux and CentOS each completed the full lifecycle with CLI and runtime evidence. Fedora provisioning was attempted and failed with documented Tier 2 node-health/certificate limitations; no Fedora fix was applied. |
-| VM destruction/cleanup | PENDING | Single-node completed guests and failed multi-node attempts were stopped and moved to recoverable validation trash. Rocky remains available for final security/negative checks; final removal is still pending. |
+| VM destruction/cleanup | PASS | All beta21 libvirt domains are undefined and no VMs are running. Single-node completed guests and failed multi-node attempts were moved to recoverable validation trash; the temporary SSH private/public key pair was securely removed; the temporary virbr0 alias `192.168.122.254/24` was removed; no beta21 overlay or seed remains under `/var/lib/libvirt/beta21`. |
 
 The host has `/dev/kvm`, 4 vCPU, 8 GiB RAM and more than 150 GiB free disk.
 Libvirt, QEMU/KVM, the default NAT network and cloud-init are operational.
@@ -85,9 +85,10 @@ closed.
 The complete VM-level checks requested by #68/#69 (SELinux AVC delta, external
 port scan, three-node segmentation, WireGuard break/restore, SSH password
 rejection, secret scans, permissions, reboot recovery, and hostile-node tests)
-remain incomplete. Single-node SELinux, firewall, listener, permissions and SSH
-smoke checks passed on Rocky, Alma and CentOS; they do not substitute for the
-pending multi-node checks.
+remain incomplete because the clean multi-node guests never reached SSH. The
+single-node SELinux, firewall, listener, permissions and SSH smoke checks
+passed on Rocky, Alma and CentOS; they do not substitute for the blocked
+multi-node checks.
 
 ## GitHub issue evidence
 
