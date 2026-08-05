@@ -5,8 +5,8 @@
 %global commit 3cedeea041c99276938d70c827da183f4d429a47
 
 Name:    admiral-fleet
-Version: 0.0.1beta20
-Release: 50%{?dist}
+Version: 0.0.1beta21
+Release: 51%{?dist}
 Summary: Admiral Fleet Worker Agent
 
 License: Apache-2.0
@@ -87,6 +87,9 @@ loginctl enable-linger admiral-apps 2>/dev/null || :
 %systemd_postun_with_restart admiral-fleet.service
 
 %changelog
+* Wed Aug 05 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta21-51
+- Bump to beta21: coordinated release validation candidate
+
 * Sat Aug 01 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta19-8
 - Delegate all Podman operations through specialized rootless helpers
 - Share one systemd user-session transport across lifecycle, setup and backup

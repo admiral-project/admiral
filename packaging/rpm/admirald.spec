@@ -5,8 +5,8 @@
 %global commit df2c87425aa1614e869495a52bad4c2ff09b2ec9
 
 Name:    admirald
-Version: 0.0.1beta20
-Release: 45%{?dist}
+Version: 0.0.1beta21
+Release: 46%{?dist}
 Summary: Admiral Control Plane - Core API and orchestration service
 
 License: Apache-2.0
@@ -74,6 +74,9 @@ restorecon -F %{_bindir}/admirald 2>/dev/null || :
 %systemd_postun_with_restart admirald.service
 
 %changelog
+* Wed Aug 05 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta21-46
+- Bump to beta21: coordinated release validation candidate
+
 * Sat Aug 01 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta19-5
 - Align the control-plane package documentation with idempotent spoke reconvergence
 

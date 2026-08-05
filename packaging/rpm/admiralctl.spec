@@ -5,8 +5,8 @@
 %global commit 3c50732484b766e167383756659b57249f70470b
 
 Name:    admiralctl
-Version: 0.0.1beta20
-Release: 43%{?dist}
+Version: 0.0.1beta21
+Release: 44%{?dist}
 Summary: Admiral Command-Line Interface
 
 License: Apache-2.0
@@ -62,6 +62,9 @@ mkdir -p "$GOCACHE"
 restorecon -F %{_bindir}/admiralctl 2>/dev/null || :
 
 %changelog
+* Wed Aug 05 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta21-44
+- Bump to beta21: coordinated release validation candidate
+
 * Mon Jul 27 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta18-1
 - Bump version to 0.0.1beta18
 
