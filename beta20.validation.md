@@ -157,11 +157,11 @@ validation is complete; final repository, CI, push,
 and VM-shutdown gates are recorded below.
 
 Current new-host status: RPM BUILD PASS; CENTOS STREAM 10, ROCKY LINUX 10,
-AND ALMALINUX 10 SINGLE-NODE PASS; MULTINODE PASS for all three Tier 1
-distributions. Every multinode role completed with `failed=0`, and the final
-admin-side `admiralctl nodes list` check showed both spokes `active healthy
-true` for Rocky and Alma. CentOS reached the same state during its final
-peer-exchange run.
+AND ALMALINUX 10 SINGLE-NODE PASS. The multinode role-installation and
+registration evidence below is retained, but the complete multinode gate is
+NOT YET PASS: a real WordPress lifecycle on the worker and a successful
+dedicated-portal catalog synchronization must also be recorded. Handshake,
+node registration, or `admiralctl nodes list` alone are insufficient.
 
 ### New-host local RPM build
 
@@ -210,7 +210,7 @@ volume-restore defect for the validated rootless Podman path.
 
 ### New-host multinode evidence
 
-#### Explicit installer-mode gate
+#### Explicit installer-mode gate (installation/registration only)
 
 This is a separate multinode gate from the single-node lifecycle above. Each
 distribution used three dedicated VMs and these exact installer modes:
@@ -238,6 +238,17 @@ The role-specific Ansible recaps below are the authoritative results for this
 gate; every role has `unreachable=0` and `failed=0`. This evidence is dated
 2026-08-03 and is intentionally kept distinct from the fresh single-node
 session dated 2026-08-04/05.
+
+This section does not claim the full multinode validation. Pending evidence is
+explicitly:
+
+1. apply the WordPress definition through the admin and provision it onto the
+   registered worker;
+2. verify the workload through the worker's published/WireGuard address, then
+   exercise backup, pause, resume, and deprovision;
+3. verify on the dedicated portal that
+   `admiral-harbor-catalog-sync.service` succeeds and that the portal catalog
+   contains the application snapshot supplied by `admirald`.
 
 Each distribution used one admin VM, one dedicated portal VM, and one worker
 VM, with 2 GiB RAM per guest. CentOS Stream 10 completed the final portal and
