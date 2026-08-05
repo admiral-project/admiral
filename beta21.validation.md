@@ -53,18 +53,21 @@ with 60 tests and 10 subtests; `bash -n` passed for the deploy hook.
 
 | Escenario | Resultado beta21 | Evidence / classification |
 |---|---|---|
-| Rocky Linux 10 single-node, clean GenericCloud | NOT TESTED in this cut | Prior beta20 evidence exists in `beta20.validation.md`; it is not evidence for the new NEVRAs. ENVIRONMENTAL BLOCKER: no disposable image/VM was present. |
+| Rocky Linux 10 single-node, clean GenericCloud | IN PROGRESS / NOT PASS | Official `Rocky-10-GenericCloud-Base-10.2-20260525.0.x86_64.qcow2`, verified SHA256 `9fc9e9ff16888bb68ac39b0392e25c9c92684d50c85f1cce6ab549363bbc4b48`, was booted as disposable KVM guest `beta21-rocky-single`. The six beta21 RPMs installed successfully after the documented EPEL/CRB/COPR repository setup. The installer is still running its initial system update; no lifecycle or security PASS is claimed yet. |
 | AlmaLinux 10 single-node, clean GenericCloud | NOT TESTED in this cut | Same reason. |
 | CentOS Stream 10 single-node, clean GenericCloud | NOT TESTED in this cut | Validation host is CentOS Stream 10, but it is not a clean VM. |
 | Fedora smoke | NOT TESTED | No Fedora guest/image was available. Non-blocking by policy. |
 | Admin/Portal/Worker multi-node | NOT TESTED in this cut | Prior beta20 report records the worker installer gate as not PASS; no beta21 three-VM run was performed. |
 | WordPress Golden Test | NOT TESTED against beta21 packages | Prior beta20 lifecycle evidence remains historical only. |
-| VM destruction/cleanup | NOT TESTED | No beta21 VMs were created. |
+| VM destruction/cleanup | PENDING | The Rocky guest remains intentionally active while its installation evidence is collected. |
 
-The host has `/dev/kvm`, 4 vCPU, 8 GiB RAM and 155 GiB free disk. QEMU/libvirt
-packages were installed during preparation, but no libvirt daemon, guest
-images, or disposable overlays existed in the workspace. Therefore the
-required clean-VM matrix cannot be marked PASS from this host state.
+The host has `/dev/kvm`, 4 vCPU, 8 GiB RAM and more than 150 GiB free disk.
+Libvirt, QEMU/KVM, the default NAT network and cloud-init are operational.
+The Rocky base image and the AlmaLinux and CentOS Stream GenericCloud images
+were downloaded from their official image locations and checksum-verified.
+The matrix remains incomplete: one guest is in progress and no AlmaLinux,
+CentOS, Fedora, multi-node, Golden Test, or VM cleanup result has yet been
+established.
 
 ## Security and negative validation
 
