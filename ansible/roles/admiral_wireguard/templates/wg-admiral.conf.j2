@@ -14,6 +14,7 @@ AllowedIPs = {{ peer.allowed_ips }}
 {% set peer_state.keys = peer_state.keys + [peer_key] %}
 {% endif %}
 {% endfor %}
+{% if admiral_wireguard_preserve_existing_peers | default(false) | bool %}
 {% for peer_block in admiral_existing_wireguard_peers | default([]) %}
 {% set peer_key = (peer_block | regex_findall('(?m)^PublicKey\\s*=\\s*(.+)$') | first | default('') | trim) %}
 {% if peer_block | trim and peer_key and peer_key not in peer_state.keys %}
@@ -28,6 +29,7 @@ AllowedIPs = {{ peer.allowed_ips }}
 {% set peer_state.keys = peer_state.keys + [peer_key] %}
 {% endif %}
 {% endfor %}
+{% endif %}
 {% elif admiral_wireguard_role == 'spoke' %}
 [Peer]
 PublicKey = {{ admiral_wireguard_hub_public_key }}
