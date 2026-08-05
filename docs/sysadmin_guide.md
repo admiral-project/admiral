@@ -36,6 +36,12 @@ The other supported beta topology uses `--admin-node` with a dedicated
 local PostgreSQL role and password and reaches Admirald only through its
 WireGuard address.
 
+`--admin-node` and `--admin-portal-node` intentionally install the complete
+Admiral package set in one transaction (`admiral-common`, `admirald`,
+`admiralctl`, `admiral-fleet`, `admiral-harbor`, `admiral-flagship`). This
+keeps installer playbooks and shipped binaries aligned on every reconvergence.
+The tradeoff is a wider installed software surface on admin hosts.
+
 The installer persists the selected role in `/etc/admiral/role`. Re-running
 the same mode reconciles that host idempotently. Selecting a different role
 fails before the installer changes the host. The only automatic role transition
@@ -189,6 +195,9 @@ copy. Admiral does not use this key for normal Fleet, WireGuard, API, or TLS
 operations, and each Worker or Portal receives a different key pair.
 
 For a portal, replace the final service with `admiral-harbor`.
+
+When operating a dedicated admin node, review inactive Admiral services and
+keep only the required ones enabled for your topology.
 
 ### 6. Reconcile or Reinstall a Spoke
 

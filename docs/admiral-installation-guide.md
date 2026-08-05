@@ -48,6 +48,13 @@ El instalador:
 - genera secretos y certificados internos
 - arranca los servicios principales del modo seleccionado
 
+En `--admin-node` y `--admin-portal-node` el instalador aplica una transacción
+de paquete completa (`admiral-common`, `admirald`, `admiralctl`,
+`admiral-fleet`, `admiral-harbor`, `admiral-flagship`) para mantener
+playbooks y binarios en la misma versión publicada. Esta decisión es
+intencional y prioriza convergencia consistente; como tradeoff, aumenta la
+superficie de software instalada en el nodo admin.
+
 La postura por defecto es:
 
 - RHEL 10, CentOS Stream 10, Rocky Linux 10 y AlmaLinux 10 son Tier 1
@@ -182,6 +189,20 @@ Admin API de Caddy) escuchan en loopback o en la IP WireGuard del nodo.
 El checklist del instalador no los considera superficie pública: la subred
 `10.99.0.0/24` solo es alcanzable por pares WireGuard autenticados, y las
 reglas de la zona `admiral` de firewalld solo admiten tráfico del hub.
+
+### Tradeoff de paquete completo en nodos admin
+
+Los perfiles `--admin-node` y `--admin-portal-node` instalan todos los
+componentes Admiral aunque algunos servicios no se habiliten en ese host.
+Esto evita divergencia de versiones entre playbooks y ejecutables durante
+reconvergencias y upgrades, pero implica más binarios presentes en disco.
+
+Mitigaciones recomendadas:
+
+- mantener SELinux en enforcing
+- aplicar errata de seguridad sin demoras (`dnf-automatic` activo)
+- restringir acceso SSH administrativo a llaves gestionadas
+- auditar servicios activos con `systemctl list-unit-files 'admiral*'`
 
 ## Archivos de configuración
 
