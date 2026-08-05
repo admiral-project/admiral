@@ -291,14 +291,64 @@ def _validate_certificate_pair(cert_file, key_file):
         fail("Certificate and private key do not contain the same public key.")
 
 
-def _validate_certificate_names(cert_file, apps_domain):
-    for hostname in (apps_domain, f"probe.{apps_domain}"):
-        result = subprocess.run(
-            ["openssl", "x509", "-in", cert_file, "-noout", "-checkhost", hostname],
-            capture_output=True,
+def _dns_name_matches(pattern, hostname):
+    pattern = pattern.lower()
+    hostname = hostname.lower()
+    if pattern == hostname:
+        return True
+    if not pattern.startswith("*."):
+        return False
+
+    suffix = pattern[1:]
+    # Wildcards only match exactly one left-most DNS label.
+    return hostname.endswith(suffix) and hostname.count(".") == suffix.count(".")
+
+def _certificate_dns_names(cert_file):
+    try:
+        output = subprocess.check_output(
+            ["openssl", "x509", "-in", cert_file, "-noout", "-ext", "subjectAltName"],
             text=True,
+            stderr=subprocess.DEVNULL,
         )
-        if result.returncode != 0:
+    except (subprocess.CalledProcessError, OSError) as exc:
+        fail(f"Unable to read subjectAltName from {cert_file}: {exc}")
+
+    return [match.lower() for match in re.findall(r"DNS:([^,\s]+)", output)]
+
+
+def _validate_certificate_usage(cert_file):
+    try:
+        usage_output = subprocess.check_output(
+            [
+                "openssl",
+                "x509",
+                "-in",
+                cert_file,
+                "-noout",
+                "-ext",
+                "extendedKeyUsage",
+                "-ext",
+                "keyUsage",
+            ],
+            text=True,
+            stderr=subprocess.DEVNULL,
+        )
+    except (subprocess.CalledProcessError, OSError) as exc:
+        fail(f"Unable to read certificate usage extensions from {cert_file}: {exc}")
+
+    if not re.search(r"(TLS\s+Web\s+Server\s+Authentication|Server\s+Authentication)", usage_output, re.IGNORECASE):
+        fail("Certificate is not valid for TLS server authentication (missing serverAuth EKU).")
+    if not re.search(r"Digital\s+Signature", usage_output, re.IGNORECASE):
+        fail("Certificate keyUsage must allow digitalSignature for TLS server authentication.")
+
+
+def _validate_certificate_names(cert_file, apps_domain):
+    cert_names = _certificate_dns_names(cert_file)
+    if not cert_names:
+        fail("Certificate is missing subjectAltName DNS entries.")
+
+    for hostname in (apps_domain, f"probe.{apps_domain}"):
+        if not any(_dns_name_matches(pattern, hostname) for pattern in cert_names):
             fail(f"Certificate does not cover required hostname {hostname}.")
 
 
@@ -367,6 +417,7 @@ def configure_admirald(domain, apps_domain, cert_dir):
             fail(f"Missing: {f}")
 
     _validate_certificate_pair(cert_file, key_file)
+    _validate_certificate_usage(cert_file)
     _validate_certificate_names(cert_file, apps_domain)
     override_dir = "/etc/systemd/system/admirald.service.d"
     os.makedirs(override_dir, exist_ok=True)
