@@ -230,6 +230,15 @@
   no_log: true
   when: admiral_install_mode == 'worker-node'
 
+- name: Require non-empty admin token for worker registration
+  assert:
+    that:
+      - admiral_admin_token_value is defined
+      - admiral_admin_token_value | length > 0
+    fail_msg: "ADMIRAL_ADMIN_TOKEN is empty in /etc/admiral/secrets on the admin controller. Regenerate or repair controller secrets before worker registration."
+  no_log: true
+  when: admiral_install_mode == 'worker-node'
+
 - name: Register node with admirald (admin-to-node)
   command: >
     /usr/bin/admiralctl nodes register

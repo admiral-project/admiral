@@ -241,6 +241,14 @@
          | regex_findall('(?m)^ADMIRAL_ADMIN_TOKEN=(.*)$') | first | default('', true) | trim }}
   no_log: true
 
+- name: Require non-empty admin token for portal registration
+  assert:
+    that:
+      - admiral_admin_token_value is defined
+      - admiral_admin_token_value | length > 0
+    fail_msg: "ADMIRAL_ADMIN_TOKEN is empty in /etc/admiral/secrets on the admin controller. Regenerate or repair controller secrets before portal registration."
+  no_log: true
+
 - name: Register portal node with admirald
   command: >
     /usr/bin/admiralctl nodes register
