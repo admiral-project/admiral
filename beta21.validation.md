@@ -6,7 +6,7 @@ una ejecución beta21.
 
 ## Candidato
 
-El candidato actual incluye `e0de3ee` en el superproyecto y el parche de Fleet
+El candidato actual incluye `dc710bb` en el superproyecto y el parche de Fleet
 `f9a386fc654ffb66f925da69f7639cfec43323c2`. Además de las correcciones TLS y
 de instalación ya descritas, Fleet interpreta `need_restarting` como una
 actualización de imágenes: valida las referencias, descarga cada imagen a
@@ -60,9 +60,9 @@ with 60 tests and 10 subtests; `bash -n` passed for the deploy hook.
 | AlmaLinux 10 single-node, clean GenericCloud | PASS for installation, security smoke, complete Golden Test and cleanup | Official image SHA256 `47f2218668dd4776be140dd92fa3bea700be1766e2c7d88bdfd6a4b50f477b4d`; guest `beta21-alma-single` at `192.168.122.175`. Installer playbook: `ok=222 changed=100 unreachable=0 failed=0`; all required Admiral services active, SELinux Enforcing, firewall services `http https ssh`, SSH password authentication disabled. Via `admiralctl`: apply/provision/setup/healthy, HTTP validation, DB backup `op_f8aceb3d5d1d1629`, volume backup `op_30748a2240256227`, DB restore `op_1b8652b6479de09e`, volume restore `op_0ae3785f926f3479`, pause/resume, image update/restart `op_ca110125182c6fa1`, actual rootless `wordpress:6.8.1` image ID `36e2490fa1a957f3cee615693157139c64b69951dcc7bfd48ee4fd6d03750a31`, `need_restarting=false`, healthy, then deprovision `op_b5fd3d973ff9313e`; no containers remained. |
 | CentOS Stream 10 single-node, clean GenericCloud | PASS for installation/security smoke and complete Golden Test; environmental kdump blocker recorded | Official image SHA256 `9116da2c148c2a3da55579238a543ee9bd238265eba89234201d680e19ae1fbc`; guest `beta21-centos-single` at `192.168.122.249`. Installer playbook: `ok=221 changed=100 unreachable=0 failed=0`; Admiral services active, SELinux Enforcing, firewall services `http https ssh`, SSH password authentication disabled. `kdump.service` failed with `No memory reserved for crash kernel`; classified ENVIRONMENTAL BLOCKER for this VM. Via `admiralctl`: provision `op_9c15044bd37fa44a`, healthy/setup complete, HTTP 308, DB backup `op_7ef753bbe9fd6648`, volume backup `op_8c77a64b0b36c5b5`, DB restore `op_fc204fecdb0a0fa7`, volume restore `op_d7db0ff4aac828ce`, pause/resume, image update/restart `op_f6376d466f6da770`, actual rootless `wordpress:6.8.1` image ID `36e2490fa1a957f3cee615693157139c64b69951dcc7bfd48ee4fd6d03750a31`, `need_restarting=false`, healthy, then deprovision `op_3ae38ca9143977f2`; no containers remained. |
 | Fedora smoke and WordPress attempt | FAIL, non-blocking Tier 2 expected limitation; no fix applied | Official Fedora 44 Generic Cloud image `Fedora-Cloud-Base-Generic-44-1.7.x86_64.qcow2`, SHA256 `28680fe5b371a5a82ebf43a31926e086a168e59949d03969c5093e7071f90b7f`; guest `beta21-fedora-smoke` at `192.168.122.47`. RPM installation and `--dev-node` installer completed; SELinux Enforcing. `admiral-harbor-worker` and `admiral-harbor-catalog-sync` fail with `ADMIRAL_INSECURE_SKIP_VERIFY must be false in production`; this matches the documented Fedora/Python 3.14/OpenSSL limitation and was not changed. WordPress `admiralctl instances provision` was attempted four times and failed safely with HTTP 503; persisted operations report `node_provisioning_rejected_no_capacity` with `metrics_stale`, `node_unhealthy`, and Fleet evidence of `wireguard_ip_mismatch`/HTTP 403. Classified EXPECTED LIMITATION for the documented Tier 2 dev-node path, not a Tier 1 release blocker. |
-| Admin/Portal/Worker multi-node | NOT TESTED in this cut | Prior beta20 report records the worker installer gate as not PASS; no beta21 three-VM run was performed. |
+| Admin/Portal/Worker multi-node | BLOCKED by validation environment before installation | Rocky Admin was retained as the control-plane VM. Fresh AlmaLinux and CentOS Stream guests were created from checksum-verified GenericCloud images, first as backing overlays and then as full qcow2 copies; both stopped at `GRUB -> Booting kernel` without DHCP/SSH. The same pre-Admiral behavior reproduced with direct `/usr/libexec/qemu-kvm -enable-kvm` boot and with Rocky powered off. Classified ENVIRONMENTAL BLOCKER; no product installation result or PASS is inferred. |
 | WordPress Golden Test | PASS Rocky, AlmaLinux and CentOS Stream; Fedora non-blocking failure documented | Rocky, AlmaLinux and CentOS each completed the full lifecycle with CLI and runtime evidence. Fedora provisioning was attempted and failed with documented Tier 2 node-health/certificate limitations; no Fedora fix was applied. |
-| VM destruction/cleanup | PENDING | The Rocky guest remains intentionally active while its installation evidence is collected. |
+| VM destruction/cleanup | PENDING | Single-node completed guests and failed multi-node attempts were stopped and moved to recoverable validation trash. Rocky remains available for final security/negative checks; final removal is still pending. |
 
 The host has `/dev/kvm`, 4 vCPU, 8 GiB RAM and more than 150 GiB free disk.
 Libvirt, QEMU/KVM, the default NAT network and cloud-init are operational.
@@ -71,7 +71,8 @@ were downloaded from their official image locations and checksum-verified.
 The three Tier 1 single-node installations and their independent WordPress
 Golden Tests are now evidenced. Fedora smoke/Golden validation is recorded as
 a non-blocking Tier 2 limitation. The required three-node, network
-segmentation, WireGuard, negative, and final cleanup evidence remains open.
+segmentation and WireGuard evidence is blocked by the clean-guest pre-Admiral
+boot failure above. Negative checks and final cleanup evidence remain open.
 
 ## Security and negative validation
 
