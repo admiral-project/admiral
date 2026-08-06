@@ -430,7 +430,7 @@ The SRPM is staged at `http://142.93.2.122:8888/` for COPR import. Existing
 lab certificates were not replaced destructively; replacement material was
 verified in an isolated temporary directory and removed.
 
-### Current release-gate status
+### Historical release-gate snapshot (superseded)
 
 The local runtime gate is complete for the three-node WordPress lifecycle and
 the security checks above. GitHub currently has only #68 and #69 open among
@@ -440,10 +440,8 @@ review. Fleet-56 and common-121 are compiled and staged on the local SRPM
 server, but COPR metadata must expose those exact NEVRAs before distribution
 channel acceptance can be marked PASS.
 
-The current release verdict therefore remains **BLOCKED** pending COPR
-publication/verification of the proposed packages, review of #75, and the
-libvirt reboot-harness limitation. No validation issue was closed by this
-agent.
+The text above records the state at that point in the run. It is superseded by
+the authoritative current status at the end of this file.
 
 ### COPR Fleet-56 revalidation and second proposed fix
 
@@ -490,13 +488,10 @@ This verifies the proposed retry fix locally, but does not substitute for
 verification of the exact Fleet-57 binary produced by COPR. Issue #70 remains
 open pending that channel-level verification.
 
-### Release-gate correction
+### Historical release-gate correction (superseded)
 
-The earlier summary stating that only #68 and #69 were open is superseded.
-Current relevant open issues are #68, #69, #70, and #75. Issue #70 was
-reopened after the exact COPR-56 artifact reproduced the image-update race;
-#75 is the newly discovered internal TLS key-usage defect and remains open for
-peer review. No issue was closed by this validation run.
+The text above records an earlier state in the run. It is superseded by the
+authoritative current status at the end of this file.
 
 ### COPR publication audit — 2026-08-06
 
@@ -596,13 +591,10 @@ All Admiral component repositories are synchronized with `origin/main`:
 | `admiral-flagship` | `34fd70c380649cd85c76cd1bd905650222b2d0d9` |
 | `admiral-harbor` | `c9e4f73407db81849067585159d375804f53c519` |
 
-### Current issue gate — 2026-08-06
+### Historical issue gate snapshot (superseded)
 
-The security evidence was posted to issue #69 and the issue was closed after
-validation. The only remaining open issue is #68. Fleet-58 is compiled,
-locally installed, and locally verified, but its exact COPR URL still returns
-HTTP 404; therefore #68 remains open pending publication and exact-artifact
-verification.
+The text above records an earlier state before the Fleet-58 COPR build
+finished. See the authoritative status below.
 
 ### DNF COPR channel audit — 2026-08-06
 
@@ -621,3 +613,24 @@ incompatible architecture (`x86_64_v2`). It was not forced with RPM, because
 that would not be a valid target-architecture validation. The Worker remains
 on the locally built Fleet-58 x86_64 package while the EPEL x86_64 chroot
 finishes.
+
+## Authoritative current status — 2026-08-06
+
+This section supersedes all earlier status summaries in this chronological
+log.
+
+| Gate | Current result | Evidence |
+|---|---|---|
+| Rocky Linux 10 single-node | PASS | Clean-image install and complete WordPress lifecycle |
+| AlmaLinux 10 single-node | PASS | Clean-image install and complete WordPress lifecycle |
+| CentOS Stream 10 single-node | PASS with environmental `kdump` limitation | Clean-image install and complete WordPress lifecycle |
+| Fedora smoke/WordPress | Known non-blocking failure | Fedora 44/Python 3.14/OpenSSL limitation documented |
+| Three-node installation and services | PASS locally | Admin/Portal/Worker, registration, WireGuard, Fleet, Harbor, catalog |
+| Security validation (#69) | PASS; issue CLOSED | SELinux, firewall, SSH, secrets, permissions, rootless, segmentation, WireGuard, TLS |
+| Fleet-58 local artifact | PASS | Heartbeat beta21; restart operations `op_b6ea46e35c0909a2` and `op_1ee5458d37394448`; WordPress container and HTTP 301 |
+| Fleet-58 COPR EPEL x86_64 artifact | PENDING | COPR build `10827876`, `epel-10-x86_64` chroot still `running`; DNF exposes Fleet-57 only |
+| Open GitHub issues | #68 only | #69, #70, and #75 are CLOSED |
+
+Current verdict: **BLOCKED** only on completion of the COPR
+`epel-10-x86_64` build and exact DNF/runtime verification of Fleet-58. No
+additional source fix is pending.
