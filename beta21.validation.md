@@ -557,3 +557,41 @@ incremented from 57 to 58.
 `go test ./...` and the RPM `%check` pass. The beta21-58 SRPM is staged on
 the local source server for COPR import. Fleet-58 must be published and
 retested before #68 can be closed.
+
+### Fleet-58 local revalidation — 2026-08-06
+
+The locally built Fleet-58 RPM was installed on the Worker. Its SHA-256 was
+verified as `995a0232b2b1a2e6c60deca215c0bdbb16e8aef763002cb962daf30640e25d52`,
+the service was active, and the control plane subsequently reported
+`fleet_version=0.0.1beta21` with `health_status=healthy`.
+
+The WordPress update scenario was exercised through `admiralctl`. A test
+attempt to change the web image to `wordpress:6.8.0` failed while the helper
+was pulling the image with `signal: killed` (`op_584322f276954de1`); this is
+classified as an ENVIRONMENTAL BLOCKER on the 1.5 GiB Worker, not as the
+previous `no such container` race. The definition was restored to
+`wordpress:6.8.1`, and restart succeeded:
+
+| Check | Evidence | Result |
+|---|---|---|
+| Stop | `op_b6ea46e35c0909a2` | PASS |
+| Start | `op_1ee5458d37394448` | PASS |
+| State | `technical_status=running`, `need_restarting=false`, `health_status=healthy` | PASS |
+| Runtime | rootless web container `docker.io/library/wordpress:6.8.1` | PASS |
+| HTTP | WordPress `301 Moved Permanently` on allocated port `40001` | PASS |
+
+The exact Fleet-58 COPR URL still returns HTTP 404; only the local Fleet-58
+artifact has been runtime-tested. The release gate and issue #68 therefore
+remain open pending COPR publication and exact-artifact repetition.
+
+### Repository publication audit — 2026-08-06
+
+All Admiral component repositories are synchronized with `origin/main`:
+
+| Repository | Commit on `origin/main` |
+|---|---|
+| `admirald` | `df2c87425aa1614e869495a52bad4c2ff09b2ec9` |
+| `admiral-fleet` | `c2ac4f46f78aa301f3e26757d2a5dfd465605369` |
+| `admiralctl` | `3c50732484b766e167383756659b57249f70470b` |
+| `admiral-flagship` | `34fd70c380649cd85c76cd1bd905650222b2d0d9` |
+| `admiral-harbor` | `c9e4f73407db81849067585159d375804f53c519` |
