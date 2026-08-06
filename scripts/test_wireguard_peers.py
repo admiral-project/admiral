@@ -23,6 +23,11 @@ class WireGuardPeerExchangeTests(unittest.TestCase):
         self.assertNotIn("query('fileglob'", content)
         self.assertNotIn("lookup('file', '/etc/wireguard/admiral.key')", content)
 
+    def test_hub_template_preserves_durable_peer_fragments(self) -> None:
+        template = (ROOT / "ansible" / "roles" / "admiral_wireguard" / "templates" / "wg-admiral.conf.j2").read_text(encoding="utf-8")
+        self.assertIn("admiral_wireguard_role == 'hub'", template)
+        self.assertIn("admiral_existing_wireguard_peer_fragments", template)
+
 
 if __name__ == "__main__":
     unittest.main()
