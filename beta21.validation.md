@@ -444,3 +444,31 @@ The current release verdict therefore remains **BLOCKED** pending COPR
 publication/verification of the proposed packages, review of #75, and the
 libvirt reboot-harness limitation. No validation issue was closed by this
 agent.
+
+### COPR Fleet-56 revalidation and second proposed fix
+
+COPR now exposes Fleet `0.0.1beta21-56`. The exact COPR RPM was downloaded
+from its published URL and installed on Worker. A new WordPress instance was
+provisioned successfully (`op_43c2ef69ea717f64`), then the image definition
+was changed to `wordpress:6.8.1`, setting `need_restarting=true`. The restart
+still failed with `no such container` (`op_baedb9e6473b85c2`), proving that
+the first accepted fix was incomplete in the production artifact.
+
+The failure is a bounded systemd/Podman materialization race: Fleet inspects
+the named rootless container immediately after `systemd start`, before conmon
+has created it. Issue #70 was reopened and the evidence was posted there.
+
+The second proposed fix is Fleet commit
+`4d2897048dc17e91151c5e46ad4fe919f5c83ff3`. It retries only transient
+`no such container` inspection errors for a bounded 30-second window and
+includes a regression test. Full Fleet tests and the RPM `%check` passed.
+
+| Artifact | SHA-256 |
+|---|---|
+| `admiral-fleet-0.0.1beta21-57.el10.src.rpm` | `2b246739b17c1424da78f9b818e3d0ae1497a23af6cb37822b77318e06caf32c` |
+| `admiral-fleet-0.0.1beta21-57.el10.x86_64.rpm` | `4d79f42c069ef0ef6ef425181d0a9a669ae0eb105020bc2660e6f6abc9d1e927` |
+| Root commit | `ddc116f` |
+
+Fleet-57 SRPM is staged at `http://142.93.2.122:8888/` pending COPR import;
+no success is inferred until the COPR artifact itself passes the same runtime
+scenario.
