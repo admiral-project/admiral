@@ -635,6 +635,25 @@ Current verdict: **BLOCKED** only on completion of the COPR
 `epel-10-x86_64` build and exact DNF/runtime verification of Fleet-58. No
 additional source fix is pending.
 
+### Known issues and environmental limitations
+
+The final release record contains these known limitations:
+
+1. Fedora 44 smoke/WordPress is a documented Tier-2 limitation involving
+   Python 3.14/OpenSSL certificate verification. It does not block EL10.
+2. The 1.5 GiB CentOS Worker cannot reserve a crash kernel for `kdump`; this
+   is an environmental VM-size limitation.
+3. The disposable libvirt harness powers guests off during guest reboot and
+   requires an explicit `virsh start` before the next test. This is a harness
+   limitation, not an Admiral service recovery failure.
+4. Pulling an additional WordPress image under the 1.5 GiB Worker once caused
+   the helper to be killed for memory pressure (`op_584322f276954de1`). This
+   is classified ENVIRONMENTAL BLOCKER; it is distinct from the resolved
+   `no such container` Fleet race.
+
+No product issue remains open in GitHub after #68 and #69 were validated and
+closed; #70 and #75 had already been closed after their fixes were verified.
+
 ## Final COPR-58 verification — 2026-08-06
 
 COPR build `10827876` completed successfully for `epel-10-x86_64`. The Admin
