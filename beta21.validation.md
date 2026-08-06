@@ -612,3 +612,12 @@ The Admin's enabled repositories include
 exposed Common-121 and Fleet through Fleet-57. COPR build `10827876` for
 Fleet-58 is submitted but still `running`, so DNF cannot yet expose Fleet-58.
 The exact RPM installation test remains pending build completion.
+
+The same build already produced an Alma/EPEL x86_64_v2 package. Its direct
+artifact returned HTTP 200 and SHA-256
+`7efe6e53ba52c1c915a7f747e4d67be7f9f529dfa5c129f21baeb82ac9d309bc`. Attempting
+to install it on the CentOS Worker with `dnf install` was rejected as an
+incompatible architecture (`x86_64_v2`). It was not forced with RPM, because
+that would not be a valid target-architecture validation. The Worker remains
+on the locally built Fleet-58 x86_64 package while the EPEL x86_64 chroot
+finishes.
