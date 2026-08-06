@@ -6,7 +6,7 @@
 
 Name:    admiralctl
 Version: 0.0.1beta21
-Release: 47%{?dist}
+Release: 48%{?dist}
 Summary: Admiral Command-Line Interface
 
 License: Apache-2.0

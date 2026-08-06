@@ -464,7 +464,7 @@ class InstallerModeTests(unittest.TestCase):
         self.assertIn("tcp dport 53 accept", template)
         self.assertIn("udp dport 53 accept", template)
         self.assertIn("udp dport 123 accept", template)
-        self.assertIn("tcp dport { 443, 587, 9000 } accept", template)
+        self.assertIn("tcp dport { 80, 443, 587, 9000 } accept", template)
         self.assertIn("Kubernetes model", template)
         self.assertIn("ip daddr 10.99.0.0/24 accept", template)
 

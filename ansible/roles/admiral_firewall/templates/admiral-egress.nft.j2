@@ -31,7 +31,9 @@ table inet admiral_egress {
         # this to a static IP list is not reliable because both use CDNs.
         # Workers must reach the configured external backup store as well as
         # OCI registries and notification providers.
-        tcp dport { 443, 587, 9000 } accept
+        # EL10 BaseOS/AppStream/CRB and EPEL may publish mirror URLs over
+        # HTTP. Allow repository downloads without exposing TCP/80 inbound.
+        tcp dport { 80, 443, 587, 9000 } accept
         udp dport 51820 accept
 {% endif %}
         reject
