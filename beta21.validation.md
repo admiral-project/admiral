@@ -255,5 +255,16 @@ This is classified PRODUCT DEFECT and is recorded in issue
 regression set passed: `bash -n scripts/install.sh` and
 `python3 -m pytest -q scripts/test_installer_modes.py -k
 'worker_receives or spoke_extra or root_lockdown or reconciled'` => `4
-passed`. The fix requires a new immutable RPM release `120`; Worker runtime
-verification remains pending that build.
+passed`. The fix is committed as `cdc9162` and released as a new immutable
+RPM build:
+
+| Artifact | Value |
+|---|---|
+| Commit | `cdc91622cf95ce7332916324f85c005850fec816` |
+| SRPM | `admiral-common-0.0.1beta21-120.el10.src.rpm` |
+| SRPM SHA-256 | `f057ed8adc40a9f8029937882c92bf29f07b65b9b8b5e7681d25b20401536868` |
+| Binary RPM SHA-256 | `b925cfdcbed4f5b18cd603b6eca279d9bc41556fe2ac26a47caf6b391a6dc1ec` |
+| Release | `120` |
+
+The SRPM is served at `http://142.93.2.122:8888/`; Worker runtime
+verification remains pending COPR publication and a new run.
