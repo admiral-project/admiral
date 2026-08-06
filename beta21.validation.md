@@ -513,3 +513,21 @@ A subsequent audit found no external-state change: both exact COPR URLs still
 return HTTP 404 and the open issue set remains #68, #69, #70, and #75. The
 three-node lab remains available, but the required distribution-channel test
 cannot be truthfully executed until the exact packages are published.
+
+### COPR artifacts published — 2026-08-06
+
+The exact proposed artifacts are now available from COPR. Direct downloads
+returned HTTP 200 and RPM metadata matched the requested NEVRAs:
+
+| Artifact | NEVRA | SHA-256 |
+|---|---|---|
+| Fleet | `admiral-fleet-0.0.1beta21-57.el10.x86_64` | `b95e63d0681bd438c839d8a79fefc276d10dd60ecdc1a00d6f0d21c13ec0a33f` |
+| Common | `admiral-common-0.0.1beta21-121.el10.noarch` | `626c51ebd9692680812acc331321eb42df399b23d7760290eda664eaff6a78b2` |
+
+The exact Fleet-57 RPM was staged on the Admin for delivery, but after the
+Worker reboot its SSH delivery key was no longer accepted on either the LAN
+or WireGuard address. The Worker still reports healthy through Fleet, while
+`admiralctl nodes show worker-fresh` reports the installed Fleet version as
+`0.0.1beta20`; therefore the exact COPR runtime test has not yet been claimed
+as passed. This is currently a lab access/harness condition, not a product
+failure classification.
