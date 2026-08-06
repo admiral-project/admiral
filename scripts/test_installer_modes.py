@@ -287,6 +287,13 @@ class InstallerModeTests(unittest.TestCase):
         self.assertIn("no_log: true", fleet)
         self.assertIn("no_log: true", harbor)
 
+    def test_worker_receives_fleet_callback_key_without_logging_it(self) -> None:
+        installer = INSTALLER.read_text(encoding="utf-8")
+
+        self.assertIn('read_admiral_secret "ADMIRAL_FLEET_CALLBACK_KEY"', installer)
+        self.assertIn('SECRETS_FLEET_CALLBACK_KEY="$SECRETS_FLEET_CALLBACK_KEY"', installer)
+        self.assertIn('d["admiral_fleet_callback_key_value"] = fleet_callback_key', installer)
+
     def test_service_configuration_changes_are_applied_before_dependents(self) -> None:
         fleet = FLEET_TASKS.read_text(encoding="utf-8")
         harbor = HARBOR_TASKS.read_text(encoding="utf-8")

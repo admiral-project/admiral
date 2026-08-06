@@ -228,3 +228,32 @@ Worker negative SSH validation was executed. The stale fingerprint
 The current verified Worker fingerprint is
 `SHA256:edk3sGH3SQVFKFB67rfML/fCBf9+Pn5am8FaKLoBSyk`; the positive Worker
 installation was started with that value and remains pending its final recap.
+
+### Worker Fleet configuration defect
+
+With the verified Worker fingerprint, the installation reached Fleet and
+reproduced a separate product defect:
+
+```text
+TASK [admiral_fleet : Deploy admiral-fleet configuration]
+fatal: [target]: FAILED! => {"censored": "the output has been hidden due to the fact that 'no_log: true' was specified for this result"}
+PLAY RECAP
+target : ok=127 changed=13 unreachable=0 failed=1 skipped=200 rescued=0 ignored=0
+```
+
+Inspection of the task and installer contract showed that
+`ansible/roles/admiral_fleet/tasks/main.yml` renders
+`ADMIRAL_FLEET_CALLBACK_KEY`, but `scripts/install.sh` extracted and passed
+only `ADMIRAL_TASK_PUBLIC_KEY` to dedicated spokes. The callback variable was
+therefore undefined on Worker. Secret-bearing tasks remain protected by
+`no_log: true`; the proposed fix extracts
+`ADMIRAL_FLEET_CALLBACK_KEY` only for `worker-node` and passes it through the
+existing protected JSON extra-vars path.
+
+This is classified PRODUCT DEFECT and is recorded in issue
+[#74](https://github.com/admiral-project/admiral/issues/74). The focused
+regression set passed: `bash -n scripts/install.sh` and
+`python3 -m pytest -q scripts/test_installer_modes.py -k
+'worker_receives or spoke_extra or root_lockdown or reconciled'` => `4
+passed`. The fix requires a new immutable RPM release `120`; Worker runtime
+verification remains pending that build.
