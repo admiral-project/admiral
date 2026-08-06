@@ -805,7 +805,10 @@
       bash -c 'umask 077 && exec openssl req -x509 -nodes -days 3650 -newkey rsa:4096
       -keyout /etc/admiral/tls/ca-key.pem
       -out /etc/admiral/tls/ca.pem
-      -subj "/CN=Admiral CA"'
+      -subj "/CN=Admiral CA"
+      -addext "basicConstraints=critical,CA:TRUE,pathlen:1"
+      -addext "keyUsage=critical,keyCertSign,cRLSign"
+      -addext "subjectKeyIdentifier=hash"'
     creates: /etc/admiral/tls/ca.pem
   when: admiral_wireguard_role == 'hub'
 
@@ -830,6 +833,9 @@
   copy:
     dest: /etc/admiral/tls/admirald-ext.cnf
     content: |
+      basicConstraints=critical,CA:FALSE
+      keyUsage=critical,digitalSignature,keyEncipherment
+      extendedKeyUsage=serverAuth,clientAuth
       subjectAltName={{ admiral_tls_san }}
     mode: "0640"
     owner: admiral
@@ -903,6 +909,9 @@
   copy:
     dest: "{{ admiral_portal_tls_ext_tmp.path }}"
     content: |
+      basicConstraints=critical,CA:FALSE
+      keyUsage=critical,digitalSignature,keyEncipherment
+      extendedKeyUsage=serverAuth,clientAuth
       subjectAltName={{ admiral_tls_san }}
     mode: "0600"
   delegate_to: localhost
@@ -1012,7 +1021,11 @@
       bash -c 'umask 077 && exec openssl req -x509 -nodes -days 365 -newkey rsa:2048
       -keyout /etc/admiral/tls/admirald-key.pem
       -out /etc/admiral/tls/admirald.pem
-      -subj "/CN=localhost"'
+      -subj "/CN=localhost"
+      -addext "basicConstraints=critical,CA:FALSE"
+      -addext "keyUsage=critical,digitalSignature,keyEncipherment"
+      -addext "extendedKeyUsage=serverAuth,clientAuth"
+      -addext "subjectAltName=DNS:localhost,IP:127.0.0.1"'
     creates: /etc/admiral/tls/admirald.pem
   when: admiral_dev_mode | default(false) | bool
 
