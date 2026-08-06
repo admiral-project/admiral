@@ -634,3 +634,42 @@ log.
 Current verdict: **BLOCKED** only on completion of the COPR
 `epel-10-x86_64` build and exact DNF/runtime verification of Fleet-58. No
 additional source fix is pending.
+
+## Final COPR-58 verification — 2026-08-06
+
+COPR build `10827876` completed successfully for `epel-10-x86_64`. The Admin
+repository metadata exposed Fleet-58, and `dnf download` retrieved the exact
+target artifact:
+
+| Artifact | NEVRA | SHA-256 |
+|---|---|---|
+| Fleet | `admiral-fleet-0.0.1beta21-58.el10.x86_64` | `cd6f3abda2d1762812b439c79a77c0d1f13514dfc08beb83069c3ff3ddffef0e` |
+
+The RPM was delivered to the Worker and installed with DNF. `admiralctl
+nodes show worker-fresh` then reported `fleet_version=0.0.1beta21`,
+`health_status=healthy`, and `status=active`.
+
+The final runtime verification used `admiralctl` and the actual rootless
+runtime:
+
+| Check | Evidence | Result |
+|---|---|---|
+| Restart stop | `op_6103f1820bd5d522` | PASS |
+| Restart start | `op_2fabeb9e31cbae09` | PASS |
+| Instance state | `technical_status=running`, `health_status=healthy`, `need_restarting=false` | PASS |
+| Container | `admiral-inst_dbd861097a18ef57-web`, `docker.io/library/wordpress:6.8.1`, rootless Podman | PASS |
+| HTTP | WordPress `301 Moved Permanently` on allocated port `40001` | PASS |
+| Cleanup | Deprovision `op_933f55a33f774c58`; 0 containers, 0 volumes, 0 units | PASS |
+
+The earlier Fleet-58 local image-update run also passed the materialization
+path; its attempted `wordpress:6.8.0` pull was separately classified as an
+environmental memory limitation on the 1.5 GiB Worker. The exact COPR package
+has now passed the target-channel installation, version identity, restart,
+runtime, HTTP, and cleanup checks.
+
+## Final verdict — 2026-08-06
+
+The beta21 validation matrix is **PASS WITH KNOWN ISSUES**: Fedora smoke and
+the small-VM `kdump`/libvirt harness limitations remain documented and are not
+Tier-1 product failures. Security issue #69 is closed, and the remaining
+validation issue #68 is ready to close after this evidence is posted.
