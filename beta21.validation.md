@@ -65,6 +65,36 @@ For interim retrieval, the last local SRPM build remains available at
 `0.0.1beta21` SRPMs for common, admirald, fleet, admiralctl, flagship and
 harbor. The server is not evidence of COPR publication.
 
+## Firewall defect #71
+
+The fresh multinode lab reproduced issue #71 on AlmaLinux Portal. The managed
+`inet admiral_egress` policy allowed TCP `443`, `587` and `9000` for spoke
+nodes, but EL10 repository metadata selected HTTP mirror URLs on TCP `80`.
+Portal could resolve DNS and reach HTTPS, while Ansible failed at
+`admiral_fail2ban` downloading `perl-File-stat-1.14-512.2.el10_0.noarch`:
+`Cannot download, all mirrors were already tried without success`. The fresh
+Portal recap was `ok=118 changed=58 unreachable=0 failed=1`.
+
+Issue [#71](https://github.com/admiral-project/admiral/issues/71) was created
+after duplicate search. Commit `5a47e85` adds TCP `80` to spoke egress only;
+it does not expose TCP `80` inbound. The focused firewall regression tests
+passed (`2 passed, 46 deselected`).
+
+The six rebuilt SRPMs for COPR upload use incremented releases:
+
+| SRPM | SHA-256 |
+|---|---|
+| `admiral-common-0.0.1beta21-117.el10.src.rpm` | `c819deb46c0859a035792a966ab61312a85e9667d20f78eeed39bc7e374ec61d` |
+| `admirald-0.0.1beta21-50.el10.src.rpm` | `d8d8cbaa036f543017ce0269a9bf3207264448dec22e18f3880426484856f3f1` |
+| `admiral-fleet-0.0.1beta21-55.el10.src.rpm` | `4a07c640fbe6f6c7670ed90989c7c49fe207a12427ed7c9e617807782979a380` |
+| `admiralctl-0.0.1beta21-48.el10.src.rpm` | `b3ddeb836e9c66e742d3f4b29217d79e9d2c5e4e511971c5bedad36a2f3e1968` |
+| `admiral-flagship-0.0.1beta21-81.el10.src.rpm` | `0a34ffb4c9bcdae9692359e1f92d5205dac943f56992263a6bc9a5c65e406cc0` |
+| `admiral-harbor-0.0.1beta21-49.el10.src.rpm` | `e5777c7f7f0971fb578575d6ae1bd18f1da2a374d0b7ea79f1eb8f9ed9154197` |
+
+They are served at `http://142.93.2.122:8888/` for COPR upload. Runtime
+verification of the fix remains pending COPR build/import and a fresh rerun;
+issue #71 remains open.
+
 ## Release matrix
 
 | Escenario | Resultado beta21 | Evidence / classification |
