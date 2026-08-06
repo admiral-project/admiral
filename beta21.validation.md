@@ -122,10 +122,10 @@ The Rocky base image and the AlmaLinux and CentOS Stream GenericCloud images
 were downloaded from their official image locations and checksum-verified.
 The three Tier 1 single-node installations and their independent WordPress
 Golden Tests are now evidenced. Fedora smoke/Golden validation is recorded as
-a non-blocking Tier 2 limitation. The required three-node, network
-segmentation and WireGuard evidence is blocked by repository availability and
-an invalid worker overlay containing beta20 state. Negative checks and final
-cleanup evidence remain open.
+a non-blocking Tier 2 limitation. The required three-node validation was
+subsequently executed on fresh Rocky 10, AlmaLinux 10, and CentOS Stream 10
+overlays. Current evidence is recorded in the update sections below; the
+earlier blocked-row text is historical and is superseded by that evidence.
 
 ## Security and negative validation
 
@@ -135,21 +135,20 @@ for issues #63–#67 are covered by commits `944a3c5`, `168463b`, `01985fe`,
 `a8acf56`, and `e134645`; those issues remain open for review and were not
 closed.
 
-The complete VM-level checks requested by #68/#69 (SELinux AVC delta, external
-port scan, three-node segmentation, WireGuard break/restore, SSH password
-rejection, secret scans, permissions, reboot recovery, and hostile-node tests)
-remain incomplete because the multi-node installation did not produce clean
-Portal and Worker recaps. The
-single-node SELinux, firewall, listener, permissions and SSH smoke checks
-passed on Rocky, Alma and CentOS; they do not substitute for the blocked
-multi-node checks.
+The current three-node checks provide SELinux AVC deltas, external Nmap
+results, segmentation failures, WireGuard invalid-peer recovery, SSH password
+rejection, secret scans, permissions, rootless isolation, DNS,
+resource-pressure, and reboot evidence. A libvirt-specific reboot limitation
+remains classified as an ENVIRONMENTAL BLOCKER: `systemctl reboot` powered off
+each disposable guest instead of returning it automatically, so the harness
+had to start the same VM again before service recovery could be checked.
 
 ## GitHub issue evidence
 
-Comments were posted on issues #63–#69. Issue #70 records the reproducible
-image-update defect, the two proposed Fleet fixes, RPM `-54` verification and
-runtime evidence. Issue #70 remains OPEN intentionally for independent review;
-no issue was closed.
+Comments were posted on the active validation issues #68 and #69, on the
+historical duplicate #8, and on the now-closed image-update issue #70. The
+accepted fixes were not closed by this validation agent. The only currently
+open tracking issues are #68 and #69.
 
 ## Verdict
 
@@ -369,3 +368,64 @@ infra, and setup containers also running. HTTP from Admin to the actual
 Worker runtime returned WordPress `301 Moved Permanently`. This verifies the
 image update fix at runtime with the proposed RPM; COPR publication remains a
 distribution-channel check.
+
+The remaining lifecycle steps also completed through `admiralctl`: pause
+`op_343d5361a3929c64`, resume `op_db190f6f19f89b8a`, and deprovision
+`op_92050a49d2042531`. After deprovision, direct Worker inspection as
+`admiral-apps` reported `containers=0`, `volumes=0`, and `units=0` for the
+instance ID. The control-plane state was `technical_status=deprovisioned`.
+
+### Security validation update (#69)
+
+The fresh three-node lab produced the following direct evidence:
+
+| Control | Evidence | Result |
+|---|---|---|
+| SELinux | `getenforce=Enforcing` on Admin, Portal, Worker; AVC count over the validation window was `0` on all three | PASS |
+| External TCP exposure | Nmap found Admin `22,80,443`; Portal `22`; Worker `22`; no unexpected TCP ports among `5001,5432,9099,40000,51820` | PASS for documented lab exposure |
+| WireGuard UDP exposure | Nmap reported `51820/udp open|filtered` on each node; internal listeners matched `51820/udp` | PASS |
+| SSH hardening | All nodes: `pubkeyauthentication yes`, `passwordauthentication no`, `kbdinteractiveauthentication no`; Portal/Worker `permitrootlogin no`; password-only SSH was rejected | PASS |
+| Secrets | Redacted scans of journal, `/tmp`, and `/var/log` found no secret material. One Admin match was non-secret `GENERATE_SSH_KEY` metadata | PASS; false positive recorded |
+| Permissions | WireGuard private keys `0400/0600`, configuration directories `0700/0750`, TLS private material restricted to root/admiral; no world-writable Admiral files | PASS |
+| Rootless isolation | `podman info` as `admiral-apps` reported `rootless=true`; Golden Test containers used `no-new-privileges` | PASS |
+| DNS | All nodes resolved `example.com` through the configured NetworkManager resolver; no unexpected DNS listener exposed | PASS |
+| Resource pressure | Worker `/tmp` filled to 92%, Fleet remained active, cleanup returned free space to 40% | PASS |
+
+Segmentation returned the expected failures: Worker could not reach
+Admin/Portal PostgreSQL, Portal could not reach Worker Fleet or PostgreSQL,
+and Admin could not reach Portal PostgreSQL. Worker could reach the documented
+Admin API on `10.99.0.1:8080`; other tested undocumented paths rejected or
+timed out.
+
+WireGuard negative validation temporarily added an invalid peer with
+`AllowedIPs=10.99.0.250/32`; its latest handshake remained `0`. Removing it
+restored both legitimate peers and active handshakes. No invalid peer or
+temporary key remained.
+
+The first reboot cycle exposed a libvirt harness limitation: `systemctl
+reboot` powered off each disposable guest rather than automatically returning
+it. Starting the same guests again restored services. Before the WireGuard
+fix, Admin booted with zero peers despite durable `peers.d` files; this
+reproduced historical issue [#8](https://github.com/admiral-project/admiral/issues/8).
+Fix `a138797` preserves peer fragments by default. After rendering the
+corrected configuration, Admin reboot retained two peer blocks, both
+handshakes became active, and `admiralctl nodes list` reported Portal and
+Worker `active/healthy` with fresh heartbeats. The shutdown behavior remains
+an ENVIRONMENTAL BLOCKER for fully automated reboot validation.
+
+TLS chain/SAN/expiration validation passed, but the pre-fix internal
+`admirald.pem` lacked `keyUsage` and `extendedKeyUsage`. This reproducible
+PRODUCT DEFECT is tracked in [#75](https://github.com/admiral-project/admiral/issues/75).
+Fix `2bad3e3` adds CA constraints, TLS server key usage, and
+`serverAuth,clientAuth` EKU. `admiral-common-0.0.1beta21-121` was compiled,
+installed locally on Admin, and its generation commands verified with
+`openssl verify`, SAN, critical constraints, key usage, EKU, and expiration.
+
+| Artifact | SHA-256 |
+|---|---|
+| `admiral-common-0.0.1beta21-121.el10.src.rpm` | `1544967de7d801e3b16266e0268eaff601b8749fdac81d1dc8f36a18abe40713` |
+| `admiral-common-0.0.1beta21-121.el10.noarch.rpm` | `f77d4446bff8e141eb5c43d4e247e6cd57c3ec64be8232103593c72c6d2b2d85` |
+
+The SRPM is staged at `http://142.93.2.122:8888/` for COPR import. Existing
+lab certificates were not replaced destructively; replacement material was
+verified in an isolated temporary directory and removed.
