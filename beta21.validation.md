@@ -198,3 +198,33 @@ The fix is released as a new immutable RPM build:
 Release `118` is not replaced; it remains the package-reconciliation build.
 Release `119` must be built by COPR before runtime verification. Issues #72
 and #73 remain open for review; no issue was closed.
+
+### Runtime verification update
+
+The local `admiral-common-119` RPM was installed on the Admin controller and
+the Portal reconvergence was rerun. Final evidence:
+
+```text
+PLAY RECAP
+target : ok=181 changed=30 unreachable=0 failed=0 skipped=161 rescued=0 ignored=0
+Admiral installation completed.
+```
+
+Portal reported `admiral-common-0.0.1beta21-118.el10.noarch`,
+`admiral-harbor active`, `postgresql active`, public ports `51820/udp`, and
+`sshd -T` reported `permitrootlogin no`, `passwordauthentication no`,
+`kbdinteractiveauthentication no`, and `permitemptypasswords no`. The former
+`PermitRootLogin` hard failure did not recur. This is local proposed-fix
+verification; COPR publication of `119` is still required for package-level
+acceptance.
+
+Worker negative SSH validation was executed. The stale fingerprint
+`SHA256:3jtFaOdCjDbFx4nivM+BSUSvEdkjwiLUw5H4czJTxZU` was rejected with:
+
+```text
+[FATAL] SSH host key fingerprint mismatch for 192.168.122.49. Aborting.
+```
+
+The current verified Worker fingerprint is
+`SHA256:edk3sGH3SQVFKFB67rfML/fCBf9+Pn5am8FaKLoBSyk`; the positive Worker
+installation was started with that value and remains pending its final recap.
