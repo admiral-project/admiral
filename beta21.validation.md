@@ -157,3 +157,44 @@ no issue was closed.
 pass, but the required beta21 clean-VM release and security matrix lacks
 execution evidence. This report intentionally does not claim that beta20
 results prove beta21.
+
+## Validation update: package reconciliation and spoke SSH lockdown
+
+The installer reconciliation defect was reproduced on the fresh AlmaLinux
+Portal. A rerun completed the Ansible playbook with `ok=181 changed=30
+unreachable=0 failed=0`, but the Portal remained on
+`admiral-common-0.0.1beta21-117` when that was the newest package available at
+the start of the run. After COPR published `118`, the controller saw both
+`117` and `118`; the next reconvergence was started with the updated
+controller playbook. The package update behavior is covered by issue
+[#72](https://github.com/admiral-project/admiral/issues/72) and commit
+`e5a6c7a`, which changes the Ansible package task from `state: present` to
+`state: latest`.
+
+The same Portal reconvergence exposed a separate idempotency defect: the
+already-onboarded spoke had the intended final lockdown
+`/etc/ssh/sshd_config.d/49-admiral-root-lockdown.conf` with
+`PermitRootLogin no`; `sshd -T` confirmed `permitrootlogin no`,
+`passwordauthentication no`, `kbdinteractiveauthentication no`, and
+`permitemptypasswords no`. The installer nevertheless hard-failed because
+the pre-lockdown checklist required `prohibit-password`. This is recorded in
+issue [#73](https://github.com/admiral-project/admiral/issues/73).
+
+Proposed fix commit `e9f1822` accepts `permitrootlogin no` only for
+`worker-node` and `portal-node` reconvergence, while retaining the existing
+baseline check for other modes. Verification: `bash -n scripts/install.sh`
+PASS and `python3 -m pytest -q scripts/test_installer_modes.py -k
+'root_lockdown or reconciled or egress or firewall'` => `4 passed`.
+
+The fix is released as a new immutable RPM build:
+
+| Artifact | Value |
+|---|---|
+| Commit | `e9f1822113f112108f070dfd08bbaf9cf5b3deb4` |
+| SRPM | `admiral-common-0.0.1beta21-119.el10.src.rpm` |
+| SRPM SHA-256 | `94e42e7674c096822dd81beda3206ea9ba7337cd7ff5597568587a61b6afb279` |
+| Release | `119` |
+
+Release `118` is not replaced; it remains the package-reconciliation build.
+Release `119` must be built by COPR before runtime verification. Issues #72
+and #73 remain open for review; no issue was closed.
