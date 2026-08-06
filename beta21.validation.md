@@ -343,3 +343,29 @@ and tested:
 `go test ./...` and the RPM `%check` passed. COPR currently exposes only
 Fleet `0.0.1beta21-54`; Fleet-56 has been staged in the local SRPM HTTP
 directory and awaits COPR publication before rerunning the lifecycle.
+
+### Fleet-56 local runtime verification
+
+The locally built Fleet-56 RPM was installed on the Worker and the service
+restarted successfully:
+
+```text
+admiral-fleet-0.0.1beta21-56.el10.x86_64
+active
+```
+
+The lifecycle was repeated through `admiralctl` and succeeded:
+
+```text
+stop_operation: op_2cc615d5e26f62f0
+start_operation: op_4803ee61a42f3773
+```
+
+The instance then reported `technical_status=running`,
+`health_status=healthy`, `need_restarting=false`, and
+`setup_completed=true`. Direct inspection as `admiral-apps` showed the web
+container running `docker.io/library/wordpress:6.8.1`, with the database,
+infra, and setup containers also running. HTTP from Admin to the actual
+Worker runtime returned WordPress `301 Moved Permanently`. This verifies the
+image update fix at runtime with the proposed RPM; COPR publication remains a
+distribution-channel check.
