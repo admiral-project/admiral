@@ -268,3 +268,33 @@ RPM build:
 
 The SRPM is served at `http://142.93.2.122:8888/`; Worker runtime
 verification remains pending COPR publication and a new run.
+
+### Worker proposed-fix runtime verification
+
+Before COPR exposed `120`, the Admin controller was upgraded locally to
+`admiral-common-120` and the Worker was re-run. The Fleet configuration task
+that previously failed now completed successfully:
+
+```text
+TASK [admiral_fleet : Deploy admiral-fleet configuration]
+changed: [target]
+PLAY RECAP
+target : ok=137 changed=19 unreachable=0 failed=0 skipped=206 rescued=0 ignored=0
+```
+
+Runtime checks then confirmed:
+
+| Check | Result |
+|---|---|
+| Worker common package | `admiral-common-0.0.1beta21-119.el10.noarch` (latest COPR package available during the run) |
+| Fleet package | `admiral-fleet-0.0.1beta21-54.el10.x86_64` |
+| `admiral-fleet` service | `active` |
+| Fleet listener | `10.99.0.2:9099` |
+| WireGuard | handshake with Admin peer active; allowed IP `10.99.0.1/32` |
+| `admiralctl nodes list` | `worker-fresh`: `active`, `healthy`, `available_for_provisioning=true` |
+
+This verifies the proposed callback-key fix functionally, but package-level
+acceptance of `120` remains pending its COPR build and a final rerun with the
+Worker itself updated to NEVRA `120`. `kdump.service` remains failed on this
+1.5 GiB Worker with no reserved crash kernel; it is classified as an
+ENVIRONMENTAL BLOCKER and does not explain the Fleet configuration defect.
