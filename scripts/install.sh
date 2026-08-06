@@ -1248,7 +1248,14 @@ if [[ "$INSTALL_DEV_MODE" != "true" ]]; then
     EXPECTED_ROOT_LOGIN="prohibit-password"
     # Spokes retain bootstrap root access until all onboarding, handshake, and
     # security checks have passed. The final root lockdown is applied below.
+    # On an idempotent rerun, an already onboarded spoke has PermitRootLogin
+    # set to `no`; that final state is stronger than the pre-lockdown baseline
+    # and must not make the security checklist fail.
     ROOT_LOGIN_OK=false
+    if [[ ("$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node") &&
+        "$SSHD_EFFECTIVE" == *"permitrootlogin no"* ]]; then
+        ROOT_LOGIN_OK=true
+    fi
     if [[ "$SSHD_EFFECTIVE" == *"permitrootlogin $EXPECTED_ROOT_LOGIN"* ]]; then
         ROOT_LOGIN_OK=true
     fi

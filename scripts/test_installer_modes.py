@@ -258,6 +258,13 @@ class InstallerModeTests(unittest.TestCase):
         self.assertIn("/var/lib/admiral/ssh-delivery/", common)
         self.assertNotIn('SECRETS_SSH_USER=$(read_admiral_secret "ADMIRAL_SSH_USER")', installer)
 
+    def test_spoke_security_check_accepts_final_root_lockdown_on_rerun(self) -> None:
+        installer = INSTALLER.read_text(encoding="utf-8")
+
+        self.assertIn('"$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node"', installer)
+        self.assertIn('"$SSHD_EFFECTIVE" == *"permitrootlogin no"*', installer)
+        self.assertIn("already onboarded spoke", installer)
+
     def test_spoke_extra_vars_exclude_controller_admin_token(self) -> None:
         installer = INSTALLER.read_text(encoding="utf-8")
         fleet = FLEET_TASKS.read_text(encoding="utf-8")
