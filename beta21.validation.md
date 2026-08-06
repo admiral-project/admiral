@@ -97,6 +97,13 @@ Only `admiral-common-0.0.1beta21-117.el10.src.rpm` is currently served at
 `http://142.93.2.122:8888/` for COPR upload. Runtime verification of the fix
 remains pending COPR build/import and a fresh rerun; issue #71 remains open.
 
+Before pausing for COPR, the root cause was independently isolated on the
+fresh Portal: with the original egress chain, `dnf makecache --refresh` failed;
+after inserting only `tcp dport 80 accept` before the default reject,
+BaseOS/AppStream/CRB/EPEL metadata completed successfully (`rc=0`). The
+automatic Ansible rerun was then stopped at operator request pending the COPR
+RPM; this manual result is diagnostic evidence, not final runtime acceptance.
+
 ## Release matrix
 
 | Escenario | Resultado beta21 | Evidence / classification |
