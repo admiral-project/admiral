@@ -472,3 +472,28 @@ includes a regression test. Full Fleet tests and the RPM `%check` passed.
 Fleet-57 SRPM is staged at `http://142.93.2.122:8888/` pending COPR import;
 no success is inferred until the COPR artifact itself passes the same runtime
 scenario.
+
+### Fleet-57 local runtime verification
+
+The proposed Fleet-57 RPM was installed on the Worker from the locally built
+artifact. The previously provisioned COPR-56 reproduction instance was
+restarted through `admiralctl` using the normal control-plane workflow:
+
+| Check | Evidence | Result |
+|---|---|---|
+| Restart operation | `op_d74092c35958e1e4`, status `succeeded`; stop operation `op_1bc4ba7f117d5fdf` | PASS |
+| Runtime state | `technical_status=running`, `health_status=healthy`, `setup_completed=true` | PASS |
+| Image update flag | `need_restarting=false` after restart | PASS |
+| Application lifecycle | Instance remained provisioned and healthy after materialization retry | PASS |
+
+This verifies the proposed retry fix locally, but does not substitute for
+verification of the exact Fleet-57 binary produced by COPR. Issue #70 remains
+open pending that channel-level verification.
+
+### Release-gate correction
+
+The earlier summary stating that only #68 and #69 were open is superseded.
+Current relevant open issues are #68, #69, #70, and #75. Issue #70 was
+reopened after the exact COPR-56 artifact reproduced the image-update race;
+#75 is the newly discovered internal TLS key-usage defect and remains open for
+peer review. No issue was closed by this validation run.
