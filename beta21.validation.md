@@ -298,3 +298,48 @@ acceptance of `120` remains pending its COPR build and a final rerun with the
 Worker itself updated to NEVRA `120`. `kdump.service` remains failed on this
 1.5 GiB Worker with no reserved crash kernel; it is classified as an
 ENVIRONMENTAL BLOCKER and does not explain the Fleet configuration defect.
+
+### WordPress image-update validation and Fleet-56
+
+The local three-node cluster was operated through `admiralctl`: Rocky Linux 10
+Admin, AlmaLinux 10 Portal, and CentOS Stream 10 Worker. The WordPress
+definition validated and applied, provisioning completed with
+`technical_status=running`, `health_status=healthy`, and
+`setup_completed=true`, and actual rootless Podman containers were observed
+under `admiral-apps`. HTTP returned the expected WordPress redirect.
+
+Database and volume backups succeeded with SHA-256 checksums. Restore requests
+while running were rejected with HTTP 409, matching the pause precondition;
+sequential database and volume restores while paused succeeded, followed by a
+successful resume.
+
+Changing the web image from `wordpress:6` to `wordpress:6.8.1` set
+`need_restarting=true` and `update_type=improvement`. Restart through
+`admiralctl` then failed twice with the pre-fix Fleet package:
+
+```text
+inspect started container "admiral-inst_6115bc8017a1b128-web" for image verification:
+... Error: no such container "admiral-inst_6115bc8017a1b128-web"
+```
+
+Operation IDs were `op_99f4bff10c158fe8` and `op_ffa5a0a44b2fd2da`. The
+instance remained `running` with `need_restarting=true`; the new image was
+not verified. This is PRODUCT DEFECT #70, now closed after acceptance of its
+fix; package-level verification remains pending.
+
+The root project now pins Fleet commit
+`b2d42e0ebca5f546f431294221b174fc945a0d3c`, which pulls requested images via
+the rootless helper and recreates affected units. The proposed RPM was built
+and tested:
+
+| Artifact | Value |
+|---|---|
+| RPM | `admiral-fleet-0.0.1beta21-56.el10.x86_64.rpm` |
+| RPM SHA-256 | `e9a3af34686a799366cd2e5b3ddf3a285dcb898f2cdfd594a43b2b510cab84a6` |
+| SRPM | `admiral-fleet-0.0.1beta21-56.el10.src.rpm` |
+| SRPM SHA-256 | `08ebebe999ed9d69675038c18c1d68f3b954d1bb7d834a15409f875249e612a0` |
+| Root commit | `d15ce1f` |
+
+`go test ./...` and the RPM `%check` passed. COPR currently exposes only
+Fleet `0.0.1beta21-54`; Fleet-56 has been staged in the local SRPM HTTP
+directory and awaits COPR publication before rerunning the lifecycle.
