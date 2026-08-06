@@ -80,7 +80,9 @@ after duplicate search. Commit `5a47e85` adds TCP `80` to spoke egress only;
 it does not expose TCP `80` inbound. The focused firewall regression tests
 passed (`2 passed, 46 deselected`).
 
-The six rebuilt SRPMs for COPR upload use incremented releases:
+The project policy requires all six Release fields to be incremented on a
+rebuild; all six SRPMs were therefore generated. For this firewall correction,
+only `admiral-common` is needed for COPR upload and runtime verification:
 
 | SRPM | SHA-256 |
 |---|---|
@@ -91,9 +93,9 @@ The six rebuilt SRPMs for COPR upload use incremented releases:
 | `admiral-flagship-0.0.1beta21-81.el10.src.rpm` | `0a34ffb4c9bcdae9692359e1f92d5205dac943f56992263a6bc9a5c65e406cc0` |
 | `admiral-harbor-0.0.1beta21-49.el10.src.rpm` | `e5777c7f7f0971fb578575d6ae1bd18f1da2a374d0b7ea79f1eb8f9ed9154197` |
 
-They are served at `http://142.93.2.122:8888/` for COPR upload. Runtime
-verification of the fix remains pending COPR build/import and a fresh rerun;
-issue #71 remains open.
+Only `admiral-common-0.0.1beta21-117.el10.src.rpm` is currently served at
+`http://142.93.2.122:8888/` for COPR upload. Runtime verification of the fix
+remains pending COPR build/import and a fresh rerun; issue #71 remains open.
 
 ## Release matrix
 
