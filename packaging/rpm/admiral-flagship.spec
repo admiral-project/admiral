@@ -2,11 +2,11 @@
 # SPDX-License-Identifier: Apache-2.0
 
 %global debug_package %{nil}
-%global commit 34fd70c380649cd85c76cd1bd905650222b2d0d9
+%global commit a670b80a5abf6041059a0fd7702124fa6d6a9ff7
 
 Name:    admiral-flagship
-Version: 0.0.1beta21
-Release: 81%{?dist}
+Version: 0.0.1rc1
+Release: 82%{?dist}
 Summary: Admiral Administrative Web Console
 
 License: Apache-2.0

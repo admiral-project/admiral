@@ -2,11 +2,11 @@
 # SPDX-License-Identifier: Apache-2.0
 
 %global debug_package %{nil}
-%global commit 3c50732484b766e167383756659b57249f70470b
+%global commit 4b6721200e10dbbcf64da6cd6f97f9637190570e
 
 Name:    admiralctl
-Version: 0.0.1beta21
-Release: 48%{?dist}
+Version: 0.0.1rc1
+Release: 49%{?dist}
 Summary: Admiral Command-Line Interface
 
 License: Apache-2.0

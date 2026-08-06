@@ -1,9 +1,9 @@
 %global debug_package %{nil}
-%global commit c9e4f73407db81849067585159d375804f53c519
+%global commit 2dd173a472f588466f4fbdf307575e32df739215
 
 Name:    admiral-harbor
-Version: 0.0.1beta21
-Release: 49%{?dist}
+Version: 0.0.1rc1
+Release: 50%{?dist}
 Summary: Admiral Customer Portal - Web UI for end users
 
 License: Apache-2.0
