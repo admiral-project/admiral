@@ -497,3 +497,12 @@ Current relevant open issues are #68, #69, #70, and #75. Issue #70 was
 reopened after the exact COPR-56 artifact reproduced the image-update race;
 #75 is the newly discovered internal TLS key-usage defect and remains open for
 peer review. No issue was closed by this validation run.
+
+### COPR publication audit — 2026-08-06
+
+The current COPR project page does not expose the proposed artifacts. Direct
+requests for `admiral-fleet-0.0.1beta21-57.el10.x86_64.rpm` and
+`admiral-common-0.0.1beta21-121.el10.noarch.rpm` returned HTTP 404. The latest
+published Fleet build visible in the project history remains beta21-56.
+Therefore no COPR-57 runtime result is claimed, and the distribution gate
+remains **BLOCKED** pending publication and exact-artifact verification.
