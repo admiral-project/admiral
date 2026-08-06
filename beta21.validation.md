@@ -595,3 +595,20 @@ All Admiral component repositories are synchronized with `origin/main`:
 | `admiralctl` | `3c50732484b766e167383756659b57249f70470b` |
 | `admiral-flagship` | `34fd70c380649cd85c76cd1bd905650222b2d0d9` |
 | `admiral-harbor` | `c9e4f73407db81849067585159d375804f53c519` |
+
+### Current issue gate — 2026-08-06
+
+The security evidence was posted to issue #69 and the issue was closed after
+validation. The only remaining open issue is #68. Fleet-58 is compiled,
+locally installed, and locally verified, but its exact COPR URL still returns
+HTTP 404; therefore #68 remains open pending publication and exact-artifact
+verification.
+
+### DNF COPR channel audit — 2026-08-06
+
+The Admin's enabled repositories include
+`copr:copr.fedorainfracloud.org:admiral-project:admiral`. After
+`dnf clean all` and `dnf makecache --refresh`, `dnf --showduplicates list`
+exposed Common-121 and Fleet through Fleet-57. COPR build `10827876` for
+Fleet-58 is submitted but still `running`, so DNF cannot yet expose Fleet-58.
+The exact RPM installation test remains pending build completion.
