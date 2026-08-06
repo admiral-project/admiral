@@ -429,3 +429,18 @@ installed locally on Admin, and its generation commands verified with
 The SRPM is staged at `http://142.93.2.122:8888/` for COPR import. Existing
 lab certificates were not replaced destructively; replacement material was
 verified in an isolated temporary directory and removed.
+
+### Current release-gate status
+
+The local runtime gate is complete for the three-node WordPress lifecycle and
+the security checks above. GitHub currently has only #68 and #69 open among
+the tracked beta21 fixes; #63–#67 and #70–#74 are closed after accepted
+changes. Newly discovered TLS defect #75 remains intentionally open for peer
+review. Fleet-56 and common-121 are compiled and staged on the local SRPM
+server, but COPR metadata must expose those exact NEVRAs before distribution
+channel acceptance can be marked PASS.
+
+The current release verdict therefore remains **BLOCKED** pending COPR
+publication/verification of the proposed packages, review of #75, and the
+libvirt reboot-harness limitation. No validation issue was closed by this
+agent.
