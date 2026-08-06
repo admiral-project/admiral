@@ -531,3 +531,29 @@ or WireGuard address. The Worker still reports healthy through Fleet, while
 `0.0.1beta20`; therefore the exact COPR runtime test has not yet been claimed
 as passed. This is currently a lab access/harness condition, not a product
 failure classification.
+
+### COPR-57 version identity defect and proposed correction — 2026-08-06
+
+After restoring the Worker SSH delivery account (`admiral-ssh`), the exact
+COPR Fleet-57 RPM was installed and its downloaded RPM SHA-256 was verified as
+`b95e63d0681bd438c839d8a79fefc276d10dd60ecdc1a00d6f0d21c13ec0a33f`. The
+package NEVRA was correct, but the Worker heartbeat still reported
+`fleet_version=0.0.1beta20`. Source inspection identified
+`internal/agent/heartbeat.go:const FleetVersion` as the cause. This is a
+PRODUCT DEFECT in the published beta21 artifact and is covered by beta21
+validation issue #68.
+
+The correction changes the heartbeat identity to `0.0.1beta21` and adds an
+exact-version regression test. Fleet commit
+`c2ac4f46f78aa301f3e26757d2a5dfd465605369` was pushed with a signed semantic
+commit. The root pin was updated in commit `f6fd13e`; the RPM release was
+incremented from 57 to 58.
+
+| Proposed artifact | SHA-256 |
+|---|---|
+| `admiral-fleet-0.0.1beta21-58.el10.src.rpm` | `89fb945d90e5be7868baa66f8b0ccf5444e314da5c32eb70f276bd700a501fc1` |
+| `admiral-fleet-0.0.1beta21-58.el10.x86_64.rpm` | `995a0232b2b1a2e6c60deca215c0bdbb16e8aef763002cb962daf30640e25d52` |
+
+`go test ./...` and the RPM `%check` pass. The beta21-58 SRPM is staged on
+the local source server for COPR import. Fleet-58 must be published and
+retested before #68 can be closed.
