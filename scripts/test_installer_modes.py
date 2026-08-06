@@ -82,9 +82,14 @@ class InstallerModeTests(unittest.TestCase):
 
     def test_admiral_common_is_reconciled_to_current_repository_version(self) -> None:
         content = INSTALLER.read_text(encoding="utf-8")
+        common_tasks = COMMON_TASKS.read_text(encoding="utf-8")
 
         self.assertIn('dnf install -y admiral-common', content)
         self.assertNotIn('if ! rpm -q admiral-common', content)
+        self.assertRegex(
+            common_tasks,
+            r"- name: Install admiral-common baseline package[\s\S]*?state: latest",
+        )
 
     def test_installer_help_lists_explicit_admin_portal_mode(self) -> None:
         result = subprocess.run(

@@ -100,7 +100,10 @@
     name:
       - admiral-common
       - acl
-    state: present
+    # Reconcile the controller's current release on every installer run.
+    # `present` leaves an older admiral-common installed on an existing spoke,
+    # which can leave its managed Ansible roles behind the release candidate.
+    state: latest
 
 - name: Install admin-plane packages
   dnf:
