@@ -692,3 +692,24 @@ The beta21 validation matrix is **PASS WITH KNOWN ISSUES**: Fedora smoke and
 the small-VM `kdump`/libvirt harness limitations remain documented and are not
 Tier-1 product failures. Security issue #69 is closed, and the remaining
 validation issue #68 is ready to close after this evidence is posted.
+
+## RC1 packaging record — 2026-08-05
+
+The five component commits were pinned in the root `Makefile` and the six RPM
+specifications. `scripts/validate-release-refs.py` passed. The six RC1 SRPMs
+were compiled with `%check` disabled, as requested; no tests were executed.
+
+| Package | NEVRA | SHA-256 |
+|---|---|---|
+| admiral-common | `admiral-common-0.0.1rc1-122.el10.src` | `6faf7c41301f6a5b57ae0a140eb05b9a8a697b2fddb785a6084be5e0a7bdf8c5` |
+| admirald | `admirald-0.0.1rc1-51.el10.src` | `19586e574a94edbb64fd8debb838c757ab8d8d82f0447fa28686ab6aabe16632` |
+| admiral-fleet | `admiral-fleet-0.0.1rc1-59.el10.src` | `f6420aceac2ffa4c0c228fa42188757e08263e6b937a3f5bc99a91b8f367743d` |
+| admiralctl | `admiralctl-0.0.1rc1-49.el10.src` | `59879fd9dd01a4ba5b650c6c3358dd7a4c1a75c67da8b0892e18e2861b2ac87e` |
+| admiral-flagship | `admiral-flagship-0.0.1rc1-82.el10.src` | `b1e2bd47a60ce6d43d050b1945ceccbfe75a29ada47634ac5ca683a17474eb49` |
+| admiral-harbor | `admiral-harbor-0.0.1rc1-50.el10.src` | `ff821cf02bdec97491047f992795e148e890c1dc34b26e8a3dbde72a93e42665` |
+
+The first four packages built through the normal `make rpm-admiral-no-test`
+target. The two Python packages required `--nodeps` because the CentOS Stream
+10 host's enabled repositories did not provide `python3-pytest`; this is a
+build-environment limitation and must be resolved before treating the RC1
+artifacts as fully reproducible in a clean COPR EL10 chroot.
