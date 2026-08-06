@@ -506,3 +506,10 @@ requests for `admiral-fleet-0.0.1beta21-57.el10.x86_64.rpm` and
 published Fleet build visible in the project history remains beta21-56.
 Therefore no COPR-57 runtime result is claimed, and the distribution gate
 remains **BLOCKED** pending publication and exact-artifact verification.
+
+### Repeated external-state audit — 2026-08-06
+
+A subsequent audit found no external-state change: both exact COPR URLs still
+return HTTP 404 and the open issue set remains #68, #69, #70, and #75. The
+three-node lab remains available, but the required distribution-channel test
+cannot be truthfully executed until the exact packages are published.
