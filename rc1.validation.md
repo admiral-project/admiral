@@ -1207,3 +1207,198 @@ admin/worker/portal, repositorios EPEL/CRB/COPR antes de instalar, identidad
 SSH posterior al bootstrap, WireGuard, salud de nodos y ciclo WordPress.
 Rocky incluye además el gate explícito de restore DB/volumen con marcadores;
 Alma y CentOS cubren el mismo ciclo de operación y actualización de imagen.
+
+### 19. Validación del último release publicado en COPR — ejecución nueva
+
+Estado actualizado al `2026-08-07T11:59:27Z`: `IN PROGRESS`. Esta sección corresponde a
+una ejecución independiente de la matriz y no reutiliza los resultados de las
+secciones anteriores como evidencia de instalación. El objetivo de este gate
+es validar únicamente los RPM que COPR está compilando ahora, en máquinas
+virtuales frescas, y conservar tanto los resultados positivos como los fallos
+de infraestructura o empaquetado.
+
+#### 19.1 Fuente del release y regla de selección
+
+Se consultó la API pública de COPR para
+`admiral-project/admiral`. La página HTML está protegida por Anubis, por lo
+que la API JSON es la fuente operativa utilizada para observar los builds. La
+nueva tanda visible en COPR es:
+
+| Build COPR | Paquete | Versión | Estado inicial |
+|---:|---|---|---|
+| `10835523` | `admiral-common` | `0.0.1rc1-124` | `succeeded` |
+| `10835524` | `admiral-flagship` | `0.0.1rc1-84` | `succeeded` |
+| `10835525` | `admiral-fleet` | `0.0.1rc1-61` | `succeeded` |
+| `10835526` | `admiral-harbor` | `0.0.1rc1-52` | `succeeded` |
+| `10835527` | `admiralctl` | `0.0.1rc1-51` | `succeeded` |
+| `10835528` | `admirald` | `0.0.1rc1-53` | `succeeded` |
+
+Los seis builds fueron enviados al mismo tiempo (`submitted_on` equivalente
+en la API). En la reconsulta final de `2026-08-07T11:59:27Z`, los seis
+terminaron con `succeeded` y ya tienen `ended_on`. Los builds anteriores
+`10827914`–`10827919` son versiones antiguas ya exitosas y quedan excluidos de
+esta ejecución. No se usará ningún RPM anterior como sustituto si uno de los
+seis builds nuevos falla o todavía no aparece en metadata DNF.
+
+#### 19.2 Preparación del laboratorio fresco
+
+Las VMs de la ejecución anterior permanecen separadas de esta matriz. Las
+máquinas `rc1-rocky-*`, `rc1-alma-*` y `rc1-centos-*` existentes no se tomarán
+como guests de prueba para este release. Se crearán overlays nuevos sobre las
+imágenes base verificadas:
+
+```text
+/var/lib/libvirt/rc1/images/rocky.qcow2
+/var/lib/libvirt/rc1/images/alma.qcow2
+/var/lib/libvirt/rc1/images/centos.qcow2
+```
+
+Cada overlay tendrá usuario cloud-init nuevo del harness, 2 vCPU, memoria
+registrada por guest y estado limpio de paquetes/configuración Admiral. Antes
+de instalar se documentarán `os-release`, SELinux, estado de firewalld,
+paquetes Admiral ausentes y la dirección DHCP obtenida.
+
+#### 19.3 Gate obligatorio de disponibilidad DNF
+
+La validación funcional no comenzará hasta que cada VM fresca confirme, con
+los repositorios habilitados antes del install, que los seis NEVRA están
+disponibles desde COPR:
+
+```bash
+sudo dnf makecache --refresh
+sudo dnf repoquery --available --qf '%{name}-%{epoch}:%{version}-%{release}.%{arch}' \
+  admiral-common admirald admiral-fleet admiralctl admiral-flagship admiral-harbor
+```
+
+El resultado esperado es exactamente `124/53/61/51/84/52` para los seis
+paquetes, con arquitectura `noarch` para `common`, `flagship` y `harbor`, y
+`x86_64` para `admirald`, `fleet` y `admiralctl`. También se conservará la
+salida de `dnf repolist` demostrando EPEL, CRB, Caddy COPR y Admiral COPR
+habilitados antes de resolver dependencias.
+
+Si DNF todavía devuelve los builds anteriores o no devuelve un paquete, el
+resultado del gate será `WAITING_FOR_COPR`, no `PASS`; se registrará el
+timestamp de cada reconsulta y no se avanzará con una mezcla de releases.
+
+#### 19.4 Gates funcionales previstos
+
+Para cada OS se ejecutará, en VM fresca, el instalador empaquetado y se
+registrarán los recaps completos:
+
+1. `--single-node`, incluyendo repositorios, Ansible, servicios de seguridad,
+   SELinux, listeners, Podman rootless, WordPress, HTTP, backups con checksum,
+   pause/resume, actualización de imagen y deprovision/cleanup.
+2. Topología separada `--admin-node` + `--worker-node` + `--portal-node`, con
+   fingerprints SSH, revocación de bootstrap, peers/handshakes WireGuard,
+   registro y health de ambos spokes, Harbor, WordPress publicado por la IP
+   WireGuard del worker y el mismo lifecycle completo.
+3. Cada operación se anotará con su `operation_id`, `task_id`, estado final,
+   timestamps, checksum y salida HTTP observada. Los fallos de memoria del
+   harness se registrarán por separado de los errores funcionales y se repetirá
+   el gate con capacidad suficiente.
+
+#### 19.5 Confirmación DNF del conjunto nuevo
+
+Se crearon tres overlays nuevos y se obtuvieron sus direcciones mediante
+`guest-network-get-interfaces` del agente QEMU. Las leases DHCP históricas
+(`.112`, `.252` y `.139`) fueron descartadas: no se usaron para conectarse ni
+como evidencia.
+
+| OS | VM fresca | IP usada | Resultado previo | Repos habilitados antes de resolver |
+|---|---|---:|---|---|
+| Rocky Linux 10.2 | `rc2-rocky-single` | `192.168.122.155` | no había paquetes Admiral instalados | Admiral COPR, Caddy COPR, CRB, EPEL |
+| AlmaLinux 10.2 | `rc2-alma-single` | `192.168.122.42` | no había paquetes Admiral instalados | Admiral COPR, Caddy COPR, CRB, EPEL |
+| CentOS Stream 10 | `rc2-centos-single` | `192.168.122.182` | no había paquetes Admiral instalados | Admiral COPR, Caddy COPR, CRB, EPEL |
+
+La preparación del host también quedó registrada: se creó y activó
+`/var/swapfile` de 4 GiB, se añadió a `/etc/fstab`, y se apagaron todas las
+VMs anteriores antes de encender estas VMs. Cada consulta ejecutó
+`dnf makecache --refresh` después de habilitar EPEL, CRB, Caddy COPR y Admiral
+COPR.
+
+La consulta exacta `dnf repoquery --available --latest-limit=1` confirmó el
+mismo conjunto completo en los tres sistemas:
+
+```text
+admiral-common   0.0.1rc1-124.el10.noarch
+admirald         0.0.1rc1-53.el10.x86_64
+admiral-fleet    0.0.1rc1-61.el10.x86_64
+admiralctl       0.0.1rc1-51.el10.x86_64
+admiral-flagship 0.0.1rc1-84.el10.noarch
+admiral-harbor   0.0.1rc1-52.el10.noarch
+```
+
+Este bloque apareció para Rocky, Alma y CentOS sin diferencias de NEVRA. Por
+tanto, el gate de publicación DNF pasa para los tres OS (`DNF PASS`). Este
+resultado sólo demuestra disponibilidad del conjunto nuevo; todavía no
+demuestra instalación funcional ni sustituye la matriz one-shot pendiente.
+
+#### 19.6 Estado actual
+
+`COPR BUILD PASS` y `DNF PASS` para las tres VMs frescas. El siguiente paso
+obligatorio es instalar y validar `--single-node` en estas mismas VMs, sin
+reutilizar ningún resultado de las secciones anteriores. Después se destruirán
+los overlays de single-node y se crearán topologías multinodo nuevas por OS.
+
+#### 19.7 Instalación fresh y requisito de operación de `admiralctl`
+
+La instalación del paquete nuevo se ejecutó con el binario empaquetado
+`/usr/bin/admiral-install`, no con el script del árbol fuente. En cada VM se
+confirmaron antes de lanzar el rol las seis versiones `rc1` de esta tanda.
+
+| OS | Recap | Resultado del instalador | Podman | Verificación inmediata |
+|---|---|---|---|---|
+| Rocky Linux 10.2 | `ok=222 changed=100 unreachable=0 failed=0 skipped=125` | completado | 5.8.2 | `harbor_ping` autenticado exitoso; worker pasó de `registered/unhealthy` durante el primer health check a `active/healthy/true` en la reconsulta |
+| AlmaLinux 10.2 | `ok=222 changed=100 unreachable=0 failed=0 skipped=125` | completado | 5.8.2 | `harbor_ping` autenticado exitoso; worker y portal `active/healthy/true` |
+| CentOS Stream 10 | `ok=221 changed=100 unreachable=0 failed=0 skipped=126` | completado | 6.0.2 | `harbor_ping` autenticado exitoso; worker y portal `active/healthy/true` |
+
+Los ocho servicios de cada VM (`admirald`, `admiral-fleet`,
+`admiral-harbor`, `admiral-flagship`, `caddy`, `postgresql`, `firewalld` y
+`fail2ban`) quedaron `active`. Las seis NEVRA instaladas fueron exactamente:
+
+```text
+admiral-common-0.0.1rc1-124.el10.noarch
+admiralctl-0.0.1rc1-51.el10.x86_64
+admirald-0.0.1rc1-53.el10.x86_64
+admiral-flagship-0.0.1rc1-84.el10.noarch
+admiral-fleet-0.0.1rc1-61.el10.x86_64
+admiral-harbor-0.0.1rc1-52.el10.noarch
+```
+
+La prueba operativa demostró una condición importante del setup: ejecutar
+`admiralctl` como el usuario operador sin configuración adicional falla con
+`no authentication token configured`, y usar directamente
+`/etc/admiral/tls/ca.pem` falla por permisos. No se relajaron los permisos de
+los secretos. La forma válida posterior al setup fue preparar el entorno del
+usuario con `ADMIRAL_ADMIN_TOKEN` leído por una operación privilegiada y una
+copia temporal, legible y no secreta de la CA; por ejemplo, la CA temporal se
+copió a `/tmp/rc2-ca.pem` con propietario `admiraltest`, mientras
+`/etc/admiral/secrets` permaneció protegido.
+
+Con esa configuración, AlmaLinux ejecutó realmente el flujo completo:
+
+- `admiralctl apps validate -f /tmp/wordpress.yaml`: `YAML Validation: PASSED`.
+- `admiralctl apps apply`: aplicación `wp` aplicada.
+- provision: `op_77b36a456d3b2ff3`, task `task_ccabfd8565c0f4e2`, instancia
+  `inst_15f5e12f1222e9a1`, `succeeded`.
+- inspect: operación `op_29c5cbd538435156` encolada; la instancia terminó
+  `commercial=active`, `technical=running`, `storage=ok`.
+- HTTP real de WordPress: `301` en `127.0.0.1:40000`.
+- backup de base de datos: `op_da1131e4cea9a012`, task
+  `task_7929516a8ddf0cbd`, `succeeded`.
+- backup de volumen: `op_f43891463d5a942a`, task `task_b1c82459426caf11`,
+  `succeeded`.
+- pause: `op_dff846ee6e7ad78b`, `succeeded`; HTTP inmediato `000`.
+- resume: `op_2498b083a44c59fc`, `succeeded`; tras 15 segundos HTTP `301` y
+  la instancia volvió a `active/running/storage=ok`.
+- deprovision: `op_d78536975ceb5d76`, task `task_1bcf5935208b633a`,
+  `succeeded`; estado final `cancelled/deprovisioned`, sin contenedores de la
+  instancia.
+
+En este punto el usuario ordenó detener la ejecución. Se cancelaron las
+sesiones de provisionamiento que se habían iniciado en Rocky y CentOS después
+de completar la instalación; no se declara lifecycle `PASS` para esos dos OS
+en esta sección. La matriz multinodo fresh tampoco se inició. Por tanto, el
+estado global de esta ejecución queda `PARTIAL / STOPPED`: COPR, DNF,
+instalación one-shot y operación post-setup de `admiralctl` están demostrados;
+faltan el lifecycle WordPress de Rocky/CentOS y la matriz multinodo fresh.
