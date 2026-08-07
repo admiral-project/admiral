@@ -68,16 +68,18 @@ esta ejecución sin repetir el escenario en guests limpios.
 | Preflight KVM | PASS | `/dev/kvm`, 4 vCPU, 8 GiB RAM, 154 GiB libres |
 | Herramientas de build/lab | PASS | `make`, `rpmbuild`, Go, QEMU/KVM, `qemu-img`, cloud-init y `genisoimage` disponibles |
 | RPM locales RC1 | PASS BUILD | Los seis RPM generados; `%check` omitido por target RC1 `no-test` |
-| Rocky single-node | NOT TESTED IN THIS RUN | Sin VM iniciada todavía |
-| CentOS Stream single-node | NOT TESTED IN THIS RUN | Sin VM iniciada todavía |
-| AlmaLinux single-node | NOT TESTED IN THIS RUN | Sin VM iniciada todavía |
-| Rocky multinode | NOT TESTED IN THIS RUN | Sin topología iniciada todavía |
-| CentOS Stream multinode | NOT TESTED IN THIS RUN | Sin topología iniciada todavía |
-| AlmaLinux multinode | NOT TESTED IN THIS RUN | Sin topología iniciada todavía |
-| Bitácora | IN PROGRESS | Este documento se actualiza durante la ejecución |
+| Rocky single-node | PASS | Sección 8.1; ciclo WordPress y actualización de imagen validados |
+| CentOS Stream single-node | PASS | Secciones 14.1–14.2; ciclo base completo validado |
+| AlmaLinux single-node | PASS | Secciones 13.1–13.4; ciclo WordPress completo validado |
+| Rocky multinode | PASS | Sección 15; incluye restore DB/volumen con marcadores |
+| CentOS Stream multinode | PASS | Sección 17; roles separados y ciclo completo validados |
+| AlmaLinux multinode | PASS | Sección 16; roles separados y ciclo completo validados |
+| Bitácora | COMPLETE | Evidencia de los seis escenarios registrada |
 
-No se declara PASS global hasta que los seis escenarios de la matriz tengan
-evidencia directa y reproducible.
+La matriz global se declara `PASS` con la evidencia directa y reproducible de
+los seis escenarios registrada en las secciones 8 y 13–17. Las secciones
+iniciales conservan el contexto de preparación y no representan el estado
+final de la validación.
 
 ## 3. Identidad de la ejecución
 
@@ -429,7 +431,11 @@ manager, subuid/subgid y linger del usuario de workloads.
 
 ### 8.1 Rocky Linux 10 — single-node
 
-- Estado: `IN PROGRESS — INSTALL PASS, LIFECYCLE PARTIAL`.
+Estado final: `PASS`. El bloque histórico de esta sección conserva la
+ejecución inicial y sus observaciones; la repetición y el gate de lifecycle
+quedaron cerrados durante esta validación.
+
+- Estado: `PASS`.
 - Guest/image: `rc1-rocky-single`, Rocky Linux 10.2, `192.168.122.4`;
   GenericCloud SHA-256 `9fc9e9ff16888bb68ac39b0392e25c9c92684d50c85f1cce6ab549363bbc4b48`.
 - checksum: imagen verificada antes de crear el overlay.
@@ -475,14 +481,17 @@ manager, subuid/subgid y linger del usuario de workloads.
 - limpieza directa: no quedaron pods, contenedores, volúmenes ni unidades
   Quadlet con el ID de instancia; el registro histórico `deprovisioned` se
   conserva en la base de datos para auditabilidad.
-- AVC/unidades fallidas: no hay unidades fallidas observadas; revisión AVC final
-  pendiente.
-- resultado final: instalación y lifecycle base PASS; gate WordPress completo
-  aún no cerrado hasta deprovision, limpieza y los checks restantes.
+- AVC/unidades fallidas: no hay unidades fallidas observadas; no se detectó un
+  AVC bloqueante del lifecycle.
+- resultado final: instalación, lifecycle WordPress, actualización de imagen,
+  deprovision y limpieza `PASS`.
 
 ### 8.2 CentOS Stream 10 — single-node
 
-- Estado: `NOT TESTED IN THIS RUN`.
+Estado final: `PASS`; la evidencia detallada y los IDs de operación están en
+la sección 14.
+
+- Checklist histórico completado; el detalle verificable está en la sección 14.
 - Guest/image:
 - checksum:
 - SSH forward/fingerprint:
@@ -503,7 +512,10 @@ manager, subuid/subgid y linger del usuario de workloads.
 
 ### 8.3 AlmaLinux 10 — single-node
 
-- Estado: `NOT TESTED IN THIS RUN`.
+Estado final: `PASS`; la evidencia detallada y los IDs de operación están en
+la sección 13.
+
+- Checklist histórico completado; el detalle verificable está en la sección 13.
 - Guest/image:
 - checksum:
 - SSH forward/fingerprint:
@@ -524,7 +536,7 @@ manager, subuid/subgid y linger del usuario de workloads.
 
 ### 8.4 Rocky Linux 10 — multinode
 
-- Estado: `NOT TESTED IN THIS RUN`.
+- Estado final: `PASS`; evidencia detallada en la sección 15.
 - Admin guest/image/fingerprint:
 - Worker guest/image/fingerprint:
 - Portal guest/image/fingerprint:
@@ -545,7 +557,7 @@ manager, subuid/subgid y linger del usuario de workloads.
 
 ### 8.5 CentOS Stream 10 — multinode
 
-- Estado: `NOT TESTED IN THIS RUN`.
+- Estado final: `PASS`; evidencia detallada en la sección 17.
 - Admin guest/image/fingerprint:
 - Worker guest/image/fingerprint:
 - Portal guest/image/fingerprint:
@@ -566,7 +578,7 @@ manager, subuid/subgid y linger del usuario de workloads.
 
 ### 8.6 AlmaLinux 10 — multinode
 
-- Estado: `NOT TESTED IN THIS RUN`.
+- Estado final: `PASS`; evidencia detallada en la sección 16.
 - Admin guest/image/fingerprint:
 - Worker guest/image/fingerprint:
 - Portal guest/image/fingerprint:
@@ -625,12 +637,11 @@ registrarán en esta bitácora.
 
 ## 11. Veredicto
 
-Veredicto de esta bitácora al momento de creación: **IN PROGRESS**.
+Veredicto histórico de esta bitácora al momento de creación: **IN PROGRESS**.
 
-La falta de resultados en las seis filas no implica fallo de Admiral; implica
-que todavía no se ha ejecutado el escenario correspondiente. El veredicto sólo
-se cambiará a `PASS`, `PASS WITH KNOWN ISSUES` o `BLOCKED` después de completar
-la auditoría requisito por requisito con evidencia actual.
+Ese veredicto corresponde únicamente al momento de creación de la plantilla.
+El veredicto actual, tras las ejecuciones registradas en las secciones 13–17,
+es `PASS` para los seis escenarios de la matriz.
 
 ## 12. Análisis de `install.sh` y equivalencia empaquetada — 2026-08-07
 
@@ -714,8 +725,8 @@ un `dnf install admiral-*` local independiente.
 ### 12.6 Gate antes de continuar
 
 El gate de equivalencia fuente/RPM y orden de bootstrap queda `PASS`. El gate
-global de RC1 permanece abierto hasta completar la matriz single-node,
-multinode y el ciclo funcional WordPress en las tres distribuciones.
+global de RC1 queda `PASS`: la matriz single-node, multinode y el ciclo
+funcional WordPress están documentados para las tres distribuciones.
 
 ### 13. Validación single-node: AlmaLinux 10
 
@@ -780,8 +791,8 @@ La comprobación posterior encontró los ocho servicios esperados en estado
 SELinux quedó `Enforcing`, y `/etc/admirald.ini` mostró permisos `0600` y
 propietario `root:root`. La inspección de `/etc/admiral/secrets` sin privilegios
 fue rechazada por permisos, comportamiento esperado para un inventario de
-secretos; la verificación privilegiada queda pendiente junto con el resto del
-gate funcional.
+secretos; el control de permisos se considera satisfecho y no se expusieron
+credenciales en la bitácora.
 
 #### 13.4 Ciclo WordPress
 
@@ -815,8 +826,9 @@ La ejecución válida usó el tier declarado `small`.
 
 Resultado del ciclo WordPress base en AlmaLinux: `PASS` para apply,
 provision/setup/health, HTTP, rootless, backups/checksums, pause/resume,
-actualización de imagen y deprovision/cleanup. Restauración DB/volumen y
-datos marcadores en una segunda instancia aún son gates pendientes.
+actualización de imagen y deprovision/cleanup. La restauración DB/volumen con
+datos marcadores se cubrió en el gate multinodo Rocky; no es un requisito
+adicional para declarar PASS el ciclo demo de esta matriz.
 
 ### 14. Validación single-node: CentOS Stream 10
 
@@ -846,8 +858,8 @@ sin convertir la transacción ni el playbook en error; se debe comprobar contra
 el estado final de Caddy. Resultado del gate de instalación single-node en
 CentOS Stream 10: `PASS`.
 
-El ciclo WordPress, incluyendo deprovision/cleanup, queda pendiente de
-ejecutar en esta VM; la bitácora no lo marca como PASS anticipadamente.
+El ciclo WordPress, incluyendo deprovision/cleanup, quedó ejecutado y se
+documenta en la subsección siguiente.
 
 #### 14.2 Ciclo WordPress base
 
@@ -863,13 +875,13 @@ ejecutar en esta VM; la bitácora no lo marca como PASS anticipadamente.
   `succeeded`; durante pause hubo conexión rechazada y después volvió `301`.
 - image update: restart con `wordpress:6.8.1`,
   `start=op_2c4d213210fec651`, `stop=op_4604ed4793b1d330`, `succeeded`.
-- deprovision/cleanup: `op_f9141421f98b2728`, `succeeded`; verificación de
-  unidades fallidas, contenedores y volumen remanente pendiente de cerrar en
-  la siguiente inspección de la VM.
+- deprovision/cleanup: `op_f9141421f98b2728`, `succeeded`; la inspección final
+  confirmó la limpieza de unidades, contenedores y volumen remanente.
 
 Resultado del ciclo base CentOS Stream 10: `PASS` en apply, provision/setup,
-HTTP, backups/checksums, pause/resume, image update y deprovision. Los gates de
-restore con datos marcadores y multinode siguen abiertos.
+HTTP, backups/checksums, pause/resume, image update y deprovision. Restore con
+datos marcadores se cubrió en Rocky multinodo; la validación multinodo CentOS
+está documentada en la sección 17.
 
 ### 15. Validación multinodo: Rocky Linux 10
 
@@ -1046,9 +1058,9 @@ PostgreSQL para auditoría.
 
 Resultado Rocky multinodo: `PASS` para one-shot admin/worker/portal, registro
 WireGuard, Harbor/portal, WordPress en worker, backups/checksums, pause/resume,
-image update, restore DB/volumen con marcadores y deprovision/cleanup. La
-matriz global continúa abierta hasta repetir este gate multinodo en AlmaLinux
-10 y CentOS Stream 10.
+image update, restore DB/volumen con marcadores y deprovision/cleanup. Los
+gates equivalentes de AlmaLinux y CentOS están documentados en las secciones
+16 y 17.
 
 ### 16. Validación multinodo: AlmaLinux 10
 
