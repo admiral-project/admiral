@@ -1,9 +1,9 @@
 %global debug_package %{nil}
-%global commit 2dd173a472f588466f4fbdf307575e32df739215
+%global commit 9f29ec8ab30192d0616f9b68c22bce59b0e3ed04
 
 Name:    admiral-harbor
 Version: 0.0.1rc1
-Release: 51%{?dist}
+Release: 52%{?dist}
 Summary: Admiral Customer Portal - Web UI for end users
 
 License: Apache-2.0
@@ -131,7 +131,7 @@ restorecon -R %{_localstatedir}/lib/admiral/harbor 2>/dev/null || :
 %{python3} -m pytest tests/ -x --tb=short
 
 %changelog
-* Fri Aug 07 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc1-51
+* Fri Aug 07 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc1-52
 - Rebuild RC1 with resilient spoke SSH post-revocation validation
 
 * Wed Aug 05 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta21-45
