@@ -870,3 +870,182 @@ ejecutar en esta VM; la bitácora no lo marca como PASS anticipadamente.
 Resultado del ciclo base CentOS Stream 10: `PASS` en apply, provision/setup,
 HTTP, backups/checksums, pause/resume, image update y deprovision. Los gates de
 restore con datos marcadores y multinode siguen abiertos.
+
+### 15. Validación multinodo: Rocky Linux 10
+
+Fecha de ejecución: 2026-08-07 UTC. Esta es la primera topología multinodo
+completa de la matriz. Se usaron cuatro overlays Rocky Linux 10.2 para separar
+roles y repetir el bootstrap del rol portal en una VM limpia:
+
+| Rol | VM | IPv4 libvirt | IPv4 WireGuard | Identidad |
+|---|---|---:|---:|---|
+| admin | `rc1-rocky-admin` | `192.168.122.140` | `10.99.0.1` | control plane + Harbor + Flagship |
+| worker | `rc1-rocky-worker` | `192.168.122.141` | `10.99.0.2` | `rocky-worker-01` |
+| portal inicial | `rc1-rocky-portal` | `192.168.122.142` | `10.99.0.100` | `rocky-portal-01` |
+| portal limpio | `rc1-rocky-portal-fixed` | `192.168.122.143` | `10.99.0.101` | `rocky-portal-fixed` |
+
+El portal inicial se conserva como evidencia de la primera ejecución; el
+portal limpio se utilizó para repetir el one-shot después de corregir la
+carrera de SSH. La preparación offline del usuario `admiraltest` y del perfil
+DHCP NetworkManager pertenece al harness libvirt y no al instalador.
+
+#### 15.1 Bootstrap del admin y worker
+
+Antes de cualquier `dnf install admiral*` se verificó en cada guest el orden
+obligatorio del instalador: `epel-release`, `dnf-plugins-core`, CRB, Caddy COPR,
+Admiral COPR y luego una transacción única de los RPM Admiral. La versión
+empaquetada se ejecutó mediante `admiral-install`; la fuente equivalente se
+comparó previamente con el cuerpo extraído de `/usr/bin/admiral-install`.
+
+El admin terminó con exit code `0` y recap Ansible:
+
+```text
+ok=193 changed=97 unreachable=0 failed=0 skipped=153
+```
+
+`admirald`, PostgreSQL, Harbor, Harbor worker/timers, Flagship, Caddy,
+firewalld, auditd, fail2ban y `wg-quick@wg-admiral` quedaron activos. SELinux
+quedó `Enforcing`; `systemctl --failed --no-legend` no produjo unidades. El
+handshake WireGuard del worker apareció en el primer intento.
+
+El worker terminó con exit code `0` y recap:
+
+```text
+ok=145 changed=58 unreachable=0 failed=0 skipped=199
+```
+
+El nodo quedó registrado como `active/healthy/available=true`, con
+`admiral-fleet 0.0.1rc1`, Podman `5.8.2` y endpoint WireGuard `10.99.0.2`.
+La salida de `admiralctl nodes list --output json` confirmó que el worker no
+se registró por su IP libvirt sino por la identidad privada esperada.
+
+#### 15.2 Portal, carrera detectada y repetición limpia
+
+La primera ejecución del portal obtuvo:
+
+```text
+ok=190 changed=87 unreachable=0 failed=0 skipped=154
+WireGuard handshake: PASS
+Per-node SSH identity stopped working after bootstrap revocation.
+```
+
+La clasificación inicial fue `PRODUCT_DEFECT`: el one-shot verificaba una
+identidad que acababa de ser revocada sin tolerar la convergencia del canal
+SSH. Se añadió una espera activa de diez intentos de un segundo en
+`scripts/install.sh`, junto con una prueba del modo portal. La sintaxis Bash y
+las 51 pruebas del instalador pasaron.
+
+El portal limpio se ejecutó después con los RPM reconstruidos. Resultado:
+
+```text
+ok=190 changed=88 unreachable=0 failed=0 skipped=154
+Bootstrap SSH credential revoked; per-node admiral-ssh identity is now authoritative.
+Admiral installation completed.
+```
+
+El portal limpio mostró activos PostgreSQL, Harbor, sus timers, firewalld,
+auditd, fail2ban y WireGuard; SELinux quedó `Enforcing`, Harbor respondió a
+`harborctl ping` y `systemctl show -p Result admiral-harbor-catalog-sync.service`
+devolvió `Result=success`.
+
+Durante la primera ejecución, el reinicio del servicio Harbor terminó un
+catálogo en `SIGTERM`, pero dejó una auditoría `in_progress`. El siguiente
+timer falló repetidamente con `Sync already in progress`, aunque la red y el
+portal estaban sanos. Se clasificó como `PRODUCT_DEFECT` y se corrigió en
+`admiral-harbor/app/catalog_service.py`: una auditoría `in_progress` de más de
+cinco minutos se marca como abandonada antes de comenzar una sincronización
+nueva. La corrección tiene 13 pruebas de catálogo exitosas.
+
+La evidencia posterior al fix contiene:
+
+```text
+Marked abandoned catalog sync sync_2e95f42f17bd4f19 as failed
+Catalog sync completed: 0 new, 0 updated, 0 marked missing
+```
+
+#### 15.3 RPM utilizado en la repetición corregida
+
+Los seis paquetes se reconstruyeron juntos, incrementando `Release` en todos,
+y `python3 scripts/validate-release-refs.py` pasó. NEVRA y SHA-256 local:
+
+| Paquete | NEVRA | SHA-256 |
+|---|---|---|
+| common | `admiral-common-0.0.1rc1-124.el10.noarch` | `76503951434609294043abff7e8599b5a68d6edd1b17c9a5a38536705b82a89c` |
+| admirald | `admirald-0.0.1rc1-53.el10.x86_64` | `a70b1b5320d70fc4fabbf590c26b274fceb62a5a5109b33ef0a9ef8422e57ba9` |
+| fleet | `admiral-fleet-0.0.1rc1-61.el10.x86_64` | `0e7867d5ea82dfc00d89f0f6148a455ad1cac6bbf3179e63042e36c461ed76ed` |
+| admiralctl | `admiralctl-0.0.1rc1-51.el10.x86_64` | `e1dd055c4e07b8f157627464e6c5aa52d046c7ec12351a6503324721d8dd9258` |
+| flagship | `admiral-flagship-0.0.1rc1-84.el10.noarch` | `fefff097c5b3532159fea7121f2868c3c3f7afc82abc2cd8356a15d4e4952472` |
+| harbor | `admiral-harbor-0.0.1rc1-52.el10.noarch` | `f79e8a7e0283cbc917508020840326e2455bf59d4864bd53bbca74298e430571` |
+
+Los cambios quedaron firmados en `9f29ec8 fix(catalog): recover abandoned
+synchronization`, con el pin del superproyecto y la Release conjunta en los
+commits root `dec12bcf` y `e43b0ee`. El portal limpio recibió `admiral-common`
+y `admiral-harbor` desde este conjunto; el admin recibió el conjunto común y
+los binarios de control.
+
+#### 15.4 Ciclo WordPress en worker Rocky
+
+Se aplicó `examples/apps/wordpress.yaml` como `wp` y se seleccionó
+explícitamente `rocky-worker-01`; no se validó accidentalmente el loopback del
+admin. La operación y la inspección fueron:
+
+- provision/setup: `op_a4138de24f0eec78`, instancia
+  `inst_4d149ef5965fca11`, `succeeded`; `setup_completed=true`,
+  `technical_status=running`, `health_status=healthy`.
+- inspect: cuatro contenedores rootless (infra, MariaDB, WordPress web y CLI
+  setup), cgroup `user.slice`/systemd, almacenamiento bajo
+  `/var/lib/admiral-apps/.local/share/containers/storage` y publicación
+  `10.99.0.2:40000`.
+- HTTP: `curl http://10.99.0.2:40000/` devolvió `301`.
+- backup DB: operación `op_9cc3cf95471ceff9`, backup
+  `bk_a86c23f2183e6d6f`, SHA-256
+  `54f6658a5f4979e49f726a69893f4da4e8aebcd7baea568802483bf85d5f4765`.
+- backup volumen: operación `op_222c90666dad3a2b`, backup
+  `bk_83dc1551abb3cc62`, SHA-256
+  `9130a714ce035db0102976fb89382cdce6bd625430e9c71a4b2919c23cbd489f`.
+- pause/resume: `op_cf95352c17ec8b32` y `op_72b252f2f86f963c`, ambos
+  `succeeded`; el endpoint dio `000` durante pause y `301` después de resume.
+- image update: se aplicó temporalmente `wordpress:6.8.1`; stop
+  `op_7d1a12cf169d0597` y start `op_3ef4735e8b928bcf` fueron `succeeded`.
+  Una inspección nueva confirmó `ImageName=wordpress:6.8.1`, digest
+  `sha256:9ca181730570f82df91e301d2e53efc0ce2f98aa8112d2f95ef780bd341ffd12`,
+  HTTP `301` y `need_restarting=false`.
+
+#### 15.5 Restore con datos marcadores y limpieza
+
+Para respetar el gate de restore se aplicó una definición temporal
+`wp-restore` con `restore_allowed=true`. En la instancia fuente se creó el
+archivo `rc1-rocky-marker.txt` con valor `rc1-rocky-volume-marker` y una tabla
+MariaDB `rc1_validation_marker` con valor `rc1-rocky-db-marker`. Los backups
+fuente adicionales fueron `bk_43526ae7688a8bfc` (DB, SHA-256
+`915e7f64bbd0db6fb4366c1bc3a055567b1906fcf896e2036814a9ba3cc7524b`) y
+`bk_ec5f2d824ff1999b` (volumen, SHA-256
+`1f8fda868d15b027b614ade33c136f5763316d283ad6c47ffabcb4d893991a34`).
+
+La instancia destino fue `inst_fc0614cc0251cf90` (`wp-restore`, nodo
+`rocky-worker-01`). Provision `op_2a9c825bf76cf21f` y pause
+`op_b5163d972f789cbb` fueron exitosos. El restore DB `op_a5a6ce6f88385365`
+y restore volumen `op_f3dbe6d164da1466` terminaron `succeeded` con verificación
+de checksum. El producto exige que la instancia esté pausada antes de cada
+restore; por eso se volvió a pausar con `op_a2d5561620c0d96e` entre DB y
+volumen. Resume `op_43b981aa593666ea` fue exitoso.
+
+La comprobación directa dentro de los contenedores restaurados produjo,
+concatenados sin separador por el comando de shell:
+
+```text
+rc1-rocky-volume-marker
+rc1-rocky-db-marker
+```
+
+El ciclo terminó con deprovision exitoso de fuente y destino:
+`op_ed48bab4135b48d0` y `op_e5049ede1297d470`. Ambas filas quedaron
+`technical_status=deprovisioned`, `commercial_status=cancelled`; no quedaron
+contenedores ni volúmenes runtime con esos IDs y el historial permaneció en
+PostgreSQL para auditoría.
+
+Resultado Rocky multinodo: `PASS` para one-shot admin/worker/portal, registro
+WireGuard, Harbor/portal, WordPress en worker, backups/checksums, pause/resume,
+image update, restore DB/volumen con marcadores y deprovision/cleanup. La
+matriz global continúa abierta hasta repetir este gate multinodo en AlmaLinux
+10 y CentOS Stream 10.
