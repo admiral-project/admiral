@@ -1849,3 +1849,33 @@ instalación one-shot de los tres roles, registro, WireGuard, health, Harbor,
 workload rootless, HTTP, backups con checksum, pause/resume y deprovision.
 Resultado de la matriz RC1: **`PASS` en Rocky Linux 10.2, AlmaLinux 10.2 y
 CentOS Stream 10**. Registro de cierre: `2026-08-07T15:40:10Z` UTC.
+
+#### 19.14 Auditoría post-cierre: última publicación COPR
+
+Se volvió a consultar el repositorio publicado después del cierre de la
+matriz para evitar que `PASS` dependiera de una versión anterior. La página
+web de COPR puede presentar protección Anubis, por lo que la comprobación
+autoritativa se hizo contra los metadatos `repodata/repomd.xml` y `primary.xml`
+de los repositorios publicados.
+
+El último conjunto `0.0.1rc1` disponible para EL10 fue el siguiente, tanto en
+`epel-10-x86_64` como en `epel-10-aarch64`:
+
+```text
+admiral-common   0.0.1rc1-124.el10.noarch
+admiralctl       0.0.1rc1-51.el10.{x86_64,aarch64}
+admirald         0.0.1rc1-53.el10.{x86_64,aarch64}
+admiral-fleet    0.0.1rc1-61.el10.{x86_64,aarch64}
+admiral-flagship 0.0.1rc1-84.el10.noarch
+admiral-harbor   0.0.1rc1-52.el10.noarch
+```
+
+Los metadatos comprobados tuvieron revisión `1786103451` para x86_64 y
+`1786103424` para aarch64. No apareció ninguna Release posterior para los
+seis paquetes. Por tanto, las ejecuciones fresh de Rocky, AlmaLinux y CentOS
+usaron la última publicación efectiva de COPR, y no es necesario repetir la
+matriz ni modificar la bitácora de resultados por una deriva de paquetes.
+
+Resultado de esta auditoría: **`PASS` — COPR permanece alineado con el
+conjunto validado y no hubo cambios de código, playbooks ni de `admiralctl`**.
+Registro: `2026-08-07T15:53:16Z` UTC.
