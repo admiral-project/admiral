@@ -1402,3 +1402,450 @@ en esta sección. La matriz multinodo fresh tampoco se inició. Por tanto, el
 estado global de esta ejecución queda `PARTIAL / STOPPED`: COPR, DNF,
 instalación one-shot y operación post-setup de `admiralctl` están demostrados;
 faltan el lifecycle WordPress de Rocky/CentOS y la matriz multinodo fresh.
+
+#### 19.8 Nueva generación `rc3`: instalación one-shot del release RC1 publicado
+
+Esta subsección reemplaza como evidencia operativa vigente a las referencias
+anteriores a `rc2-*`. Las VMs `rc2-*` fueron apagadas y destruidas antes de
+crear esta generación. No se reutilizó su disco, configuración, secreto,
+token, CA ni estado de PostgreSQL. Cada VM `rc3-*` se creó como overlay nuevo
+desde la imagen base correspondiente y se conectó exclusivamente usando la
+lease DHCP observada para esa instancia:
+
+| OS | VM fresca | Imagen base | IP observada y usada | Estado inicial |
+|---|---|---|---:|---|
+| Rocky Linux 10.2 | `rc3-rocky-single` | `rocky.qcow2` | `192.168.122.193` | sin Admiral instalado |
+| AlmaLinux 10.2 | `rc3-alma-single` | `alma.qcow2` | `192.168.122.196` | sin Admiral instalado |
+| CentOS Stream 10 | `rc3-centos-single` | `centos.qcow2` | `192.168.122.114` | sin Admiral instalado |
+
+La preparación del host siguió vigente durante esta repetición: swap de 4 GiB
+en `/var/swapfile`, activada y persistida en `/etc/fstab`. Se ejecutó un OS a
+la vez cuando la transacción RPM o el playbook podía consumir memoria. No se
+tomó ningún pass o secreto de una corrida previa.
+
+##### 19.8.1 Gate de repositorios y disponibilidad DNF
+
+Antes de instalar `admiral*`, cada VM ejecutó explícitamente:
+
+```bash
+sudo dnf install epel-release dnf-plugins-core
+sudo crb enable
+sudo dnf copr enable @caddy/caddy
+sudo dnf copr enable admiral-project/admiral
+sudo dnf makecache --refresh
+```
+
+Se verificó que EPEL, CRB, Caddy COPR y Admiral COPR estuvieran habilitados
+antes de resolver los seis paquetes. La consulta final fue equivalente a:
+
+```bash
+sudo dnf repoquery --available --latest-limit=1 \
+  --qf '%{name} %{version}-%{release}.%{arch}' \
+  admiral-common admiralctl admirald admiral-flagship admiral-fleet admiral-harbor
+```
+
+Las tres VMs devolvieron exactamente el mismo conjunto, sin paquetes fuente
+mezclados ni versiones de builds anteriores:
+
+```text
+admiral-common   0.0.1rc1-124.el10.noarch
+admiralctl       0.0.1rc1-51.el10.x86_64
+admirald         0.0.1rc1-53.el10.x86_64
+admiral-flagship 0.0.1rc1-84.el10.noarch
+admiral-fleet    0.0.1rc1-61.el10.x86_64
+admiral-harbor   0.0.1rc1-52.el10.noarch
+```
+
+Resultado del gate: `PASS` en Rocky, Alma y CentOS. Esta es disponibilidad
+del release RC1 que está publicado en COPR; no implica que el bump local de
+spec (`125/54/62/52/85/53`) esté publicado. Ese bump quedó únicamente en el
+commit local `a57e6f5` y no se subió ni generó un RC nuevo.
+
+##### 19.8.2 Comando de instalación y criterio de one-shot
+
+En cada VM se ejecutó el mismo flujo, con la IP pública de esa VM:
+
+```bash
+sudo dnf -y install admiral-common admiralctl admirald admiral-fleet \
+  admiral-flagship admiral-harbor
+sudo /usr/bin/admiral-install --single-node \
+  --public-ip <IP_DE_LA_VM> \
+  --ssh-public-key /home/admiraltest/.ssh/authorized_keys
+```
+
+El instalador empaquetado habilitó/verificó nuevamente EPEL, CRB, Caddy COPR
+y Admiral COPR antes de instalar su baseline. En los tres casos terminó con
+`Admiral installation completed`, ejecutó la autenticación contra
+`/api/v1/harbor_ping` y no requirió introducir manualmente un pass, token o
+secreto de corridas anteriores.
+
+| OS | `PLAY RECAP` exacto | `harbor_ping` | Podman | Resultado |
+|---|---|---|---|---|
+| Rocky Linux 10.2 (`192.168.122.193`) | `ok=222 changed=100 unreachable=0 failed=0 skipped=125 rescued=0 ignored=0` | exitoso (`0.015s`) | `5.8.2` | `PASS` |
+| AlmaLinux 10.2 (`192.168.122.196`) | `ok=222 changed=100 unreachable=0 failed=0 skipped=125 rescued=0 ignored=0` | exitoso; tiempo no conservado en la salida resumida | `5.8.2` | `PASS` |
+| CentOS Stream 10 (`192.168.122.114`) | `ok=221 changed=100 unreachable=0 failed=0 skipped=126 rescued=0 ignored=0` | exitoso (`0.010s`) | `6.0.2` | `PASS` |
+
+El contador diferente de CentOS es esperado en esta corrida: en CentOS se
+cargaron las reglas de auditd con `augenrules`, mientras que en Rocky/Alma
+las tareas equivalentes quedaron omitidas por la disponibilidad del loader.
+No hubo `failed`, `unreachable`, `rescued` ni `ignored` en ninguno de los
+recaps.
+
+##### 19.8.3 NEVRA instalada y servicios
+
+Después de cada instalación se verificó con `rpm -qa` que las seis entradas
+fueran las mismas que resolvió DNF. El inventario instalado fue:
+
+```text
+admiral-common-0.0.1rc1-124.el10.noarch
+admiralctl-0.0.1rc1-51.el10.x86_64
+admirald-0.0.1rc1-53.el10.x86_64
+admiral-flagship-0.0.1rc1-84.el10.noarch
+admiral-fleet-0.0.1rc1-61.el10.x86_64
+admiral-harbor-0.0.1rc1-52.el10.noarch
+```
+
+En Rocky, Alma y CentOS se consultó individualmente el estado de:
+`admirald`, `admiral-fleet`, `admiral-flagship`, `admiral-harbor`,
+`admiral-harbor-worker.timer`, `admiral-harbor-catalog-sync.timer`, `caddy`,
+`postgresql`, `firewalld` y `fail2ban`. Todos devolvieron `active`.
+
+Esto demuestra que el one-shot no sólo instaló los RPM: dejó activos el
+control plane, worker, portal, timers asíncronos de Harbor, reverse proxy,
+PostgreSQL y las capas de firewall/auditabilidad esperadas por el perfil.
+
+##### 19.8.4 `admiralctl` después de `setup`
+
+La verificación se hizo con la forma documentada y soportada:
+
+```bash
+sudo admiralctl nodes list
+```
+
+No se asumió que el usuario `admiraltest` pudiera leer secretos root ni se
+relajaron permisos de `/etc/admiral/secrets` o de la CA. El instalador
+desplegó su configuración en `/root/.config/admiralctl/config.yaml`; por eso
+la prueba post-setup válida en esta matriz es `sudo admiralctl`.
+
+En cada OS la primera consulta podía mostrar durante la convergencia:
+
+```text
+localhost-portal ... active healthy true
+localhost        ... registered unhealthy false
+```
+
+Ese estado no se clasificó inmediatamente como PASS. Se esperaron 20
+segundos y se repitió la consulta. En los tres casos el resultado final fue:
+
+```text
+localhost-portal   ... portal  active  healthy  true  10.99.0.1 <IP_DE_LA_VM>
+localhost           ... worker  active  healthy  true  10.99.0.1 <IP_DE_LA_VM>
+```
+
+Por VM, las IP públicas observadas en la salida final fueron `.193` para
+Rocky, `.196` para Alma y `.114` para CentOS. La transición
+`registered/unhealthy` a `active/healthy` se conserva como evidencia de
+convergencia del registro Fleet y no se oculta dentro del resultado final.
+
+##### 19.8.5 Estado de la matriz después de `rc3` single-node
+
+| Gate | Rocky | Alma | CentOS |
+|---|---|---|---|
+| VM fresca sin estado previo | PASS | PASS | PASS |
+| EPEL/CRB/Caddy COPR/Admiral COPR antes de DNF | PASS | PASS | PASS |
+| Seis NEVRA RC1 disponibles | PASS | PASS | PASS |
+| Instalación empaquetada one-shot | PASS | PASS | PASS |
+| Recap Ansible sin fallos | PASS | PASS | PASS |
+| `harbor_ping` | PASS | PASS | PASS |
+| Servicios requeridos activos | PASS | PASS | PASS |
+| `sudo admiralctl nodes list` convergente | PASS | PASS | PASS |
+| Lifecycle WordPress completo | pendiente | pendiente | pendiente |
+| Backup/checksum, pause/resume y deprovision | pendiente | pendiente | pendiente |
+| Topología multinodo fresh | pendiente | pendiente | pendiente |
+
+Registro de esta actualización: `2026-08-07T13:13:44Z` UTC. El estado de la
+matriz sigue siendo `PARTIAL`: la capa de instalación y el funcionamiento
+post-setup de `admiralctl` pasan en los tres OS, pero todavía no se declara
+validación completa del release hasta ejecutar, en VMs multinodo nuevas, el
+lifecycle funcional y todos sus controles de cleanup.
+
+#### 19.9 Rocky Linux `rc4`: topología multinodo fresh y lifecycle
+
+Para Rocky se apagaron los tres single-node `rc3` y se creó una topología
+completamente nueva desde `rocky.qcow2`. Las leases observadas fueron:
+
+| Rol | VM | IP pública | IP WireGuard | Fingerprint SSH verificado |
+|---|---|---:|---:|---|
+| admin | `rc4-rocky-admin` | `192.168.122.41` | `10.99.0.1` | `SHA256:IIfihR0oDPzDkjjaDS4TH1zR2mJF5+/c7PfHPIfidm4` |
+| worker | `rc4-rocky-worker` | `192.168.122.66` | `10.99.0.2` | `SHA256:bhjnddV+w72E4B5nxdiXK8GlviAlCrIZu4zxBl5tjvg` |
+| portal | `rc4-rocky-portal` | `192.168.122.123` | `10.99.0.100` | `SHA256:qqGFQ+0sr6NbDeDjocWcQJkAt4i9aGi2DFNXw/dSHrU` |
+
+El primer intento de bootstrap del worker sin `--ssh-user` fue rechazado
+antes de aplicar el rol, porque el instalador usa `root` por defecto y la VM
+fresh sólo tenía habilitado el usuario cloud `admiraltest`. El mensaje fue
+`Could not inspect the existing Admiral role ... Permission denied`; no se
+transfirieron secretos ni se declaró éxito. Se repitió explícitamente con
+`--ssh-user admiraltest`, el fingerprint volvió a coincidir y el flujo siguió
+correctamente. Este rechazo confirma que la verificación de usuario/host
+precede a los cambios remotos.
+
+##### 19.9.1 Instalación de roles
+
+El admin se preparó primero con EPEL, CRB, Caddy COPR y Admiral COPR, y se
+resolvieron los seis RPM RC1 publicados. Después se ejecutó:
+
+```bash
+sudo admiral-install --admin-node --public-ip 192.168.122.41 \
+  --ssh-public-key /home/admiraltest/.ssh/authorized_keys
+```
+
+Recap admin: `ok=193 changed=97 unreachable=0 failed=0 skipped=153 rescued=0
+ignored=0`. El admin generó el hub WireGuard, CA, secretos, PostgreSQL,
+`admirald`, `admiral-flagship`, Caddy, firewall y los artefactos SSH de
+entrega.
+
+Desde el admin se ejecutó el rol worker con `--node-id rc4-rocky-worker`,
+`--wireguard-ip 10.99.0.2`, `--admin-endpoint 192.168.122.41` y el fingerprint
+independientemente verificado. Recap worker:
+`ok=145 changed=58 unreachable=0 failed=0 skipped=199 rescued=0 ignored=0`.
+El instalador verificó el handshake de control plane, añadió el peer
+`10.99.0.2`, y revocó la credencial bootstrap dejando la identidad
+`admiral-ssh`.
+
+El portal se instaló con `--node-id rc4-rocky-portal`,
+`--wireguard-ip 10.99.0.100`, `--admin-endpoint 192.168.122.41` y su
+fingerprint verificado. Recap portal:
+`ok=190 changed=87 unreachable=0 failed=0 skipped=154 rescued=0 ignored=0`.
+Se firmó el certificado del portal en el admin, se registró Harbor, se
+actualizó la ruta pública del portal en `admirald`, se verificó el handshake
+`10.99.0.100` y se revocó la clave bootstrap.
+
+Los estados posteriores fueron comprobados desde el admin:
+
+```text
+rc4-rocky-worker  worker  active  healthy  true  10.99.0.2    192.168.122.66
+rc4-rocky-portal  portal  active  healthy  true  10.99.0.100  192.168.122.123
+```
+
+`wg show wg-admiral` mostró handshake reciente y transferencia en ambos peers.
+En el worker quedaron activos `admiral-fleet`, `firewalld`, `fail2ban` y
+`wg-quick@wg-admiral`, con Podman `5.8.2`. En el portal quedaron activos
+`admiral-harbor`, ambos timers Harbor, PostgreSQL, firewalld, fail2ban y
+WireGuard. El perfil portal no instaló Podman, como corresponde al rol
+dedicado.
+
+##### 19.9.2 Lifecycle WordPress en worker multinodo
+
+Desde el admin, usando `sudo admiralctl`, se validó el YAML y se aplicó `wp`.
+El provisionamiento se dirigió a `rc4-rocky-worker`:
+
+- provision: `op_28f6bfcc97ed51b2`, task `task_86547662fea8ef46`, instancia
+  `inst_d3083bbd9069e6f1`, `succeeded`;
+- inspección: `op_82e3e1f7d3fd4497`; el resultado mostró pod rootless y los
+  contenedores WordPress, MariaDB, web y setup en estado `running`;
+- HTTP externo directo a la IP pública del worker fue `000`, correctamente
+  bloqueado por el perfil de firewall del worker;
+- HTTP por la IP WireGuard publicada `10.99.0.2:40000` fue `301`, demostrando
+  la ruta funcional real de workload multinodo;
+- backup DB: `op_e18d37c5994615c6`, task `task_03d60a7a4e34a2ca`,
+  `succeeded`; SHA-256:
+  `bf98b58ad23242169cbec9f53cc8a4d9ab009ca5f97c8a9ec9e96c96d2474024`;
+- backup de volumen: `op_0e67bed2573f37bc`, task `task_dd10576c211049e0`,
+  `succeeded`; SHA-256:
+  `4fbe8b02031e7bdaf0f6955c3cd11618159baa2a9095dc73f0e5e2dc5fe957ad`;
+- pause: `op_0b56cae378e70d8b`, task no conservado en la salida resumida,
+  `succeeded`; HTTP WireGuard inmediato `000`;
+- resume: `op_70aa8c218405e8a7`, task `task_90b8014de554cb38`, `succeeded`;
+  tras 15 segundos HTTP WireGuard `301`;
+- deprovision: `op_f9f4e58726d8827d`, task `task_ffb511308a01f257`,
+  `succeeded`; `instances list` dejó `cancelled/deprovisioned` y no quedaron
+  contenedores con el ID de instancia en el worker.
+
+Resultado Rocky multinodo: `PASS` para instalación de los tres roles,
+WireGuard, registro/health, Harbor, ejecución rootless en el worker, HTTP
+real, backups con checksum, pause/resume y cleanup.
+
+Registro de esta subsección: `2026-08-07T14:08:49Z` UTC. AlmaLinux y CentOS
+multinodo fresh permanecen pendientes; por ello la matriz global sigue
+`PARTIAL` aunque los gates single-node de los tres OS y el multinodo Rocky ya
+sean `PASS`.
+
+#### 19.10 Confirmación de no necesidad de cambios para el conjunto COPR
+
+Durante esta matriz se mantuvo el conjunto publicado en COPR sin parches
+locales ni sustituciones desde el árbol fuente. Los RPM utilizados fueron
+`admiral-common-0.0.1rc1-124`, `admirald-0.0.1rc1-53`,
+`admiral-fleet-0.0.1rc1-61`, `admiralctl-0.0.1rc1-51`,
+`admiral-flagship-0.0.1rc1-84` y `admiral-harbor-0.0.1rc1-52`.
+
+Los gates completados hasta este punto no requirieron cambios de código en
+`admiralctl`, `scripts/install.sh` ni en los playbooks Ansible empaquetados en
+`admiral-common`. El instalador empaquetado `/usr/bin/admiral-install` ejecutó
+esos playbooks directamente desde el RPM publicado y pasó los recaps de
+single-node en los tres OS y la topología multinodo Rocky. Tampoco fue
+necesario relajar permisos de secretos, modificar autenticación, cambiar
+WireGuard ni aplicar workarounds al CLI.
+
+El único cambio local fuera de la bitácora es el incremento coordinado de
+`Release` en los seis specs (`125/54/62/52/85/53`), commit local
+`a57e6f5`. Ese release de spec no se publicó en COPR, no se usó en esta
+validación y no generó un nuevo RC. Registro de esta confirmación:
+`2026-08-07T14:29:25Z` UTC.
+
+#### 19.11 AlmaLinux `rc5`: topología multinodo fresh y lifecycle
+
+AlmaLinux se validó en tres VMs nuevas, sin reutilizar los overlays `rc3` ni
+los secretos de su single-node:
+
+| Rol | VM | IP pública | IP WireGuard | Fingerprint SSH verificado |
+|---|---|---:|---:|---|
+| admin | `rc5-alma-admin` | `192.168.122.35` | `10.99.0.1` | `SHA256:UgzPVhhTauoP7Cdb+62EK64Wm64gO0EnfjhCGcfrVTQ` |
+| worker | `rc5-alma-worker` | `192.168.122.240` | `10.99.0.2` | `SHA256:lk9ix2lrhcBvHTelmpAq2vF/UxzeMGtOEl0/7eUC/sU` |
+| portal | `rc5-alma-portal` | `192.168.122.135` | `10.99.0.100` | `SHA256:4v6aQdlOhNEd3uDs47J/a+6W/QnECqW2Ox5GNv6GMNI` |
+
+El admin se instaló con el conjunto RC1 de COPR y terminó con:
+`ok=193 changed=97 unreachable=0 failed=0 skipped=153 rescued=0 ignored=0`.
+El worker terminó con:
+`ok=145 changed=57 unreachable=0 failed=0 skipped=199 rescued=0 ignored=0`.
+El portal terminó con:
+`ok=190 changed=86 unreachable=0 failed=0 skipped=154 rescued=0 ignored=0`.
+No hubo fallos ni hosts inalcanzables. Ambos spokes fueron registrados con
+WireGuard, y la credencial bootstrap fue revocada tras validar `admiral-ssh`.
+
+La consulta final desde el admin fue:
+
+```text
+rc5-alma-worker  worker  active  healthy  true  10.99.0.2    192.168.122.240
+rc5-alma-portal  portal  active  healthy  true  10.99.0.100  192.168.122.135
+```
+
+`wg show wg-admiral` mostró handshake reciente para ambos peers. El worker
+quedó con Podman `5.8.2`; el portal quedó con Harbor, timers de Harbor,
+PostgreSQL, firewall, fail2ban y WireGuard activos, sin Podman por diseño del
+perfil dedicado.
+
+El lifecycle se ejecutó desde `sudo admiralctl` en el admin. La validación de
+WordPress pasó y `apps apply` fue exitoso. La operación de provisionamiento
+fue `op_81ef42bc2cbcbeab`, task `task_991c8ff19dd9347f`, instancia
+`inst_b3e96fc03eddea73`, dirigida a `rc5-alma-worker`, con estado `succeeded`.
+La inspección se encoló como `op_a9ffb9417a06244d`; HTTP por
+`10.99.0.2:40000` devolvió `301`.
+
+Los backups fueron exitosos y se verificaron sus hashes en el worker:
+
+- DB: `op_ed12e6b4a48871d7`, task `task_1aaf13167beb8928`, SHA-256
+  `bc5ba316241245acfdee78a28f89a2ef8b3ff69f189072eed6a35bfb04492e32`;
+- volúmenes: `op_d33da3db6c75485e`, task `task_55cdaf9eca624f34`, SHA-256
+  `e9fa472e60bcfd1a67a0ebacc2b0a7058b511fdd5746ffda658a85bc57ed65df`.
+
+Pause fue `op_f194330447ec19fb`, task `task_a7c928aaf34c6347`, `succeeded`,
+con HTTP inmediato `000`. Resume fue `op_3914b8af71c2437f`, task
+`task_8f258c50dd8e5e90`, `succeeded`; después de 15 segundos HTTP volvió a
+`301`. Deprovision fue `op_5a78e2b18a58d650`, task `task_cd2f5fb8dc0719e4`,
+`succeeded`, dejando la instancia `cancelled/deprovisioned` y sin residuos
+funcionales declarados.
+
+Resultado Alma multinodo: `PASS` para roles, WireGuard, registro, Harbor,
+workload rootless, HTTP, backups con checksum, pause/resume y deprovision.
+CentOS multinodo fresh permanece pendiente. Registro: `2026-08-07T14:50:54Z`
+UTC.
+
+#### 19.12 Resumen consolidado visible de la validación
+
+Este resumen es el estado de decisión de la ejecución actual. No se debe
+interpretar una fila `PASS` como aprobación de otra fila todavía pendiente.
+
+| Área | Rocky Linux 10.2 | AlmaLinux 10.2 | CentOS Stream 10 | Estado global |
+|---|---|---|---|---|
+| DNF con EPEL/CRB/Caddy COPR/Admiral COPR | PASS | PASS | PASS | PASS |
+| Seis RPM RC1 publicados disponibles | PASS | PASS | PASS | PASS |
+| Single-node one-shot | PASS | PASS | PASS | PASS |
+| `sudo admiralctl nodes list` post-setup | PASS | PASS | PASS | PASS |
+| Multinodo: admin + worker + portal | PASS | PASS | PASS | PASS |
+| WireGuard y health de spokes | PASS | PASS | PASS | PASS |
+| Lifecycle WordPress multinodo | PASS | PASS | PASS | PASS |
+| Backups y SHA-256 | PASS | PASS | PASS | PASS |
+| Pause/resume y HTTP | PASS | PASS | PASS | PASS |
+| Deprovision y cleanup | PASS | PASS | PASS | PASS |
+
+Estado global inequívoco al registrar esta sección: **`PASS`**.
+
+Los tres OS terminaron los tres roles sin `failed`/`unreachable`, mostraron
+ambos spokes `active/healthy/true`, y completaron el lifecycle WordPress por
+WireGuard con backups verificables, pause/resume y cleanup.
+
+La fuente de paquetes de todas las filas anteriores es el conjunto RC1
+publicado en COPR (`124/53/61/51/84/52`). No hubo cambios requeridos en
+`admiralctl`, `scripts/install.sh` ni en los playbooks empaquetados para
+obtener estos resultados. Registro del resumen: `2026-08-07T15:16:21Z` UTC.
+
+#### 19.13 CentOS Stream 10 `rc6`: cierre multinodo y lifecycle
+
+CentOS Stream 10 se validó en tres VMs nuevas, con overlays independientes y
+sin reutilizar secretos, configuración ni estado de las ejecuciones anteriores:
+
+| Rol | VM | IP pública | IP WireGuard | Fingerprint SSH verificado |
+|---|---|---:|---:|---|
+| admin | `rc6-centos-admin` | `192.168.122.50` | `10.99.0.1` | `SHA256:NCmwB5n1FUPv+2yuCr0dXKiW+U9jDB9APBRDlyZmi3E` |
+| worker | `rc6-centos-worker` | `192.168.122.247` | `10.99.0.2` | `SHA256:rXRT7gEHhrzZuW0ZIW4eDtEL3bu2c5yruX+Neqp0iIA` |
+| portal | `rc6-centos-portal` | `192.168.122.237` | `10.99.0.100` | `SHA256:CnXYAr9pdGwKKSExEeZWWhHayPOiu72VOYMjKCKvIfE` |
+
+Antes de cada instalación se habilitaron explícitamente EPEL, CRB, Caddy COPR
+y Admiral COPR. Los seis RPM instalados fueron exactamente los publicados en
+COPR:
+
+```text
+admiral-common-0.0.1rc1-124.el10.noarch
+admiralctl-0.0.1rc1-51.el10.x86_64
+admirald-0.0.1rc1-53.el10.x86_64
+admiral-fleet-0.0.1rc1-61.el10.x86_64
+admiral-flagship-0.0.1rc1-84.el10.noarch
+admiral-harbor-0.0.1rc1-52.el10.noarch
+```
+
+El admin terminó con `ok=192 changed=97 unreachable=0 failed=0 skipped=154
+rescued=0 ignored=0`. El worker terminó sin error ni host inalcanzable; el
+portal terminó con `ok=189 changed=86 unreachable=0 failed=0 skipped=155
+rescued=0 ignored=0`. El instalador verificó los fingerprints antes de
+conectar, intercambió los peers y revocó la credencial SSH de bootstrap.
+
+La comprobación post-setup desde el admin fue:
+
+```text
+rc6-centos-worker  worker  active  healthy  true  10.99.0.2    192.168.122.247
+rc6-centos-portal  portal  active  healthy  true  10.99.0.100  192.168.122.237
+```
+
+`wg show wg-admiral` mostró handshakes recientes para ambos peers. El worker
+quedó con Podman `6.0.2`; el portal quedó con Harbor, timers de Harbor,
+PostgreSQL, firewall, fail2ban y WireGuard activos, sin Podman por diseño del
+perfil dedicado.
+
+El lifecycle se ejecutó completamente con `sudo admiralctl` en el admin. YAML
+validate y `apps apply` pasaron. La instancia fue
+`inst_c375e82eb8921596`, cliente `rc6-centos-customer`, sobre
+`rc6-centos-worker`. Provision fue `op_cc872209cb4fa29d`, task
+`task_5f6d477dbd5d5e23`, `succeeded`. Inspect fue
+`op_b94bb45e8ea69b3f`; mostró un pod rootless administrado por systemd con
+MariaDB, WordPress y el contenedor infra en estado `running`. HTTP por
+`10.99.0.2:40000` devolvió `301`.
+
+Los backups fueron exitosos y se verificaron directamente en el worker:
+
+- DB: `op_5bcbb729e3e31929`, task `task_08c8f1d372951819`, SHA-256
+  `e59dd6a37fd9d4b6a6a9a2377ccfdfdf8dbed5cee4cafda71ba424fa24cfee3a`;
+- volúmenes: `op_09993a5d39365de7`, task `task_5c20ca73ec938679`, SHA-256
+  `760e2ec8a01f6d456c706d63db31d3f8864da5340916f6233c9d0b6be9aca242`.
+
+Pause fue `op_d83540b26f254568`, task `task_143d83e4ef927f0a`,
+`succeeded`; HTTP inmediato devolvió `000`. Resume fue
+`op_d51b40d328ad89e5`, task `task_2f0f4240c7781389`, `succeeded`; después de
+15 segundos HTTP volvió a `301`. Deprovision fue `op_d2d0544da5ddd3f6`, task
+`task_a194121f9ad13837`, `succeeded`, dejando la instancia
+`cancelled/deprovisioned`.
+
+Resultado CentOS multinodo: `PASS` para repositorios, RPM publicados,
+instalación one-shot de los tres roles, registro, WireGuard, health, Harbor,
+workload rootless, HTTP, backups con checksum, pause/resume y deprovision.
+Resultado de la matriz RC1: **`PASS` en Rocky Linux 10.2, AlmaLinux 10.2 y
+CentOS Stream 10**. Registro de cierre: `2026-08-07T15:40:10Z` UTC.
