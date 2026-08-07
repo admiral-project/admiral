@@ -1049,3 +1049,53 @@ WireGuard, Harbor/portal, WordPress en worker, backups/checksums, pause/resume,
 image update, restore DB/volumen con marcadores y deprovision/cleanup. La
 matriz global continúa abierta hasta repetir este gate multinodo en AlmaLinux
 10 y CentOS Stream 10.
+
+### 16. Validación multinodo: AlmaLinux 10
+
+Fecha: 2026-08-07 UTC. Topología limpia: admin `192.168.122.27`, worker
+`192.168.122.28` (`alma-worker-01`, WireGuard `10.99.0.2`) y portal
+`192.168.122.29` (`alma-portal-01`, WireGuard `10.99.0.100`). Se habilitaron
+EPEL, CRB, Caddy COPR y Admiral COPR antes de instalar; se usó el conjunto
+local de seis RPM `124/53/61/51/84/52`.
+
+El admin terminó con PostgreSQL, Caddy, admirald, Flagship, firewalld, auditd,
+fail2ban y WireGuard activos, SELinux `Enforcing` y cero unidades fallidas.
+Los spokes se configuraron desde el admin con fingerprints
+`SHA256:Dt4ZI77/cjMtZZ/x+GV8aHkzPcLDFZyvRtLxX9TmPMU` (worker) y
+`SHA256:32T0GfB9RGOuK8eScPzBGAhqw7v+ctGPquOTGzOUzCs` (portal). Ambos
+revocaron la clave bootstrap. `admiralctl nodes list` confirmó worker y portal
+`active/healthy/available=true`; el worker reportó fleet `0.0.1rc1`, Podman
+`5.8.2`, AlmaLinux `10.2`, y Harbor ping pasó por `10.99.0.1`.
+
+El primer timer de catálogo fue terminado con `SIGTERM` durante el bootstrap y
+el siguiente vio `Sync already in progress`. Tras cinco minutos, el mismo RPM
+recuperó el estado huérfano:
+
+```text
+Result=success
+Marked abandoned catalog sync sync_c212bd6edafc47ae as failed
+Catalog sync completed: 0 new, 0 updated, 0 marked missing
+```
+
+El ciclo WordPress se ejecutó sobre `alma-worker-01`:
+
+- apply y provision/setup: `op_beedd7ba1b860840`, instancia
+  `inst_758f207cb1f49f75`, `running/healthy`, setup completado.
+- HTTP real hacia `10.99.0.2:40000`: `301`.
+- backup DB `op_63778ae910b9faed` y volumen `op_394d83e5707c8d0f`:
+  ambos `succeeded`.
+- pause `op_d6ef0b43812ee2f9`: `succeeded`, comprobación inmediata `HTTP=000`.
+  Resume `op_28fd2a66806fff61`: `succeeded`, HTTP restaurado.
+- image update: `op_30688adbcddb47a7` falló al descargar `wordpress:6.8.1`
+  con `signal: killed` en un worker de 768 MiB; se clasificó presión de
+  capacidad del harness. Con 1.5 GiB, stop `op_51210fc986570d20` y start
+  `op_ec6d0a5d29c8f7f6` pasaron; inspección confirmó digest
+  `sha256:9ca181730570f82df91e301d2e53efc0ce2f98aa8112d2f95ef780bd341ffd12`
+  y HTTP `301`.
+- deprovision/cleanup: `op_4c0e86ef44de801d`, `succeeded`; estado final
+  `deprovisioned/cancelled`.
+
+Resultado Alma multinodo: `PASS` para one-shot admin/worker/portal, registro
+WireGuard, Harbor, WordPress en worker, backups, pause/resume, image update
+tras ajuste de capacidad y deprovision. Restore DB/volumen con marcadores se
+cubrió en Rocky; CentOS multinodo sigue abierto.
