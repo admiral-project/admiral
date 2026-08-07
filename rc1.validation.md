@@ -1098,4 +1098,100 @@ El ciclo WordPress se ejecutó sobre `alma-worker-01`:
 Resultado Alma multinodo: `PASS` para one-shot admin/worker/portal, registro
 WireGuard, Harbor, WordPress en worker, backups, pause/resume, image update
 tras ajuste de capacidad y deprovision. Restore DB/volumen con marcadores se
-cubrió en Rocky; CentOS multinodo sigue abierto.
+cubrió en Rocky.
+
+### 17. Validación multinodo: CentOS Stream 10
+
+Fecha: 2026-08-07 UTC. Topología limpia: admin `192.168.122.167`, worker
+`192.168.122.168` (`centos-worker-01`, WireGuard `10.99.0.2`) y portal
+`192.168.122.169` (`centos-portal-01`, WireGuard `10.99.0.100`). Antes de
+cualquier instalación de componentes se habilitaron EPEL, CRB, Caddy COPR y
+Admiral COPR en los hosts; los paquetes se instalaron desde el conjunto local
+RC1, no desde una resolución accidental de `admiral*` contra un repositorio
+incompleto:
+
+```text
+admiral-common-0.0.1rc1-124.el10.noarch
+admirald-0.0.1rc1-53.el10.x86_64
+admiral-fleet-0.0.1rc1-61.el10.x86_64
+admiralctl-0.0.1rc1-51.el10.x86_64
+admiral-flagship-0.0.1rc1-84.el10.noarch
+admiral-harbor-0.0.1rc1-52.el10.noarch
+```
+
+El `--admin-node` terminó con `ok=192 changed=97 failed=0 unreachable=0
+skipped=154`. La configuración dejó PostgreSQL, Caddy, admirald, Flagship,
+firewalld, auditd, fail2ban y WireGuard configurados; la instalación verificó
+SELinux y las reglas nftables. El `--worker-node` terminó con
+`ok=144 changed=53 failed=0 unreachable=0 skipped=200`; el handshake de
+WireGuard se verificó en el primer intento y Podman reportó `6.0.2`. El
+`--portal-node` terminó con `ok=189 changed=82 failed=0 unreachable=0
+skipped=155`; el handshake se verificó en el primer intento, Harbor quedó
+registrado y sus timers fueron habilitados. En ambos spokes se verificaron
+fingerprints de host antes de Ansible y se revocó la clave bootstrap al final:
+
+```text
+worker host: SHA256:VQUfnV0LijJlqkVoBKovNpaO7ZTMPnKw9BePa9nq7vk
+portal host: SHA256:AqKcmBVHVrjDPH0Dzc31s6r/Q4Hfd5UTLR/IVufuMPE
+worker admin identity: SHA256:sbVViZ8ggzWlCXcT0tCKdENr+VdEvIdhUzAuysUzJ0Y
+portal admin identity: SHA256:mwOTJzpdUAfDWg6wrE7rZer+R9iydB5FRwg2b0dZzF4
+```
+
+`admiralctl nodes list` confirmó ambos spokes `active`, `healthy` y
+`available_for_provisioning=true`. El worker reportó CentOS 10,
+`fleet_version=0.0.1rc1`, Podman `6.0.2`, y el portal reportó Harbor activo
+con la ruta WireGuard `10.99.0.100`. En estas imágenes CentOS quedó además
+`kdump.service` fallido, igual que en las imágenes de laboratorio anteriores;
+es una limitación del perfil de la imagen y no una unidad Admiral. No se
+contabilizó como fallo funcional del rol, pero queda visible para el operador.
+
+La primera ejecución del timer de catálogo fue terminada por systemd con
+`SIGTERM` durante el arranque. El RPM con recuperación de sincronizaciones
+abandonadas detectó y cerró ese estado, y la ejecución siguiente terminó bien:
+
+```text
+Result=success
+Marked abandoned catalog sync sync_8851cce83f7e47b1 as failed
+Catalog sync completed: 0 new, 0 updated, 0 marked missing
+```
+
+El ciclo WordPress se ejecutó sobre `centos-worker-01`, instancia
+`inst_e34993bb6aeca2dd`:
+
+- provision/setup: `running/healthy`, `setup_completed=true` y
+  `storage_state=ok`.
+- HTTP real hacia `10.99.0.2:40000`: `301`.
+- backup DB `op_9d9ca6dd0e6f918b`, backup de volumen
+  `op_7b3dc45008636594`; ambos `succeeded`, con backups
+  `bk_f28e9632fcddcf6e` (SHA-256
+  `28218e9f02332ffaa6cda4fcfb29dbc674ceeaf15256a950ed88f09a41b25315`) y
+  `bk_0126b6cb5ad9defd` (SHA-256
+  `28155478f9fe9b86659d9e56128c60c9dc0f89406772b9d55c81f89a72ac27a7`).
+- pause `op_d00f5d780a9eb3cf`: `succeeded`; comprobación inmediata
+  `HTTP=000`. Resume `op_99b3f25457190ab4`: `succeeded`.
+- image update a `wordpress:6.8.1`: la primera descarga falló con
+  `op_078b4278d22c207f` y `signal: killed` en el worker de 768 MiB. Se
+  clasificó como presión de memoria del harness, igual que en Alma. Después
+  de ampliar el worker a 1.5 GiB, stop `op_432931eecc160c06` y start
+  `op_7442fa6472c28ea2` del restart fueron exitosos. La inspección
+  `op_e155d12b07e1a962` confirmó la imagen `docker.io/library/wordpress:6.8.1`
+  con digest
+  `sha256:9ca181730570f82df91e301d2e53efc0ce2f98aa8112d2f95ef780bd341ffd12`.
+- deprovision/cleanup: `op_d3052abec8d9e234`, `succeeded`; la instancia quedó
+  deprovisionada y no quedaron contenedores ni volúmenes runtime activos.
+
+Resultado CentOS multinodo: `PASS` para one-shot admin/worker/portal, repos
+previos a la instalación, registro WireGuard, Harbor, WordPress en worker,
+backups con checksum, pause/resume, image update tras ajuste de capacidad y
+deprovision. Restore DB/volumen con marcadores ya está validado en Rocky;
+la cobertura funcional de instalación y ciclo operativo queda completada en
+los tres sistemas objetivo.
+
+### 18. Resultado de la matriz multinodo
+
+La matriz RC1 de instalación one-shot queda cerrada para Rocky Linux 10,
+AlmaLinux 10 y CentOS Stream 10. En cada sistema se validaron roles separados
+admin/worker/portal, repositorios EPEL/CRB/COPR antes de instalar, identidad
+SSH posterior al bootstrap, WireGuard, salud de nodos y ciclo WordPress.
+Rocky incluye además el gate explícito de restore DB/volumen con marcadores;
+Alma y CentOS cubren el mismo ciclo de operación y actualización de imagen.
