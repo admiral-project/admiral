@@ -6,7 +6,7 @@
 
 Name:    admiralctl
 Version: 0.0.1rc1
-Release: 49%{?dist}
+Release: 50%{?dist}
 Summary: Admiral Command-Line Interface
 
 License: Apache-2.0
@@ -62,6 +62,9 @@ mkdir -p "$GOCACHE"
 restorecon -F %{_bindir}/admiralctl 2>/dev/null || :
 
 %changelog
+* Fri Aug 07 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc1-50
+- Rebuild RC1 with resilient spoke SSH post-revocation validation
+
 * Wed Aug 05 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta21-44
 - Bump to beta21: coordinated release validation candidate
 

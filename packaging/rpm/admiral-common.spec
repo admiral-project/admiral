@@ -5,7 +5,7 @@
 
 Name:    admiral-common
 Version: 0.0.1rc1
-Release: 122%{?dist}
+Release: 123%{?dist}
 Summary: Common files and utilities for Admiral PaaS
 
 License: Apache-2.0
@@ -172,6 +172,9 @@ if [ "$1" -eq 0 ]; then
 fi
 
 %changelog
+* Fri Aug 07 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc1-123
+- Retry per-node SSH validation after bootstrap-key revocation
+
 * Wed Aug 05 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta21-113
 - Bump to beta21: release validation and portable TLS renewal checks
 

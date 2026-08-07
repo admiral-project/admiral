@@ -265,6 +265,14 @@ class InstallerModeTests(unittest.TestCase):
         self.assertIn('"$SSHD_EFFECTIVE" == *"permitrootlogin no"*', installer)
         self.assertIn("already onboarded spoke", installer)
 
+    def test_spoke_retries_per_node_ssh_after_bootstrap_revocation(self) -> None:
+        installer = INSTALLER.read_text(encoding="utf-8")
+
+        self.assertIn("per_node_ssh_ready=false", installer)
+        self.assertIn("for attempt in $(seq 1 10)", installer)
+        self.assertIn('ssh "${SSH_OPTIONS[@]}" "${INSTALL_TARGET_SSH_USER}@${INSTALL_PUBLIC_IP}" "sudo -n true"', installer)
+        self.assertIn('sleep 1', installer)
+
     def test_spoke_extra_vars_exclude_controller_admin_token(self) -> None:
         installer = INSTALLER.read_text(encoding="utf-8")
         fleet = FLEET_TASKS.read_text(encoding="utf-8")

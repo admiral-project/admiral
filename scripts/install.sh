@@ -1436,7 +1436,15 @@ if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]] &&
         "sudo sh -c 'tmp=/etc/ssh/sshd_config.d/.49-admiral-root-lockdown.conf.tmp; install -m 0644 /dev/stdin \"\$tmp\" && mv \"\$tmp\" /etc/ssh/sshd_config.d/49-admiral-root-lockdown.conf && { sshd -t && systemctl reload sshd || { rm -f /etc/ssh/sshd_config.d/49-admiral-root-lockdown.conf; exit 1; }; }'" \
         <<<"PermitRootLogin no" \
         || die "Could not validate and apply PermitRootLogin no after bootstrap revocation."
-    ssh "${SSH_OPTIONS[@]}" "${INSTALL_TARGET_SSH_USER}@${INSTALL_PUBLIC_IP}" "sudo -n true" >/dev/null 2>&1 ||
+    per_node_ssh_ready=false
+    for attempt in $(seq 1 10); do
+        if ssh "${SSH_OPTIONS[@]}" "${INSTALL_TARGET_SSH_USER}@${INSTALL_PUBLIC_IP}" "sudo -n true" >/dev/null 2>&1; then
+            per_node_ssh_ready=true
+            break
+        fi
+        sleep 1
+    done
+    [[ "$per_node_ssh_ready" == true ]] ||
         die "Per-node SSH identity stopped working after bootstrap revocation."
     info "Bootstrap SSH credential revoked; per-node admiral-ssh identity is now authoritative."
 fi

@@ -6,7 +6,7 @@
 
 Name:    admirald
 Version: 0.0.1rc1
-Release: 51%{?dist}
+Release: 52%{?dist}
 Summary: Admiral Control Plane - Core API and orchestration service
 
 License: Apache-2.0
@@ -74,6 +74,9 @@ restorecon -F %{_bindir}/admirald 2>/dev/null || :
 %systemd_postun_with_restart admirald.service
 
 %changelog
+* Fri Aug 07 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc1-52
+- Rebuild RC1 with resilient spoke SSH post-revocation validation
+
 * Wed Aug 05 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1beta21-46
 - Bump to beta21: coordinated release validation candidate
 
