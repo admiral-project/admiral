@@ -156,9 +156,10 @@ rm -f /etc/admiral/tls/admirald-key.pem /etc/admiral/tls/admirald.csr /etc/admir
 sudo admiral-install --single-node   # o el modo original del nodo
 ```
 
-El re-run es idempotente: regenera la clave y el certificado firmados por la
-CA existente, sincroniza las copias de PostgreSQL y reinicia los servicios
-afectados. La CA y su clave (`ca-key.pem`, solo en el nodo admin) no se tocan.
+El re-run es idempotente: conserva la clave y el certificado existentes. Tras
+una renovación manual, sincroniza las copias de PostgreSQL y lo reinicia solo
+si cambió el material TLS o su configuración. La CA y su clave (`ca-key.pem`,
+solo en el nodo admin) no se tocan.
 
 En perfiles seguros, SSH acepta únicamente claves, limita los intentos y
 desactiva autenticación interactiva, contraseñas vacías, X11 y reenvío de

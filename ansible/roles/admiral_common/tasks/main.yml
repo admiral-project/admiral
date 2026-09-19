@@ -844,6 +844,12 @@
     creates: /etc/admiral/tls/ca.pem
   when: admiral_wireguard_role == 'hub'
 
+- name: Check whether the admirald leaf certificate already exists
+  stat:
+    path: /etc/admiral/tls/admirald.pem
+  register: admiral_tls_leaf_certificate
+  when: admiral_install_mode in ['single-node', 'admin-node', 'admin-portal-node', 'portal-node']
+
 - name: Generate admirald server key
   command:
     cmd: >
@@ -859,7 +865,9 @@
       -subj "/CN=localhost"
       -addext "subjectAltName={{ admiral_tls_san }}"
     creates: /etc/admiral/tls/admirald.csr
-  when: admiral_install_mode in ['single-node', 'admin-node', 'admin-portal-node', 'portal-node']
+  when:
+    - admiral_install_mode in ['single-node', 'admin-node', 'admin-portal-node', 'portal-node']
+    - not admiral_tls_leaf_certificate.stat.exists
 
 - name: Write openssl extensions file for SAN
   copy:
@@ -872,7 +880,9 @@
     mode: "0640"
     owner: admiral
     group: admiral
-  when: admiral_install_mode in ['single-node', 'admin-node', 'admin-portal-node', 'portal-node']
+  when:
+    - admiral_install_mode in ['single-node', 'admin-node', 'admin-portal-node', 'portal-node']
+    - not admiral_tls_leaf_certificate.stat.exists
 
 - name: Sign admirald certificate with CA on hub nodes
   command:
@@ -884,6 +894,7 @@
       -CAcreateserial
       -out /etc/admiral/tls/admirald.pem
       -extfile /etc/admiral/tls/admirald-ext.cnf
+    creates: /etc/admiral/tls/admirald.pem
   when: admiral_wireguard_role == 'hub'
 
 - name: Read portal-node CSR for controller-side signing
@@ -893,6 +904,7 @@
   when:
     - admiral_install_mode == 'portal-node'
     - admiral_wireguard_role == 'spoke'
+    - not admiral_tls_leaf_certificate.stat.exists
 
 - name: Create temporary CSR file on controller for portal-node
   tempfile:
@@ -904,6 +916,7 @@
   when:
     - admiral_install_mode == 'portal-node'
     - admiral_wireguard_role == 'spoke'
+    - not admiral_tls_leaf_certificate.stat.exists
 
 - name: Create temporary extensions file on controller for portal-node
   tempfile:
@@ -915,6 +928,7 @@
   when:
     - admiral_install_mode == 'portal-node'
     - admiral_wireguard_role == 'spoke'
+    - not admiral_tls_leaf_certificate.stat.exists
 
 - name: Create temporary certificate file on controller for portal-node
   tempfile:
@@ -926,6 +940,7 @@
   when:
     - admiral_install_mode == 'portal-node'
     - admiral_wireguard_role == 'spoke'
+    - not admiral_tls_leaf_certificate.stat.exists
 
 - name: Write portal-node CSR to controller temporary file
   copy:
@@ -936,6 +951,7 @@
   when:
     - admiral_install_mode == 'portal-node'
     - admiral_wireguard_role == 'spoke'
+    - not admiral_tls_leaf_certificate.stat.exists
 
 - name: Write portal-node SAN extensions to controller temporary file
   copy:
@@ -950,6 +966,7 @@
   when:
     - admiral_install_mode == 'portal-node'
     - admiral_wireguard_role == 'spoke'
+    - not admiral_tls_leaf_certificate.stat.exists
 
 - name: Sign portal-node certificate on controller
   command:
@@ -965,6 +982,7 @@
   when:
     - admiral_install_mode == 'portal-node'
     - admiral_wireguard_role == 'spoke'
+    - not admiral_tls_leaf_certificate.stat.exists
 
 - name: Read signed portal-node certificate from controller
   slurp:
@@ -974,6 +992,7 @@
   when:
     - admiral_install_mode == 'portal-node'
     - admiral_wireguard_role == 'spoke'
+    - not admiral_tls_leaf_certificate.stat.exists
 
 - name: Deploy signed portal-node certificate
   copy:
@@ -985,6 +1004,7 @@
   when:
     - admiral_install_mode == 'portal-node'
     - admiral_wireguard_role == 'spoke'
+    - not admiral_tls_leaf_certificate.stat.exists
 
 - name: Remove temporary openssl extensions file
   file:
@@ -1018,6 +1038,7 @@
   when:
     - admiral_install_mode == 'portal-node'
     - admiral_wireguard_role == 'spoke'
+    - not admiral_tls_leaf_certificate.stat.exists
 
 - name: Set TLS cert permissions
   file:
@@ -1099,6 +1120,7 @@
     path: /var/lib/pgsql/data/postgresql.conf
     regexp: "^#?listen_addresses\\s*="
     line: "listen_addresses = '{{ admiral_pg_listen_addresses | default('127.0.0.1') }}'"
+  register: admiral_postgresql_listen_addresses_configuration
   when: admiral_install_mode in ['single-node', 'admin-node', 'admin-portal-node']
 
 - name: Require password authentication for localhost PostgreSQL
@@ -1106,6 +1128,7 @@
     path: /var/lib/pgsql/data/pg_hba.conf
     regexp: "^host\\s+all\\s+all\\s+127\\.0\\.0\\.1/32\\s+"
     line: "host    all             all             127.0.0.1/32            scram-sha-256"
+  register: admiral_postgresql_hba_ipv4_configuration
   when: admiral_install_mode in ['single-node', 'admin-node', 'admin-portal-node', 'portal-node']
 
 - name: Require password authentication for localhost PostgreSQL over IPv6
@@ -1113,6 +1136,7 @@
     path: /var/lib/pgsql/data/pg_hba.conf
     regexp: "^host\\s+all\\s+all\\s+::1/128\\s+"
     line: "host    all             all             ::1/128                 scram-sha-256"
+  register: admiral_postgresql_hba_ipv6_configuration
   when: admiral_install_mode in ['single-node', 'admin-node', 'admin-portal-node', 'portal-node']
 
 - name: Copy TLS certificates for PostgreSQL SSL
@@ -1127,6 +1151,7 @@
     - { src: "/etc/admiral/tls/ca.pem", dest: "/var/lib/pgsql/data/ca.crt", mode: "0600" }
     - { src: "/etc/admiral/tls/admirald.pem", dest: "/var/lib/pgsql/data/server.crt", mode: "0600" }
     - { src: "/etc/admiral/tls/admirald-key.pem", dest: "/var/lib/pgsql/data/server.key", mode: "0600" }
+  register: admiral_postgresql_tls_files
   when:
     - admiral_install_mode in ['single-node', 'admin-node', 'admin-portal-node', 'portal-node']
     - admiral_wireguard_role == 'hub' or admiral_install_mode == 'portal-node'
@@ -1141,16 +1166,30 @@
     - { param: "ssl_ca_file", value: "ca.crt" }
     - { param: "ssl_cert_file", value: "server.crt" }
     - { param: "ssl_key_file", value: "server.key" }
+  register: admiral_postgresql_ssl_configuration
   when:
     - admiral_install_mode in ['single-node', 'admin-node', 'admin-portal-node', 'portal-node']
     - admiral_wireguard_role == 'hub' or admiral_install_mode == 'portal-node'
 
-- name: Ensure PostgreSQL is enabled and restarted (applies pg_hba and SSL changes)
+- name: Ensure PostgreSQL is enabled and running
   systemd:
     name: postgresql
     enabled: true
-    state: restarted
+    state: started
   when: admiral_install_mode in ['single-node', 'admin-node', 'admin-portal-node', 'portal-node']
+
+- name: Restart PostgreSQL when TLS files or SSL configuration change
+  systemd:
+    name: postgresql
+    state: restarted
+  when:
+    - admiral_install_mode in ['single-node', 'admin-node', 'admin-portal-node', 'portal-node']
+    - >-
+      (admiral_postgresql_tls_files.changed | default(false)) or
+      (admiral_postgresql_ssl_configuration.changed | default(false)) or
+      (admiral_postgresql_listen_addresses_configuration.changed | default(false)) or
+      (admiral_postgresql_hba_ipv4_configuration.changed | default(false)) or
+      (admiral_postgresql_hba_ipv6_configuration.changed | default(false))
 
 - name: Verify PostgreSQL accepts local connections after restart
   become_user: postgres
