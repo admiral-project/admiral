@@ -356,6 +356,12 @@ remote provisioning:
 
 The Harbor package also ships `admiral-harbor-worker.service`, `admiral-harbor-worker.timer`, `admiral-harbor-catalog-sync.service`, and `admiral-harbor-catalog-sync.timer`.
 
+The catalog-sync timer runs every five minutes. If a prior synchronization is
+still active, the overlapping timer invocation is recorded as `skipped` and
+exits successfully; this is normal and must not leave the service in `failed`.
+Manual synchronizations still report the conflict so an operator can retry
+after the active run finishes.
+
 ## Public Exposure Policy
 
 The default installation is designed so that only the following ingress is public:
