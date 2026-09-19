@@ -1,0 +1,16 @@
+[Unit]
+Description=Admiral encrypted control-plane backup
+Documentation=https://github.com/admiral-project/admiral
+After=network-online.target postgresql.service
+Wants=network-online.target postgresql.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/admiral-control-plane-backup
+UMask=0077
+PrivateTmp=true
+NoNewPrivileges=true
+ProtectHome=true
+ProtectSystem=full
+ReadWritePaths=/var/lib/admiral/control-plane-backups
+

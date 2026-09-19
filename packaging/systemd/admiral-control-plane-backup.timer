@@ -1,0 +1,12 @@
+[Unit]
+Description=Daily Admiral encrypted control-plane backup
+Documentation=https://github.com/admiral-project/admiral
+
+[Timer]
+OnCalendar=*-*-* 03:00:00 UTC
+Persistent=true
+RandomizedDelaySec=30m
+Unit=admiral-control-plane-backup.service
+
+[Install]
+WantedBy=timers.target

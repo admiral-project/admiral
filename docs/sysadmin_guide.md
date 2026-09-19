@@ -629,7 +629,7 @@ Use `admiralctl` to configure the active backup storage backend:
 ```bash
 admiralctl backups storage set \
   --backend s3 \
-  --endpoint http://10.99.0.1:9000 \
+  --endpoint https://s3.example.com \
   --region us-east-1 \
   --bucket admiral-backups \
   --prefix admiral/multi-node-beta
@@ -716,11 +716,52 @@ verification failed and the backup may not be recoverable.
 - Backups must be stored off-node. Local-only backups on a worker
   node will be lost if the node fails.
 - The S3 endpoint must be reachable from all worker nodes via the
-  WireGuard network (e.g., `http://10.99.0.1:9000` for MinIO on the
-  admin node).
+  WireGuard network. Production endpoints must use HTTPS.
 - The verifier requires `ADMIRAL_S3_ACCESS_KEY_ID` and
   `ADMIRAL_S3_SECRET_ACCESS_KEY` in `admirald`'s environment. Without
   them, the verifier logs an error and skips verification.
+
+### Control-plane recovery backup
+
+Workload backups do not contain the control-plane databases, Harbor state, or
+the platform cryptographic material. After the initial Admiral setup is
+complete, configure S3 storage as above and place the matching credentials in
+`/etc/admiral/admirald.env` with mode `0600`:
+
+```text
+ADMIRAL_S3_ACCESS_KEY_ID=<access-key>
+ADMIRAL_S3_SECRET_ACCESS_KEY=<secret-key>
+```
+
+Then create and verify the first encrypted hub backup manually:
+
+```bash
+sudo admiral-control-plane-backup
+sudo systemctl enable --now admiral-control-plane-backup.timer
+sudo systemctl list-timers admiral-control-plane-backup.timer
+```
+
+The timer runs daily, with a bounded randomized delay, and is intentionally not
+enabled by the installer: S3 is configured after initial setup. The backup
+script reads the active S3 destination configured with
+`admiralctl backups storage set`, dumps `admiral`, `admiral_queue` and
+`admiral_harbor`, then encrypts the recovery package before uploading it. It
+requires an external HTTPS S3-compatible endpoint supporting SigV4 and
+SSE-S3 (`AES256`). The IAM identity needs permission to upload and read the
+resulting object; a rejected encryption header is a backup failure.
+
+The encryption secret is `ADMIRAL_SECRETS_KEY` in `/etc/admiral/secrets`.
+Store this value separately from the admin node before relying on DR. It is
+needed to decrypt a recovery archive, and loss of both the node and this key
+makes the archive unrecoverable. Never place the key in the S3 bucket or in
+the backup filename, logs, or ticket attachments.
+
+To recover on a clean admin node, install the matching Admiral RPMs, download
+the encrypted archive, verify its OpenPGP integrity while decrypting it with
+the externally held `ADMIRAL_SECRETS_KEY`, restore the three PostgreSQL dumps,
+and restore `/etc/admiral/secrets`, TLS and WireGuard configuration before
+starting Admiral services. Validate the control plane and reconnect its spokes
+only after the restored services are healthy.
 
 ## Secrets
 

@@ -136,6 +136,8 @@ source-support-files: | $(SOURCEDIR)
 	cp $(SYSTEMDDIR)/admiral-harbor-worker.timer $(SOURCEDIR)/
 	cp $(SYSTEMDDIR)/admiral-harbor-catalog-sync.service $(SOURCEDIR)/
 	cp $(SYSTEMDDIR)/admiral-harbor-catalog-sync.timer $(SOURCEDIR)/
+	cp $(SYSTEMDDIR)/admiral-control-plane-backup.service $(SOURCEDIR)/
+	cp $(SYSTEMDDIR)/admiral-control-plane-backup.timer $(SOURCEDIR)/
 	cp $(CONFIGDIR)/admirald.ini $(SOURCEDIR)/
 	cp $(CONFIGDIR)/fleet.env $(SOURCEDIR)/
 	cp $(CONFIGDIR)/admiralctl.yaml $(SOURCEDIR)/

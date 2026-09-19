@@ -25,9 +25,14 @@ Requires: systemd >= 250
 Requires: wireguard-tools
 Requires: policycoreutils-python-utils
 Requires: openssl
+Requires: curl
+Requires: gnupg2
+Requires: postgresql
 
 Source1: admiral-common.sysusers
 Source2: admiral_letsencrypt_deploy_hook.sh
+Source3: admiral-control-plane-backup.service
+Source4: admiral-control-plane-backup.timer
 
 %description
 Common configuration files, Ansible playbooks, and utility scripts
@@ -48,6 +53,9 @@ cp -r ansible/* %{buildroot}%{_datadir}/admiral/ansible/
 install -Dm0755 scripts/install.sh %{buildroot}%{_bindir}/admiral-install
 install -Dm0755 scripts/admiral_known_host.py %{buildroot}%{_bindir}/admiral-known-host
 install -Dm0755 scripts/admiral_revoke_bootstrap_key.py %{buildroot}%{_bindir}/admiral-revoke-bootstrap-key
+install -Dm0755 scripts/admiral_control_plane_backup.sh %{buildroot}%{_bindir}/admiral-control-plane-backup
+install -Dm0644 %{SOURCE3} %{buildroot}%{_unitdir}/admiral-control-plane-backup.service
+install -Dm0644 %{SOURCE4} %{buildroot}%{_unitdir}/admiral-control-plane-backup.timer
 
 # Man pages
 install -Dm0644 docs/admiral-install.1 %{buildroot}%{_mandir}/man1/admiral-install.1
@@ -99,6 +107,9 @@ install -D -m 0644 %{SOURCE1} %{buildroot}%{_sysusersdir}/%{name}.conf
 %{_bindir}/admiral-known-host
 %{_bindir}/admiral-revoke-bootstrap-key
 %{_bindir}/admiral-rootless-subids
+%{_bindir}/admiral-control-plane-backup
+%{_unitdir}/admiral-control-plane-backup.service
+%{_unitdir}/admiral-control-plane-backup.timer
 %{_datadir}/admiral/ansible/
 %{_libexecdir}/admiral-letsencrypt-deploy-hook
 
@@ -106,6 +117,8 @@ install -D -m 0644 %{SOURCE1} %{buildroot}%{_sysusersdir}/%{name}.conf
 %{_mandir}/man8/admiral-install.8*
 
 %post
+%systemd_post admiral-control-plane-backup.service
+%systemd_post admiral-control-plane-backup.timer
 # Set ownership of log directory
 chown admiral:admiral %{_localstatedir}/log/admiral 2>/dev/null || :
 
@@ -154,6 +167,8 @@ semanage fcontext -a -t container_file_t "/var/lib/admiral-apps/.local/share/con
 restorecon -R /var/lib/admiral-apps/.local/share/containers/storage/ 2>/dev/null || :
 
 %preun
+%systemd_preun admiral-control-plane-backup.service
+%systemd_preun admiral-control-plane-backup.timer
 # Only remove runtime state on final package removal. On upgrade, %post creates
 # the current tmpfiles rule and SELinux mapping again.
 if [ "$1" -eq 0 ]; then
@@ -167,6 +182,8 @@ if [ "$1" -eq 0 ]; then
 fi
 
 %postun
+%systemd_postun_with_restart admiral-control-plane-backup.service
+%systemd_postun admiral-control-plane-backup.timer
 if [ "$1" -eq 0 ]; then
     systemd-tmpfiles --remove /usr/lib/tmpfiles.d/admiral-apps.conf >/dev/null 2>&1 || :
 fi
