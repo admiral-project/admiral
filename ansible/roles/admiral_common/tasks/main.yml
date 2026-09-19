@@ -33,6 +33,26 @@
     cmd: dnf copr enable -y admiral-project/admiral
     creates: /etc/yum.repos.d/_copr:copr.fedorainfracloud.org:admiral-project:admiral.repo
 
+# COPR repositories must keep signature enforcement enabled on every node
+# role (hub and spoke). Enabling the repository is not enough by itself; fail
+# the run when gpgcheck is disabled or missing so a tampered repository cannot
+# be consumed silently.
+- name: Verify COPR repositories enforce GPG signature checks
+  command:
+    argv:
+      - grep
+      - -Eq
+      - '^gpgcheck\s*=\s*1'
+      - "{{ item }}"
+  loop:
+    - /etc/yum.repos.d/_copr:copr.fedorainfracloud.org:admiral-project:admiral.repo
+    - /etc/yum.repos.d/_copr:copr.fedorainfracloud.org:group_caddy:caddy.repo
+  register: admiral_copr_gpgcheck
+  failed_when:
+    - admiral_copr_gpgcheck.rc != 0
+    - admiral_install_mode != 'dev-node'
+  changed_when: false
+
 - name: Refresh package metadata after enabling repositories
   dnf:
     update_cache: true
@@ -98,12 +118,15 @@
 - name: Install admiral-common baseline package
   dnf:
     name:
-      - admiral-common
+      - "{{ 'admiral-common-' ~ admiral_common_version if (admiral_common_version | default('')) != '' else 'admiral-common' }}"
       - acl
     # Reconcile the controller's current release on every installer run.
     # `present` leaves an older admiral-common installed on an existing spoke,
     # which can leave its managed Ansible roles behind the release candidate.
-    state: latest
+    # Defining `admiral_common_version` (e.g. "0.0.1rc1-124" from the release
+    # process) pins the exact package and switches to `present`, giving the
+    # release process a reproducible version to install on every node.
+    state: "{{ 'present' if (admiral_common_version | default('')) != '' else 'latest' }}"
 
 - name: Install admin-plane packages
   dnf:

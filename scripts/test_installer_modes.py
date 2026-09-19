@@ -88,8 +88,12 @@ class InstallerModeTests(unittest.TestCase):
         self.assertNotIn('if ! rpm -q admiral-common', content)
         self.assertRegex(
             common_tasks,
-            r"- name: Install admiral-common baseline package[\s\S]*?state: latest",
+            r"- name: Install admiral-common baseline package",
         )
+        # The default keeps reconciling admiral-common to the repository
+        # release; defining admiral_common_version pins an exact version.
+        self.assertIn("else 'latest'", common_tasks)
+        self.assertIn("admiral_common_version", common_tasks)
 
     def test_installer_help_lists_explicit_admin_portal_mode(self) -> None:
         result = subprocess.run(
