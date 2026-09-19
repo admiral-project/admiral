@@ -224,6 +224,38 @@
       when: not admiral_secrets_file.stat.exists
       no_log: true
 
+    - name: Require a complete existing Admiral secret inventory
+      assert:
+        that:
+          - "(admiral_secrets_text | regex_findall('(?m)^' ~ item ~ '=[^\\r\\n]+$') | length) == 1"
+        fail_msg: "Existing Admiral secret inventory is incomplete or malformed: {{ item }}. Restore /etc/admiral/secrets from a complete backup; secrets will not be regenerated."
+      loop:
+        - ADMIRAL_POSTGRES_USER
+        - ADMIRAL_POSTGRES_PASSWORD
+        - ADMIRAL_ADMIN_TOKEN
+        - ADMIRAL_TOKEN_PEPPER
+        - ADMIRAL_SECRETS_KEY
+        - FLAGSHIP_SECRET_KEY
+        - FLAGSHIP_BOOTSTRAP_USER
+        - FLAGSHIP_BOOTSTRAP_PASSWORD
+        - HARBOR_SECRET_KEY
+        - HARBOR_ENCRYPTION_KEY
+        - HARBOR_BOOTSTRAP_USER
+        - HARBOR_BOOTSTRAP_PASSWORD
+        - HARBOR_LEGACY_ADMIN_PASSWORD
+        - ADMIRAL_HARBOR_API_TOKEN
+        - COCKPIT_ADMIN_USER
+        - COCKPIT_ADMIN_PASSWORD
+        - ADMIRAL_FLEET_TOKEN
+        - ADMIRAL_ED25519_PRIVATE_KEY
+        - ADMIRAL_TASK_PUBLIC_KEY
+        - ADMIRAL_TASK_ENCRYPTION_KEY
+        - ADMIRAL_FLEET_CALLBACK_KEY
+        - ADMIRAL_SESSION_HMAC_KEY
+        - ADMIRAL_SSH_USER
+      when: admiral_secrets_file.stat.exists
+      no_log: true
+
     - name: Extract existing Admiral secrets
       set_fact:
         admiral_existing_postgres_password: "{{ admiral_secrets_text | regex_findall('(?m)^ADMIRAL_POSTGRES_PASSWORD=(.*)$') | first | default('') }}"
