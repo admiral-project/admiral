@@ -1309,6 +1309,9 @@ if [[ "$INSTALL_DEV_MODE" != "true" ]]; then
     if [[ "$SSHD_EFFECTIVE" != *"kbdinteractiveauthentication no"* ]]; then
         SECURITY_WARNINGS+=("sshd keyboard-interactive authentication is not disabled.")
     fi
+    if [[ "$SSHD_EFFECTIVE" != *"allowtcpforwarding no"* ]]; then
+        SECURITY_WARNINGS+=("sshd TCP forwarding is not disabled.")
+    fi
     if [[ "$SSHD_EFFECTIVE" != *"permitemptypasswords no"* ]]; then
         SECURITY_WARNINGS+=("sshd empty passwords are not explicitly disabled.")
     fi
