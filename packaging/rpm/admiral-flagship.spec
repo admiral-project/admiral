@@ -6,7 +6,7 @@
 
 Name:    admiral-flagship
 Version: 0.0.1rc1
-Release: 86%{?dist}
+Release: 87%{?dist}
 Summary: Admiral Administrative Web Console
 
 License: Apache-2.0
