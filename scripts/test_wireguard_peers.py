@@ -23,10 +23,22 @@ class WireGuardPeerExchangeTests(unittest.TestCase):
         self.assertNotIn("query('fileglob'", content)
         self.assertNotIn("lookup('file', '/etc/wireguard/admiral.key')", content)
 
+    def test_peer_preshared_keys_are_generated_preserved_and_hidden(self) -> None:
+        content = PLAYBOOK.read_text(encoding="utf-8")
+
+        self.assertIn("wg genpsk", content)
+        self.assertIn("node_wg_preshared_key", content)
+        self.assertIn("PresharedKey = {{ node_wg_preshared_key }}", content)
+        self.assertIn("no_log: true", content)
+        self.assertIn("regex_findall('(?m)^PresharedKey", content)
+        template = (ROOT / "ansible/roles/admiral_wireguard/templates/wg-admiral.conf.j2").read_text(encoding="utf-8")
+        self.assertIn("PresharedKey = {{ admiral_wireguard_preshared_key", template)
+
     def test_hub_template_preserves_durable_peer_fragments(self) -> None:
         template = (ROOT / "ansible" / "roles" / "admiral_wireguard" / "templates" / "wg-admiral.conf.j2").read_text(encoding="utf-8")
         self.assertIn("admiral_wireguard_role == 'hub'", template)
         self.assertIn("admiral_existing_wireguard_peer_fragments", template)
+        self.assertIn("peer.preshared_key", template)
 
 
 if __name__ == "__main__":

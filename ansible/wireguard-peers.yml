@@ -82,12 +82,51 @@
       delegate_to: "{{ hub_host }}"
       run_once: true
 
+    - name: Check for an existing per-peer preshared key
+      stat:
+        path: "/etc/wireguard/peers.d/{{ inventory_hostname | regex_replace('[^A-Za-z0-9_.-]', '_') }}.conf"
+      register: peer_fragment_stat
+      delegate_to: "{{ hub_host }}"
+
+    - name: Read existing per-peer preshared key
+      slurp:
+        src: "/etc/wireguard/peers.d/{{ inventory_hostname | regex_replace('[^A-Za-z0-9_.-]', '_') }}.conf"
+      register: peer_fragment_content
+      when: peer_fragment_stat.stat.exists
+      delegate_to: "{{ hub_host }}"
+      no_log: true
+
+    - name: Preserve existing per-peer preshared key
+      set_fact:
+        node_wg_preshared_key: >-
+          {{
+            (peer_fragment_content.content | b64decode
+             | regex_findall('(?m)^PresharedKey\s*=\s*(.+)$') | first | default('') | trim)
+            if peer_fragment_stat.stat.exists else ''
+          }}
+      no_log: true
+
+    - name: Generate per-peer preshared key on hub when absent
+      command: wg genpsk
+      register: generated_peer_preshared_key
+      when: node_wg_preshared_key | default('') | trim == ''
+      delegate_to: "{{ hub_host }}"
+      changed_when: true
+      no_log: true
+
+    - name: Set generated per-peer preshared key
+      set_fact:
+        node_wg_preshared_key: "{{ generated_peer_preshared_key.stdout | trim }}"
+      when: node_wg_preshared_key | default('') | trim == ''
+      no_log: true
+
     - name: Write spoke peer config to hub
       copy:
         content: |
           [Peer]
           PublicKey = {{ hostvars[inventory_hostname].node_wg_public_key }}
           AllowedIPs = {{ hostvars[hub_host].admiral_known_hosts_inventory.nodes[node_lookup_key].wireguard_ip }}/32
+          PresharedKey = {{ node_wg_preshared_key }}
         dest: "/etc/wireguard/peers.d/{{ inventory_hostname | regex_replace('[^A-Za-z0-9_.-]', '_') }}.conf"
         owner: root
         group: root
@@ -126,12 +165,13 @@
 
     - name: Build peer list for template
       set_fact:
-        admiral_wireguard_peers: "{{ admiral_wireguard_peers + [{'public_key': (item.content | b64decode | regex_findall('(?m)^PublicKey\\s*=\\s*(.+)$') | first | trim), 'allowed_ips': (item.content | b64decode | regex_findall('(?m)^AllowedIPs\\s*=\\s*(.+)$') | first | trim)}] }}"
+        admiral_wireguard_peers: "{{ admiral_wireguard_peers + [{'public_key': (item.content | b64decode | regex_findall('(?m)^PublicKey\\s*=\\s*(.+)$') | first | trim), 'allowed_ips': (item.content | b64decode | regex_findall('(?m)^AllowedIPs\\s*=\\s*(.+)$') | first | trim), 'preshared_key': (item.content | b64decode | regex_findall('(?m)^PresharedKey\\s*=\\s*(.+)$') | first | default('') | trim)}] }}"
       loop: "{{ peer_files.results }}"
 
     - name: Debug peer list
       debug:
         var: admiral_wireguard_peers
+      no_log: true
 
     - name: Deploy hub WireGuard configuration
       template:
@@ -176,6 +216,7 @@
         admiral_wg_private_key:
           stdout: "{{ node_wg_private_key }}"
         admiral_wireguard_port: "51820"
+        admiral_wireguard_preshared_key: "{{ hostvars[inventory_hostname].node_wg_preshared_key }}"
       no_log: true
       notify: restart wireguard
 

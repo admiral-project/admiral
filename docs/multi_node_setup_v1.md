@@ -207,6 +207,14 @@ Example:
 
 All other administrative interfaces SHOULD remain private.
 
+Each hub↔spoke peer also uses a unique WireGuard `PresharedKey`. The peer
+exchange playbook generates the 256-bit PSK on the admin hub, stores it only in
+the root-owned `0600` peer fragments and rendered WireGuard configurations,
+and keeps Ansible output hidden. Existing peer fragments preserve their PSK;
+removing a peer fragment and onboarding that node again generates a new one.
+The PSK is an additional defense-in-depth secret, not a replacement for the
+WireGuard key pair or the firewall policy.
+
 ---
 
 5. SSH contract

@@ -11,6 +11,9 @@ ListenPort = {{ admiral_wireguard_port }}
 [Peer]
 PublicKey = {{ peer_key }}
 AllowedIPs = {{ peer.allowed_ips }}
+{% if peer.preshared_key | default('') | trim %}
+PresharedKey = {{ peer.preshared_key | trim }}
+{% endif %}
 {% set peer_state.keys = peer_state.keys + [peer_key] %}
 {% endif %}
 {% endfor %}
@@ -38,5 +41,8 @@ AllowedIPs = {{ peer.allowed_ips }}
 PublicKey = {{ admiral_wireguard_hub_public_key }}
 Endpoint = {{ admiral_wireguard_hub_endpoint }}:{{ admiral_wireguard_port }}
 AllowedIPs = {{ admiral_wireguard_hub_ip | default('10.99.0.1') }}/32
+{% if admiral_wireguard_preshared_key | default('') | trim %}
+PresharedKey = {{ admiral_wireguard_preshared_key | trim }}
+{% endif %}
 PersistentKeepalive = 25
 {% endif %}

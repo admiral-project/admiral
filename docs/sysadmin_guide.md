@@ -630,6 +630,36 @@ to one another.
 References: [Kubernetes network policies](https://kubernetes.io/docs/concepts/services-networking/network-policies/)
 and [Kubernetes cluster networking](https://kubernetes.io/docs/concepts/cluster-administration/networking/).
 
+## Worker disk encryption
+
+Admiral does not partition disks or configure LUKS. Before placing customer
+workloads on a worker, the operator must verify that the filesystem containing
+`/var/lib/admiral-apps` is protected by one of:
+
+- LUKS2 with a documented unlock path;
+- provider or hypervisor disk encryption with an equivalent recovery policy.
+
+For LUKS2, TPM2/clevis enables unattended boot but couples recovery to the
+configured host and TPM policy. A remote passphrase or manual unlock keeps the
+recovery secret outside the host but requires operator action after reboot.
+Choose one path and test it before production use. Do not store the only
+recovery key on the worker or on the same hypervisor.
+
+Run these checks on every worker and record the output without exposing keys:
+
+```bash
+findmnt -no SOURCE,FSTYPE,TARGET /var/lib/admiral-apps
+lsblk -o NAME,TYPE,FSTYPE,MOUNTPOINTS
+sudo cryptsetup status <mapped-device>
+```
+
+`cryptsetup status` must report an active `crypt` mapping when the workload
+filesystem is LUKS-backed. If the storage is provider-managed, retain the
+provider's encryption and recovery evidence instead. The Admiral installer
+does not fail on an unencrypted host because disk provisioning is outside its
+scope; an operator must not treat a plain filesystem as production-ready for
+customer data.
+
 `--dev-node` is explicitly an evaluation mode and does **not** apply all production hardening controls. In dev-node mode:
 
 - Fail2ban protections are not applied.
@@ -809,12 +839,28 @@ needed to decrypt a recovery archive, and loss of both the node and this key
 makes the archive unrecoverable. Never place the key in the S3 bucket or in
 the backup filename, logs, or ticket attachments.
 
-To recover on a clean admin node, install the matching Admiral RPMs, download
-the encrypted archive, verify its OpenPGP integrity while decrypting it with
-the externally held `ADMIRAL_SECRETS_KEY`, restore the three PostgreSQL dumps,
-and restore `/etc/admiral/secrets`, TLS and WireGuard configuration before
-starting Admiral services. Validate the control plane and reconnect its spokes
-only after the restored services are healthy.
+### Control-plane recovery validation
+
+To validate recovery on a clean admin node, install the matching Admiral RPMs,
+download the encrypted archive and verify it before restoring anything:
+
+```bash
+sha256sum -c control-plane-<timestamp>.tar.gz.gpg.sha256
+gpg --batch --decrypt \
+  --output control-plane-<timestamp>.tar.gz \
+  control-plane-<timestamp>.tar.gz.gpg
+tar -tzf control-plane-<timestamp>.tar.gz
+```
+
+The archive must contain `admiral.dump`, `admiral_queue.dump`,
+`admiral_harbor.dump`, `/etc/admiral/secrets`, the internal TLS material and
+the WireGuard configuration. On the clean host, stop Admiral services, restore
+the three databases with `pg_restore`, restore the protected configuration,
+start the services, and verify health, API authentication, Harbor state and
+the known spokes before reconnecting workload traffic. Record the restore date,
+RPM NEVRA, archive checksum and the result of each service check in the
+recovery record. The first real restore remains an operational release gate;
+these steps make the exercise repeatable and auditable.
 
 ## Secrets
 
