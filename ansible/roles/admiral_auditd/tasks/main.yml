@@ -52,10 +52,10 @@
     enabled: true
     state: started
 
-- name: Restart auditd after policy changes
-  systemd:
-    name: auditd
-    state: restarted
+- name: Reload auditd after policy changes
+  command:
+    cmd: service auditd reload
+  changed_when: true
   when: admiral_auditd_configuration.changed
 
 - name: Detect audit rule loader availability
