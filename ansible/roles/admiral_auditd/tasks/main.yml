@@ -72,13 +72,23 @@
   changed_when: false
   failed_when: false
 
+- name: Read current audit immutability state
+  command:
+    cmd: auditctl -s
+  register: admiral_auditd_status_before_load
+  changed_when: false
+  failed_when: false
+  when: auditctl_available.rc == 0
+
 - name: Load audit rules with augenrules
   command:
     cmd: augenrules --load
   changed_when: false
   register: audit_augenrules
   failed_when: false
-  when: augenrules_available.rc == 0
+  when:
+    - augenrules_available.rc == 0
+    - "'enabled 2' not in (admiral_auditd_status_before_load.stdout | default(''))"
 
 - name: Load audit rules via auditctl when augenrules is unavailable
   command:
@@ -87,6 +97,7 @@
   when:
     - augenrules_available.rc != 0 or (audit_augenrules.rc | default(1)) != 0
     - auditctl_available.rc == 0
+    - "'enabled 2' not in (admiral_auditd_status_before_load.stdout | default(''))"
 
 
 - name: Verify Admiral audit rules are loaded

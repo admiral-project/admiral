@@ -881,11 +881,15 @@ def optional_cidr_list(name):
     value = os.environ.get(name, "")
     if not value:
         return
+    expected_version = 4 if name.endswith("IPV4_DESTINATIONS") else 6
     networks = []
     for item in value.split(","):
         network = item.strip()
         try:
-            networks.append(str(ipaddress.ip_network(network, strict=False)))
+            parsed = ipaddress.ip_network(network, strict=False)
+            if parsed.version != expected_version:
+                raise ValueError(f"expected IPv{expected_version} network")
+            networks.append(str(parsed))
         except ValueError as exc:
             raise SystemExit(f"invalid {name} entry {network!r}: {exc}")
     d[name.lower()] = networks

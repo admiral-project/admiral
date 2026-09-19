@@ -508,6 +508,8 @@ The default egress policy remains destination-agnostic and port-based. Sites
 that can maintain stable address ranges may optionally pass
 `admiral_egress_ipv4_destinations` and/or `admiral_egress_ipv6_destinations`
 as CIDR lists; external TCP egress is then limited to those destinations.
+DNS and NTP remain explicit port-based exceptions unless the site also places
+its resolvers behind a separately managed destination policy.
 Set `admiral_egress_ipv6_enabled=true` when IPv6 is part of the deployment
 contract; the policy then permits the ICMPv6 neighbour-discovery and echo
 messages required for normal operation.
