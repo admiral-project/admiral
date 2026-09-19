@@ -194,6 +194,20 @@ to secure administrator storage, verify its fingerprint and delete the local
 copy. Admiral does not use this key for normal Fleet, WireGuard, API, or TLS
 operations, and each Worker or Portal receives a different key pair.
 
+Use the packaged cleanup helper to inspect residual credentials without
+printing their contents. It is a dry run by default and accepts only explicit
+node IDs or file paths:
+
+```bash
+sudo admiral-ssh-delivery-cleanup --node-id worker-01
+sudo admiral-ssh-delivery-cleanup --node-id worker-01 \
+  --apply --replacement-key /secure/operator/id_ed25519
+```
+
+The apply form verifies that the replacement key is a private, restricted SSH
+key before securely removing only the selected delivery files. It never
+recursively removes the delivery directory or `/etc/admiral/secrets`.
+
 For a portal, replace the final service with `admiral-harbor`.
 
 When operating a dedicated admin node, review inactive Admiral services and
@@ -481,6 +495,33 @@ re-verify the replacement key before retrying.
 | `admiralctl` | `admiralctl` | `~/.config/admiralctl/config.yaml` |
 
 Package defaults are installed under `/etc/admiralctl/config.yaml`, but the CLI reads the user config in `~/.config/admiralctl/config.yaml` first.
+
+### Audit and egress hardening options
+
+The audit role sets explicit rotation and disk-space actions (`space_left`,
+`admin_space_left`, `disk_full_action`, and `max_log_file_action`). To make
+the loaded audit rules immutable after provisioning, pass
+`admiral_auditd_immutable=true` to Ansible. This is opt-in because changing
+immutable rules requires a reboot or a host-level audit policy change.
+
+The default egress policy remains destination-agnostic and port-based. Sites
+that can maintain stable address ranges may optionally pass
+`admiral_egress_ipv4_destinations` and/or `admiral_egress_ipv6_destinations`
+as CIDR lists; external TCP egress is then limited to those destinations.
+Set `admiral_egress_ipv6_enabled=true` when IPv6 is part of the deployment
+contract; the policy then permits the ICMPv6 neighbour-discovery and echo
+messages required for normal operation.
+
+### Minimal off-cluster log shipping
+
+Admiral keeps journald and auditd local by default. For a small forensic
+baseline, configure a separate log collector outside the Admiral hosts and
+forward journal and audit events over authenticated TLS. On EL systems this
+can use `systemd-journal-upload` to a `systemd-journal-remote` receiver and
+the `audisp-syslog` plugin to forward audit records. Keep the collector
+outside the cluster, restrict its ingress to the node addresses, and do not
+place Admiral secrets or private keys in the forwarded payload. The platform
+does not require a full metrics or observability stack for this setup.
 
 `admiral-fleet` requires `ADMIRAL_FLEET_ROOTLESS_USER` and runs Podman through the rootless user manager.
 

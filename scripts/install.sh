@@ -873,6 +873,26 @@ if os.environ.get("INSTALL_PUBLIC_IP"):
 if os.environ.get("INSTALL_WIREGUARD_IP"):
     d["admiral_wireguard_ip"] = os.environ["INSTALL_WIREGUARD_IP"]
 
+def optional_cidr_list(name):
+    value = os.environ.get(name, "")
+    if not value:
+        return
+    networks = []
+    for item in value.split(","):
+        network = item.strip()
+        try:
+            networks.append(str(ipaddress.ip_network(network, strict=False)))
+        except ValueError as exc:
+            raise SystemExit(f"invalid {name} entry {network!r}: {exc}")
+    d[name.lower()] = networks
+
+optional_cidr_list("ADMIRAL_EGRESS_IPV4_DESTINATIONS")
+optional_cidr_list("ADMIRAL_EGRESS_IPV6_DESTINATIONS")
+if os.environ.get("ADMIRAL_EGRESS_IPV6_ENABLED", "").lower() in ("1", "true", "yes"):
+    d["admiral_egress_ipv6_enabled"] = True
+if os.environ.get("ADMIRAL_AUDITD_IMMUTABLE", "").lower() in ("1", "true", "yes"):
+    d["admiral_auditd_immutable"] = True
+
 harbor_secret = os.environ.get("SECRETS_HARBOR_SECRET_KEY", "")
 if harbor_secret:
     d["admiral_harbor_secret_key_value"] = harbor_secret
@@ -1528,7 +1548,11 @@ Administrative SSH credential for this node:
 
 Extract this private key to secure administrator storage and delete both
 delivery artifacts from the Admin node after verification. Admiral will not
-use this key for normal control-plane operations.
+use this key for normal control-plane operations. Inspect them without
+deleting anything first with:
+  sudo admiral-ssh-delivery-cleanup --node-id ${DELIVERY_ID}
+After confirming an alternate operator key works, remove only these exact
+files with --apply and --replacement-key.
 EOF
 fi
 

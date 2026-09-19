@@ -14,11 +14,23 @@ table inet admiral_egress {
         ip daddr 10.99.0.0/24 accept
         # Correct time is security-critical for TLS, tokens, and audit records.
         udp dport 123 accept
+{% if admiral_egress_ipv6_enabled | default(false) | bool %}
+        # Permit the IPv6 control-plane neighbour discovery required for a
+        # functional dual-stack host. The default does not add ICMPv6 policy.
+        icmpv6 type { nd-neighbor-solicit, nd-neighbor-advert, nd-router-solicit, nd-router-advert, echo-request, echo-reply } accept
+{% endif %}
 {% if admiral_effective_host_profile in ['single-node', 'admin'] %}
         # SMTP submission is required for Harbor and Flagship notifications.
         # S3-compatible backup endpoints such as MinIO commonly expose the
         # API on TCP/9000. HTTPS S3 endpoints continue to use TCP/443.
+{% if (admiral_egress_ipv4_destinations | default([]) | length) > 0 %}
+        ip daddr { {{ admiral_egress_ipv4_destinations | join(', ') }} } tcp dport { 22, 80, 443, 587, 9000, 53 } accept
+{% else %}
         tcp dport { 22, 80, 443, 587, 9000, 53 } accept
+{% endif %}
+{% if (admiral_egress_ipv6_destinations | default([]) | length) > 0 %}
+        ip6 daddr { {{ admiral_egress_ipv6_destinations | join(', ') }} } tcp dport { 22, 80, 443, 587, 9000, 53 } accept
+{% endif %}
         udp dport 53 accept
 {% else %}
         tcp dport 22 accept
@@ -33,7 +45,14 @@ table inet admiral_egress {
         # OCI registries and notification providers.
         # EL10 BaseOS/AppStream/CRB and EPEL may publish mirror URLs over
         # HTTP. Allow repository downloads without exposing TCP/80 inbound.
+{% if (admiral_egress_ipv4_destinations | default([]) | length) > 0 %}
+        ip daddr { {{ admiral_egress_ipv4_destinations | join(', ') }} } tcp dport { 80, 443, 587, 9000 } accept
+{% else %}
         tcp dport { 80, 443, 587, 9000 } accept
+{% endif %}
+{% if (admiral_egress_ipv6_destinations | default([]) | length) > 0 %}
+        ip6 daddr { {{ admiral_egress_ipv6_destinations | join(', ') }} } tcp dport { 80, 443, 587, 9000 } accept
+{% endif %}
         udp dport 51820 accept
 {% endif %}
         reject

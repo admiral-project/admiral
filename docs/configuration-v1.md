@@ -70,6 +70,10 @@ Variables de entorno equivalentes:
 ### Reglas actuales
 
 - `admin_token` y `token_pepper` son obligatorios
+- En el primer release `admin_token` representa un único operador administrativo
+  compartido entre `admiralctl` y Flagship; no se debe distribuir como una
+  credencial personal. Tokens por operador con scopes, expiración y revocación
+  quedan como evolución posterior.
 - `queue_database_url` es obligatorio
 - `flagship_admin_user` y `flagship_admin_pswd` se usan solo para bootstrap inicial
 - `tls_cert_file` es obligatorio

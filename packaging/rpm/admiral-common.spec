@@ -53,6 +53,7 @@ cp -r ansible/* %{buildroot}%{_datadir}/admiral/ansible/
 install -Dm0755 scripts/install.sh %{buildroot}%{_bindir}/admiral-install
 install -Dm0755 scripts/admiral_known_host.py %{buildroot}%{_bindir}/admiral-known-host
 install -Dm0755 scripts/admiral_revoke_bootstrap_key.py %{buildroot}%{_bindir}/admiral-revoke-bootstrap-key
+install -Dm0755 scripts/admiral_ssh_delivery_cleanup.py %{buildroot}%{_bindir}/admiral-ssh-delivery-cleanup
 install -Dm0755 scripts/admiral_control_plane_backup.sh %{buildroot}%{_bindir}/admiral-control-plane-backup
 install -Dm0644 %{SOURCE3} %{buildroot}%{_unitdir}/admiral-control-plane-backup.service
 install -Dm0644 %{SOURCE4} %{buildroot}%{_unitdir}/admiral-control-plane-backup.timer
@@ -106,6 +107,7 @@ install -D -m 0644 %{SOURCE1} %{buildroot}%{_sysusersdir}/%{name}.conf
 %{_bindir}/admiral-install
 %{_bindir}/admiral-known-host
 %{_bindir}/admiral-revoke-bootstrap-key
+%{_bindir}/admiral-ssh-delivery-cleanup
 %{_bindir}/admiral-rootless-subids
 %{_bindir}/admiral-control-plane-backup
 %{_unitdir}/admiral-control-plane-backup.service

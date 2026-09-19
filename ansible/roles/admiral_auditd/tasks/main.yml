@@ -4,6 +4,25 @@
     name: audit
     state: present
 
+- name: Configure explicit auditd rotation and disk-space policy
+  lineinfile:
+    path: /etc/audit/auditd.conf
+    regexp: "^#?{{ item.key | regex_escape }}\\s*="
+    line: "{{ item.key }} = {{ item.value }}"
+    create: true
+    mode: "0640"
+  loop:
+    - { key: "space_left", value: "100" }
+    - { key: "admin_space_left", value: "50" }
+    - { key: "space_left_action", value: "SYSLOG" }
+    - { key: "admin_space_left_action", value: "SUSPEND" }
+    - { key: "disk_full_action", value: "SUSPEND" }
+    - { key: "disk_error_action", value: "SUSPEND" }
+    - { key: "max_log_file", value: "50" }
+    - { key: "num_logs", value: "10" }
+    - { key: "max_log_file_action", value: "ROTATE" }
+  register: admiral_auditd_configuration
+
 - name: Ensure audit rules directory exists
   file:
     path: /etc/audit/rules.d
@@ -23,12 +42,21 @@
       -w /etc/admiral/tls -p war -k admiral_tls
       -w /var/lib/admiral -p wa -k admiral_data
       -w /etc/wireguard -p war -k admiral_wireguard
+      {% if admiral_auditd_immutable | default(false) | bool %}
+      -e 2
+      {% endif %}
 
 - name: Enable and start auditd
   systemd:
     name: auditd
     enabled: true
     state: started
+
+- name: Restart auditd after policy changes
+  systemd:
+    name: auditd
+    state: restarted
+  when: admiral_auditd_configuration.changed
 
 - name: Detect audit rule loader availability
   command:
@@ -92,3 +120,24 @@
   when:
     - auditctl_available.rc != 0
     - augenrules_available.rc != 0
+
+- name: Warn when audit rule loader utilities are unavailable
+  debug:
+    msg: >-
+      auditd is installed and the Admiral rules file exists, but auditctl and
+      augenrules are unavailable; effective rule loading could not be verified.
+  when:
+    - auditctl_available.rc != 0
+    - augenrules_available.rc != 0
+
+- name: Verify optional immutable audit policy
+  command:
+    cmd: auditctl -s
+  register: admiral_audit_status
+  changed_when: false
+  failed_when: >-
+    admiral_audit_status.rc != 0 or
+    'enabled 2' not in admiral_audit_status.stdout
+  when:
+    - admiral_auditd_immutable | default(false) | bool
+    - auditctl_available.rc == 0
