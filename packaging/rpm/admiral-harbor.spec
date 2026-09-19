@@ -3,7 +3,7 @@
 
 Name:    admiral-harbor
 Version: 0.0.1rc1
-Release: 61%{?dist}
+Release: 62%{?dist}
 Summary: Admiral Customer Portal - Web UI for end users
 
 License: Apache-2.0
