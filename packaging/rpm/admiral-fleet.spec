@@ -6,7 +6,7 @@
 
 Name:    admiral-fleet
 Version: 0.0.1rc1
-Release: 68%{?dist}
+Release: 69%{?dist}
 Summary: Admiral Fleet Worker Agent
 
 License: Apache-2.0
