@@ -212,7 +212,7 @@
       register: admiral_single_node_nodes
       changed_when: false
       environment:
-        ADMIRAL_ADMIN_TOKEN: "{{ admiral_admin_token_value }}"
+        ADMIRAL_INTERNAL_TOKEN: "{{ admiral_internal_token_value }}"
         ADMIRAL_SERVER_URL: "{{ admiral_control_plane_url }}"
         ADMIRAL_TLS_CA_FILE: /etc/admiral/tls/ca.pem
       when: admiral_install_mode == 'single-node'
