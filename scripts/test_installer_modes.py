@@ -607,6 +607,17 @@ class InstallerModeTests(unittest.TestCase):
         self.assertIn("name: cockpit-ws", cockpit)
         self.assertIn("name: cockpit.socket", cockpit)
 
+    def test_admirald_deploys_admiralctl_config_with_internal_token(self) -> None:
+        admirald = ADMIRALD_TASKS.read_text(encoding="utf-8")
+
+        self.assertIn("Resolve admiralctl token for control-plane tasks", admirald)
+        self.assertIn("admiralctl_token_value:", admirald)
+        self.assertIn("admiral_internal_token_value", admirald)
+        self.assertIn("Require non-empty token for admiralctl configuration", admirald)
+        self.assertIn("admiralctl_token_value is defined", admirald)
+        self.assertIn("admiralctl_token_value | length > 0", admirald)
+        self.assertIn("token: {{ admiralctl_token_value }}", admirald)
+
 
 if __name__ == "__main__":
     unittest.main()

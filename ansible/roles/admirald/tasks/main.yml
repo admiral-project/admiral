@@ -117,6 +117,19 @@
     state: started
     daemon_reload: true
 
+- name: Resolve admiralctl token for control-plane tasks
+  set_fact:
+    admiralctl_token_value: "{{ admirald_admin_token | default(admirald_internal_token | default(admiral_internal_token_value | default('', true))) }}"
+  no_log: true
+
+- name: Require non-empty token for admiralctl configuration
+  assert:
+    that:
+      - admiralctl_token_value is defined
+      - admiralctl_token_value | length > 0
+    fail_msg: "ADMIRAL_INTERNAL_TOKEN is empty or undefined. Ensure admiral_internal_token_value or admirald_admin_token is set before deploying admiralctl config."
+  no_log: true
+
 - name: Ensure admiralctl config directory exists
   file:
     path: /root/.config/admiralctl
@@ -129,6 +142,6 @@
     mode: "0600"
     content: |
       server_url: {{ admiralctl_server_url | default(admiral_control_plane_url) }}
-      token: {{ admirald_admin_token | default(admiral_admin_token_value) }}
+      token: {{ admiralctl_token_value }}
       ca_cert_file: {{ admiralctl_ca_cert_file | default('/etc/admiral/tls/ca.pem') }}
   no_log: true
