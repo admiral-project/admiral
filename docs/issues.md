@@ -11,6 +11,12 @@ pineados, los seis specs usan `Release: 2`, los seis RPM ya están compilados
 localmente con NEVRA y SHA-256, y el fix de #113 está incluido. Falta publicar
 la nueva tanda en COPR y validar en guests.
 
+El issue #99 es un gate de seguridad para RC2: se confirmó que un proceso de
+cliente puede alcanzar un puerto publicado por otro cliente co-residente en el
+mismo worker. Un workload autorizado pero comprometido puede usar esa ruta para
+reconocimiento lateral o acceso a servicios de otro tenant; no se aprueba el
+release hasta aislarlo y repetir la prueba negativa.
+
 El laboratorio abrió el issue [#113](https://github.com/admiral-project/admiral/issues/113)
 contra RC2: el playbook remoto del portal termina correctamente, pero el
 intercambio final de peers WireGuard falla porque el wrapper busca
@@ -47,7 +53,6 @@ requiere ejecutar el runbook completo.
 | #106 | test(billing): verify PayPal sandbox E2E flow as first alpha gate | Ciclo completo en guests limpios: producto/plan → checkout sandbox → webhook → provisión → upgrade/downgrade/pausa | Sin implementar evidencia |
 | #105 | docs(ops): prove control-plane and workload recovery runbooks | Probar (no solo redactar): HTTPS DNS-01, backup off-node de secrets, S3, SMTP, renovación TLS, restore del hub en guests limpios | Runbook ampliado; falta evidencia operativa completa |
 | #92 | sec(dr): add control-plane state backup and hub recovery runbook | Restore real del backup del control plane en guest limpio | Implementado (`b93cd1c`); restore documentado, falta evidencia real |
-| #99 | sec(workloads): validate and prevent lateral access between instances | Experimento: dos instancias en el mismo worker, probar conectividad intra-host a puertos publicados (posible falso positivo) | Hipótesis sin probar |
 | #97 | sec(wireguard): add per-peer preshared keys (+PSK) | Verificar `PresharedKey` por peer y handshake hub↔spoke en multinodo | Payload pinneado (`da57130`); falta evidencia en vivo |
 
 ## Implementar primero, laboratorio después
@@ -56,6 +61,7 @@ requiere ejecutar el runbook completo.
 |---|---|---|
 | #100 | sec(storage): document and verify disk encryption (LUKS) for customer data | Documentar prerequisito LUKS2 en workers; luego verificar en lab |
 | #96 | sec(bootstrap): minimize and expire SSH delivery credentials | Implementar inventario/cleanup explícito; luego verificar en lab |
+| #99 | sec(workloads): validate and prevent lateral access between instances | Confirmado: un proceso de cliente alcanza un puerto publicado de otro cliente en el mismo worker. Aislar redes por workload/tenant, limitar los puertos host al ingress autorizado y añadir una prueba negativa entre dos instancias co-residentes; luego repetir en lab |
 | #95 | sec(backups): immutable off-site backup profile and automated restore verification | Definir perfil S3 con Object Lock; luego probar restore | Perfil Object Lock Governance de 30 días implementado; falta verificación en S3 |
 | #98 | sec(api): per-operator tokens with scope/expiry/revocation (`needs-work`) | Completar el modelo de operadores; luego validar scope/revocación en lab |
 | #94 | sec(flagship): require single-use email verification code (`needs-work`, posible falso positivo) | Implementar MFA email; luego probar flujo de login |
