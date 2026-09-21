@@ -1092,7 +1092,14 @@ fi
 # --- 10b. exchange WireGuard peers for spoke installs ---
 if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]]; then
     info "Exchanging WireGuard peers between hub and spoke..."
-    export ADMIRAL_ADMIN_TOKEN="$(read_admiral_secret ADMIRAL_ADMIN_TOKEN)"
+    # The generated controller inventory stores the validated administrative
+    # token as ADMIRAL_INTERNAL_TOKEN. Keep the old key as a compatibility
+    # fallback for installations created before that inventory normalization.
+    CONTROLLER_ADMIN_TOKEN="$(read_admiral_secret ADMIRAL_INTERNAL_TOKEN || true)"
+    if [[ -z "$CONTROLLER_ADMIN_TOKEN" ]]; then
+        CONTROLLER_ADMIN_TOKEN="$(read_admiral_secret ADMIRAL_ADMIN_TOKEN || true)"
+    fi
+    export ADMIRAL_ADMIN_TOKEN="$CONTROLLER_ADMIN_TOKEN"
     [[ -n "$ADMIRAL_ADMIN_TOKEN" ]] || die "Controller admin token is unavailable for WireGuard peer exchange."
     export ADMIRAL_SERVER_URL="https://${INSTALL_ADMIN_WIREGUARD_IP}:8080"
     export ADMIRAL_TLS_CA_FILE="/etc/admiral/tls/ca.pem"

@@ -628,6 +628,24 @@ class InstallerModeTests(unittest.TestCase):
         self.assertNotIn("admiral_internal_token_value", registration.split("no_log: true", 1)[0])
         self.assertIn('ADMIRAL_INTERNAL_TOKEN: "{{ admiral_admin_token_value }}"', routes_sync)
 
+    def test_spoke_peer_exchange_reads_normalized_controller_token(self) -> None:
+        installer = INSTALLER.read_text(encoding="utf-8")
+        peer_exchange = installer.split("# --- 10b. exchange WireGuard peers for spoke installs ---", 1)[1]
+
+        self.assertIn(
+            'CONTROLLER_ADMIN_TOKEN="$(read_admiral_secret ADMIRAL_INTERNAL_TOKEN || true)"',
+            peer_exchange,
+        )
+        self.assertIn(
+            'CONTROLLER_ADMIN_TOKEN="$(read_admiral_secret ADMIRAL_ADMIN_TOKEN || true)"',
+            peer_exchange,
+        )
+        self.assertIn('export ADMIRAL_ADMIN_TOKEN="$CONTROLLER_ADMIN_TOKEN"', peer_exchange)
+        self.assertLess(
+            peer_exchange.index("ADMIRAL_INTERNAL_TOKEN"),
+            peer_exchange.index("ADMIRAL_ADMIN_TOKEN"),
+        )
+
     def test_worker_registration_exports_validated_admin_token(self) -> None:
         fleet = FLEET_TASKS.read_text(encoding="utf-8")
         registration = fleet.split("- name: Register node with admirald (admin-to-node)", 1)[1].split(
