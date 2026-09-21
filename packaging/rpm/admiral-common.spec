@@ -1,11 +1,11 @@
 # SPDX-FileCopyrightText: William Moreno Reyes CP | MBA
 # SPDX-License-Identifier: Apache-2.0
 
-%global commit 9884b76305902c74666abd8ea04203a54acc6098
+%global commit 7aac0592abc5b9fe7a09ed9a69b596cbda882c52
 
 Name:    admiral-common
 Version: 0.0.1rc2
-Release: 2%{?dist}
+Release: 3%{?dist}
 Summary: Common files and utilities for Admiral PaaS
 
 License: Apache-2.0
@@ -191,6 +191,9 @@ if [ "$1" -eq 0 ]; then
 fi
 
 %changelog
+* Mon Sep 21 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc2-3
+- Declare rootless pasta networking for workload pods
+
 * Mon Sep 21 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc2-2
 - Fix RC2 spoke peer exchange to read the normalized controller token
 

@@ -3,7 +3,7 @@
 
 Name:    admiral-harbor
 Version: 0.0.1rc2
-Release: 2%{?dist}
+Release: 3%{?dist}
 Summary: Admiral Customer Portal - Web UI for end users
 
 License: Apache-2.0
@@ -131,6 +131,9 @@ restorecon -R %{_localstatedir}/lib/admiral/harbor 2>/dev/null || :
 %{python3} -m pytest tests/ -x --tb=short
 
 %changelog
+* Mon Sep 21 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc2-3
+- Rebuild RC2 set with rootless pasta workload isolation
+
 * Mon Sep 21 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc2-2
 - Rebuild RC2 set with the spoke peer exchange token fix
 

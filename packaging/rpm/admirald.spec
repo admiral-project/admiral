@@ -6,7 +6,7 @@
 
 Name:    admirald
 Version: 0.0.1rc2
-Release: 2%{?dist}
+Release: 3%{?dist}
 Summary: Admiral Control Plane - Core API and orchestration service
 
 License: Apache-2.0
@@ -74,6 +74,9 @@ restorecon -F %{_bindir}/admirald 2>/dev/null || :
 %systemd_postun_with_restart admirald.service
 
 %changelog
+* Mon Sep 21 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc2-3
+- Rebuild RC2 set with rootless pasta workload isolation
+
 * Mon Sep 21 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc2-2
 - Rebuild RC2 set with the spoke peer exchange token fix
 

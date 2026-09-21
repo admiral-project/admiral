@@ -6,10 +6,10 @@ tracker maestro y no requiere acción directa.
 
 ## Trabajo actual
 
-Release `0.0.1rc2-2` en preparación: los cinco submódulos están versionados y
-pineados, los seis specs usan `Release: 2`, los seis RPM ya están compilados
-localmente con NEVRA y SHA-256, y el fix de #113 está incluido. Falta publicar
-la nueva tanda en COPR y validar en guests.
+Release `0.0.1rc2-3` en preparación: los cinco submódulos están versionados y
+pineados, los seis specs usan `Release: 3` e incluyen los fixes #113 y #99;
+#99 declara `Network=pasta` por pod rootless, sin bridge Netavark generado.
+Falta compilar/publicar la nueva tanda en COPR y validar en guests.
 
 El issue #99 es un gate de seguridad para RC2: se confirmó que un proceso de
 cliente puede alcanzar un puerto publicado por otro cliente co-residente en el
@@ -34,7 +34,7 @@ issues son candidatos a cerrarse cuando completen su gate:
 | #107 | Fix en `89a58a5` y tests de contrato del instalador | Confirmar `Deploy admiralctl configuration` en single-node |
 | #109 | Fix en `112f580` y tests locales del instalador | Probar `harborctl ping` y catalog sync con el RPM COPR |
 | #110 | Fix en `112f580` y tests locales del instalador | Validar `--portal-node` dedicado con el RPM COPR |
-| #104 | Seis RPM `0.0.1rc2-1` compilados localmente con NEVRA y SHA-256 | Completar exitosamente los seis builds COPR |
+| #104 | Seis RPM `0.0.1rc2-2` compilados localmente con NEVRA y SHA-256 | Completar exitosamente los seis builds COPR de `0.0.1rc2-3` |
 
 La implementación de #92 y #95 también está completada localmente, pero no se
 consideran candidatos inmediatos de cierre porque requieren restore real en un
@@ -45,10 +45,10 @@ requiere ejecutar el runbook completo.
 
 | Issue | Título | Acción lab requerida | Estado del fix |
 |---|---|---|---|
-| #103 | test(release): re-validate Tier 1 matrix on alpha candidate RPMs | Matriz Rocky/Alma/CentOS 10, single + multinodo, golden WordPress desde COPR | Pendiente publicar `0.0.1rc2-2` en COPR; laboratorio en paralelo |
-| #109 | fix(installer): generated Harbor token rejected by Admirald | Single-node fresco: `harborctl ping` y catalog sync con token generado | Corregido; validar con `0.0.1rc2-2` en COPR |
-| #110 | fix(installer): dedicated portal registration uses undefined admin token variable | `--portal-node` dedicado registra el portal y continúa a route checks | Corregido; validar con `0.0.1rc2-2` en COPR |
-| #113 | fix(installer): RC2 peer exchange reads missing `ADMIRAL_ADMIN_TOKEN` | Repetir portal dedicado y verificar resolución del token, intercambio de peers y handshake WireGuard | Fix en `9884b76`; tests locales y RPM `0.0.1rc2-2` pasan; falta COPR y rerun |
+| #103 | test(release): re-validate Tier 1 matrix on alpha candidate RPMs | Matriz Rocky/Alma/CentOS 10, single + multinodo, golden WordPress desde COPR | Pendiente publicar `0.0.1rc2-3` en COPR; laboratorio en paralelo |
+| #109 | fix(installer): generated Harbor token rejected by Admirald | Single-node fresco: `harborctl ping` y catalog sync con token generado | Corregido; validar con `0.0.1rc2-3` en COPR |
+| #110 | fix(installer): dedicated portal registration uses undefined admin token variable | `--portal-node` dedicado registra el portal y continúa a route checks | Corregido; validar con `0.0.1rc2-3` en COPR |
+| #113 | fix(installer): RC2 peer exchange reads missing `ADMIRAL_ADMIN_TOKEN` | Repetir portal dedicado y verificar resolución del token, intercambio de peers y handshake WireGuard | Fix en `9884b76`; validar `0.0.1rc2-3` en COPR y rerun |
 | #107 | fix(installer): define admin token for single-node admiralctl config | Confirmar en single-node que `Deploy admiralctl configuration` pasa y cerrar | Probablemente resuelto (`89a58a5`); runs de #109 llegaron a `failed=0` |
 | #106 | test(billing): verify PayPal sandbox E2E flow as first alpha gate | Ciclo completo en guests limpios: producto/plan → checkout sandbox → webhook → provisión → upgrade/downgrade/pausa | Sin implementar evidencia |
 | #105 | docs(ops): prove control-plane and workload recovery runbooks | Probar (no solo redactar): HTTPS DNS-01, backup off-node de secrets, S3, SMTP, renovación TLS, restore del hub en guests limpios | Runbook ampliado; falta evidencia operativa completa |
@@ -61,7 +61,7 @@ requiere ejecutar el runbook completo.
 |---|---|---|
 | #100 | sec(storage): document and verify disk encryption (LUKS) for customer data | Documentar prerequisito LUKS2 en workers; luego verificar en lab |
 | #96 | sec(bootstrap): minimize and expire SSH delivery credentials | Implementar inventario/cleanup explícito; luego verificar en lab |
-| #99 | sec(workloads): validate and prevent lateral access between instances | Confirmado: un proceso de cliente alcanza un puerto publicado de otro cliente en el mismo worker. Aislar redes por workload/tenant, limitar los puertos host al ingress autorizado y añadir una prueba negativa entre dos instancias co-residentes; luego repetir en lab |
+| #99 | sec(workloads): validate and prevent lateral access between instances | Confirmado. Fix en preparación: cada pod declara `Network=pasta`, sin bridge compartido ni `--map-gw`; falta prueba negativa con `0.0.1rc2-3` en dos instancias co-residentes |
 | #95 | sec(backups): immutable off-site backup profile and automated restore verification | Definir perfil S3 con Object Lock; luego probar restore | Perfil Object Lock Governance de 30 días implementado; falta verificación en S3 |
 | #98 | sec(api): per-operator tokens with scope/expiry/revocation (`needs-work`) | Completar el modelo de operadores; luego validar scope/revocación en lab |
 | #94 | sec(flagship): require single-use email verification code (`needs-work`, posible falso positivo) | Implementar MFA email; luego probar flujo de login |
@@ -70,4 +70,4 @@ requiere ejecutar el runbook completo.
 
 | Issue | Título | Nota |
 |---|---|---|
-| #104 | build(release): reproducible release process for first alpha candidate | Seis RPM `0.0.1rc2-2` compilados localmente con NEVRA y SHA-256; falta publicación COPR |
+| #104 | build(release): reproducible release process for first alpha candidate | Preparando seis RPM `0.0.1rc2-3`; falta compilación local y publicación COPR |

@@ -6,7 +6,7 @@
 
 Name:    admiralctl
 Version: 0.0.1rc2
-Release: 2%{?dist}
+Release: 3%{?dist}
 Summary: Admiral Command-Line Interface
 
 License: Apache-2.0
@@ -62,6 +62,9 @@ mkdir -p "$GOCACHE"
 restorecon -F %{_bindir}/admiralctl 2>/dev/null || :
 
 %changelog
+* Mon Sep 21 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc2-3
+- Rebuild RC2 set with rootless pasta workload isolation
+
 * Mon Sep 21 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc2-2
 - Rebuild RC2 set with the spoke peer exchange token fix
 
