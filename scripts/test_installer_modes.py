@@ -499,6 +499,12 @@ class InstallerModeTests(unittest.TestCase):
         self.assertIn("Kubernetes model", template)
         self.assertIn("ip daddr 10.99.0.0/24 accept", template)
 
+    def test_workload_egress_cannot_reach_co_resident_published_ports(self) -> None:
+        template = (ROOT / "ansible" / "roles" / "admiral_firewall" / "templates" / "admiral-egress.nft.j2").read_text(encoding="utf-8")
+
+        self.assertIn('meta skuid "{{ fleet_rootless_user | default(\'admiral-apps\') }}" ip daddr 127.0.0.1 tcp dport 40000-49999 reject', template)
+        self.assertIn('meta skuid "{{ fleet_rootless_user | default(\'admiral-apps\') }}" ip daddr 10.99.0.0/24 tcp dport 40000-49999 reject', template)
+
     def test_wireguard_is_segmented_as_a_hub_and_spoke_vpn(self) -> None:
         installer = INSTALLER.read_text(encoding="utf-8")
         wireguard_tasks = (

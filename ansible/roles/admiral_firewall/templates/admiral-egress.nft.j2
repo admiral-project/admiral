@@ -1,6 +1,13 @@
 table inet admiral_egress {
     chain output {
         type filter hook output priority -5; policy accept;
+        # Workloads all run as the dedicated rootless user. Never let one use
+        # the worker's published-port range to reach another co-resident
+        # tenant through loopback or the worker's WireGuard address.
+        # Fleet and Caddy use different host identities, so their authorised
+        # health checks and ingress proxying remain available.
+        meta skuid "{{ fleet_rootless_user | default('admiral-apps') }}" ip daddr 127.0.0.1 tcp dport 40000-49999 reject
+        meta skuid "{{ fleet_rootless_user | default('admiral-apps') }}" ip daddr 10.99.0.0/24 tcp dport 40000-49999 reject
         # Admiral deliberately uses a port-level node policy here. Docker Hub
         # and PayPal use DNS, CDNs, and rotating addresses; pinning their IPs
         # would make secure installs fail unpredictably. This follows the
