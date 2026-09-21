@@ -12,6 +12,24 @@ localmente con NEVRA y SHA-256, y la tanda COPR `11018265–11018270` está en
 ejecución. El laboratorio puede avanzar en paralelo; falta completar los
 builds COPR y validar en guests.
 
+## Candidatos a cerrarse
+
+El trabajo local confirma la implementación de varios fixes, pero no sustituye
+la validación del artefacto COPR ni la ejecución en guests. Los siguientes
+issues son candidatos a cerrarse cuando completen su gate:
+
+| Issue | Evidencia local | Gate de cierre |
+|---|---|---|
+| #107 | Fix en `89a58a5` y tests de contrato del instalador | Confirmar `Deploy admiralctl configuration` en single-node |
+| #109 | Fix en `112f580` y tests locales del instalador | Probar `harborctl ping` y catalog sync con el RPM COPR |
+| #110 | Fix en `112f580` y tests locales del instalador | Validar `--portal-node` dedicado con el RPM COPR |
+| #104 | Seis RPM `0.0.1rc2-1` compilados localmente con NEVRA y SHA-256 | Completar exitosamente los seis builds COPR |
+
+La implementación de #92 y #95 también está completada localmente, pero no se
+consideran candidatos inmediatos de cierre porque requieren restore real en un
+guest limpio y verificación de Object Lock en S3, respectivamente. #105 además
+requiere ejecutar el runbook completo.
+
 ## Validación en laboratorio (accionable ya)
 
 | Issue | Título | Acción lab requerida | Estado del fix |
