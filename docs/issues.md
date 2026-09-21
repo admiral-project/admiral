@@ -6,16 +6,17 @@ tracker maestro y no requiere acción directa.
 
 ## Trabajo actual
 
-Recovery y backups: implementación del perfil S3 inmutable y del runbook de
-restore para #92, #95 y #105. La evidencia en guests limpios sigue pendiente.
+Release `0.0.1rc2` en preparación: los cinco submódulos están versionados y
+pineados, los seis specs usan `Release: 1` y la compilación RPM está pendiente.
+La evidencia en guests limpios para recovery sigue pendiente.
 
 ## Validación en laboratorio (accionable ya)
 
 | Issue | Título | Acción lab requerida | Estado del fix |
 |---|---|---|---|
-| #103 | test(release): re-validate Tier 1 matrix on alpha candidate RPMs | Matriz Rocky/Alma/CentOS 10, single + multinodo, golden WordPress desde COPR | Bloqueado hasta publicar COPR |
-| #109 | fix(installer): generated Harbor token rejected by Admirald | Single-node fresco: `harborctl ping` y catalog sync con token generado | Corregido (`admirald@add0087`); RPM `admirald-69` construido, pendiente COPR |
-| #110 | fix(installer): dedicated portal registration uses undefined admin token variable | `--portal-node` dedicado registra el portal y continúa a route checks | Corregido (`admiral@112f580`); RPM `admiral-common-140` construido, pendiente COPR |
+| #103 | test(release): re-validate Tier 1 matrix on alpha candidate RPMs | Matriz Rocky/Alma/CentOS 10, single + multinodo, golden WordPress desde COPR | Bloqueado hasta publicar COPR de `0.0.1rc2-1` |
+| #109 | fix(installer): generated Harbor token rejected by Admirald | Single-node fresco: `harborctl ping` y catalog sync con token generado | Corregido; RPM `admirald-0.0.1rc2-1` pendiente COPR |
+| #110 | fix(installer): dedicated portal registration uses undefined admin token variable | `--portal-node` dedicado registra el portal y continúa a route checks | Corregido; RPM `admiral-common-0.0.1rc2-1` pendiente COPR |
 | #107 | fix(installer): define admin token for single-node admiralctl config | Confirmar en single-node que `Deploy admiralctl configuration` pasa y cerrar | Probablemente resuelto (`89a58a5`); runs de #109 llegaron a `failed=0` |
 | #106 | test(billing): verify PayPal sandbox E2E flow as first alpha gate | Ciclo completo en guests limpios: producto/plan → checkout sandbox → webhook → provisión → upgrade/downgrade/pausa | Sin implementar evidencia |
 | #105 | docs(ops): prove control-plane and workload recovery runbooks | Probar (no solo redactar): HTTPS DNS-01, backup off-node de secrets, S3, SMTP, renovación TLS, restore del hub en guests limpios | Runbook ampliado; falta evidencia operativa completa |
@@ -37,4 +38,4 @@ restore para #92, #95 y #105. La evidencia en guests limpios sigue pendiente.
 
 | Issue | Título | Nota |
 |---|---|---|
-| #104 | build(release): reproducible release process for first alpha candidate | Evidencia de build, no guests; parte x86_64 ya construida localmente con NEVRA + SHA-256 |
+| #104 | build(release): reproducible release process for first alpha candidate | Evidencia de build, no guests; `0.0.1rc2-1` requiere completar build de los seis RPM y hashes |

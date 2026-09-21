@@ -2,11 +2,11 @@
 # SPDX-License-Identifier: Apache-2.0
 
 %global debug_package %{nil}
-%global commit 6f53903f1c425ee306c7699164bc46030918c038
+%global commit 6aae06feb626c10f8215d344925bf93468129e39
 
 Name:    admiralctl
-Version: 0.0.1rc1
-Release: 67%{?dist}
+Version: 0.0.1rc2
+Release: 1%{?dist}
 Summary: Admiral Command-Line Interface
 
 License: Apache-2.0
@@ -62,6 +62,9 @@ mkdir -p "$GOCACHE"
 restorecon -F %{_bindir}/admiralctl 2>/dev/null || :
 
 %changelog
+* Mon Sep 21 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc2-1
+- Release 0.0.1rc2
+
 * Fri Aug 07 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc1-51
 - Rebuild RC1 with resilient spoke SSH post-revocation validation
 

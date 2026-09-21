@@ -2,11 +2,11 @@
 # SPDX-License-Identifier: Apache-2.0
 
 %global debug_package %{nil}
-%global commit ef12e9b5f6b9e283898acde0c68461220b73c529
+%global commit 4641a8f66d022296ef94bccfdb0dc495571bac65
 
 Name:    admiral-fleet
-Version: 0.0.1rc1
-Release: 77%{?dist}
+Version: 0.0.1rc2
+Release: 1%{?dist}
 Summary: Admiral Fleet Worker Agent
 
 License: Apache-2.0
@@ -87,6 +87,9 @@ loginctl enable-linger admiral-apps 2>/dev/null || :
 %systemd_postun_with_restart admiral-fleet.service
 
 %changelog
+* Mon Sep 21 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc2-1
+- Release 0.0.1rc2
+
 * Fri Aug 07 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc1-61
 - Rebuild RC1 with resilient spoke SSH post-revocation validation
 

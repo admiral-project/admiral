@@ -2,11 +2,11 @@
 # SPDX-License-Identifier: Apache-2.0
 
 %global debug_package %{nil}
-%global commit da74b4ff2c271d1028e97cba30b6cbf1e16fffb5
+%global commit cfa7d39699f01a4918f7ac95f720a2b308d420d9
 
 Name:    admiral-flagship
-Version: 0.0.1rc1
-Release: 100%{?dist}
+Version: 0.0.1rc2
+Release: 1%{?dist}
 Summary: Admiral Administrative Web Console
 
 License: Apache-2.0
@@ -83,6 +83,9 @@ restorecon -R %{_prefix}/lib/admiral/flagship 2>/dev/null || :
 %{python3} -m pytest tests/ -x --tb=short
 
 %changelog
+* Mon Sep 21 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc2-1
+- Release 0.0.1rc2
+
 * Fri Aug 07 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc1-84
 - Rebuild RC1 with resilient spoke SSH post-revocation validation
 

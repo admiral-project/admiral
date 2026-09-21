@@ -4,8 +4,8 @@
 %global commit 20564d793df8c6afb0bc0f1957586e2f2f29579f
 
 Name:    admiral-common
-Version: 0.0.1rc1
-Release: 141%{?dist}
+Version: 0.0.1rc2
+Release: 1%{?dist}
 Summary: Common files and utilities for Admiral PaaS
 
 License: Apache-2.0
@@ -191,6 +191,9 @@ if [ "$1" -eq 0 ]; then
 fi
 
 %changelog
+* Mon Sep 21 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc2-1
+- Release 0.0.1rc2 with immutable recovery backup validation
+
 * Mon Sep 21 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc1-141
 - Require Object Lock retention on encrypted control-plane recovery backups
 
