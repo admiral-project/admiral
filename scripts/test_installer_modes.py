@@ -618,6 +618,25 @@ class InstallerModeTests(unittest.TestCase):
         self.assertIn("admiralctl_token_value | length > 0", admirald)
         self.assertIn("token: {{ admiralctl_token_value }}", admirald)
 
+    def test_portal_registration_exports_validated_admin_token(self) -> None:
+        harbor = HARBOR_TASKS.read_text(encoding="utf-8")
+        registration = harbor.split("- name: Register portal node with admirald", 1)[1]
+        routes_sync = harbor.split("- name: Synchronize public routes after portal registration", 1)[1]
+
+        self.assertIn("admiral_admin_token_value", registration)
+        self.assertIn('ADMIRAL_INTERNAL_TOKEN: "{{ admiral_admin_token_value }}"', registration)
+        self.assertNotIn("admiral_internal_token_value", registration.split("no_log: true", 1)[0])
+        self.assertIn('ADMIRAL_INTERNAL_TOKEN: "{{ admiral_admin_token_value }}"', routes_sync)
+
+    def test_worker_registration_exports_validated_admin_token(self) -> None:
+        fleet = FLEET_TASKS.read_text(encoding="utf-8")
+        registration = fleet.split("- name: Register node with admirald (admin-to-node)", 1)[1].split(
+            "- name:", 1
+        )[0]
+
+        self.assertIn("admiral_admin_token_value", registration)
+        self.assertNotIn('ADMIRAL_INTERNAL_TOKEN: "{{ admiral_internal_token_value }}"', registration)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -253,6 +253,6 @@
   environment:
     ADMIRAL_SERVER_URL: "{{ admiral_control_plane_url }}"
     ADMIRAL_TLS_CA_FILE: /etc/admiral/tls/ca.pem
-    ADMIRAL_INTERNAL_TOKEN: "{{ admiral_internal_token_value }}"
+    ADMIRAL_INTERNAL_TOKEN: "{{ admiral_admin_token_value | default(admiral_internal_token_value | default('', true), true) }}"
     ADMIRAL_NODE_TOKEN: "{{ fleet_node_token_value }}"
   no_log: true
