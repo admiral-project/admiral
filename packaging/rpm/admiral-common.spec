@@ -1,11 +1,11 @@
 # SPDX-FileCopyrightText: William Moreno Reyes CP | MBA
 # SPDX-License-Identifier: Apache-2.0
 
-%global commit 4be359df412f893d70ccab00dac5379fea555560
+%global commit 9884b76305902c74666abd8ea04203a54acc6098
 
 Name:    admiral-common
 Version: 0.0.1rc2
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: Common files and utilities for Admiral PaaS
 
 License: Apache-2.0
@@ -191,6 +191,9 @@ if [ "$1" -eq 0 ]; then
 fi
 
 %changelog
+* Mon Sep 21 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc2-2
+- Fix RC2 spoke peer exchange to read the normalized controller token
+
 * Mon Sep 21 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc2-1
 - Release 0.0.1rc2 with immutable recovery backup validation
 
