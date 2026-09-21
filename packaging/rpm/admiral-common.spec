@@ -1,11 +1,11 @@
 # SPDX-FileCopyrightText: William Moreno Reyes CP | MBA
 # SPDX-License-Identifier: Apache-2.0
 
-%global commit 112f5800b96e80f23c16f7328650b1950244da9c
+%global commit 20564d793df8c6afb0bc0f1957586e2f2f29579f
 
 Name:    admiral-common
 Version: 0.0.1rc1
-Release: 140%{?dist}
+Release: 141%{?dist}
 Summary: Common files and utilities for Admiral PaaS
 
 License: Apache-2.0
@@ -191,6 +191,9 @@ if [ "$1" -eq 0 ]; then
 fi
 
 %changelog
+* Mon Sep 21 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc1-141
+- Require Object Lock retention on encrypted control-plane recovery backups
+
 * Fri Aug 07 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc1-124
 - Retry per-node SSH validation after bootstrap-key revocation
 
