@@ -7,8 +7,8 @@ tracker maestro y no requiere acción directa.
 ## Trabajo actual
 
 Release `0.0.1rc2` en preparación: los cinco submódulos están versionados y
-pineados, los seis specs usan `Release: 1` y la compilación RPM está pendiente.
-La evidencia en guests limpios para recovery sigue pendiente.
+pineados, los seis specs usan `Release: 1` y los seis RPM ya están compilados
+localmente con NEVRA y SHA-256. Falta publicación COPR y validación en guests.
 
 ## Validación en laboratorio (accionable ya)
 
@@ -38,4 +38,4 @@ La evidencia en guests limpios para recovery sigue pendiente.
 
 | Issue | Título | Nota |
 |---|---|---|
-| #104 | build(release): reproducible release process for first alpha candidate | Evidencia de build, no guests; `0.0.1rc2-1` requiere completar build de los seis RPM y hashes |
+| #104 | build(release): reproducible release process for first alpha candidate | Seis RPM `0.0.1rc2-1` compilados localmente con NEVRA y SHA-256; falta evidencia COPR |
