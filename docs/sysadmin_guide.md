@@ -705,6 +705,15 @@ Backups are a critical data-protection feature. Admiral stores backups in
 external S3-compatible storage (MinIO, Backblaze B2, AWS S3, etc.) to
 ensure data survives node failure.
 
+Production and alpha recovery storage must use an S3 bucket created with
+versioning and Object Lock enabled. The control-plane backup command applies
+Object Lock `GOVERNANCE` retention for 30 days to every encrypted recovery
+object and fails closed if the provider does not report that retention. Object
+Lock cannot be enabled retroactively on an existing bucket in many providers;
+create a dedicated recovery bucket before configuring Admiral. Keep bucket
+administration credentials separate from the upload/read identity used by
+Admiral.
+
 ### Configure S3 backup storage
 
 Use `admiralctl` to configure the active backup storage backend:
@@ -839,6 +848,13 @@ needed to decrypt a recovery archive, and loss of both the node and this key
 makes the archive unrecoverable. Never place the key in the S3 bucket or in
 the backup filename, logs, or ticket attachments.
 
+The backup upload sends `x-amz-object-lock-mode: GOVERNANCE` and a
+`x-amz-object-lock-retain-until-date` at least 30 days in the future. The
+follow-up HEAD request verifies the object size, mode, and retention deadline.
+The IAM identity therefore needs permission to put objects with retention
+metadata and to read object metadata; a provider that accepts the upload but
+does not expose Object Lock headers is treated as a failed backup.
+
 ### Control-plane recovery validation
 
 To validate recovery on a clean admin node, install the matching Admiral RPMs,
@@ -861,6 +877,55 @@ the known spokes before reconnecting workload traffic. Record the restore date,
 RPM NEVRA, archive checksum and the result of each service check in the
 recovery record. The first real restore remains an operational release gate;
 these steps make the exercise repeatable and auditable.
+
+Use the following sequence after verifying the archive listing. Replace the
+timestamp and package version with the values recorded from the backup run:
+
+```bash
+sudo mkdir -p /tmp/admiral-control-plane-restore
+sudo tar -xzf control-plane-<timestamp>.tar.gz -C /tmp/admiral-control-plane-restore
+sudo systemctl stop admirald admiral-fleet admiral-harbor admiral-flagship
+
+for database in admiral admiral_queue admiral_harbor; do
+  sudo -u postgres dropdb --if-exists "$database"
+  sudo -u postgres createdb -O admiral "$database"
+  sudo -u postgres pg_restore --exit-on-error --no-owner \
+    --dbname "$database" \
+    "/tmp/admiral-control-plane-restore/${database}.dump"
+done
+
+sudo install -m 0600 -o root -g root \
+  /tmp/admiral-control-plane-restore/etc/admiral/secrets /etc/admiral/secrets
+sudo install -m 0600 -o root -g root \
+  /tmp/admiral-control-plane-restore/etc/admiral/admirald.env /etc/admiral/admirald.env
+sudo install -m 0600 -o root -g root \
+  /tmp/admiral-control-plane-restore/etc/admirald.ini /etc/admirald.ini
+sudo cp -a /tmp/admiral-control-plane-restore/etc/admiral/tls/. /etc/admiral/tls/
+sudo install -d -m 0700 /etc/wireguard
+sudo cp -a /tmp/admiral-control-plane-restore/etc/wireguard/. /etc/wireguard/
+sudo systemctl daemon-reload
+sudo systemctl start admirald admiral-fleet admiral-harbor admiral-flagship
+```
+
+Before reconnecting workers, verify the restore in this order:
+
+```bash
+systemctl --failed
+systemctl is-active admirald admiral-fleet admiral-harbor admiral-flagship
+admiralctl status
+admiralctl nodes list
+admiralctl instances list
+admiralctl backups list
+curl --fail --silent --show-error \
+  -H 'Authorization: Bearer <admin-token>' \
+  https://<admin-endpoint>/health
+```
+
+Then confirm Harbor login/state, the expected node identities and one real
+workload request. Do not delete the original clean guest or reconnect
+production workers until these checks pass. Save the archive SHA-256, Object
+Lock retention timestamp, RPM NEVRA, guest identifier, command output and
+service results as the restore evidence for issues #92, #95 and #105.
 
 ## Secrets
 

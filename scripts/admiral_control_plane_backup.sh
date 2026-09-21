@@ -10,6 +10,7 @@ set -euo pipefail
 readonly SECRETS_FILE=/etc/admiral/secrets
 readonly ADMIRAL_ENV=/etc/admiral/admirald.env
 readonly BACKUP_DIR=/var/lib/admiral/control-plane-backups
+readonly OBJECT_LOCK_DAYS=30
 
 die() {
     printf '%s\n' "admiral-control-plane-backup: $*" >&2
@@ -33,7 +34,7 @@ require_root
 require_file "$SECRETS_FILE"
 require_file "$ADMIRAL_ENV"
 
-for command in awk curl gpg pg_dump psql sha256sum tar; do
+for command in awk curl date gpg pg_dump psql sha256sum stat tar; do
     command -v "$command" >/dev/null 2>&1 || die "required command is not installed: $command"
 done
 
@@ -109,10 +110,15 @@ else
     object_url="$scheme://$bucket.$host/$object_key"
 fi
 
+retain_until=$(date -u -d "+${OBJECT_LOCK_DAYS} days" +%Y-%m-%dT%H:%M:%SZ) \
+    || die "calculate Object Lock retention deadline"
+
 curl --fail --silent --show-error \
     --aws-sigv4 "aws:amz:${region}:s3" \
     --user "${access_key}:${secret_key}" \
     --header "x-amz-server-side-encryption: AES256" \
+    --header "x-amz-object-lock-mode: GOVERNANCE" \
+    --header "x-amz-object-lock-retain-until-date: ${retain_until}" \
     --upload-file "$encrypted" \
     "$object_url" || die "upload encrypted control-plane backup to S3"
 
@@ -123,5 +129,23 @@ remote_length=$(curl --fail --silent --show-error --head \
     || die "verify encrypted control-plane backup in S3"
 local_length=$(stat -c %s "$encrypted")
 [[ $remote_length == "$local_length" ]] || die "S3 object size does not match encrypted backup"
+
+head_response=$(curl --fail --silent --show-error --head \
+    --aws-sigv4 "aws:amz:${region}:s3" \
+    --user "${access_key}:${secret_key}" \
+    "$object_url") \
+    || die "verify encrypted control-plane backup in S3"
+
+object_lock_mode=$(printf '%s\n' "$head_response" | awk 'BEGIN { IGNORECASE = 1 } /^x-amz-object-lock-mode:/ { print $2 }' | tr -d '\r')
+object_lock_until=$(printf '%s\n' "$head_response" | awk 'BEGIN { IGNORECASE = 1 } /^x-amz-object-lock-retain-until-date:/ { print $2 }' | tr -d '\r')
+[[ $object_lock_mode == GOVERNANCE ]] || die "S3 object is not protected with Object Lock Governance"
+[[ -n $object_lock_until ]] || die "S3 object has no Object Lock retention deadline"
+
+object_lock_until_epoch=$(date -u -d "$object_lock_until" +%s 2>/dev/null) \
+    || die "S3 Object Lock retention deadline is invalid"
+retain_until_epoch=$(date -u -d "$retain_until" +%s) \
+    || die "calculate Object Lock retention deadline"
+(( object_lock_until_epoch >= retain_until_epoch )) \
+    || die "S3 Object Lock retention is shorter than ${OBJECT_LOCK_DAYS} days"
 
 printf '%s\n' "created encrypted control-plane backup: s3://${bucket}/${object_key}"

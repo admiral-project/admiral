@@ -22,6 +22,10 @@ def test_backup_encrypts_checksums_and_requires_sse() -> None:
     assert "--symmetric --cipher-algo AES256" in BACKUP
     assert "sha256sum \"$encrypted\"" in BACKUP
     assert 'x-amz-server-side-encryption: AES256' in BACKUP
+    assert 'readonly OBJECT_LOCK_DAYS=30' in BACKUP
+    assert 'x-amz-object-lock-mode: GOVERNANCE' in BACKUP
+    assert 'x-amz-object-lock-retain-until-date: ${retain_until}' in BACKUP
+    assert 'object_lock_until_epoch' in BACKUP
     assert "remote_length" in BACKUP
     assert "local_length" in BACKUP
 
@@ -32,4 +36,7 @@ def test_backup_is_packaged_and_recovery_runbook_is_actionable() -> None:
     assert "OnCalendar=*-*-* 03:00:00 UTC" in TIMER
     assert "pg_restore" in GUIDE
     assert "sha256sum -c" in GUIDE
+    assert "Object Lock `GOVERNANCE` retention for 30 days" in GUIDE
+    assert "admiral-control-plane-restore" in GUIDE
+    assert "admiralctl nodes list" in GUIDE
     assert "control-plane recovery validation" in GUIDE.lower()
