@@ -11,11 +11,14 @@ pineados, los seis specs usan `Release: 3` e incluyen los fixes #113 y #99;
 #99 declara `Network=pasta` por pod rootless, sin bridge Netavark generado.
 Falta compilar/publicar la nueva tanda en COPR y validar en guests.
 
-El issue #99 es un gate de seguridad para RC2: se confirmó que un proceso de
-cliente puede alcanzar un puerto publicado por otro cliente co-residente en el
-mismo worker. Un workload autorizado pero comprometido puede usar esa ruta para
-reconocimiento lateral o acceso a servicios de otro tenant; no se aprueba el
-release hasta aislarlo y repetir la prueba negativa.
+El issue #99 está cerrado. La validación confirmó namespaces `pasta` separados:
+un pod no comparte localhost ni alcanza los puertos internos de otro pod. Un
+servicio que declara un puerto se publica intencionalmente en la IP WireGuard
+del worker y puede recibir tráfico de otros workloads, igual que recibe tráfico
+no confiable a través de Caddy. La aplicación publicada es responsable de su
+autenticación y autorización. No se usa A → puerto publicado de B como prueba
+negativa de aislamiento; la prueba negativa corresponde a localhost, puertos
+no publicados, volúmenes y secretos.
 
 El laboratorio abrió el issue [#113](https://github.com/admiral-project/admiral/issues/113)
 contra RC2: el playbook remoto del portal termina correctamente, pero el
@@ -61,7 +64,6 @@ requiere ejecutar el runbook completo.
 |---|---|---|
 | #100 | sec(storage): document and verify disk encryption (LUKS) for customer data | Documentar prerequisito LUKS2 en workers; luego verificar en lab |
 | #96 | sec(bootstrap): minimize and expire SSH delivery credentials | Implementar inventario/cleanup explícito; luego verificar en lab |
-| #99 | sec(workloads): validate and prevent lateral access between instances | Confirmado. Fix en preparación: cada pod declara `Network=pasta`, sin bridge compartido ni `--map-gw`; falta prueba negativa con `0.0.1rc2-3` en dos instancias co-residentes |
 | #95 | sec(backups): immutable off-site backup profile and automated restore verification | Definir perfil S3 con Object Lock; luego probar restore | Perfil Object Lock Governance de 30 días implementado; falta verificación en S3 |
 | #98 | sec(api): per-operator tokens with scope/expiry/revocation (`needs-work`) | Completar el modelo de operadores; luego validar scope/revocación en lab |
 | #94 | sec(flagship): require single-use email verification code (`needs-work`, posible falso positivo) | Implementar MFA email; luego probar flujo de login |

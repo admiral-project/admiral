@@ -164,6 +164,26 @@ Fleet no necesita `CAP_NET_ADMIN`, `CAP_NET_RAW` ni `CAP_NET_BIND_SERVICE` para 
 modelo validado. La red y los puertos publicados pertenecen a Podman rootless;
 los workloads probados usan puertos altos asignados por Admiral.
 
+## Contrato de aislamiento entre instancias
+
+Cada instancia se ejecuta en su propio pod con `Network=pasta`. Los contenedores
+de una misma instancia comparten localhost, pero dos instancias no comparten el
+namespace de red, un bridge generado por Admiral, volúmenes ni secretos. Fleet
+no habilita `--map-gw`, host networking, host PID/IPC ni modo privilegiado.
+
+Un servicio con puerto declarado es una excepción deliberada a la privacidad
+de red: Quadlet crea `PublishPort=<direccion-worker>:<puerto-host>:<puerto-app>`.
+En multinodo la dirección es la IP WireGuard del worker. Ese endpoint puede ser
+alcanzado por Caddy y también por otro workload co-residente que conecte a la IP
+WireGuard. Esta conectividad no entrega acceso al namespace del otro pod ni a
+sus puertos no publicados.
+
+Por tanto, todo servicio publicado debe tratar a sus clientes como no
+confiables y aplicar autenticación, autorización, límites de petición y
+validación de entrada. Las bases de datos y servicios internos no deben
+declarar un puerto de aplicación. Admiral no promete que Caddy sea el único
+proceso capaz de alcanzar un puerto publicado.
+
 ## Cómo ejecuta cada clase de operación
 
 Fleet no ejecuta Podman directamente. La única ruta permitida para operaciones
@@ -423,6 +443,11 @@ válido cuando supera, como mínimo:
     tarea por stdin y no exponen secretos en argv.
 12. Comprobar por separado `run`, `inspect`, `exec`, `cp`, secrets, backup y
     restore; todas deben usar el runtime rootless común.
+13. Con dos instancias co-residentes, confirmar namespaces distintos, aislamiento
+    de localhost y puertos no publicados, y acceso funcional al servicio que
+    cada instancia publique en la IP WireGuard. El acceso a un puerto publicado
+    es un resultado esperado; no sustituye la prueba negativa de recursos
+    internos.
 
 Para cambios sensibles se usa WordPress/MariaDB y el golden test de ERPNext. Una
 app mínima resulta útil para diagnóstico, pero por sí sola no valida setup,

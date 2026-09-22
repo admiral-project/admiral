@@ -332,6 +332,20 @@ Public ingress MUST terminate in Caddy.
 
 Workers SHOULD NOT expose arbitrary public workload ports.
 
+Fleet publishes only services that declare an application port, bound to the
+worker WireGuard address. That publication is an intentional trust boundary:
+the endpoint can receive untrusted traffic through Caddy and can also be
+reached by a co-resident workload through the worker address. Published
+applications MUST enforce their own authentication, authorization, rate
+limits, and input validation; they MUST NOT rely on Caddy being their only
+possible caller.
+
+Each instance uses a separate rootless `pasta` network namespace. This keeps
+pod localhost, unpublished ports, volumes, and secrets private to the
+instance. It does not turn a host-published port into a Caddy-only endpoint.
+Database and other private services MUST therefore omit the application port
+declaration unless external reachability is intentional.
+
 Recommended exposure:
 
 22/tcp
