@@ -28,6 +28,12 @@ intercambio final de peers WireGuard falla porque el wrapper busca
 
 ## Candidatos a cerrarse
 
+Los issues #96, #97 y #98 fueron cerrados después de validar sus cambios y
+registrar evidencia adicional en GitHub el 2026-09-22. #96 pasó un dry-run y
+una limpieza real de claves Ed25519 temporales; #97 combinó los tests de PSK
+con los handshakes multinodo de rc2-3; #98 pasó las pruebas de autorización de
+scopes y expiración/revocación sobre admirald.
+
 El trabajo local confirma la implementación de varios fixes, pero no sustituye
 la validación del artefacto COPR ni la ejecución en guests. Los siguientes
 issues son candidatos a cerrarse cuando completen su gate:
@@ -56,16 +62,16 @@ requiere ejecutar el runbook completo.
 | #106 | test(billing): verify PayPal sandbox E2E flow as first alpha gate | Ciclo completo en guests limpios: producto/plan → checkout sandbox → webhook → provisión → upgrade/downgrade/pausa | Sin implementar evidencia |
 | #105 | docs(ops): prove control-plane and workload recovery runbooks | Probar (no solo redactar): HTTPS DNS-01, backup off-node de secrets, S3, SMTP, renovación TLS, restore del hub en guests limpios | Runbook ampliado; falta evidencia operativa completa |
 | #92 | sec(dr): add control-plane state backup and hub recovery runbook | Restore real del backup del control plane en guest limpio | Implementado (`b93cd1c`); restore documentado, falta evidencia real |
-| #97 | sec(wireguard): add per-peer preshared keys (+PSK) | Verificar `PresharedKey` por peer y handshake hub↔spoke en multinodo | Payload pinneado (`da57130`); falta evidencia en vivo |
+| #97 | sec(wireguard): add per-peer preshared keys (+PSK) | Verificar `PresharedKey` por peer y handshake hub↔spoke en multinodo | Cerrado; payload pinneado (`da57130`), tests focalizados y handshake rc2-3 |
 
 ## Implementar primero, laboratorio después
 
 | Issue | Título | Bloqueador |
 |---|---|---|
 | #100 | sec(storage): document and verify disk encryption (LUKS) for customer data | Documentar prerequisito LUKS2 en workers; luego verificar en lab |
-| #96 | sec(bootstrap): minimize and expire SSH delivery credentials | Implementar inventario/cleanup explícito; luego verificar en lab |
+| #96 | sec(bootstrap): minimize and expire SSH delivery credentials | Implementar inventario/cleanup explícito; luego verificar en lab | Cerrado; dry-run y limpieza real verificados |
 | #95 | sec(backups): immutable off-site backup profile and automated restore verification | Definir perfil S3 con Object Lock; luego probar restore | Perfil Object Lock Governance de 30 días implementado; falta verificación en S3 |
-| #98 | sec(api): per-operator tokens with scope/expiry/revocation (`needs-work`) | Completar el modelo de operadores; luego validar scope/revocación en lab |
+| #98 | sec(api): per-operator tokens with scope/expiry/revocation | Completar el modelo de operadores; luego validar scope/revocación en lab | Cerrado; modelo, pruebas de scopes y expiración/revocación verificados |
 | #94 | sec(flagship): require single-use email verification code (`needs-work`, posible falso positivo) | Implementar MFA email; luego probar flujo de login |
 
 ## Sin laboratorio
