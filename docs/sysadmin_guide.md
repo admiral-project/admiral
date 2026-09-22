@@ -705,6 +705,23 @@ Backups are a critical data-protection feature. Admiral stores backups in
 external S3-compatible storage (MinIO, Backblaze B2, AWS S3, etc.) to
 ensure data survives node failure.
 
+### Responsibility boundary: setup versus operations
+
+The initial installer does not create or enable the production recovery
+profile. An operator must provision the independent S3 account and bucket,
+enable versioning/Object Lock, create the least-privilege credentials, and
+configure them after installation using the procedures below. This is
+intentional: bucket ownership, retention policy, recovery-secret custody and
+the failure domain are operational decisions that the installer cannot safely
+infer or automate.
+
+The installer can complete with local-only storage, but local-only backups are
+not disaster recovery. The operator must treat the absence of S3 configuration
+or a failed verification as an operational incident, configure off-node
+storage before production use, and schedule a clean-host restore drill. The
+restore drill and its evidence are maintained as an operational release gate
+under issue #105; this section is the runbook for executing it.
+
 Production and alpha recovery storage must use an S3 bucket created with
 versioning and Object Lock enabled. The control-plane backup command applies
 Object Lock `GOVERNANCE` retention for 30 days to every encrypted recovery
