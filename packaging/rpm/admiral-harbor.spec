@@ -1,5 +1,5 @@
 %global debug_package %{nil}
-%global commit 931352bbb0301a662dc5f07fb9b50d035651e2d3
+%global commit d4903f02a403d8acb2c11b8b0619775afe91b4f1
 
 Name:    admiral-harbor
 Version: 0.0.1rc4
@@ -134,6 +134,7 @@ restorecon -R %{_localstatedir}/lib/admiral/harbor 2>/dev/null || :
 * Tue Sep 22 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc4-1
 - Release 0.0.1rc4
 - Add external custom themes with restricted override assets
+- Make tax rate branding tests hermetic across shared database state
 
 * Tue Sep 22 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc3-1
 - Release 0.0.1rc3
