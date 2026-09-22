@@ -144,6 +144,19 @@ necesita para operar como consola administrativa. Comprometer el proceso
 Flagship equivale a comprometer la plataforma completa. El archivo se instala
 con permisos `0600 root:admiral` y solo es legible por el servicio.
 
+### Verificación por email de operadores (Flagship)
+
+Flagship permite exigir, por operador, un código de verificación de un solo uso
+cuando se inicia sesión desde un navegador desconocido. La entrega usa SMTP
+(`FLAGSHIP_SMTP_HOST`, `FLAGSHIP_SMTP_FROM`, ver `admiral-flagship/README.md`).
+Sin SMTP configurado, el login desde un navegador no confiable **falla cerrado**
+(no abre sesión). Cada código es de un solo uso, expira en 10 minutos y está
+limitado por intentos y por reenvíos por cuenta e IP. Si el operador pierde el
+acceso al correo verificado, la recuperación requiere acceso administrativo al
+host para limpiar `mfa_email_enabled` en PostgreSQL (ver *break-glass recovery*
+en `admiral-flagship/README.md`); el correo y el código nunca se registran en
+logs.
+
 ### Renovación de certificados TLS internos
 
 La CA interna (`/etc/admiral/tls/ca.pem`) tiene vigencia de 10 años y los

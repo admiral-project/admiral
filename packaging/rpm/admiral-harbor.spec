@@ -2,8 +2,8 @@
 %global commit a417740ffb813cd7b34f1583e3d3668900a2336f
 
 Name:    admiral-harbor
-Version: 0.0.1rc2
-Release: 3%{?dist}
+Version: 0.0.1rc3
+Release: 1%{?dist}
 Summary: Admiral Customer Portal - Web UI for end users
 
 License: Apache-2.0
@@ -131,6 +131,9 @@ restorecon -R %{_localstatedir}/lib/admiral/harbor 2>/dev/null || :
 %{python3} -m pytest tests/ -x --tb=short
 
 %changelog
+* Tue Sep 22 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc3-1
+- Release 0.0.1rc3
+
 * Mon Sep 21 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc2-3
 - Rebuild RC2 set with rootless pasta workload isolation
 

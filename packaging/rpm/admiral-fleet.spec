@@ -5,8 +5,8 @@
 %global commit d0e5eac9d4c03d18aa218ff1d14dbee55baff6d1
 
 Name:    admiral-fleet
-Version: 0.0.1rc2
-Release: 3%{?dist}
+Version: 0.0.1rc3
+Release: 1%{?dist}
 Summary: Admiral Fleet Worker Agent
 
 License: Apache-2.0
@@ -87,6 +87,9 @@ loginctl enable-linger admiral-apps 2>/dev/null || :
 %systemd_postun_with_restart admiral-fleet.service
 
 %changelog
+* Tue Sep 22 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc3-1
+- Release 0.0.1rc3
+
 * Mon Sep 21 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc2-3
 - Use rootless pasta per workload pod with explicit host-port bindings
 

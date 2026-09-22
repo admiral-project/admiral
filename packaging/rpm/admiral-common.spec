@@ -4,8 +4,8 @@
 %global commit 7aac0592abc5b9fe7a09ed9a69b596cbda882c52
 
 Name:    admiral-common
-Version: 0.0.1rc2
-Release: 3%{?dist}
+Version: 0.0.1rc3
+Release: 1%{?dist}
 Summary: Common files and utilities for Admiral PaaS
 
 License: Apache-2.0
@@ -191,6 +191,9 @@ if [ "$1" -eq 0 ]; then
 fi
 
 %changelog
+* Tue Sep 22 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc3-1
+- Release 0.0.1rc3
+
 * Mon Sep 21 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc2-3
 - Declare rootless pasta networking for workload pods
 
