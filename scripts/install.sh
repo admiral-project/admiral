@@ -11,6 +11,11 @@ SCRIPT_DIR="$(cd -- "$(dirname -- "$SCRIPT_SOURCE")" && pwd)"
 die() { echo "[FATAL] $*" >&2; exit 1; }
 info() { echo "[INFO] $*"; }
 warn() { echo "[WARN] $*"; }
+ssh_no_stdin() {
+    # The installer may itself be streamed through `curl | bash`; a child SSH
+    # command must not consume the remaining installer text from stdin.
+    command ssh "$@" </dev/null
+}
 require_option_value() {
     local opt="$1"
     local val="${2-}"
@@ -157,10 +162,10 @@ preflight_remote_node_role() {
     probe_command='if [ -f /etc/admiral/role ]; then tr -d "\r\n" < /etc/admiral/role; elif rpm -q admiral-common >/dev/null 2>&1 && [ ! -e /etc/admiral/secrets ]; then printf %s __ADMIRAL_NEW__; elif [ -e /etc/admiral/secrets ] || [ -e /etc/admiral/harbor.env ] || [ -e /etc/admiral/fleet.env ] || [ -e /etc/admirald.ini ]; then printf %s __ADMIRAL_LEGACY__; else printf %s __ADMIRAL_NEW__; fi'
     printf -v quoted_probe '%q' "$probe_command"
     if [[ "$INSTALL_TARGET_SSH_USER" == "root" ]]; then
-        persisted_role=$(ssh "${SSH_OPTIONS[@]}" "root@${INSTALL_PUBLIC_IP}" "bash -lc $quoted_probe") ||
+        persisted_role=$(ssh_no_stdin "${SSH_OPTIONS[@]}" "root@${INSTALL_PUBLIC_IP}" "bash -lc $quoted_probe") ||
             die "Could not inspect the existing Admiral role on $INSTALL_PUBLIC_IP. Refusing remote changes."
     else
-        persisted_role=$(ssh "${SSH_OPTIONS[@]}" "${INSTALL_TARGET_SSH_USER}@${INSTALL_PUBLIC_IP}" "sudo -n bash -lc $quoted_probe") ||
+        persisted_role=$(ssh_no_stdin "${SSH_OPTIONS[@]}" "${INSTALL_TARGET_SSH_USER}@${INSTALL_PUBLIC_IP}" "sudo -n bash -lc $quoted_probe") ||
             die "Could not inspect the existing Admiral role on $INSTALL_PUBLIC_IP. Refusing remote changes."
     fi
     case "$persisted_role" in
@@ -616,7 +621,7 @@ if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]]; t
         PERSISTED_SSH_USER="$(read_admiral_secret ADMIRAL_SSH_USER || true)"
         PERSISTED_SSH_USER="${PERSISTED_SSH_USER:-admiral-ssh}"
         if [[ -n "$PERSISTED_SSH_USER" ]] &&
-            ssh "${SSH_OPTIONS[@]}" \
+            ssh_no_stdin "${SSH_OPTIONS[@]}" \
                 "${PERSISTED_SSH_USER}@${INSTALL_PUBLIC_IP}" true >/dev/null 2>&1; then
             INSTALL_TARGET_SSH_USER="$PERSISTED_SSH_USER"
             info "Using persisted non-root SSH user: $INSTALL_TARGET_SSH_USER"
@@ -625,7 +630,7 @@ if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]]; t
             DELIVERY_ID="${DELIVERY_ID//[^A-Za-z0-9_.-]/_}"
             DELIVERY_KEY_CANDIDATE="/var/lib/admiral/ssh-delivery/${DELIVERY_ID}.ed25519"
             if [[ -f "$DELIVERY_KEY_CANDIDATE" ]] &&
-                ssh -i "$DELIVERY_KEY_CANDIDATE" \
+                ssh_no_stdin -i "$DELIVERY_KEY_CANDIDATE" \
                     -o BatchMode=yes -o ControlMaster=no -o ControlPersist=no \
                     -o StrictHostKeyChecking=yes -o "UserKnownHostsFile=$TMP_KNOWN_HOSTS" \
                     "${PERSISTED_SSH_USER}@${INSTALL_PUBLIC_IP}" true >/dev/null 2>&1; then
@@ -1054,13 +1059,13 @@ if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]]; t
     ADMIN_SSH_DELIVERY_KEY="/var/lib/admiral/ssh-delivery/${DELIVERY_ID}.ed25519"
     [[ -f "$ADMIN_SSH_DELIVERY_KEY" ]] || die "Ansible did not create the per-node SSH delivery key: $ADMIN_SSH_DELIVERY_KEY"
     REMOTE_SSH_USER="admiral-ssh"
-    if ! ssh -i "$ADMIN_SSH_DELIVERY_KEY" -o BatchMode=yes \
+    if ! ssh_no_stdin -i "$ADMIN_SSH_DELIVERY_KEY" -o BatchMode=yes \
         -o ControlMaster=no -o ControlPersist=no \
         -o StrictHostKeyChecking=yes -o "UserKnownHostsFile=$TMP_KNOWN_HOSTS" \
         "${REMOTE_SSH_USER}@${INSTALL_PUBLIC_IP}" true >/dev/null 2>&1; then
         die "Per-node SSH login verification failed for ${REMOTE_SSH_USER}; bootstrap access remains available for recovery."
     fi
-    if ! ssh -i "$ADMIN_SSH_DELIVERY_KEY" -o BatchMode=yes \
+    if ! ssh_no_stdin -i "$ADMIN_SSH_DELIVERY_KEY" -o BatchMode=yes \
         -o ControlMaster=no -o ControlPersist=no \
         -o StrictHostKeyChecking=yes -o "UserKnownHostsFile=$TMP_KNOWN_HOSTS" \
         "${REMOTE_SSH_USER}@${INSTALL_PUBLIC_IP}" "sudo -n true" >/dev/null 2>&1; then
@@ -1106,8 +1111,8 @@ if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]]; t
     [[ -n "$ADMIRAL_ADMIN_TOKEN" ]] || die "Controller admin token is unavailable for WireGuard peer exchange."
     export ADMIRAL_SERVER_URL="https://${INSTALL_ADMIN_WIREGUARD_IP}:8080"
     export ADMIRAL_TLS_CA_FILE="/etc/admiral/tls/ca.pem"
-    SPOKE_KEY=$(ssh "${SSH_OPTIONS[@]}" "${INSTALL_TARGET_SSH_USER}@${INSTALL_PUBLIC_IP}" "sudo sh -c 'wg pubkey < /etc/wireguard/admiral.key'" 2>/dev/null || true)
-    SPOKE_NODE_ID="${INSTALL_NODE_ID:-$(ssh "${SSH_OPTIONS[@]}" "${INSTALL_TARGET_SSH_USER}@${INSTALL_PUBLIC_IP}" "sudo sh -c \"grep -hE '^(ADMIRAL_FLEET_NODE_ID|HARBOR_NODE_ID)=' /etc/admiral/*.env 2>/dev/null | tail -n1 | cut -d= -f2-\"" 2>/dev/null || true)}"
+    SPOKE_KEY=$(ssh_no_stdin "${SSH_OPTIONS[@]}" "${INSTALL_TARGET_SSH_USER}@${INSTALL_PUBLIC_IP}" "sudo sh -c 'wg pubkey < /etc/wireguard/admiral.key'" 2>/dev/null || true)
+    SPOKE_NODE_ID="${INSTALL_NODE_ID:-$(ssh_no_stdin "${SSH_OPTIONS[@]}" "${INSTALL_TARGET_SSH_USER}@${INSTALL_PUBLIC_IP}" "sudo sh -c \"grep -hE '^(ADMIRAL_FLEET_NODE_ID|HARBOR_NODE_ID)=' /etc/admiral/*.env 2>/dev/null | tail -n1 | cut -d= -f2-\"" 2>/dev/null || true)}"
     if [[ -z "$SPOKE_KEY" ]]; then
         die "Could not read the spoke WireGuard public key after installation."
     fi
@@ -1162,7 +1167,7 @@ fi
 # --- 11. verify core runtime ---
 if [[ "$INSTALL_MODE" == "single-node" || "$INSTALL_MODE" == "worker-node" ]]; then
     if [[ "$INSTALL_MODE" == "worker-node" ]]; then
-        PODMAN_VER=$(ssh "${SSH_OPTIONS[@]}" "${INSTALL_TARGET_SSH_USER}@${INSTALL_PUBLIC_IP}" "sudo podman version --format '{{.Version}}'" 2>/dev/null || echo "0")
+        PODMAN_VER=$(ssh_no_stdin "${SSH_OPTIONS[@]}" "${INSTALL_TARGET_SSH_USER}@${INSTALL_PUBLIC_IP}" "sudo podman version --format '{{.Version}}'" 2>/dev/null || echo "0")
     else
         command -v podman >/dev/null 2>&1 || die "Podman was not installed by RPM dependencies."
         PODMAN_VER=$(podman version --format '{{.Version}}' 2>/dev/null || echo "0")
@@ -1195,7 +1200,7 @@ for service in "${REQUIRED_SERVICES[@]}"; do
     service_ready=false
     for attempt in $(seq 1 12); do
         if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]]; then
-            if ssh "${SSH_OPTIONS[@]}" "${INSTALL_TARGET_SSH_USER}@${INSTALL_PUBLIC_IP}" "systemctl is-active --quiet '$service'"; then
+            if ssh_no_stdin "${SSH_OPTIONS[@]}" "${INSTALL_TARGET_SSH_USER}@${INSTALL_PUBLIC_IP}" "systemctl is-active --quiet '$service'"; then
                 service_ready=true
                 break
             fi
@@ -1206,7 +1211,7 @@ for service in "${REQUIRED_SERVICES[@]}"; do
         if [[ "$attempt" == 6 && ( "$service" == "admiral-fleet" || "$service" == "admiral-harbor" ) &&
             ( "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ) ]]; then
             info "${service} is still starting; restarting it once before continuing readiness checks."
-            ssh "${SSH_OPTIONS[@]}" "${INSTALL_TARGET_SSH_USER}@${INSTALL_PUBLIC_IP}" \
+            ssh_no_stdin "${SSH_OPTIONS[@]}" "${INSTALL_TARGET_SSH_USER}@${INSTALL_PUBLIC_IP}" \
                 "sudo -n systemctl restart '$service'" || true
         fi
         sleep 5
@@ -1227,7 +1232,7 @@ if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]]; t
             ready_ok=true
         fi
         if [[ "$INSTALL_MODE" == "portal-node" ]]; then
-            if ! ssh "${SSH_OPTIONS[@]}" "${INSTALL_TARGET_SSH_USER}@${INSTALL_PUBLIC_IP}" \
+            if ! ssh_no_stdin "${SSH_OPTIONS[@]}" "${INSTALL_TARGET_SSH_USER}@${INSTALL_PUBLIC_IP}" \
                 "sudo -n /usr/bin/harborctl ping" >/dev/null 2>&1; then
                 auth_ok=false
             fi
@@ -1240,11 +1245,11 @@ if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]]; t
         if [[ "$attempt" == 3 ]]; then
             if [[ "$INSTALL_MODE" == "worker-node" ]]; then
                 info "Handshake is still pending; restarting admiral-fleet once before retrying."
-                ssh "${SSH_OPTIONS[@]}" "${INSTALL_TARGET_SSH_USER}@${INSTALL_PUBLIC_IP}" \
+                ssh_no_stdin "${SSH_OPTIONS[@]}" "${INSTALL_TARGET_SSH_USER}@${INSTALL_PUBLIC_IP}" \
                     "sudo -n systemctl restart admiral-fleet" || true
             else
                 info "Handshake is still pending; restarting admiral-harbor once before retrying."
-                ssh "${SSH_OPTIONS[@]}" "${INSTALL_TARGET_SSH_USER}@${INSTALL_PUBLIC_IP}" \
+                ssh_no_stdin "${SSH_OPTIONS[@]}" "${INSTALL_TARGET_SSH_USER}@${INSTALL_PUBLIC_IP}" \
                     "sudo -n systemctl restart admiral-harbor" || true
             fi
         fi
@@ -1465,10 +1470,10 @@ if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]] &&
     [[ -n "$BOOTSTRAP_SSH_USER" ]] || die "Bootstrap SSH user is unavailable; refusing to revoke bootstrap access."
     printf -v QUOTED_BOOTSTRAP_USER '%q' "$BOOTSTRAP_SSH_USER"
     printf -v QUOTED_BOOTSTRAP_KEY '%q' "$BOOTSTRAP_SSH_PUB_KEY"
-    ssh "${SSH_OPTIONS[@]}" "${INSTALL_TARGET_SSH_USER}@${INSTALL_PUBLIC_IP}" \
+    ssh_no_stdin "${SSH_OPTIONS[@]}" "${INSTALL_TARGET_SSH_USER}@${INSTALL_PUBLIC_IP}" \
         "sudo -n /usr/bin/admiral-revoke-bootstrap-key $QUOTED_BOOTSTRAP_USER $QUOTED_BOOTSTRAP_KEY" \
         || die "Could not revoke the bootstrap SSH credential from authorized_keys."
-    if [[ "$INSTALL_RECONVERGE_SSH_KEY" != "true" ]] && ssh -i "$INSTALL_TARGET_SSH_KEY" -o BatchMode=yes \
+    if [[ "$INSTALL_RECONVERGE_SSH_KEY" != "true" ]] && ssh_no_stdin -i "$INSTALL_TARGET_SSH_KEY" -o BatchMode=yes \
         -o StrictHostKeyChecking=yes -o "UserKnownHostsFile=$TMP_KNOWN_HOSTS" \
         "${BOOTSTRAP_SSH_USER}@${INSTALL_PUBLIC_IP}" true >/dev/null 2>&1; then
         die "Bootstrap SSH credential is still accepted after revocation."
@@ -1479,7 +1484,7 @@ if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]] &&
         || die "Could not validate and apply PermitRootLogin no after bootstrap revocation."
     per_node_ssh_ready=false
     for attempt in $(seq 1 10); do
-        if ssh "${SSH_OPTIONS[@]}" "${INSTALL_TARGET_SSH_USER}@${INSTALL_PUBLIC_IP}" "sudo -n true" >/dev/null 2>&1; then
+        if ssh_no_stdin "${SSH_OPTIONS[@]}" "${INSTALL_TARGET_SSH_USER}@${INSTALL_PUBLIC_IP}" "sudo -n true" >/dev/null 2>&1; then
             per_node_ssh_ready=true
             break
         fi

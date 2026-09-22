@@ -4,7 +4,9 @@
 from __future__ import annotations
 
 import pathlib
+import os
 import subprocess
+import tempfile
 import unittest
 
 
@@ -37,6 +39,36 @@ class InstallerModeTests(unittest.TestCase):
 
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertNotIn("unbound variable", result.stderr)
+
+    def test_control_ssh_does_not_consume_curl_streamed_installer(self) -> None:
+        installer = INSTALLER.read_text(encoding="utf-8")
+        helper_body = installer.split("ssh_no_stdin() {", 1)[1].split("\n}", 1)[0]
+        helper = "ssh_no_stdin() {" + helper_body + "\n}"
+
+        with tempfile.TemporaryDirectory() as temp_dir:
+            temp_path = pathlib.Path(temp_dir)
+            fake_bin = temp_path / "bin"
+            fake_bin.mkdir()
+            ssh_stub = fake_bin / "ssh"
+            ssh_stub.write_text("#!/bin/sh\ncat > \"$SSH_STDIN_CAPTURE\"\n", encoding="utf-8")
+            ssh_stub.chmod(0o755)
+            capture = temp_path / "ssh-stdin"
+            env = os.environ.copy()
+            env["PATH"] = f"{fake_bin}{os.pathsep}{env['PATH']}"
+            env["SSH_STDIN_CAPTURE"] = str(capture)
+            result = subprocess.run(
+                ["bash", "-c", f"{helper}\nssh_no_stdin test-host\nIFS= read -r next || exit 10\nprintf '%s\\n' \"$next\"\n"],
+                input="installer remainder\n",
+                text=True,
+                capture_output=True,
+                check=False,
+                env=env,
+            )
+            captured_stdin = capture.read_text(encoding="utf-8")
+
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(result.stdout, "installer remainder\n")
+        self.assertEqual(captured_stdin, "")
 
     def test_installer_fails_when_ansible_playbook_fails(self) -> None:
         installer = INSTALLER.read_text(encoding="utf-8")
@@ -254,7 +286,7 @@ class InstallerModeTests(unittest.TestCase):
         self.assertIn('INSTALL_RECONVERGE_SSH_KEY="true"', content)
         self.assertIn("/var/lib/admiral/ssh-delivery/", content)
         self.assertIn("Using per-node delivery key for spoke reconvergence", content)
-        self.assertIn('[[ "$INSTALL_RECONVERGE_SSH_KEY" != "true" ]] && ssh -i', content)
+        self.assertIn('[[ "$INSTALL_RECONVERGE_SSH_KEY" != "true" ]] && ssh_no_stdin -i', content)
 
     def test_bootstrap_key_revocation_is_idempotent(self) -> None:
         content = (ROOT / "scripts" / "admiral_revoke_bootstrap_key.py").read_text(encoding="utf-8")
@@ -300,7 +332,7 @@ class InstallerModeTests(unittest.TestCase):
 
         self.assertIn("per_node_ssh_ready=false", installer)
         self.assertIn("for attempt in $(seq 1 10)", installer)
-        self.assertIn('ssh "${SSH_OPTIONS[@]}" "${INSTALL_TARGET_SSH_USER}@${INSTALL_PUBLIC_IP}" "sudo -n true"', installer)
+        self.assertIn('ssh_no_stdin "${SSH_OPTIONS[@]}" "${INSTALL_TARGET_SSH_USER}@${INSTALL_PUBLIC_IP}" "sudo -n true"', installer)
         self.assertIn('sleep 1', installer)
 
     def test_spoke_extra_vars_exclude_controller_admin_token(self) -> None:
