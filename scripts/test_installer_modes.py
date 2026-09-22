@@ -26,6 +26,32 @@ FLEET_CONFIG = ROOT / "packaging" / "config" / "fleet.env"
 
 
 class InstallerModeTests(unittest.TestCase):
+    def test_curl_to_bash_source_path_is_safe_with_nounset(self) -> None:
+        result = subprocess.run(
+            ["bash", "-us"],
+            input='SCRIPT_SOURCE="${BASH_SOURCE[0]:-$0}"\nprintf "%s\\n" "$SCRIPT_SOURCE"\n',
+            text=True,
+            capture_output=True,
+            check=False,
+        )
+
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertNotIn("unbound variable", result.stderr)
+
+    def test_installer_fails_when_ansible_playbook_fails(self) -> None:
+        installer = INSTALLER.read_text(encoding="utf-8")
+
+        self.assertEqual(installer.count('|| die "Ansible playbook failed'), 2)
+
+    def test_audit_role_installs_el10_rule_utilities_and_loads_rules(self) -> None:
+        audit_tasks = AUDIT_TASKS.read_text(encoding="utf-8")
+
+        self.assertIn("- audit-rules", audit_tasks)
+        self.assertIn("cmd: augenrules --load", audit_tasks)
+        self.assertNotIn("service auditd reload", audit_tasks)
+        self.assertIn("path: /sbin/augenrules", audit_tasks)
+        self.assertIn("path: /sbin/auditctl", audit_tasks)
+
     def test_all_tier_one_el10_distributions_are_accepted(self) -> None:
         content = INSTALLER.read_text(encoding="utf-8")
 
@@ -332,7 +358,7 @@ class InstallerModeTests(unittest.TestCase):
         content = AUDIT_TASKS.read_text(encoding="utf-8")
 
         self.assertIn(
-            "augenrules_available.rc != 0 or (audit_augenrules.rc | default(1)) != 0",
+            "not augenrules_available.stat.exists or (audit_augenrules.rc | default(1)) != 0",
             content,
         )
         for key in (

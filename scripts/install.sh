@@ -4,7 +4,8 @@
 
 set -euo pipefail
 
-SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+SCRIPT_SOURCE="${BASH_SOURCE[0]:-$0}"
+SCRIPT_DIR="$(cd -- "$(dirname -- "$SCRIPT_SOURCE")" && pwd)"
 
 # --- helpers ---
 die() { echo "[FATAL] $*" >&2; exit 1; }
@@ -1030,7 +1031,8 @@ PY
             "$ANSIBLE_DIR/site.yml" \
             -i "$TMP_INVENTORY" \
             --limit target \
-            --extra-vars "@$EXTRA_VARS_FILE"
+            --extra-vars "@$EXTRA_VARS_FILE" \
+            || die "Ansible playbook failed for remote node $INSTALL_PUBLIC_IP."
     else
         ANSIBLE_LOCAL_TEMP="$ANSIBLE_LOCAL_TEMP" \
         ANSIBLE_REMOTE_TEMP="$ANSIBLE_REMOTE_TEMP" \
@@ -1038,7 +1040,8 @@ PY
         ansible-playbook \
             "$ANSIBLE_DIR/site.yml" \
             -i "$ANSIBLE_DIR/inventory/localhost.yml" \
-            --extra-vars "@$EXTRA_VARS_FILE"
+            --extra-vars "@$EXTRA_VARS_FILE" \
+            || die "Ansible playbook failed for local node $INSTALL_PUBLIC_IP."
     fi
 else
     die "Ansible playbook directory not found at $ANSIBLE_DIR"
