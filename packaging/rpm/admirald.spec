@@ -2,10 +2,10 @@
 # SPDX-License-Identifier: Apache-2.0
 
 %global debug_package %{nil}
-%global commit 36b8aa60772dd49b70ab859869073436018d4dfe
+%global commit e94d82011cca4197c58f0c294aa1c391b58b3c00
 
 Name:    admirald
-Version: 0.0.1rc3
+Version: 0.0.1rc4
 Release: 1%{?dist}
 Summary: Admiral Control Plane - Core API and orchestration service
 
@@ -74,6 +74,11 @@ restorecon -F %{_bindir}/admirald 2>/dev/null || :
 %systemd_postun_with_restart admirald.service
 
 %changelog
+* Tue Sep 22 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc4-1
+- Release 0.0.1rc4
+- Fail closed on unknown operator token scopes
+- Import the operator token lifecycle model with expiry and revocation
+
 * Tue Sep 22 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc3-1
 - Release 0.0.1rc3
 

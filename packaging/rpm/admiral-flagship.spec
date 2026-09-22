@@ -2,10 +2,10 @@
 # SPDX-License-Identifier: Apache-2.0
 
 %global debug_package %{nil}
-%global commit 36606149cb20dc36f8b1325b7e3e07d5051a8551
+%global commit c21c81b7b95d7f44d8c878f6067ff178af065feb
 
 Name:    admiral-flagship
-Version: 0.0.1rc3
+Version: 0.0.1rc4
 Release: 1%{?dist}
 Summary: Admiral Administrative Web Console
 
@@ -83,6 +83,9 @@ restorecon -R %{_prefix}/lib/admiral/flagship 2>/dev/null || :
 %{python3} -m pytest tests/ -x --tb=short
 
 %changelog
+* Tue Sep 22 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc4-1
+- Release 0.0.1rc4
+
 * Tue Sep 22 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc3-1
 - Release 0.0.1rc3
 - Require single-use email verification for login on untrusted browsers

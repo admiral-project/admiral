@@ -1,8 +1,8 @@
 %global debug_package %{nil}
-%global commit a417740ffb813cd7b34f1583e3d3668900a2336f
+%global commit 931352bbb0301a662dc5f07fb9b50d035651e2d3
 
 Name:    admiral-harbor
-Version: 0.0.1rc3
+Version: 0.0.1rc4
 Release: 1%{?dist}
 Summary: Admiral Customer Portal - Web UI for end users
 
@@ -131,6 +131,10 @@ restorecon -R %{_localstatedir}/lib/admiral/harbor 2>/dev/null || :
 %{python3} -m pytest tests/ -x --tb=short
 
 %changelog
+* Tue Sep 22 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc4-1
+- Release 0.0.1rc4
+- Add external custom themes with restricted override assets
+
 * Tue Sep 22 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc3-1
 - Release 0.0.1rc3
 

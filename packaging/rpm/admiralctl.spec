@@ -2,10 +2,10 @@
 # SPDX-License-Identifier: Apache-2.0
 
 %global debug_package %{nil}
-%global commit 6aae06feb626c10f8215d344925bf93468129e39
+%global commit 98bf7ff26bdec0313320af1a885f932389feba13
 
 Name:    admiralctl
-Version: 0.0.1rc3
+Version: 0.0.1rc4
 Release: 1%{?dist}
 Summary: Admiral Command-Line Interface
 
@@ -62,6 +62,9 @@ mkdir -p "$GOCACHE"
 restorecon -F %{_bindir}/admiralctl 2>/dev/null || :
 
 %changelog
+* Tue Sep 22 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc4-1
+- Release 0.0.1rc4
+
 * Tue Sep 22 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc3-1
 - Release 0.0.1rc3
 
