@@ -28,11 +28,18 @@ intercambio final de peers WireGuard falla porque el wrapper busca
 
 ## Candidatos a cerrarse
 
-Los issues #96, #97 y #98 fueron cerrados después de validar sus cambios y
+Los issues #96, #97, #98 y #94 fueron cerrados después de validar sus cambios y
 registrar evidencia adicional en GitHub el 2026-09-22. #96 pasó un dry-run y
 una limpieza real de claves Ed25519 temporales; #97 combinó los tests de PSK
 con los handshakes multinodo de rc2-3; #98 pasó las pruebas de autorización de
 scopes y expiración/revocación sobre admirald.
+
+#94 se cerró con la implementación de la verificación por email de un solo uso
+en `admiral-flagship` (ópt-in por operador, `670e6f8`). El código se guarda
+solo como HMAC-SHA256, expira en 10 minutos, es de un solo uso y falla cerrado
+cuando SMTP no está configurado; los límites de verificación y reenvío tienen
+tests automatizados. Queda pendiente la prueba del flujo de login MFA con SMTP
+real en el lab (guest), al igual que el resto del artifacto COPR `0.0.1rc3`.
 
 El trabajo local confirma la implementación de varios fixes, pero no sustituye
 la validación del artefacto COPR ni la ejecución en guests. Los siguientes
@@ -71,8 +78,8 @@ requiere ejecutar el runbook completo.
 | #100 | sec(storage): document and verify disk encryption (LUKS) for customer data | Documentar prerequisito LUKS2 en workers; luego verificar en lab |
 | #96 | sec(bootstrap): minimize and expire SSH delivery credentials | Implementar inventario/cleanup explícito; luego verificar en lab | Cerrado; dry-run y limpieza real verificados |
 | #95 | sec(backups): immutable off-site backup profile and automated restore verification | Definir perfil S3 con Object Lock; luego probar restore | Perfil Object Lock Governance de 30 días implementado; falta verificación en S3 |
-| #98 | sec(api): per-operator tokens with scope/expiry/revocation | Completar el modelo de operadores; luego validar scope/revocación en lab | Cerrado; modelo, pruebas de scopes y expiración/revocación verificados |
-| #94 | sec(flagship): require single-use email verification code (`needs-work`, posible falso positivo) | Implementar MFA email; luego probar flujo de login |
+| #98 | sec(api): per-operator tokens with scope/expiry/revocation | Completar el modelo de operadores; luego validar scope/revocación en lab | Cerrado; modelo, pruebas de scopes, expiración/revocación verificados |
+| #94 | sec(flagship): require single-use email verification code (implementada en rc3; label `posible-false-positive` conservado del análisis) | Verificar flujo MFA con SMTP real en lab | Prueba de login con código real; matices: ópt-in y SMTP síncrono |
 
 ## Sin laboratorio
 
