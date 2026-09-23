@@ -1,16 +1,16 @@
 # SPDX-FileCopyrightText: William Moreno Reyes CP | MBA
 # SPDX-License-Identifier: Apache-2.0
 
-%global commit 6c3e4420805cdb63f5214c777d37144cdf7f2936
+%global commit 8a5e31399d978bb5900bbf1114f6c9dd43cf462f
 
 Name:    admiral-common
 Version: 0.0.1rc4
-Release: 1%{?dist}
+Release: 7%{?dist}
 Summary: Common files and utilities for Admiral PaaS
 
 License: Apache-2.0
 URL:     https://github.com/admiral-project/admiral
-Source0: https://github.com/admiral-project/admiral/archive/%{commit}/admiral-%{version}.tar.gz
+Source0: https://github.com/admiral-project/admiral/archive/%{commit}.tar.gz
 
 BuildArch: noarch
 
@@ -40,7 +40,7 @@ shared by all Admiral components. Admiral is a lightweight PaaS for
 agencies to sell and operate SaaS applications on Enterprise Linux.
 
 %prep
-%autosetup -n admiral-v%{version}
+%autosetup -n admiral-%{commit}
 
 %build
 
@@ -191,6 +191,12 @@ if [ "$1" -eq 0 ]; then
 fi
 
 %changelog
+* Wed Sep 23 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc4-7
+- Rebuild RC4 packages with EPEL-provided Caddy
+
+* Wed Sep 23 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc4-5
+- Correct the source archive URL and extraction directory for reproducible RPM builds
+
 * Tue Sep 22 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc4-1
 - Release 0.0.1rc4
 

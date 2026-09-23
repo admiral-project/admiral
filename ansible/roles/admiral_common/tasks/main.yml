@@ -4,7 +4,7 @@
 # --single-node combines all roles; --admin-portal-node combines admin and
 # portal roles without a local worker.
 
-- name: Install dnf-plugins-core (for copr)
+- name: Install dnf-plugins-core (for Admiral COPR)
   dnf:
     name: dnf-plugins-core
     state: present
@@ -23,20 +23,20 @@
     - ansible_distribution in ['RedHat', 'CentOS', 'Rocky', 'AlmaLinux']
     - ansible_distribution_major_version | int == 10
 
-- name: Enable Caddy COPR repository
-  command:
-    cmd: dnf copr enable -y @caddy/caddy
-    creates: /etc/yum.repos.d/_copr:copr.fedorainfracloud.org:group_caddy:caddy.repo
+- name: Remove obsolete Caddy COPR repository
+  file:
+    path: /etc/yum.repos.d/_copr:copr.fedorainfracloud.org:group_caddy:caddy.repo
+    state: absent
 
 - name: Enable Admiral COPR repository
   command:
     cmd: dnf copr enable -y admiral-project/admiral
     creates: /etc/yum.repos.d/_copr:copr.fedorainfracloud.org:admiral-project:admiral.repo
 
-# COPR repositories must keep signature enforcement enabled on every node
-# role (hub and spoke). Enabling the repository is not enough by itself; fail
-# the run when gpgcheck is disabled or missing so a tampered repository cannot
-# be consumed silently.
+# The Admiral COPR must keep signature enforcement enabled on every node role
+# (hub and spoke). Enabling the repository is not enough by itself; fail the
+# run when gpgcheck is disabled or missing so a tampered repository cannot be
+# consumed silently.
 - name: Verify COPR repositories enforce GPG signature checks
   command:
     argv:
@@ -46,7 +46,6 @@
       - "{{ item }}"
   loop:
     - /etc/yum.repos.d/_copr:copr.fedorainfracloud.org:admiral-project:admiral.repo
-    - /etc/yum.repos.d/_copr:copr.fedorainfracloud.org:group_caddy:caddy.repo
   register: admiral_copr_gpgcheck
   failed_when:
     - admiral_copr_gpgcheck.rc != 0

@@ -6,12 +6,12 @@
 
 Name:    admiral-flagship
 Version: 0.0.1rc4
-Release: 1%{?dist}
+Release: 5%{?dist}
 Summary: Admiral Administrative Web Console
 
 License: Apache-2.0
 URL:     https://github.com/admiral-project/admiral-flagship
-Source0: https://github.com/admiral-project/admiral-flagship/archive/%{commit}/admiral-flagship-%{version}.tar.gz
+Source0: https://github.com/admiral-project/admiral-flagship/archive/%{commit}.tar.gz
 Source1: admiral-flagship.service
 Source2: flagship.env
 
@@ -39,7 +39,7 @@ Operators use flagship to manage nodes, applications, instances,
 backups, and platform operations through a web interface.
 
 %prep
-%setup -q -n %{name}-v%{version}
+%setup -q -n %{name}-%{commit}
 
 %build
 
@@ -83,6 +83,12 @@ restorecon -R %{_prefix}/lib/admiral/flagship 2>/dev/null || :
 %{python3} -m pytest tests/ -x --tb=short
 
 %changelog
+* Wed Sep 23 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc4-5
+- Rebuild RC4 packages with EPEL-provided Caddy
+
+* Wed Sep 23 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc4-3
+- Correct the source archive URL and extraction directory for reproducible RPM builds
+
 * Tue Sep 22 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc4-1
 - Release 0.0.1rc4
 

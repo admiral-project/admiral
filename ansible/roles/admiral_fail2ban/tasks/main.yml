@@ -88,6 +88,15 @@
         state: restarted
         daemon_reload: true
 
+    - name: Wait for the Fail2ban SSH jail to become ready
+      command:
+        cmd: fail2ban-client status sshd
+      register: admiral_fail2ban_ssh_status
+      until: admiral_fail2ban_ssh_status.rc == 0
+      retries: 15
+      delay: 2
+      changed_when: false
+
     - name: Exercise Fail2ban nftables enforcement
       block:
         - name: Add a temporary documentation-range ban

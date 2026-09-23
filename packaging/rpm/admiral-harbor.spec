@@ -1,14 +1,14 @@
 %global debug_package %{nil}
-%global commit 326887389acf7ce46e57a8510daf3badbce8c850
+%global commit fc7dc38bbdb741fce98607b4e8aa34aa432968ac
 
 Name:    admiral-harbor
 Version: 0.0.1rc4
-Release: 1%{?dist}
+Release: 5%{?dist}
 Summary: Admiral Customer Portal - Web UI for end users
 
 License: Apache-2.0
 URL:     https://github.com/admiral-project/admiral-harbor
-Source0: https://github.com/admiral-project/admiral-harbor/archive/%{commit}/admiral-harbor-%{version}.tar.gz
+Source0: https://github.com/admiral-project/admiral-harbor/archive/%{commit}.tar.gz
 Source1: admiral-harbor.service
 Source2: admiral-harbor-worker.service
 Source3: admiral-harbor-worker.timer
@@ -59,7 +59,7 @@ End users interact with harbor to manage their applications, view
 usage, and perform self-service operations.
 
 %prep
-%setup -q -n %{name}-v%{version}
+%setup -q -n %{name}-%{commit}
 
 %build
 
@@ -131,6 +131,12 @@ restorecon -R %{_localstatedir}/lib/admiral/harbor 2>/dev/null || :
 %{python3} -m pytest tests/ -x --tb=short
 
 %changelog
+* Wed Sep 23 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc4-5
+- Rebuild RC4 packages with EPEL-provided Caddy
+
+* Wed Sep 23 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc4-3
+- Correct the source archive URL and extraction directory for reproducible RPM builds
+
 * Tue Sep 22 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc4-1
 - Release 0.0.1rc4
 - Add external custom themes with restricted override assets

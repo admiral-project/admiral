@@ -1,7 +1,9 @@
 ---
 - name: Install auditd
   dnf:
-    name: audit
+    name:
+      - audit
+      - audit-rules
     state: present
 
 - name: Configure explicit auditd rotation and disk-space policy
@@ -52,25 +54,15 @@
     enabled: true
     state: started
 
-- name: Reload auditd after policy changes
-  command:
-    cmd: service auditd reload
-  changed_when: true
-  when: admiral_auditd_configuration.changed
-
 - name: Detect audit rule loader availability
-  command:
-    cmd: command -v augenrules
+  stat:
+    path: /sbin/augenrules
   register: augenrules_available
-  changed_when: false
-  failed_when: false
 
 - name: Detect auditctl availability
-  command:
-    cmd: command -v auditctl
+  stat:
+    path: /sbin/auditctl
   register: auditctl_available
-  changed_when: false
-  failed_when: false
 
 - name: Read current audit immutability state
   command:
@@ -78,7 +70,7 @@
   register: admiral_auditd_status_before_load
   changed_when: false
   failed_when: false
-  when: auditctl_available.rc == 0
+  when: auditctl_available.stat.exists
 
 - name: Load audit rules with augenrules
   command:
@@ -87,7 +79,7 @@
   register: audit_augenrules
   failed_when: false
   when:
-    - augenrules_available.rc == 0
+    - augenrules_available.stat.exists
     - "'enabled 2' not in (admiral_auditd_status_before_load.stdout | default(''))"
 
 - name: Load audit rules via auditctl when augenrules is unavailable
@@ -95,8 +87,8 @@
     cmd: auditctl -R /etc/audit/rules.d/admiral.rules
   changed_when: false
   when:
-    - augenrules_available.rc != 0 or (audit_augenrules.rc | default(1)) != 0
-    - auditctl_available.rc == 0
+    - not augenrules_available.stat.exists or (audit_augenrules.rc | default(1)) != 0
+    - auditctl_available.stat.exists
     - "'enabled 2' not in (admiral_auditd_status_before_load.stdout | default(''))"
 
 
@@ -112,7 +104,7 @@
     'admiral_tls' not in admiral_audit_rules_effective.stdout or
     'admiral_data' not in admiral_audit_rules_effective.stdout or
     'admiral_wireguard' not in admiral_audit_rules_effective.stdout
-  when: auditctl_available.rc == 0
+  when: auditctl_available.stat.exists
 
 - name: Confirm audit rules file when audit rule loader utilities are unavailable
   ansible.builtin.stat:
@@ -120,8 +112,8 @@
   register: audit_rules_file
   changed_when: false
   when:
-    - auditctl_available.rc != 0
-    - augenrules_available.rc != 0
+    - not auditctl_available.stat.exists
+    - not augenrules_available.stat.exists
 
 - name: Assert audit rules file is present when audit rule loader utilities are unavailable
   ansible.builtin.assert:
@@ -129,8 +121,8 @@
       - audit_rules_file.stat.exists
     fail_msg: "Admiral audit rules file is missing and no audit rule loader utility is available."
   when:
-    - auditctl_available.rc != 0
-    - augenrules_available.rc != 0
+    - not auditctl_available.stat.exists
+    - not augenrules_available.stat.exists
 
 - name: Warn when audit rule loader utilities are unavailable
   debug:
@@ -138,8 +130,8 @@
       auditd is installed and the Admiral rules file exists, but auditctl and
       augenrules are unavailable; effective rule loading could not be verified.
   when:
-    - auditctl_available.rc != 0
-    - augenrules_available.rc != 0
+    - not auditctl_available.stat.exists
+    - not augenrules_available.stat.exists
 
 - name: Verify optional immutable audit policy
   command:
@@ -151,4 +143,4 @@
     'enabled 2' not in admiral_audit_status.stdout
   when:
     - admiral_auditd_immutable | default(false) | bool
-    - auditctl_available.rc == 0
+    - auditctl_available.stat.exists

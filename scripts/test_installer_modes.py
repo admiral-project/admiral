@@ -4,7 +4,9 @@
 from __future__ import annotations
 
 import pathlib
+import os
 import subprocess
+import tempfile
 import unittest
 
 
@@ -26,6 +28,76 @@ FLEET_CONFIG = ROOT / "packaging" / "config" / "fleet.env"
 
 
 class InstallerModeTests(unittest.TestCase):
+    def test_curl_to_bash_source_path_is_safe_with_nounset(self) -> None:
+        result = subprocess.run(
+            ["bash", "-us"],
+            input='SCRIPT_SOURCE="${BASH_SOURCE[0]:-$0}"\nprintf "%s\\n" "$SCRIPT_SOURCE"\n',
+            text=True,
+            capture_output=True,
+            check=False,
+        )
+
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertNotIn("unbound variable", result.stderr)
+
+    def test_control_ssh_does_not_consume_curl_streamed_installer(self) -> None:
+        installer = INSTALLER.read_text(encoding="utf-8")
+        helper_body = installer.split("ssh_no_stdin() {", 1)[1].split("\n}", 1)[0]
+        helper = "ssh_no_stdin() {" + helper_body + "\n}"
+
+        with tempfile.TemporaryDirectory() as temp_dir:
+            temp_path = pathlib.Path(temp_dir)
+            fake_bin = temp_path / "bin"
+            fake_bin.mkdir()
+            ssh_stub = fake_bin / "ssh"
+            ssh_stub.write_text("#!/bin/sh\ncat > \"$SSH_STDIN_CAPTURE\"\n", encoding="utf-8")
+            ssh_stub.chmod(0o755)
+            capture = temp_path / "ssh-stdin"
+            env = os.environ.copy()
+            env["PATH"] = f"{fake_bin}{os.pathsep}{env['PATH']}"
+            env["SSH_STDIN_CAPTURE"] = str(capture)
+            result = subprocess.run(
+                ["bash", "-c", f"{helper}\nssh_no_stdin test-host\nIFS= read -r next || exit 10\nprintf '%s\\n' \"$next\"\n"],
+                input="installer remainder\n",
+                text=True,
+                capture_output=True,
+                check=False,
+                env=env,
+            )
+            captured_stdin = capture.read_text(encoding="utf-8")
+
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(result.stdout, "installer remainder\n")
+        self.assertEqual(captured_stdin, "")
+
+    def test_installer_fails_when_ansible_playbook_fails(self) -> None:
+        installer = INSTALLER.read_text(encoding="utf-8")
+
+        self.assertEqual(installer.count('|| die "Ansible playbook failed'), 2)
+
+    def test_spoke_ansible_temp_uses_target_writable_directory(self) -> None:
+        installer = INSTALLER.read_text(encoding="utf-8")
+        temp_setup = installer.split(
+            'ANSIBLE_LOCAL_TEMP="$INSTALLER_TEMP_BASE/ansible-local"', 1
+        )[1]
+        temp_setup = temp_setup.split("ANSIBLE_GALAXY_CACHE_DIR=", 1)[0]
+
+        self.assertIn(
+            '[[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]]',
+            temp_setup,
+        )
+        self.assertIn('ANSIBLE_REMOTE_TEMP="/tmp"', temp_setup)
+        self.assertIn('ANSIBLE_REMOTE_TEMP="$INSTALLER_TEMP_BASE/ansible-remote"', temp_setup)
+
+    def test_audit_role_installs_el10_rule_utilities_and_loads_rules(self) -> None:
+        audit_tasks = AUDIT_TASKS.read_text(encoding="utf-8")
+
+        self.assertIn("- audit-rules", audit_tasks)
+        self.assertIn("cmd: augenrules --load", audit_tasks)
+        self.assertNotIn("service auditd reload", audit_tasks)
+        self.assertIn("path: /sbin/augenrules", audit_tasks)
+        self.assertIn("path: /sbin/auditctl", audit_tasks)
+
     def test_all_tier_one_el10_distributions_are_accepted(self) -> None:
         content = INSTALLER.read_text(encoding="utf-8")
 
@@ -228,7 +300,7 @@ class InstallerModeTests(unittest.TestCase):
         self.assertIn('INSTALL_RECONVERGE_SSH_KEY="true"', content)
         self.assertIn("/var/lib/admiral/ssh-delivery/", content)
         self.assertIn("Using per-node delivery key for spoke reconvergence", content)
-        self.assertIn('[[ "$INSTALL_RECONVERGE_SSH_KEY" != "true" ]] && ssh -i', content)
+        self.assertIn('[[ "$INSTALL_RECONVERGE_SSH_KEY" != "true" ]] && ssh_no_stdin -i', content)
 
     def test_bootstrap_key_revocation_is_idempotent(self) -> None:
         content = (ROOT / "scripts" / "admiral_revoke_bootstrap_key.py").read_text(encoding="utf-8")
@@ -274,7 +346,7 @@ class InstallerModeTests(unittest.TestCase):
 
         self.assertIn("per_node_ssh_ready=false", installer)
         self.assertIn("for attempt in $(seq 1 10)", installer)
-        self.assertIn('ssh "${SSH_OPTIONS[@]}" "${INSTALL_TARGET_SSH_USER}@${INSTALL_PUBLIC_IP}" "sudo -n true"', installer)
+        self.assertIn('ssh_no_stdin "${SSH_OPTIONS[@]}" "${INSTALL_TARGET_SSH_USER}@${INSTALL_PUBLIC_IP}" "sudo -n true"', installer)
         self.assertIn('sleep 1', installer)
 
     def test_spoke_extra_vars_exclude_controller_admin_token(self) -> None:
@@ -332,7 +404,7 @@ class InstallerModeTests(unittest.TestCase):
         content = AUDIT_TASKS.read_text(encoding="utf-8")
 
         self.assertIn(
-            "augenrules_available.rc != 0 or (audit_augenrules.rc | default(1)) != 0",
+            "not augenrules_available.stat.exists or (audit_augenrules.rc | default(1)) != 0",
             content,
         )
         for key in (
@@ -447,6 +519,25 @@ class InstallerModeTests(unittest.TestCase):
         )
         self.assertIn("Enable EL10 CRB repository", common_tasks)
         self.assertIn("cmd: dnf config-manager --set-enabled crb", common_tasks)
+
+    def test_caddy_uses_epel_without_enabling_caddy_copr(self) -> None:
+        installer = INSTALLER.read_text(encoding="utf-8")
+        common_tasks = COMMON_TASKS.read_text(encoding="utf-8")
+
+        self.assertNotIn('dnf copr enable -y "@caddy/caddy"', installer)
+        self.assertNotIn("Enable Caddy COPR repository", common_tasks)
+        self.assertIn("Removing obsolete Caddy COPR repository", installer)
+        self.assertIn("Remove obsolete Caddy COPR repository", common_tasks)
+        self.assertIn("dnf install -y epel-release", installer)
+        self.assertIn("name: epel-release", common_tasks)
+
+        # The Admiral repository remains enabled and its GPG check remains
+        # part of the common role's preflight.
+        self.assertIn('dnf copr enable -y "admiral-project/admiral"', installer)
+        self.assertIn("admiral-project:admiral.repo", common_tasks)
+        self.assertNotIn("group_caddy:caddy.repo", common_tasks.split(
+            "loop:", 1
+        )[-1].split("register: admiral_copr_gpgcheck", 1)[0])
 
     def test_caddy_admin_api_uses_loopback_port_without_socket_acl(self) -> None:
         common_tasks = COMMON_TASKS.read_text(encoding="utf-8")
@@ -594,6 +685,9 @@ class InstallerModeTests(unittest.TestCase):
         self.assertIn("name: chronyd", common)
         self.assertIn("chronyc waitsync 30", FIREWALL_TASKS.read_text(encoding="utf-8"))
         self.assertIn("banaction = nftables[type=allports]", fail2ban)
+        self.assertIn("Wait for the Fail2ban SSH jail to become ready", fail2ban)
+        self.assertIn("cmd: fail2ban-client status sshd", fail2ban)
+        self.assertIn("until: admiral_fail2ban_ssh_status.rc == 0", fail2ban)
         self.assertIn("Exercise Fail2ban nftables enforcement", fail2ban)
         self.assertIn("nft list ruleset", fail2ban)
         self.assertIn("gpgcheck", installer)

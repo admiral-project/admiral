@@ -74,6 +74,14 @@ def main() -> int:
         if make != actual:
             failures.append(f"{name}: Makefile={make}, spec={actual}")
     common = common_ref()
+    try:
+        make_common = make_ref("ADMIRAL_COMMON_COMMIT")
+        if make_common != common:
+            failures.append(
+                f"admiral-common: Makefile={make_common}, spec={common}"
+            )
+    except ValueError as error:
+        failures.append(str(error))
     common_diff = subprocess.run(
         ["git", "diff", "--quiet", common, "HEAD", "--", *COMMON_PAYLOAD_PATHS],
         cwd=ROOT,
