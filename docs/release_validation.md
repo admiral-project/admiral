@@ -107,6 +107,11 @@ Every operating system must use an official GenericCloud image.
 
 The image checksum must be verified before use.
 
+Tier 1 support is limited to Enterprise Linux 10. The installer must reject
+other EL major versions until their dependency, repository, and security-update
+behavior has been explicitly implemented and validated. Fedora Rawhide is a
+Tier 2 compatibility signal for a future EL11; it does not claim EL11 support.
+
 ### 4.3 Tier 2 Fedora operating systems
 
 The RC4 Tier 2 matrix is:

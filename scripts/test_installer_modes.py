@@ -102,7 +102,30 @@ class InstallerModeTests(unittest.TestCase):
         content = INSTALLER.read_text(encoding="utf-8")
 
         self.assertIn("rhel|centos|rocky|almalinux)", content)
-        self.assertIn('[[ "$MAJOR" -ge 10 ]]', content)
+        self.assertIn('is_supported_el_version "${VERSION_ID:-}"', content)
+        self.assertNotIn('[[ "$MAJOR" -ge 10 ]]', content)
+
+    def test_el_release_guard_accepts_only_el10(self) -> None:
+        installer = INSTALLER.read_text(encoding="utf-8")
+        helper_body = installer.split("is_supported_el_version() {", 1)[1].split("\n}", 1)[0]
+        helper = "is_supported_el_version() {" + helper_body + "\n}"
+        shell = helper + """
+for version in 10 10.0 10.2; do
+    is_supported_el_version "$version" || exit 1
+done
+for version in 8 9 9.6 11 11.0; do
+    if is_supported_el_version "$version"; then exit 2; fi
+done
+"""
+        result = subprocess.run(
+            ["bash"],
+            input=shell,
+            text=True,
+            capture_output=True,
+            check=False,
+        )
+
+        self.assertEqual(result.returncode, 0, result.stderr)
 
     def test_fedora_44_and_rawhide_are_supported_without_dev_mode(self) -> None:
         content = INSTALLER.read_text(encoding="utf-8")

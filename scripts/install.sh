@@ -16,6 +16,11 @@ ssh_no_stdin() {
     # command must not consume the remaining installer text from stdin.
     command ssh "$@" </dev/null
 }
+is_supported_el_version() {
+    local version_id="${1:-}"
+    local major="${version_id%%.*}"
+    [[ "$major" =~ ^[0-9]+$ && "$major" -eq 10 ]]
+}
 require_option_value() {
     local opt="$1"
     local val="${2-}"
@@ -662,8 +667,8 @@ fi
 
 case "$ID" in
     rhel|centos|rocky|almalinux)
-        MAJOR="${VERSION_ID%%.*}"
-        [[ "$MAJOR" -ge 10 ]] || die "Enterprise Linux 10 required (got $ID $VERSION_ID)"
+        is_supported_el_version "${VERSION_ID:-}" ||
+            die "Enterprise Linux 10 is required; EL${VERSION_ID:-unknown} is not supported."
         ;;
     fedora)
         FEDORA_RELEASE_LABEL="${VERSION_ID:-} ${VERSION_CODENAME:-} ${VERSION:-}"
