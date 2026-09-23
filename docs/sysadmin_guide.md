@@ -813,12 +813,13 @@ the correct size at a later time.
 To check verification status:
 
 ```bash
-admiralctl backups list --instance <instance-id>
+admiralctl backups list --output json
 ```
 
-The `verified_at` field shows the last successful verification
-timestamp. An empty `verified_at` with an `error_message` indicates
-verification failed and the backup may not be recoverable.
+Filter the returned records by `instance_id`. The `verified_at` field shows
+the last successful verification timestamp. An empty `verified_at` with an
+`error_message` indicates verification failed and the backup may not be
+recoverable.
 
 ### Important notes
 
