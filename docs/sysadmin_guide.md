@@ -668,11 +668,13 @@ customer data.
 
 Use `--dev-node` only for temporary testing workflows where direct port access is required.
 
-The installer enables the signed Caddy and Admiral COPR repositories. It
-refuses repository definitions that do not enable RPM GPG metadata checking;
-operators should still review the repository trust policy and pin package
-versions through their normal RPM/COPR change-control process before production
-rollouts. Playbooks install `admiral-common` at the repository release
+On Enterprise Linux, Caddy is installed from EPEL. The installer enables the
+signed Admiral COPR repository and refuses its repository definition if RPM
+GPG metadata checking is disabled; it also removes a Caddy COPR repository file
+left by older installs. Operators should still review the repository trust
+policy and pin Admiral package versions through their normal RPM/COPR
+change-control process before production rollouts. Playbooks install
+`admiral-common` at the repository release
 (`state: latest`) so every installer run reconciles the managed roles; to pin
 an exact build, define `admiral_common_version` (for example
 `0.0.1rc1-124`) in the extra-vars and the role installs that precise

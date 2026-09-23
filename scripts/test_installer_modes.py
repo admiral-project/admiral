@@ -520,6 +520,25 @@ class InstallerModeTests(unittest.TestCase):
         self.assertIn("Enable EL10 CRB repository", common_tasks)
         self.assertIn("cmd: dnf config-manager --set-enabled crb", common_tasks)
 
+    def test_caddy_uses_epel_without_enabling_caddy_copr(self) -> None:
+        installer = INSTALLER.read_text(encoding="utf-8")
+        common_tasks = COMMON_TASKS.read_text(encoding="utf-8")
+
+        self.assertNotIn('dnf copr enable -y "@caddy/caddy"', installer)
+        self.assertNotIn("Enable Caddy COPR repository", common_tasks)
+        self.assertIn("Removing obsolete Caddy COPR repository", installer)
+        self.assertIn("Remove obsolete Caddy COPR repository", common_tasks)
+        self.assertIn("dnf install -y epel-release", installer)
+        self.assertIn("name: epel-release", common_tasks)
+
+        # The Admiral repository remains enabled and its GPG check remains
+        # part of the common role's preflight.
+        self.assertIn('dnf copr enable -y "admiral-project/admiral"', installer)
+        self.assertIn("admiral-project:admiral.repo", common_tasks)
+        self.assertNotIn("group_caddy:caddy.repo", common_tasks.split(
+            "loop:", 1
+        )[-1].split("register: admiral_copr_gpgcheck", 1)[0])
+
     def test_caddy_admin_api_uses_loopback_port_without_socket_acl(self) -> None:
         common_tasks = COMMON_TASKS.read_text(encoding="utf-8")
 

@@ -29,7 +29,6 @@ docker run --rm \
     dnf install -y git dnf-plugins-core epel-release
     git config --global --add safe.directory "*"
     dnf config-manager --set-enabled crb
-    dnf copr enable -y @caddy/caddy
     dnf copr enable -y admiral-project/admiral
     dnf install -y make gcc rpm-build rpmdevtools redhat-rpm-config \
       systemd-devel pkgconfig which file wget curl ca-certificates \
@@ -46,9 +45,7 @@ docker run --rm \
 
 ## Notes
 
-- The build enables the required COPR repositories:
-  - @caddy/caddy
-  - admiral-project/admiral
+- The build installs Caddy from EPEL and enables the Admiral COPR repository.
 - The container must have Git installed before the release-reference validator runs.
 - The build uses the repository's Makefile target `make rpm-admiral`.
 

@@ -700,7 +700,7 @@ if [[ "$ID" != "fedora" && "$ID" != "amzn" && "$INSTALL_MODE" != "worker-node" &
     fi
 fi
 
-# --- 5. install dnf-plugins-core (for copr) ---
+# --- 5. install dnf-plugins-core (for Admiral COPR) ---
 if [[ "$INSTALL_MODE" != "worker-node" && "$INSTALL_MODE" != "portal-node" ]] &&
     ! rpm -q dnf-plugins-core >/dev/null 2>&1; then
     dnf install -y dnf-plugins-core
@@ -716,15 +716,19 @@ if [[ "$INSTALL_MODE" != "worker-node" && "$INSTALL_MODE" != "portal-node" ]] &&
 fi
 
 if [[ "$INSTALL_MODE" != "worker-node" && "$INSTALL_MODE" != "portal-node" ]]; then
-    # --- 6. enable COPR repos ---
-    info "Enabling Caddy COPR repository..."
-    dnf copr enable -y "@caddy/caddy"
+    # Caddy is provided by EPEL on EL10; discard the repository file left by
+    # older Admiral installers so it cannot override EPEL's package.
+    CADDY_COPR_REPO=/etc/yum.repos.d/_copr:copr.fedorainfracloud.org:group_caddy:caddy.repo
+    if [[ -f "$CADDY_COPR_REPO" ]]; then
+        info "Removing obsolete Caddy COPR repository..."
+        rm -f "$CADDY_COPR_REPO"
+    fi
 
+    # --- 6. enable Admiral COPR ---
     info "Enabling Admiral COPR repository..."
     dnf copr enable -y "admiral-project/admiral"
 
     for copr_repo in \
-        /etc/yum.repos.d/_copr:copr.fedorainfracloud.org:group_caddy:caddy.repo \
         /etc/yum.repos.d/_copr:copr.fedorainfracloud.org:admiral-project:admiral.repo; do
         [[ -f "$copr_repo" ]] || die "Expected COPR repository file is missing: $copr_repo"
         grep -Eq '^[[:space:]]*gpgcheck[[:space:]]*=[[:space:]]*1[[:space:]]*$' "$copr_repo" ||
