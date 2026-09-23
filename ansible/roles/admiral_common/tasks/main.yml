@@ -4,6 +4,62 @@
 # --single-node combines all roles; --admin-portal-node combines admin and
 # portal roles without a local worker.
 
+- name: Detect Fedora systemd-resolved service for secure LLMNR policy
+  stat:
+    path: /usr/lib/systemd/system/systemd-resolved.service
+  register: admiral_fedora_systemd_resolved_unit
+  when:
+    - ansible_distribution == 'Fedora'
+    - not (admiral_dev_mode | default(false) | bool)
+
+- name: Apply Fedora secure resolver policy
+  block:
+    - name: Ensure systemd-resolved drop-in directory exists
+      file:
+        path: /etc/systemd/resolved.conf.d
+        state: directory
+        owner: root
+        group: root
+        mode: "0755"
+
+    - name: Disable LLMNR on Fedora secure installs
+      copy:
+        dest: /etc/systemd/resolved.conf.d/90-admiral-security.conf
+        content: |
+          # Secure Admiral installs use unicast DNS and do not expose LLMNR.
+          [Resolve]
+          LLMNR=no
+        owner: root
+        group: root
+        mode: "0644"
+      register: admiral_fedora_resolved_policy
+
+    - name: Restart systemd-resolved after changing the Fedora LLMNR policy
+      systemd:
+        name: systemd-resolved
+        state: restarted
+      when: admiral_fedora_resolved_policy.changed
+
+    - name: Read effective Fedora resolver protocols
+      command: resolvectl status
+      register: admiral_fedora_resolved_status
+      changed_when: false
+
+    - name: Verify LLMNR is disabled on Fedora secure installs
+      assert:
+        that:
+          - "'LLMNR=resolve' not in admiral_fedora_resolved_status.stdout"
+          - "'LLMNR=yes' not in admiral_fedora_resolved_status.stdout"
+          - "'+LLMNR' not in admiral_fedora_resolved_status.stdout"
+        fail_msg: >-
+          Secure Fedora installs must keep systemd-resolved unicast DNS
+          available without enabling LLMNR listeners.
+  when:
+    - ansible_distribution == 'Fedora'
+    - not (admiral_dev_mode | default(false) | bool)
+    - admiral_fedora_systemd_resolved_unit is defined
+    - admiral_fedora_systemd_resolved_unit.stat.exists | default(false)
+
 - name: Install DNF plugins for Admiral COPR
   dnf:
     name: "{{ 'dnf5-plugins' if ansible_distribution == 'Fedora' else 'dnf-plugins-core' }}"

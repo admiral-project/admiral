@@ -69,6 +69,8 @@ La postura por defecto es:
 - ningún puerto interno de `admirald`, `admiral-fleet`, `admiral-flagship`, `admiral-harbor`, PostgreSQL o la Admin API de Caddy debe exponerse directamente
 - los errata de seguridad disponibles se aplican durante el playbook; quedan
   habilitados `dnf-automatic.timer` en EL10 y `dnf5-automatic.timer` en Fedora
+- en los modos seguros de Fedora, LLMNR se desactiva mediante un drop-in de
+  `systemd-resolved`; DNS unicast permanece habilitado
 - Fail2ban usa nftables nativo y la instalación comprueba que un baneo de
   prueba crea una regla efectiva
 

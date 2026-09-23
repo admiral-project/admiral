@@ -131,6 +131,12 @@ Fedora uses DNF5. Conditional package-manager steps must preserve the EL10
 behavior while using Fedora's DNF5 plugins and `dnf5-automatic.timer` where
 applicable.
 
+Secure Fedora modes also disable LLMNR through a `systemd-resolved`
+configuration drop-in when that service is present. Verify that wildcard
+listeners on TCP/UDP 5355 are absent and that unicast DNS resolution still
+works; keep the declared firewall and exact listener checks enabled. This
+Fedora-specific resolver policy does not alter EL10 behavior.
+
 ### 4.4 Deferred platforms
 
 Architectures or operating systems outside the Tier 1 and Tier 2 matrices must be reported as `NOT TESTED`.
