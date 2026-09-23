@@ -75,6 +75,20 @@ class InstallerModeTests(unittest.TestCase):
 
         self.assertEqual(installer.count('|| die "Ansible playbook failed'), 2)
 
+    def test_spoke_ansible_temp_uses_target_writable_directory(self) -> None:
+        installer = INSTALLER.read_text(encoding="utf-8")
+        temp_setup = installer.split(
+            'ANSIBLE_LOCAL_TEMP="$INSTALLER_TEMP_BASE/ansible-local"', 1
+        )[1]
+        temp_setup = temp_setup.split("ANSIBLE_GALAXY_CACHE_DIR=", 1)[0]
+
+        self.assertIn(
+            '[[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]]',
+            temp_setup,
+        )
+        self.assertIn('ANSIBLE_REMOTE_TEMP="/tmp"', temp_setup)
+        self.assertIn('ANSIBLE_REMOTE_TEMP="$INSTALLER_TEMP_BASE/ansible-remote"', temp_setup)
+
     def test_audit_role_installs_el10_rule_utilities_and_loads_rules(self) -> None:
         audit_tasks = AUDIT_TASKS.read_text(encoding="utf-8")
 

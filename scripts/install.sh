@@ -999,7 +999,15 @@ info "Running Admiral configuration playbook for mode: $INSTALL_MODE"
 ANSIBLE_DIR="/usr/share/admiral/ansible"
 if [[ -d "$ANSIBLE_DIR" ]]; then
     ANSIBLE_LOCAL_TEMP="$INSTALLER_TEMP_BASE/ansible-local"
-    ANSIBLE_REMOTE_TEMP="$INSTALLER_TEMP_BASE/ansible-remote"
+    if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]]; then
+        # The controller's private temp directory is not a usable remote
+        # directory across the spoke SSH user and Ansible's become user.
+        # Let Ansible create private, per-task directories under the target's
+        # sticky /tmp instead.
+        ANSIBLE_REMOTE_TEMP="/tmp"
+    else
+        ANSIBLE_REMOTE_TEMP="$INSTALLER_TEMP_BASE/ansible-remote"
+    fi
     ANSIBLE_GALAXY_CACHE_DIR="$INSTALLER_TEMP_BASE/ansible-galaxy-cache"
     if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]]; then
         TMP_INVENTORY="$(mktemp "$INSTALLER_TEMP_BASE/inventory.XXXXXX.json")"
