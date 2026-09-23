@@ -1,11 +1,11 @@
 # SPDX-FileCopyrightText: William Moreno Reyes CP | MBA
 # SPDX-License-Identifier: Apache-2.0
 
-%global commit da0c03ffd9f8611ef60f40a357d18416217e6256
+%global commit 76d74b741459dca4c8b85df6841692daf61e1ebf
 
 Name:    admiral-common
 Version: 0.0.1rc4
-Release: 10%{?dist}
+Release: 11%{?dist}
 Summary: Common files and utilities for Admiral PaaS
 
 License: Apache-2.0
@@ -191,6 +191,9 @@ if [ "$1" -eq 0 ]; then
 fi
 
 %changelog
+* Wed Sep 23 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc4-11
+- Add subject and authority key identifiers to internal TLS leaf certificates
+
 * Wed Sep 23 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc4-8
 - Rebuild the coordinated RC4 RPM set for secure Fedora Tier 2 validation
 
