@@ -116,8 +116,10 @@ The RC4 Tier 2 matrix is:
 | Fedora 44        |    Required |   Required |
 | Fedora Rawhide   |    Required |   Required |
 
-Use each platform's official x86_64 GenericCloud image and verify its
-checksum. Apply `dnf update --refresh` to every fresh VM before installing
+Use each platform's official x86_64 GenericCloud image and verify its checksum.
+For repeated validation, clone its verified immutable seed after that seed has
+completed `dnf update --refresh`; do not repeat the full OS update on each
+overlay. Verify the seed hash, guest OS, and SELinux state before installing
 Admiral. Exercise the secure production modes; `--dev-node` is not an
 acceptance substitute.
 
