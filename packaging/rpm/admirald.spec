@@ -6,12 +6,12 @@
 
 Name:    admirald
 Version: 0.0.1rc4
-Release: 2%{?dist}
+Release: 3%{?dist}
 Summary: Admiral Control Plane - Core API and orchestration service
 
 License: Apache-2.0
 URL:     https://github.com/admiral-project/admirald
-Source0: https://github.com/admiral-project/admiral/archive/%{commit}/admiral-%{version}.tar.gz
+Source0: https://github.com/admiral-project/admirald/archive/%{commit}.tar.gz
 Source1: admirald.service
 Source2: admirald.ini
 
@@ -33,31 +33,28 @@ maintains system state, validates operations, coordinates provisioning,
 dispatches tasks to fleet workers, and maintains auditability.
 
 %prep
-%setup -q -n admiral-v%{version}
+%setup -q -n admirald-%{commit}
 
 %build
-cd admirald
 export PATH=/usr/lib/golang/bin:%{_bindir}:$PATH
 export GOCACHE=%{_tmppath}/go-cache
 mkdir -p "$GOCACHE"
 go build -trimpath -buildmode=pie -ldflags="-s -w -X main.Version=%{version}" -o admirald ./cmd/admirald/
 
 %install
-cd admirald
 install -Dm0755 admirald %{buildroot}%{_bindir}/admirald
 install -Dm0644 %{SOURCE1} %{buildroot}%{_unitdir}/admirald.service
 install -Dm0600 %{SOURCE2} %{buildroot}%{_sysconfdir}/admirald.ini
 install -d %{buildroot}/etc/systemd/system/admirald.service.d
 
 %check
-cd admirald
 export PATH=/usr/lib/golang/bin:%{_bindir}:$PATH
 export GOCACHE=%{_tmppath}/go-cache
 mkdir -p "$GOCACHE"
     go test ./...
 
 %files
-%license admirald/LICENSE
+%license LICENSE
 %{_bindir}/admirald
 %{_unitdir}/admirald.service
 %attr(0600, root, root) %config(noreplace) %{_sysconfdir}/admirald.ini
@@ -74,6 +71,9 @@ restorecon -F %{_bindir}/admirald 2>/dev/null || :
 %systemd_postun_with_restart admirald.service
 
 %changelog
+* Wed Sep 23 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc4-3
+- Correct the source archive URL and extraction directory for reproducible RPM builds
+
 * Tue Sep 22 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc4-1
 - Release 0.0.1rc4
 - Fail closed on unknown operator token scopes

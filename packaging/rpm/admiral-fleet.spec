@@ -2,18 +2,19 @@
 # SPDX-License-Identifier: Apache-2.0
 
 %global debug_package %{nil}
-%global commit 059d3503f3e1369eef5c0497f0206bee973aafba
+%global commit 1b047c66abdf305ac471f924eda1f8112b5d0335
 
 Name:    admiral-fleet
 Version: 0.0.1rc4
-Release: 2%{?dist}
+Release: 3%{?dist}
 Summary: Admiral Fleet Worker Agent
 
 License: Apache-2.0
 URL:     https://github.com/admiral-project/admiral-fleet
-Source0: https://github.com/admiral-project/admiral/archive/%{commit}/admiral-%{version}.tar.gz
+Source0: https://github.com/admiral-project/admiral-fleet/archive/%{commit}.tar.gz
 Source1: admiral-fleet.service
 Source2: fleet.env
+Source3: https://github.com/admiral-project/admirald/archive/e94d82011cca4197c58f0c294aa1c391b58b3c00.tar.gz
 
 BuildRequires: golang >= 1.26.5
 BuildRequires: systemd >= 250
@@ -35,10 +36,11 @@ It interacts locally with Podman, systemd, volumes, backups, and
 node-level resources.
 
 %prep
-%setup -q -n admiral-v%{version}
+%setup -q -n admiral-fleet-%{commit}
+mkdir -p local_deps/admirald
+tar -xzf %{SOURCE3} --strip-components=1 -C local_deps/admirald
 
 %build
-cd admiral-fleet
 export PATH=/usr/lib/golang/bin:%{_bindir}:$PATH
 export GOCACHE=%{_tmppath}/go-cache
 mkdir -p "$GOCACHE"
@@ -48,7 +50,6 @@ go build -trimpath -buildmode=pie -ldflags="-s -w" -o admiral-fleet-setup ./cmd/
 go build -trimpath -buildmode=pie -ldflags="-s -w" -o admiral-fleet-backup ./cmd/admiral-fleet-backup/
 
 %install
-cd admiral-fleet
 install -Dm0755 admiral-fleet %{buildroot}%{_bindir}/admiral-fleet
 install -Dm0755 admiral-fleet-lifecycle %{buildroot}%{_bindir}/admiral-fleet-lifecycle
 install -Dm0755 admiral-fleet-setup %{buildroot}%{_bindir}/admiral-fleet-setup
@@ -57,14 +58,13 @@ install -Dm0644 %{SOURCE1} %{buildroot}%{_unitdir}/admiral-fleet.service
 install -Dm0600 %{SOURCE2} %{buildroot}%{_sysconfdir}/admiral/fleet.env
 
 %check
-cd admiral-fleet
 export PATH=/usr/lib/golang/bin:%{_bindir}:$PATH
 export GOCACHE=%{_tmppath}/go-cache
 mkdir -p "$GOCACHE"
     go test ./...
 
 %files
-%license admiral-fleet/LICENSE
+%license LICENSE
 %{_bindir}/admiral-fleet
 %{_bindir}/admiral-fleet-lifecycle
 %{_bindir}/admiral-fleet-setup
@@ -87,6 +87,9 @@ loginctl enable-linger admiral-apps 2>/dev/null || :
 %systemd_postun_with_restart admiral-fleet.service
 
 %changelog
+* Wed Sep 23 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc4-3
+- Extend image pull timeout and correct the source archive URL and extraction directory
+
 * Tue Sep 22 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc4-1
 - Release 0.0.1rc4
 - Codify the published service trust boundary for isolated workload pods

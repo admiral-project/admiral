@@ -6,13 +6,14 @@
 
 Name:    admiralctl
 Version: 0.0.1rc4
-Release: 2%{?dist}
+Release: 3%{?dist}
 Summary: Admiral Command-Line Interface
 
 License: Apache-2.0
 URL:     https://github.com/admiral-project/admiralctl
-Source0: https://github.com/admiral-project/admiral/archive/%{commit}/admiral-%{version}.tar.gz
+Source0: https://github.com/admiral-project/admiralctl/archive/%{commit}.tar.gz
 Source1: admiralctl.yaml
+Source2: https://github.com/admiral-project/admirald/archive/e94d82011cca4197c58f0c294aa1c391b58b3c00.tar.gz
 
 BuildRequires: golang >= 1.26.5
 BuildRequires: git
@@ -27,31 +28,30 @@ diagnostics, configuration, app management, node management, instance
 management, backup operations, and troubleshooting.
 
 %prep
-%setup -q -n admiral-v%{version}
+%setup -q -n admiralctl-%{commit}
+mkdir -p admirald
+tar -xzf %{SOURCE2} --strip-components=1 -C admirald
 
 %build
-cd admiralctl
 export PATH=/usr/lib/golang/bin:%{_bindir}:$PATH
 export GOCACHE=%{_tmppath}/go-cache
 mkdir -p "$GOCACHE"
 go build -trimpath -buildmode=pie -ldflags="-s -w -X main.Version=%{version}" -o admiralctl ./cmd/admiralctl/
 
 %install
-cd admiralctl
 install -Dm0755 admiralctl %{buildroot}%{_bindir}/admiralctl
 install -Dm0600 %{SOURCE1} %{buildroot}%{_sysconfdir}/admiralctl/config.yaml
 install -Dm0644 docs/admiralctl.1 %{buildroot}%{_mandir}/man1/admiralctl.1
 install -Dm0644 docs/admiralctl-admin.8 %{buildroot}%{_mandir}/man8/admiralctl-admin.8
 
 %check
-cd admiralctl
 export PATH=/usr/lib/golang/bin:%{_bindir}:$PATH
 export GOCACHE=%{_tmppath}/go-cache
 mkdir -p "$GOCACHE"
     go test ./...
 
 %files
-%license admiralctl/LICENSE
+%license LICENSE
 %{_bindir}/admiralctl
 %{_mandir}/man1/admiralctl.1*
 %{_mandir}/man8/admiralctl-admin.8*
@@ -62,6 +62,9 @@ mkdir -p "$GOCACHE"
 restorecon -F %{_bindir}/admiralctl 2>/dev/null || :
 
 %changelog
+* Wed Sep 23 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc4-3
+- Correct the source archive URL and extraction directory for reproducible RPM builds
+
 * Tue Sep 22 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc4-1
 - Release 0.0.1rc4
 
