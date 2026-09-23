@@ -1,5 +1,6 @@
 SHELL := /bin/bash
 VERSION := 0.0.1rc4
+ADMIRAL_COMMON_COMMIT := 8a5e31399d978bb5900bbf1114f6c9dd43cf462f
 ADMIRALD_COMMIT := e94d82011cca4197c58f0c294aa1c391b58b3c00
 FLEET_COMMIT := 059d3503f3e1369eef5c0497f0206bee973aafba
 ADMIRALCTL_COMMIT := 98bf7ff26bdec0313320af1a885f932389feba13
@@ -29,6 +30,7 @@ FLASK_LOGIN_SHA256 := 3b2489f46d854b5f1d7a55007271d2eae9f744e0935ca7b88ab584c770
 MISTUNE_SHA256 := 14d23e4803c4181e6bca4b56fe38f5f81af4a5df397a9bed4b99a9e173d13696
 
 .PHONY: all clean rpm rpm-admiral rpmlint validate-release-refs all-sources \
+	source-superproject source-admiral-flagship source-admiral-harbor \
 	srpm srpms \
 	rpm-admiral-common rpm-admirald rpm-admiral-fleet \
 	rpm-admiralctl rpm-admiral-flagship rpm-admiral-harbor \
@@ -57,31 +59,25 @@ $(SOURCEDIR):
 	mkdir -p $(RPMTOPDIR)/BUILD
 	mkdir -p $(RPMTOPDIR)/tmp
 
-# -- Combined source tarball with submodule contents for Go builds -------
-# Builds from superproject workspace so go.work resolves cross-references.
+# -- Pinned source archives used by the RPM specs ------------------------
+# Stage each repository at the exact archive filename and root directory
+# that its spec declares. This keeps rpmbuild independent of network fetches.
 
 source-superproject: | $(SOURCEDIR)
-	@echo "=== Generating superproject source tarball ==="
-	git archive --format=tar \
-		--prefix=admiral-v$(VERSION)/ \
-		-o $(SOURCEDIR)/admiral-$(VERSION).tar HEAD
-	for sm in admirald admiral-fleet admiralctl admiral-flagship admiral-harbor; do \
+	@echo "=== Generating pinned Admiral source archives ==="
+	git archive --format=tar.gz \
+		--prefix=admiral-$(ADMIRAL_COMMON_COMMIT)/ \
+		-o $(SOURCEDIR)/$(ADMIRAL_COMMON_COMMIT).tar.gz $(ADMIRAL_COMMON_COMMIT)
+	for sm in admirald admiral-fleet admiralctl; do \
 		echo "  Adding $$sm..."; \
 		commit="HEAD"; \
 		if [ "$$sm" = "admirald" ]; then commit="$(ADMIRALD_COMMIT)"; fi; \
 		if [ "$$sm" = "admiral-fleet" ]; then commit="$(FLEET_COMMIT)"; fi; \
 		if [ "$$sm" = "admiralctl" ]; then commit="$(ADMIRALCTL_COMMIT)"; fi; \
-		if [ "$$sm" = "admiral-flagship" ]; then commit="$(FLAGSHIP_COMMIT)"; fi; \
-		if [ "$$sm" = "admiral-harbor" ]; then commit="$(HARBOR_COMMIT)"; fi; \
-		cd $$sm && git archive --format=tar \
-			--prefix=admiral-v$(VERSION)/$$sm/ \
-			-o $(SOURCEDIR)/$$sm-partial.tar $$commit && \
-		cd $(CURDIR) && \
-		tar --concatenate --file=$(SOURCEDIR)/admiral-$(VERSION).tar \
-			$(SOURCEDIR)/$$sm-partial.tar && \
-		rm -f $(SOURCEDIR)/$$sm-partial.tar; \
+		git -C $$sm archive --format=tar.gz \
+			--prefix=$$sm-$$commit/ \
+			-o $(SOURCEDIR)/$$commit.tar.gz $$commit || exit $$?; \
 	done
-	gzip -f $(SOURCEDIR)/admiral-$(VERSION).tar
 
 # -- Source tarballs from each submodule (for non-Go components) ---------
 
@@ -92,14 +88,14 @@ endef
 
 
 source-admiral-flagship: | $(SOURCEDIR)
-	cd admiral-flagship && git archive --format=tar.gz \
-		--prefix=admiral-flagship-v$(VERSION)/ \
-		-o $(SOURCEDIR)/admiral-flagship-$(VERSION).tar.gz $(FLAGSHIP_COMMIT)
+	git -C admiral-flagship archive --format=tar.gz \
+		--prefix=admiral-flagship-$(FLAGSHIP_COMMIT)/ \
+		-o $(SOURCEDIR)/$(FLAGSHIP_COMMIT).tar.gz $(FLAGSHIP_COMMIT)
 
 source-admiral-harbor: | $(SOURCEDIR)
-	cd admiral-harbor && git archive --format=tar.gz \
-		--prefix=admiral-harbor-v$(VERSION)/ \
-		-o $(SOURCEDIR)/admiral-harbor-$(VERSION).tar.gz $(HARBOR_COMMIT)
+	git -C admiral-harbor archive --format=tar.gz \
+		--prefix=admiral-harbor-$(HARBOR_COMMIT)/ \
+		-o $(SOURCEDIR)/$(HARBOR_COMMIT).tar.gz $(HARBOR_COMMIT)
 
 source-python-flask-sqlalchemy: | $(SOURCEDIR)
 	$(call download_checked,$(SOURCEDIR)/flask-sqlalchemy-$(FLASK_SQLALCHEMY_VERSION).tar.gz,https://github.com/pallets-eco/flask-sqlalchemy/archive/refs/tags/$(FLASK_SQLALCHEMY_VERSION)/flask-sqlalchemy-$(FLASK_SQLALCHEMY_VERSION).tar.gz,$(FLASK_SQLALCHEMY_SHA256))
