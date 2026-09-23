@@ -2,11 +2,11 @@
 # SPDX-License-Identifier: Apache-2.0
 
 %global debug_package %{nil}
-%global commit 059d3503f3e1369eef5c0497f0206bee973aafba
+%global commit 1b047c66abdf305ac471f924eda1f8112b5d0335
 
 Name:    admiral-fleet
 Version: 0.0.1rc4
-Release: 5%{?dist}
+Release: 6%{?dist}
 Summary: Admiral Fleet Worker Agent
 
 License: Apache-2.0
@@ -89,6 +89,9 @@ loginctl enable-linger admiral-apps 2>/dev/null || :
 %systemd_postun_with_restart admiral-fleet.service
 
 %changelog
+* Wed Sep 23 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc4-6
+- Include the bounded ten-minute image-pull timeout in the RC4 Fleet candidate
+
 * Wed Sep 23 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc4-5
 - Rebuild RC4 packages with EPEL-provided Caddy
 
