@@ -6,7 +6,7 @@
 
 Name:    admiralctl
 Version: 0.0.1rc4
-Release: 5%{?dist}
+Release: 6%{?dist}
 Summary: Admiral Command-Line Interface
 
 License: Apache-2.0
@@ -64,6 +64,9 @@ mkdir -p "$GOCACHE"
 restorecon -F %{_bindir}/admiralctl 2>/dev/null || :
 
 %changelog
+* Wed Sep 23 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc4-6
+- Rebuild the coordinated RC4 RPM set for secure Fedora Tier 2 validation
+
 * Wed Sep 23 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc4-5
 - Rebuild RC4 packages with EPEL-provided Caddy
 
