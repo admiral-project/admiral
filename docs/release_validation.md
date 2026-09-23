@@ -107,9 +107,33 @@ Every operating system must use an official GenericCloud image.
 
 The image checksum must be verified before use.
 
-### 4.3 Deferred platforms
+### 4.3 Tier 2 Fedora operating systems
 
-Architectures or operating systems outside the Tier 1 matrix must be reported as `NOT TESTED`.
+The RC4 Tier 2 matrix is:
+
+| Operating system | Single-node | Multi-node |
+| ---------------- | ----------: | ---------: |
+| Fedora 44        |    Required |   Required |
+| Fedora Rawhide   |    Required |   Required |
+
+Use each platform's official x86_64 GenericCloud image and verify its
+checksum. Apply `dnf update --refresh` to every fresh VM before installing
+Admiral. Exercise the secure production modes; `--dev-node` is not an
+acceptance substitute.
+
+The RC4 golden candidate is the same six Admiral RPM files, with identical
+SHA-256 values, across all ten Tier 1 and Tier 2 scenarios. If a fix changes
+any RPM payload, rebuild the coordinated six-package candidate and restart
+validation on fresh VMs for all ten scenarios. Fedora-native package builds
+are auxiliary evidence and do not replace the common candidate.
+
+Fedora uses DNF5. Conditional package-manager steps must preserve the EL10
+behavior while using Fedora's DNF5 plugins and `dnf5-automatic.timer` where
+applicable.
+
+### 4.4 Deferred platforms
+
+Architectures or operating systems outside the Tier 1 and Tier 2 matrices must be reported as `NOT TESTED`.
 
 Passing results from x86_64 must not be presented as evidence for aarch64.
 

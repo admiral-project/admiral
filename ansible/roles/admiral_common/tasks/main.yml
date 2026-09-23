@@ -4,9 +4,9 @@
 # --single-node combines all roles; --admin-portal-node combines admin and
 # portal roles without a local worker.
 
-- name: Install dnf-plugins-core (for Admiral COPR)
+- name: Install DNF plugins for Admiral COPR
   dnf:
-    name: dnf-plugins-core
+    name: "{{ 'dnf5-plugins' if ansible_distribution == 'Fedora' else 'dnf-plugins-core' }}"
     state: present
 
 - name: Enable EPEL repository
@@ -63,21 +63,29 @@
   changed_when: admiral_security_updates.rc == 0 and 'Nothing to do' not in admiral_security_updates.stdout
   when:
     - not (admiral_dev_mode | default(false) | bool)
-    - ansible_distribution in ['RedHat', 'CentOS', 'Rocky', 'AlmaLinux']
-    - ansible_distribution_major_version | int == 10
+    - >-
+      (ansible_distribution in ['RedHat', 'CentOS', 'Rocky', 'AlmaLinux'] and
+      (ansible_distribution_major_version | int) == 10) or
+      (ansible_distribution == 'Fedora' and
+      (ansible_distribution_major_version | int) >= 44)
 
 - name: Install automatic security update support
   dnf:
-    name: dnf-automatic
+    name: "{{ 'dnf5-plugin-automatic' if ansible_distribution == 'Fedora' else 'dnf-automatic' }}"
     state: present
   when:
     - not (admiral_dev_mode | default(false) | bool)
-    - ansible_distribution in ['RedHat', 'CentOS', 'Rocky', 'AlmaLinux']
-    - ansible_distribution_major_version | int == 10
+    - >-
+      (ansible_distribution in ['RedHat', 'CentOS', 'Rocky', 'AlmaLinux'] and
+      (ansible_distribution_major_version | int) == 10) or
+      (ansible_distribution == 'Fedora' and
+      (ansible_distribution_major_version | int) >= 44)
 
 - name: Configure automatic security updates
   lineinfile:
     path: /etc/dnf/automatic.conf
+    create: true
+    mode: "0644"
     regexp: "^{{ item.option | regex_escape }}\\s*="
     line: "{{ item.option }} = {{ item.value }}"
   loop:
@@ -87,19 +95,25 @@
     - { option: emit_via, value: stdio }
   when:
     - not (admiral_dev_mode | default(false) | bool)
-    - ansible_distribution in ['RedHat', 'CentOS', 'Rocky', 'AlmaLinux']
-    - ansible_distribution_major_version | int == 10
+    - >-
+      (ansible_distribution in ['RedHat', 'CentOS', 'Rocky', 'AlmaLinux'] and
+      (ansible_distribution_major_version | int) == 10) or
+      (ansible_distribution == 'Fedora' and
+      (ansible_distribution_major_version | int) >= 44)
 
 - name: Enable automatic security updates
   systemd:
-    name: dnf-automatic.timer
+    name: "{{ 'dnf5-automatic.timer' if ansible_distribution == 'Fedora' else 'dnf-automatic.timer' }}"
     enabled: true
     state: started
     daemon_reload: true
   when:
     - not (admiral_dev_mode | default(false) | bool)
-    - ansible_distribution in ['RedHat', 'CentOS', 'Rocky', 'AlmaLinux']
-    - ansible_distribution_major_version | int == 10
+    - >-
+      (ansible_distribution in ['RedHat', 'CentOS', 'Rocky', 'AlmaLinux'] and
+      (ansible_distribution_major_version | int) == 10) or
+      (ansible_distribution == 'Fedora' and
+      (ansible_distribution_major_version | int) >= 44)
 
 - name: Install production time synchronization
   dnf:

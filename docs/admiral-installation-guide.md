@@ -1,6 +1,6 @@
 # Admiral Installation Guide
 
-Guía oficial para instalar Admiral en Enterprise Linux 10.
+Guía oficial para instalar Admiral en Enterprise Linux 10, Fedora 44 y Fedora Rawhide.
 
 ## Alcance
 
@@ -20,6 +20,7 @@ Si necesita worker y portal, despliegue nodos separados.
 ## Plataforma soportada
 
 - Enterprise Linux 10
+- Fedora 44 y Fedora Rawhide (Tier 2)
 - `admiral-install`
 - `admiral-https-setup`
 - RPMs del repositorio Admiral
@@ -58,15 +59,16 @@ superficie de software instalada en el nodo admin.
 La postura por defecto es:
 
 - RHEL 10, CentOS Stream 10, Rocky Linux 10 y AlmaLinux 10 son Tier 1
-- Fedora Rawhide es Tier 2 y solo se admite con `--dev-node`; sus ajustes
-  inseguros de desarrollo son intencionales y están separados del perfil EL10
+- Fedora 44 y Fedora Rawhide son Tier 2 y admiten los modos seguros de
+  instalación; `--dev-node` conserva su perfil de desarrollo y no sustituye
+  la validación de producción
 - `22/tcp` siempre público para administración por SSH
 - `80/tcp` y `443/tcp` públicos solo en `--single-node` y `--admin-node`, servidos por Caddy
 - `51820/udp` público en perfiles multi-node para WireGuard; el single-node
   seguro no ejecuta WireGuard
 - ningún puerto interno de `admirald`, `admiral-fleet`, `admiral-flagship`, `admiral-harbor`, PostgreSQL o la Admin API de Caddy debe exponerse directamente
-- los errata de seguridad disponibles se aplican durante el playbook y
-  `dnf-automatic.timer` queda habilitado para actualizaciones posteriores
+- los errata de seguridad disponibles se aplican durante el playbook; quedan
+  habilitados `dnf-automatic.timer` en EL10 y `dnf5-automatic.timer` en Fedora
 - Fail2ban usa nftables nativo y la instalación comprueba que un baneo de
   prueba crea una regla efectiva
 
