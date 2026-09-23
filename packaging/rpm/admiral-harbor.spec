@@ -3,7 +3,7 @@
 
 Name:    admiral-harbor
 Version: 0.0.1rc4
-Release: 9%{?dist}
+Release: 10%{?dist}
 Summary: Admiral Customer Portal - Web UI for end users
 
 License: Apache-2.0
@@ -131,6 +131,9 @@ restorecon -R %{_localstatedir}/lib/admiral/harbor 2>/dev/null || :
 %{python3} -m pytest tests/ -x --tb=short
 
 %changelog
+* Wed Sep 23 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc4-10
+- Rebuild the coordinated RC4 candidate after the EL version guard fix
+
 * Wed Sep 23 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc4-9
 - Rebuild the coordinated RC4 set with the Fedora Rawhide TLS compatibility fix
 

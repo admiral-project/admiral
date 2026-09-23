@@ -6,7 +6,7 @@
 
 Name:    admiral-fleet
 Version: 0.0.1rc4
-Release: 10%{?dist}
+Release: 11%{?dist}
 Summary: Admiral Fleet Worker Agent
 
 License: Apache-2.0
@@ -89,6 +89,9 @@ loginctl enable-linger admiral-apps 2>/dev/null || :
 %systemd_postun_with_restart admiral-fleet.service
 
 %changelog
+* Wed Sep 23 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc4-11
+- Rebuild the coordinated RC4 candidate after the EL version guard fix
+
 * Wed Sep 23 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc4-10
 - Rebuild the coordinated RC4 set with the Fedora Rawhide TLS compatibility fix
 - Preserve the image-pull timeout source pin proven by the Tier 1 golden lifecycle
