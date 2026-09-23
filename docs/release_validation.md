@@ -118,10 +118,11 @@ The RC4 Tier 2 matrix is:
 
 Use each platform's official x86_64 GenericCloud image and verify its checksum.
 For repeated validation, clone its verified immutable seed after that seed has
-completed `dnf update --refresh`; do not repeat the full OS update on each
-overlay. Verify the seed hash, guest OS, and SELinux state before installing
-Admiral. Exercise the secure production modes; `--dev-node` is not an
-acceptance substitute.
+completed `dnf update --refresh`; do not run a separate manual update while
+preparing each overlay. The unmodified GitHub installer runs its own
+`dnf -y update --refresh` before Admiral setup. Verify the seed hash, guest OS,
+and SELinux state before installing Admiral. Exercise the secure production
+modes; `--dev-node` is not an acceptance substitute.
 
 The RC4 golden candidate is the same six Admiral RPM files, with identical
 SHA-256 values, across all ten Tier 1 and Tier 2 scenarios. If a fix changes
