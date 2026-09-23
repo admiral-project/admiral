@@ -6,7 +6,7 @@
 
 Name:    admiral-flagship
 Version: 0.0.1rc4
-Release: 4%{?dist}
+Release: 5%{?dist}
 Summary: Admiral Administrative Web Console
 
 License: Apache-2.0
@@ -83,6 +83,9 @@ restorecon -R %{_prefix}/lib/admiral/flagship 2>/dev/null || :
 %{python3} -m pytest tests/ -x --tb=short
 
 %changelog
+* Wed Sep 23 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc4-5
+- Rebuild RC4 packages with EPEL-provided Caddy
+
 * Wed Sep 23 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc4-3
 - Correct the source archive URL and extraction directory for reproducible RPM builds
 

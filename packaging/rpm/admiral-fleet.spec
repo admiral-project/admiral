@@ -6,7 +6,7 @@
 
 Name:    admiral-fleet
 Version: 0.0.1rc4
-Release: 4%{?dist}
+Release: 5%{?dist}
 Summary: Admiral Fleet Worker Agent
 
 License: Apache-2.0
@@ -41,6 +41,7 @@ mkdir -p local_deps/admirald
 tar -xzf %{SOURCE3} --strip-components=1 -C local_deps/admirald
 
 %build
+export GOWORK=off
 export PATH=/usr/lib/golang/bin:%{_bindir}:$PATH
 export GOCACHE=%{_tmppath}/go-cache
 mkdir -p "$GOCACHE"
@@ -58,6 +59,7 @@ install -Dm0644 %{SOURCE1} %{buildroot}%{_unitdir}/admiral-fleet.service
 install -Dm0600 %{SOURCE2} %{buildroot}%{_sysconfdir}/admiral/fleet.env
 
 %check
+export GOWORK=off
 export PATH=/usr/lib/golang/bin:%{_bindir}:$PATH
 export GOCACHE=%{_tmppath}/go-cache
 mkdir -p "$GOCACHE"
@@ -87,6 +89,9 @@ loginctl enable-linger admiral-apps 2>/dev/null || :
 %systemd_postun_with_restart admiral-fleet.service
 
 %changelog
+* Wed Sep 23 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc4-5
+- Rebuild RC4 packages with EPEL-provided Caddy
+
 * Wed Sep 23 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc4-3
 - Extend image pull timeout and correct the source archive URL and extraction directory
 

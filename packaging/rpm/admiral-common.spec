@@ -5,7 +5,7 @@
 
 Name:    admiral-common
 Version: 0.0.1rc4
-Release: 6%{?dist}
+Release: 7%{?dist}
 Summary: Common files and utilities for Admiral PaaS
 
 License: Apache-2.0
@@ -191,6 +191,9 @@ if [ "$1" -eq 0 ]; then
 fi
 
 %changelog
+* Wed Sep 23 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc4-7
+- Rebuild RC4 packages with EPEL-provided Caddy
+
 * Wed Sep 23 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc4-5
 - Correct the source archive URL and extraction directory for reproducible RPM builds
 

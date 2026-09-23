@@ -6,7 +6,7 @@
 
 Name:    admiralctl
 Version: 0.0.1rc4
-Release: 4%{?dist}
+Release: 5%{?dist}
 Summary: Admiral Command-Line Interface
 
 License: Apache-2.0
@@ -33,6 +33,7 @@ mkdir -p admirald
 tar -xzf %{SOURCE2} --strip-components=1 -C admirald
 
 %build
+export GOWORK=off
 export PATH=/usr/lib/golang/bin:%{_bindir}:$PATH
 export GOCACHE=%{_tmppath}/go-cache
 mkdir -p "$GOCACHE"
@@ -45,6 +46,7 @@ install -Dm0644 docs/admiralctl.1 %{buildroot}%{_mandir}/man1/admiralctl.1
 install -Dm0644 docs/admiralctl-admin.8 %{buildroot}%{_mandir}/man8/admiralctl-admin.8
 
 %check
+export GOWORK=off
 export PATH=/usr/lib/golang/bin:%{_bindir}:$PATH
 export GOCACHE=%{_tmppath}/go-cache
 mkdir -p "$GOCACHE"
@@ -62,6 +64,9 @@ mkdir -p "$GOCACHE"
 restorecon -F %{_bindir}/admiralctl 2>/dev/null || :
 
 %changelog
+* Wed Sep 23 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc4-5
+- Rebuild RC4 packages with EPEL-provided Caddy
+
 * Wed Sep 23 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc4-3
 - Correct the source archive URL and extraction directory for reproducible RPM builds
 

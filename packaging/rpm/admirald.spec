@@ -6,7 +6,7 @@
 
 Name:    admirald
 Version: 0.0.1rc4
-Release: 4%{?dist}
+Release: 5%{?dist}
 Summary: Admiral Control Plane - Core API and orchestration service
 
 License: Apache-2.0
@@ -36,6 +36,7 @@ dispatches tasks to fleet workers, and maintains auditability.
 %setup -q -n admirald-%{commit}
 
 %build
+export GOWORK=off
 export PATH=/usr/lib/golang/bin:%{_bindir}:$PATH
 export GOCACHE=%{_tmppath}/go-cache
 mkdir -p "$GOCACHE"
@@ -48,6 +49,7 @@ install -Dm0600 %{SOURCE2} %{buildroot}%{_sysconfdir}/admirald.ini
 install -d %{buildroot}/etc/systemd/system/admirald.service.d
 
 %check
+export GOWORK=off
 export PATH=/usr/lib/golang/bin:%{_bindir}:$PATH
 export GOCACHE=%{_tmppath}/go-cache
 mkdir -p "$GOCACHE"
@@ -71,6 +73,9 @@ restorecon -F %{_bindir}/admirald 2>/dev/null || :
 %systemd_postun_with_restart admirald.service
 
 %changelog
+* Wed Sep 23 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc4-5
+- Rebuild RC4 packages with EPEL-provided Caddy
+
 * Wed Sep 23 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc4-3
 - Correct the source archive URL and extraction directory for reproducible RPM builds
 
