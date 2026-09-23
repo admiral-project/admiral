@@ -206,6 +206,71 @@
     state: present
   when: admiral_install_mode in ['single-node', 'admin-node', 'admin-portal-node']
 
+# Fedora Rawhide's SELinux policy labels the Fedora Caddy binary
+# `httpd_exec_t`, which confines the service to `httpd_t`. Caddy's local
+# administration API listens on TCP/2019, so that port must use an HTTP port
+# type when the policy does not already provide one. Keep Fedora 44 and EL10
+# unchanged; never relax SELinux or expose the admin API beyond loopback.
+- name: Read Caddy SELinux executable context on Fedora 45 and later
+  command:
+    argv:
+      - matchpathcon
+      - -n
+      - /usr/bin/caddy
+  register: admiral_caddy_selinux_context
+  changed_when: false
+  when:
+    - ansible_distribution == 'Fedora'
+    - ansible_distribution_major_version | int >= 45
+    - admiral_install_mode in ['single-node', 'admin-node', 'admin-portal-node']
+    - not (admiral_dev_mode | default(false) | bool)
+    - ansible_selinux.status | default('disabled') == 'enabled'
+
+- name: Read SELinux port mappings when Fedora confines Caddy
+  command:
+    argv:
+      - semanage
+      - port
+      - -l
+  register: admiral_caddy_selinux_ports
+  changed_when: false
+  when:
+    - admiral_caddy_selinux_context is defined
+    - admiral_caddy_selinux_context.stdout is defined
+    - "'httpd_exec_t' in (admiral_caddy_selinux_context.stdout | default(''))"
+
+- name: Resolve the explicit SELinux type for Caddy admin TCP/2019
+  set_fact:
+    admiral_caddy_admin_port_type: >-
+      {{ (admiral_caddy_selinux_ports.stdout_lines
+          | select('search', '2019')
+          | list | first | default('')).split() | first | default('') }}
+  when:
+    - admiral_caddy_selinux_ports is defined
+    - admiral_caddy_selinux_ports.stdout is defined
+    - admiral_caddy_selinux_context.stdout is defined
+    - "'httpd_exec_t' in admiral_caddy_selinux_context.stdout"
+
+- name: Allow Caddy's loopback admin API port under Fedora SELinux policy
+  command:
+    argv:
+      - semanage
+      - port
+      - "{{ '-m' if admiral_caddy_admin_port_type | default('') | length > 0 else '-a' }}"
+      - -t
+      - http_port_t
+      - -p
+      - tcp
+      - "2019"
+  register: admiral_caddy_selinux_port_update
+  changed_when: admiral_caddy_selinux_port_update.rc == 0
+  when:
+    - admiral_caddy_selinux_ports is defined
+    - admiral_caddy_selinux_ports.stdout is defined
+    - admiral_caddy_selinux_context.stdout is defined
+    - "'httpd_exec_t' in admiral_caddy_selinux_context.stdout"
+    - admiral_caddy_admin_port_type | default('') != 'http_port_t'
+
 - name: Stop obsolete Caddy Unix socket permission watcher
   systemd:
     name: admiral-caddy-socket-permissions.path
