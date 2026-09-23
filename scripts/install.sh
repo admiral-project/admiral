@@ -1317,7 +1317,10 @@ if [[ "$INSTALL_DEV_MODE" != "true" ]]; then
         fi
     fi
 
-    SSHD_EFFECTIVE="$(run_target_cmd "sshd -T")"
+    # OpenSSH output capitalization differs across distro releases (Rawhide
+    # prints directive names with uppercase initials). Normalize before the
+    # case-sensitive security checks below.
+    SSHD_EFFECTIVE="$(run_target_cmd "sshd -T" | tr '[:upper:]' '[:lower:]')"
     EXPECTED_ROOT_LOGIN="prohibit-password"
     # Spokes retain bootstrap root access until all onboarding, handshake, and
     # security checks have passed. The final root lockdown is applied below.

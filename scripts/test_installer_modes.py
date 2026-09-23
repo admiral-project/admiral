@@ -353,6 +353,14 @@ class InstallerModeTests(unittest.TestCase):
         self.assertIn('"$SSHD_EFFECTIVE" == *"permitrootlogin no"*', installer)
         self.assertIn("already onboarded spoke", installer)
 
+    def test_sshd_effective_settings_are_normalized_for_case_insensitive_output(self) -> None:
+        installer = INSTALLER.read_text(encoding="utf-8")
+
+        self.assertIn(
+            'SSHD_EFFECTIVE="$(run_target_cmd "sshd -T" | tr \'[:upper:]\' \'[:lower:]\')"',
+            installer,
+        )
+
     def test_spoke_retries_per_node_ssh_after_bootstrap_revocation(self) -> None:
         installer = INSTALLER.read_text(encoding="utf-8")
 
