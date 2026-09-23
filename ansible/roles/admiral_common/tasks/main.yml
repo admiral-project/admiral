@@ -1043,6 +1043,8 @@
       basicConstraints=critical,CA:FALSE
       keyUsage=critical,digitalSignature,keyEncipherment
       extendedKeyUsage=serverAuth,clientAuth
+      subjectKeyIdentifier=hash
+      authorityKeyIdentifier=keyid,issuer
       subjectAltName={{ admiral_tls_san }}
     mode: "0640"
     owner: admiral

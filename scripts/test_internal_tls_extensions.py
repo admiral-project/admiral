@@ -17,3 +17,5 @@ def test_internal_server_has_tls_usage_constraints() -> None:
     assert 'basicConstraints=critical,CA:FALSE' in TASKS
     assert 'keyUsage=critical,digitalSignature,keyEncipherment' in TASKS
     assert 'extendedKeyUsage=serverAuth,clientAuth' in TASKS
+    assert 'subjectKeyIdentifier=hash' in TASKS
+    assert 'authorityKeyIdentifier=keyid,issuer' in TASKS
