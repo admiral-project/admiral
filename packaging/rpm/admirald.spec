@@ -6,7 +6,7 @@
 
 Name:    admirald
 Version: 0.0.1rc4
-Release: 5%{?dist}
+Release: 10%{?dist}
 Summary: Admiral Control Plane - Core API and orchestration service
 
 License: Apache-2.0
@@ -73,6 +73,15 @@ restorecon -F %{_bindir}/admirald 2>/dev/null || :
 %systemd_postun_with_restart admirald.service
 
 %changelog
+* Wed Sep 23 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc4-10
+- Rebuild the coordinated RC4 candidate after the EL version guard fix
+
+* Wed Sep 23 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc4-9
+- Rebuild the coordinated RC4 set with the Fedora Rawhide TLS compatibility fix
+
+* Wed Sep 23 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc4-6
+- Rebuild the coordinated RC4 RPM set for secure Fedora Tier 2 validation
+
 * Wed Sep 23 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc4-5
 - Rebuild RC4 packages with EPEL-provided Caddy
 

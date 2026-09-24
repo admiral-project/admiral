@@ -4,9 +4,65 @@
 # --single-node combines all roles; --admin-portal-node combines admin and
 # portal roles without a local worker.
 
-- name: Install dnf-plugins-core (for Admiral COPR)
+- name: Detect Fedora systemd-resolved service for secure LLMNR policy
+  stat:
+    path: /usr/lib/systemd/system/systemd-resolved.service
+  register: admiral_fedora_systemd_resolved_unit
+  when:
+    - ansible_distribution == 'Fedora'
+    - not (admiral_dev_mode | default(false) | bool)
+
+- name: Apply Fedora secure resolver policy
+  block:
+    - name: Ensure systemd-resolved drop-in directory exists
+      file:
+        path: /etc/systemd/resolved.conf.d
+        state: directory
+        owner: root
+        group: root
+        mode: "0755"
+
+    - name: Disable LLMNR on Fedora secure installs
+      copy:
+        dest: /etc/systemd/resolved.conf.d/90-admiral-security.conf
+        content: |
+          # Secure Admiral installs use unicast DNS and do not expose LLMNR.
+          [Resolve]
+          LLMNR=no
+        owner: root
+        group: root
+        mode: "0644"
+      register: admiral_fedora_resolved_policy
+
+    - name: Restart systemd-resolved after changing the Fedora LLMNR policy
+      systemd:
+        name: systemd-resolved
+        state: restarted
+      when: admiral_fedora_resolved_policy.changed
+
+    - name: Read effective Fedora resolver protocols
+      command: resolvectl status
+      register: admiral_fedora_resolved_status
+      changed_when: false
+
+    - name: Verify LLMNR is disabled on Fedora secure installs
+      assert:
+        that:
+          - "'LLMNR=resolve' not in admiral_fedora_resolved_status.stdout"
+          - "'LLMNR=yes' not in admiral_fedora_resolved_status.stdout"
+          - "'+LLMNR' not in admiral_fedora_resolved_status.stdout"
+        fail_msg: >-
+          Secure Fedora installs must keep systemd-resolved unicast DNS
+          available without enabling LLMNR listeners.
+  when:
+    - ansible_distribution == 'Fedora'
+    - not (admiral_dev_mode | default(false) | bool)
+    - admiral_fedora_systemd_resolved_unit is defined
+    - admiral_fedora_systemd_resolved_unit.stat.exists | default(false)
+
+- name: Install DNF plugins for Admiral COPR
   dnf:
-    name: dnf-plugins-core
+    name: "{{ 'dnf5-plugins' if ansible_distribution == 'Fedora' else 'dnf-plugins-core' }}"
     state: present
 
 - name: Enable EPEL repository
@@ -63,21 +119,29 @@
   changed_when: admiral_security_updates.rc == 0 and 'Nothing to do' not in admiral_security_updates.stdout
   when:
     - not (admiral_dev_mode | default(false) | bool)
-    - ansible_distribution in ['RedHat', 'CentOS', 'Rocky', 'AlmaLinux']
-    - ansible_distribution_major_version | int == 10
+    - >-
+      (ansible_distribution in ['RedHat', 'CentOS', 'Rocky', 'AlmaLinux'] and
+      (ansible_distribution_major_version | int) == 10) or
+      (ansible_distribution == 'Fedora' and
+      (ansible_distribution_major_version | int) >= 44)
 
 - name: Install automatic security update support
   dnf:
-    name: dnf-automatic
+    name: "{{ 'dnf5-plugin-automatic' if ansible_distribution == 'Fedora' else 'dnf-automatic' }}"
     state: present
   when:
     - not (admiral_dev_mode | default(false) | bool)
-    - ansible_distribution in ['RedHat', 'CentOS', 'Rocky', 'AlmaLinux']
-    - ansible_distribution_major_version | int == 10
+    - >-
+      (ansible_distribution in ['RedHat', 'CentOS', 'Rocky', 'AlmaLinux'] and
+      (ansible_distribution_major_version | int) == 10) or
+      (ansible_distribution == 'Fedora' and
+      (ansible_distribution_major_version | int) >= 44)
 
 - name: Configure automatic security updates
   lineinfile:
     path: /etc/dnf/automatic.conf
+    create: true
+    mode: "0644"
     regexp: "^{{ item.option | regex_escape }}\\s*="
     line: "{{ item.option }} = {{ item.value }}"
   loop:
@@ -87,19 +151,25 @@
     - { option: emit_via, value: stdio }
   when:
     - not (admiral_dev_mode | default(false) | bool)
-    - ansible_distribution in ['RedHat', 'CentOS', 'Rocky', 'AlmaLinux']
-    - ansible_distribution_major_version | int == 10
+    - >-
+      (ansible_distribution in ['RedHat', 'CentOS', 'Rocky', 'AlmaLinux'] and
+      (ansible_distribution_major_version | int) == 10) or
+      (ansible_distribution == 'Fedora' and
+      (ansible_distribution_major_version | int) >= 44)
 
 - name: Enable automatic security updates
   systemd:
-    name: dnf-automatic.timer
+    name: "{{ 'dnf5-automatic.timer' if ansible_distribution == 'Fedora' else 'dnf-automatic.timer' }}"
     enabled: true
     state: started
     daemon_reload: true
   when:
     - not (admiral_dev_mode | default(false) | bool)
-    - ansible_distribution in ['RedHat', 'CentOS', 'Rocky', 'AlmaLinux']
-    - ansible_distribution_major_version | int == 10
+    - >-
+      (ansible_distribution in ['RedHat', 'CentOS', 'Rocky', 'AlmaLinux'] and
+      (ansible_distribution_major_version | int) == 10) or
+      (ansible_distribution == 'Fedora' and
+      (ansible_distribution_major_version | int) >= 44)
 
 - name: Install production time synchronization
   dnf:
@@ -135,6 +205,71 @@
       - acl
     state: present
   when: admiral_install_mode in ['single-node', 'admin-node', 'admin-portal-node']
+
+# Fedora Rawhide's SELinux policy labels the Fedora Caddy binary
+# `httpd_exec_t`, which confines the service to `httpd_t`. Caddy's local
+# administration API listens on TCP/2019, so that port must use an HTTP port
+# type when the policy does not already provide one. Keep Fedora 44 and EL10
+# unchanged; never relax SELinux or expose the admin API beyond loopback.
+- name: Read Caddy SELinux executable context on Fedora 45 and later
+  command:
+    argv:
+      - matchpathcon
+      - -n
+      - /usr/bin/caddy
+  register: admiral_caddy_selinux_context
+  changed_when: false
+  when:
+    - ansible_distribution == 'Fedora'
+    - ansible_distribution_major_version | int >= 45
+    - admiral_install_mode in ['single-node', 'admin-node', 'admin-portal-node']
+    - not (admiral_dev_mode | default(false) | bool)
+    - ansible_selinux.status | default('disabled') == 'enabled'
+
+- name: Read SELinux port mappings when Fedora confines Caddy
+  command:
+    argv:
+      - semanage
+      - port
+      - -l
+  register: admiral_caddy_selinux_ports
+  changed_when: false
+  when:
+    - admiral_caddy_selinux_context is defined
+    - admiral_caddy_selinux_context.stdout is defined
+    - "'httpd_exec_t' in (admiral_caddy_selinux_context.stdout | default(''))"
+
+- name: Resolve the explicit SELinux type for Caddy admin TCP/2019
+  set_fact:
+    admiral_caddy_admin_port_type: >-
+      {{ (admiral_caddy_selinux_ports.stdout_lines
+          | select('search', '2019')
+          | list | first | default('')).split() | first | default('') }}
+  when:
+    - admiral_caddy_selinux_ports is defined
+    - admiral_caddy_selinux_ports.stdout is defined
+    - admiral_caddy_selinux_context.stdout is defined
+    - "'httpd_exec_t' in admiral_caddy_selinux_context.stdout"
+
+- name: Allow Caddy's loopback admin API port under Fedora SELinux policy
+  command:
+    argv:
+      - semanage
+      - port
+      - "{{ '-m' if admiral_caddy_admin_port_type | default('') | length > 0 else '-a' }}"
+      - -t
+      - http_port_t
+      - -p
+      - tcp
+      - "2019"
+  register: admiral_caddy_selinux_port_update
+  changed_when: admiral_caddy_selinux_port_update.rc == 0
+  when:
+    - admiral_caddy_selinux_ports is defined
+    - admiral_caddy_selinux_ports.stdout is defined
+    - admiral_caddy_selinux_context.stdout is defined
+    - "'httpd_exec_t' in admiral_caddy_selinux_context.stdout"
+    - admiral_caddy_admin_port_type | default('') != 'http_port_t'
 
 - name: Stop obsolete Caddy Unix socket permission watcher
   systemd:
@@ -908,6 +1043,8 @@
       basicConstraints=critical,CA:FALSE
       keyUsage=critical,digitalSignature,keyEncipherment
       extendedKeyUsage=serverAuth,clientAuth
+      subjectKeyIdentifier=hash
+      authorityKeyIdentifier=keyid,issuer
       subjectAltName={{ admiral_tls_san }}
     mode: "0640"
     owner: admiral

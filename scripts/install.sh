@@ -16,6 +16,11 @@ ssh_no_stdin() {
     # command must not consume the remaining installer text from stdin.
     command ssh "$@" </dev/null
 }
+is_supported_el_version() {
+    local version_id="${1:-}"
+    local major="${version_id%%.*}"
+    [[ "$major" =~ ^[0-9]+$ && "$major" -eq 10 ]]
+}
 require_option_value() {
     local opt="$1"
     local val="${2-}"
@@ -662,13 +667,17 @@ fi
 
 case "$ID" in
     rhel|centos|rocky|almalinux)
-        MAJOR="${VERSION_ID%%.*}"
-        [[ "$MAJOR" -ge 10 ]] || die "Enterprise Linux 10 required (got $ID $VERSION_ID)"
+        is_supported_el_version "${VERSION_ID:-}" ||
+            die "Enterprise Linux 10 is required; EL${VERSION_ID:-unknown} is not supported."
         ;;
     fedora)
-        info "Fedora detected (Tier 2 - development, not recommended for production)"
-        [[ "$INSTALL_DEV_MODE" == "true" ]] ||
-            die "Fedora is supported only with --dev-node; secure production modes require Enterprise Linux 10."
+        FEDORA_RELEASE_LABEL="${VERSION_ID:-} ${VERSION_CODENAME:-} ${VERSION:-}"
+        if [[ "${FEDORA_RELEASE_LABEL,,}" != *rawhide* ]]; then
+            FEDORA_MAJOR="${VERSION_ID%%.*}"
+            [[ "$FEDORA_MAJOR" =~ ^[0-9]+$ && "$FEDORA_MAJOR" -ge 44 ]] ||
+                die "Fedora 44 or Rawhide is required (got Fedora ${VERSION_ID:-unknown})."
+        fi
+        info "Fedora ${VERSION_ID:-Rawhide} detected (Tier 2)."
         ;;
     amzn)
         die "Amazon Linux does not ship Podman (required for rootless containers). Admiral is not installable on AL2023."
@@ -700,10 +709,15 @@ if [[ "$ID" != "fedora" && "$ID" != "amzn" && "$INSTALL_MODE" != "worker-node" &
     fi
 fi
 
-# --- 5. install dnf-plugins-core (for Admiral COPR) ---
+# --- 5. install the DNF plugin that provides Admiral COPR support ---
+if [[ "$ID" == "fedora" ]]; then
+    DNF_COPR_PLUGIN_PACKAGE=dnf5-plugins
+else
+    DNF_COPR_PLUGIN_PACKAGE=dnf-plugins-core
+fi
 if [[ "$INSTALL_MODE" != "worker-node" && "$INSTALL_MODE" != "portal-node" ]] &&
-    ! rpm -q dnf-plugins-core >/dev/null 2>&1; then
-    dnf install -y dnf-plugins-core
+    ! rpm -q "$DNF_COPR_PLUGIN_PACKAGE" >/dev/null 2>&1; then
+    dnf install -y "$DNF_COPR_PLUGIN_PACKAGE"
 fi
 
 # EL10 packages used by Admiral are split between EPEL and CRB. Enable CRB
@@ -1308,7 +1322,10 @@ if [[ "$INSTALL_DEV_MODE" != "true" ]]; then
         fi
     fi
 
-    SSHD_EFFECTIVE="$(run_target_cmd "sshd -T")"
+    # OpenSSH output capitalization differs across distro releases (Rawhide
+    # prints directive names with uppercase initials). Normalize before the
+    # case-sensitive security checks below.
+    SSHD_EFFECTIVE="$(run_target_cmd "sshd -T" | tr '[:upper:]' '[:lower:]')"
     EXPECTED_ROOT_LOGIN="prohibit-password"
     # Spokes retain bootstrap root access until all onboarding, handshake, and
     # security checks have passed. The final root lockdown is applied below.
@@ -1383,8 +1400,22 @@ if [[ "$INSTALL_DEV_MODE" != "true" ]]; then
         SECURITY_WARNINGS+=("fail2ban sshd jail is not using the required nftables action.")
     fi
 
-    if ! run_target_cmd "systemctl is-enabled --quiet dnf-automatic.timer && systemctl is-active --quiet dnf-automatic.timer"; then
-        SECURITY_WARNINGS+=("automatic security updates are not enabled and active.")
+    TARGET_OS_ID="$(run_target_cmd 'source /etc/os-release && printf "%s" "${ID:-}"')"
+    case "$TARGET_OS_ID" in
+        fedora)
+            AUTOMATIC_UPDATE_TIMER=dnf5-automatic.timer
+            ;;
+        rhel|centos|rocky|almalinux)
+            AUTOMATIC_UPDATE_TIMER=dnf-automatic.timer
+            ;;
+        *)
+            AUTOMATIC_UPDATE_TIMER=""
+            SECURITY_WARNINGS+=("Could not determine a supported automatic-update timer for target OS '$TARGET_OS_ID'.")
+            ;;
+    esac
+    if [[ -n "$AUTOMATIC_UPDATE_TIMER" ]] &&
+        ! run_target_cmd "systemctl is-enabled --quiet $AUTOMATIC_UPDATE_TIMER && systemctl is-active --quiet $AUTOMATIC_UPDATE_TIMER"; then
+        SECURITY_WARNINGS+=("automatic security updates are not enabled and active ($AUTOMATIC_UPDATE_TIMER).")
     fi
 
     TIME_SYNC="$(run_target_cmd "chronyc tracking" || true)"

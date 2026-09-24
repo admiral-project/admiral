@@ -87,13 +87,14 @@ When contributing to this repository, prioritize:
 | Tier | Distribution | Role |
 |------|-------------|------|
 | **Tier 1** | EL10 (RHEL 10 / CentOS Stream 10) | Target primario. Mandatorio. |
-| **Tier 2** | Fedora (44, rawhide) | Development (`--dev-node`). Upstream para EL11. Soportado solo para `--dev-node`. Python 3.14 + OpenSSL 3.4 aplica validación estricta de key usage en CAs autofirmadas, lo que exige `ADMIRAL_INSECURE_SKIP_VERIFY=1`. No recomendado para `--single-node` producción. |
+| **Tier 2** | Fedora 44 y Fedora Rawhide | Soporte de producción en los modos seguros. Rawhide es la señal de compatibilidad upstream para EL11. `--dev-node` no sustituye las pruebas seguras. |
 | **Tier 3** | Amazon Linux 2023 | Best effort. **No instalable**: AL2023 no incluye Podman (solo Docker/containerd). Admiral requiere Podman para contenedores rootless. |
 
 Policy:
-- Bugs exclusivos de Tier 2 o Tier 3 tienen menor prioridad que los de Tier 1.
+- Los defectos que impidan la matriz de release Tier 2 deben corregirse antes de declarar validado ese objetivo.
+- Tier 3 continúa siendo best effort.
 - Los spec files y parches no deben sacrificar claridad en EL10 por compatibilidad con tiers inferiores.
-- Fedora es upstream para desarrollo e integración continua.
+- Fedora 44 y Rawhide son plataformas Tier 2 para single-node y multi-node; Rawhide es upstream para detectar incompatibilidades que puedan anticipar EL11.
 - Todos los RPM deben compilarse para **aarch64** y **x86_64**.
 
 ## Repository Role
@@ -275,8 +276,11 @@ Packaging
 
 The final software must be suitable for RPM packaging.
 
-Before every Admiral RPM build, synchronize each component submodule with its
-latest `origin/main` commit. Pin those exact SHAs in the root `Makefile` and
+Before every Admiral RPM build, fetch and compare each component submodule
+with its latest `origin/main` commit. Use a newer main commit by default, but
+preserve a newer release-validation pin when it contains a fix already
+required by the active candidate; record that exception and its evidence in
+the validation report. Pin the exact selected SHAs in the root `Makefile` and
 the corresponding RPM specs, then run `python3 scripts/validate-release-refs.py`.
 Every rebuild of the six Admiral RPMs must increment the `Release` field for
 all six packages, including packages whose source did not change. The local

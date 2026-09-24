@@ -1,11 +1,11 @@
 # SPDX-FileCopyrightText: William Moreno Reyes CP | MBA
 # SPDX-License-Identifier: Apache-2.0
 
-%global commit 8a5e31399d978bb5900bbf1114f6c9dd43cf462f
+%global commit 5d20cbc71d77e5c8457b776d4a5ba8d15cf493e1
 
 Name:    admiral-common
 Version: 0.0.1rc4
-Release: 7%{?dist}
+Release: 12%{?dist}
 Summary: Common files and utilities for Admiral PaaS
 
 License: Apache-2.0
@@ -191,6 +191,15 @@ if [ "$1" -eq 0 ]; then
 fi
 
 %changelog
+* Wed Sep 23 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc4-12
+- Reject unvalidated Enterprise Linux major versions
+
+* Wed Sep 23 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc4-11
+- Add subject and authority key identifiers to internal TLS leaf certificates
+
+* Wed Sep 23 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc4-8
+- Rebuild the coordinated RC4 RPM set for secure Fedora Tier 2 validation
+
 * Wed Sep 23 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc4-7
 - Rebuild RC4 packages with EPEL-provided Caddy
 

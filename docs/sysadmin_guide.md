@@ -589,17 +589,16 @@ registros antes de declarar la instalación terminada.
 For normal modes (`--single-node`, `--admin-node`, `--admin-portal-node`, `--worker-node`, `--portal-node`), the installer applies a secure-by-default baseline including firewall policy, SELinux settings, login hardening, auditd, and fail2ban. Blocking security checks cause installation to fail; they are not advisory warnings.
 
 The mandatory Tier 1 platform family is Enterprise Linux 10: RHEL 10,
-CentOS Stream 10, Rocky Linux 10, and AlmaLinux 10. The same production
-installer modes and security controls apply to all four. Installation applies
-currently available vendor security errata and enables
-`dnf-automatic.timer` for subsequent security updates. Kernel updates can
-still require an operator-controlled reboot. Fail2ban uses its native nftables
-action and the playbook exercises a temporary documentation-range ban to prove
-that an effective kernel rule is installed.
+CentOS Stream 10, Rocky Linux 10, and AlmaLinux 10. Fedora 44 and Fedora
+Rawhide are Tier 2. The secure production installer modes and security
+controls apply to both tiers. Fedora is upstream for compatibility work that
+can expose issues relevant to a future EL11.
 
-Fedora Rawhide is Tier 2 and is supported only through `--dev-node`. That
-profile is insecure by design and does not receive the conditional EL10
-production update policy or the complete production hardening baseline.
+Installation applies available vendor security errata and enables automatic
+security updates: `dnf-automatic.timer` on EL10 and `dnf5-automatic.timer` on
+Fedora. Kernel updates can still require an operator-controlled reboot.
+Fail2ban uses its native nftables action and the playbook exercises a temporary
+documentation-range ban to prove that an effective kernel rule is installed.
 
 ### Configuring secure spoke egress
 

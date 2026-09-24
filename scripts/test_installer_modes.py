@@ -102,14 +102,49 @@ class InstallerModeTests(unittest.TestCase):
         content = INSTALLER.read_text(encoding="utf-8")
 
         self.assertIn("rhel|centos|rocky|almalinux)", content)
-        self.assertIn('[[ "$MAJOR" -ge 10 ]]', content)
+        self.assertIn('is_supported_el_version "${VERSION_ID:-}"', content)
+        self.assertNotIn('[[ "$MAJOR" -ge 10 ]]', content)
 
-    def test_fedora_is_limited_to_dev_mode(self) -> None:
+    def test_el_release_guard_accepts_only_el10(self) -> None:
+        installer = INSTALLER.read_text(encoding="utf-8")
+        helper_body = installer.split("is_supported_el_version() {", 1)[1].split("\n}", 1)[0]
+        helper = "is_supported_el_version() {" + helper_body + "\n}"
+        shell = helper + """
+for version in 10 10.0 10.2; do
+    is_supported_el_version "$version" || exit 1
+done
+for version in 8 9 9.6 11 11.0; do
+    if is_supported_el_version "$version"; then exit 2; fi
+done
+"""
+        result = subprocess.run(
+            ["bash"],
+            input=shell,
+            text=True,
+            capture_output=True,
+            check=False,
+        )
+
+        self.assertEqual(result.returncode, 0, result.stderr)
+
+    def test_fedora_44_and_rawhide_are_supported_without_dev_mode(self) -> None:
         content = INSTALLER.read_text(encoding="utf-8")
 
         self.assertIn("fedora)", content)
-        self.assertIn('[[ "$INSTALL_DEV_MODE" == "true" ]]', content)
-        self.assertIn("Fedora is supported only with --dev-node", content)
+        self.assertIn("Fedora 44 or Rawhide is required", content)
+        self.assertIn("*rawhide*", content)
+        self.assertNotIn("Fedora is supported only with --dev-node", content)
+        self.assertNotIn("secure production modes require Enterprise Linux 10", content)
+
+    def test_fedora_uses_dnf5_plugins_for_copr_and_security_updates(self) -> None:
+        installer = INSTALLER.read_text(encoding="utf-8")
+        common = COMMON_TASKS.read_text(encoding="utf-8")
+
+        self.assertIn("DNF_COPR_PLUGIN_PACKAGE=dnf5-plugins", installer)
+        self.assertIn("dnf5-plugins", common)
+        self.assertIn("dnf5-plugin-automatic", common)
+        self.assertIn("dnf5-automatic.timer", common)
+        self.assertIn("create: true", common)
 
     def test_rootless_cgroup_selinux_permission_is_configured_after_fleet_install(self) -> None:
         fleet_tasks = FLEET_TASKS.read_text(encoding="utf-8")
@@ -340,6 +375,14 @@ class InstallerModeTests(unittest.TestCase):
         self.assertIn('"$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node"', installer)
         self.assertIn('"$SSHD_EFFECTIVE" == *"permitrootlogin no"*', installer)
         self.assertIn("already onboarded spoke", installer)
+
+    def test_sshd_effective_settings_are_normalized_for_case_insensitive_output(self) -> None:
+        installer = INSTALLER.read_text(encoding="utf-8")
+
+        self.assertIn(
+            'SSHD_EFFECTIVE="$(run_target_cmd "sshd -T" | tr \'[:upper:]\' \'[:lower:]\')"',
+            installer,
+        )
 
     def test_spoke_retries_per_node_ssh_after_bootstrap_revocation(self) -> None:
         installer = INSTALLER.read_text(encoding="utf-8")
@@ -651,6 +694,7 @@ class InstallerModeTests(unittest.TestCase):
         self.assertIn("auditctl -l", installer)
         self.assertIn("fail2ban-client ping", installer)
         self.assertIn("fail2ban-client get sshd actions", installer)
+        self.assertIn("dnf5-automatic.timer", installer)
         self.assertIn("dnf-automatic.timer", installer)
         self.assertIn("chronyc tracking", installer)
         self.assertIn("nft list chain inet admiral_egress output", installer)
@@ -676,10 +720,19 @@ class InstallerModeTests(unittest.TestCase):
 
         self.assertIn("Apply available security updates", common)
         self.assertIn("value: security", common)
-        self.assertIn("name: dnf-automatic", common)
-        self.assertIn("name: dnf-automatic.timer", common)
+        self.assertIn("else 'dnf-automatic' }}", common)
+        self.assertIn("else 'dnf-automatic.timer' }}", common)
+        self.assertIn(
+            "'dnf5-plugin-automatic' if ansible_distribution == 'Fedora' else 'dnf-automatic'",
+            common,
+        )
+        self.assertIn(
+            "'dnf5-automatic.timer' if ansible_distribution == 'Fedora' else 'dnf-automatic.timer'",
+            common,
+        )
         self.assertIn("ansible_distribution in ['RedHat', 'CentOS', 'Rocky', 'AlmaLinux']", common)
-        self.assertIn("ansible_distribution_major_version | int == 10", common)
+        self.assertIn("(ansible_distribution_major_version | int) == 10", common)
+        self.assertIn("(ansible_distribution_major_version | int) >= 44", common)
         self.assertIn("not (admiral_dev_mode | default(false) | bool)", common)
         self.assertIn("name: chrony", common)
         self.assertIn("name: chronyd", common)
