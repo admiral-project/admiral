@@ -18,7 +18,7 @@ Group=admiral
 # Hardening
 NoNewPrivileges=true
 PrivateTmp=true
-ProtectHome=true
+ProtectHome=read-only
 ProtectSystem=strict
 ReadWritePaths=/var/lib/admiral/harbor/uploads
 CapabilityBoundingSet=
