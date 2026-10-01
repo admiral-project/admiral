@@ -15,7 +15,7 @@
 
 Name:    admiral-fleet
 Version: 0.0.1rc5
-Release: 6%{?dist}
+Release: 8%{?dist}
 Summary: Admiral Fleet Worker Agent
 
 License: Apache-2.0
@@ -80,11 +80,11 @@ mkdir -p "$GOCACHE"
 go test ./...
 %ifarch aarch64
 for binary in admiral-fleet admiral-fleet-lifecycle admiral-fleet-setup admiral-fleet-backup; do
-    readelf -h "./$binary" | grep -Fq 'Machine: AArch64'
+    readelf -h "./$binary" | grep -Eq 'Machine:[[:space:]]+AArch64'
 done
 %else
 for binary in admiral-fleet admiral-fleet-lifecycle admiral-fleet-setup admiral-fleet-backup; do
-    readelf -h "./$binary" | grep -Fq 'Machine: Advanced Micro Devices X86-64'
+    readelf -h "./$binary" | grep -Eq 'Machine:[[:space:]]+Advanced Micro Devices X86-64'
 done
 %endif
 
@@ -112,6 +112,12 @@ loginctl enable-linger admiral-apps 2>/dev/null || :
 %systemd_postun_with_restart admiral-fleet.service
 
 %changelog
+* Thu Oct 01 2026 Codex <codex@openai.com> - 0.0.1rc5-8
+- Rebuild the coordinated RC5 RPM set with clean-install fixes
+
+* Thu Oct 01 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc5-7
+- Accept readelf's variable header spacing in target architecture checks
+
 * Thu Oct 01 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc5-6
 - Fix cross-architecture RPM checks and keep the coordinated release set aligned
 

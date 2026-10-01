@@ -1,11 +1,11 @@
 # SPDX-FileCopyrightText: William Moreno Reyes CP | MBA
 # SPDX-License-Identifier: Apache-2.0
 
-%global commit 783ac753ae234ba562606b1042a63526c9f50dc5
+%global commit ca75c07cfa54dfa64ddf800767d40d408f7f5f7f
 
 Name:    admiral-common
 Version: 0.0.1rc5
-Release: 6%{?dist}
+Release: 8%{?dist}
 Summary: Common files and utilities for Admiral PaaS
 
 License: Apache-2.0
@@ -191,6 +191,12 @@ if [ "$1" -eq 0 ]; then
 fi
 
 %changelog
+* Thu Oct 01 2026 Codex <codex@openai.com> - 0.0.1rc5-8
+- Rebuild the coordinated RC5 RPM set with clean-install fixes
+
+* Thu Oct 01 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc5-7
+- Rebuild the coordinated RC5 RPM set after correcting architecture checks
+
 * Thu Oct 01 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc5-6
 - Rebuild the coordinated RC5 RPM set after a cross-architecture packaging fix
 

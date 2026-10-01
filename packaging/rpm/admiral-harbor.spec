@@ -1,9 +1,9 @@
 %global debug_package %{nil}
-%global commit 45e5b486369b671f10f45bb4d2e74e28e8129f3f
+%global commit 1f583fc30a8d90323fa510a940381ab594977962
 
 Name:    admiral-harbor
 Version: 0.0.1rc5
-Release: 6%{?dist}
+Release: 8%{?dist}
 Summary: Admiral Customer Portal - Web UI for end users
 
 License: Apache-2.0
@@ -131,6 +131,12 @@ restorecon -R %{_localstatedir}/lib/admiral/harbor 2>/dev/null || :
 %{python3} -m pytest tests/ -x --tb=short
 
 %changelog
+* Thu Oct 01 2026 Codex <codex@openai.com> - 0.0.1rc5-8
+- Rebuild the coordinated RC5 RPM set with clean-install fixes
+
+* Thu Oct 01 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc5-7
+- Rebuild the coordinated RC5 RPM set after correcting architecture checks
+
 * Thu Oct 01 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc5-6
 - Rebuild the coordinated RC5 RPM set after a cross-architecture packaging fix
 

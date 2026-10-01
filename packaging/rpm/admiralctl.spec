@@ -15,7 +15,7 @@
 
 Name:    admiralctl
 Version: 0.0.1rc5
-Release: 6%{?dist}
+Release: 8%{?dist}
 Summary: Admiral Command-Line Interface
 
 License: Apache-2.0
@@ -66,13 +66,13 @@ export GOCACHE=%{_tmppath}/go-cache
 mkdir -p "$GOCACHE"
 go test ./...
 %ifarch aarch64
-readelf -h ./admiralctl | grep -Fq 'Machine: AArch64'
+readelf -h ./admiralctl | grep -Eq 'Machine:[[:space:]]+AArch64'
 env -u GOOS -u GOARCH -u CGO_ENABLED go build -trimpath -buildmode=pie \
     -ldflags="-s -w -X github.com/admiral-project/admiral/admiralctl/internal/version.Version=%{version}" \
     -o admiralctl-native-check ./cmd/admiralctl/
 test "$(./admiralctl-native-check version 2>&1)" = "admiralctl %{version}"
 %else
-readelf -h ./admiralctl | grep -Fq 'Machine: Advanced Micro Devices X86-64'
+readelf -h ./admiralctl | grep -Eq 'Machine:[[:space:]]+Advanced Micro Devices X86-64'
 test "$(./admiralctl version 2>&1)" = "admiralctl %{version}"
 %endif
 
@@ -88,6 +88,12 @@ test "$(./admiralctl version 2>&1)" = "admiralctl %{version}"
 restorecon -F %{_bindir}/admiralctl 2>/dev/null || :
 
 %changelog
+* Thu Oct 01 2026 Codex <codex@openai.com> - 0.0.1rc5-8
+- Rebuild the coordinated RC5 RPM set with clean-install fixes
+
+* Thu Oct 01 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc5-7
+- Accept readelf's variable header spacing in target architecture checks
+
 * Thu Oct 01 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc5-6
 - Fix cross-architecture RPM checks and keep the coordinated release set aligned
 
