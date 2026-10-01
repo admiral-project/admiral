@@ -4,12 +4,20 @@
 %global debug_package %{nil}
 %global commit 06427cad72ee4ac496d69c2506b41fddbc5d4c35
 
+%ifarch x86_64
+%global admiral_goarch amd64
+%endif
+%ifarch aarch64
+%global admiral_goarch arm64
+%endif
+
 Name:    admirald
 Version: 0.0.1rc5
 Release: 5%{?dist}
 Summary: Admiral Control Plane - Core API and orchestration service
 
 License: Apache-2.0
+ExclusiveArch: x86_64 aarch64
 URL:     https://github.com/admiral-project/admirald
 Source0: https://github.com/admiral-project/admirald/archive/%{commit}.tar.gz
 Source1: admirald.service
@@ -37,6 +45,9 @@ dispatches tasks to fleet workers, and maintains auditability.
 
 %build
 export GOWORK=off
+export GOOS=linux
+export GOARCH=%{admiral_goarch}
+export CGO_ENABLED=0
 export PATH=/usr/lib/golang/bin:%{_bindir}:$PATH
 export GOCACHE=%{_tmppath}/go-cache
 mkdir -p "$GOCACHE"
@@ -73,6 +84,9 @@ restorecon -F %{_bindir}/admirald 2>/dev/null || :
 %systemd_postun_with_restart admirald.service
 
 %changelog
+* Thu Oct 01 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc5-5
+- Rebuild the coordinated RC5 set with Fedora multi-node fixes and arm64 support
+
 * Thu Oct 01 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc5-4
 - Rebuild RC5 with Harbor support-reply and provision-contract fixes
 

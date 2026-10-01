@@ -131,6 +131,9 @@ restorecon -R %{_localstatedir}/lib/admiral/harbor 2>/dev/null || :
 %{python3} -m pytest tests/ -x --tb=short
 
 %changelog
+* Thu Oct 01 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc5-5
+- Rebuild the coordinated RC5 set with Fedora multi-node fixes and arm64 support
+
 * Thu Oct 01 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc5-4
 - Rebuild RC5 with Harbor support-reply and provision-contract fixes
 

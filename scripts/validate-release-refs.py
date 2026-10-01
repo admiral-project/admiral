@@ -27,6 +27,10 @@ COMMON_PAYLOAD_PATHS = (
     "packaging/bin",
     "packaging/rpm/admiral-common.sysusers",
 )
+SECONDARY_SOURCE_REFS = {
+    "admiral-fleet": ("Source3", "ADMIRALD_COMMIT"),
+    "admiralctl": ("Source2", "ADMIRALD_COMMIT"),
+}
 
 
 def make_ref(variable: str) -> str:
@@ -57,6 +61,18 @@ def common_ref() -> str:
     return match.group(1)
 
 
+def secondary_source_ref(name: str, source: str) -> str:
+    text = (ROOT / "packaging" / "rpm" / f"{name}.spec").read_text()
+    match = re.search(
+        rf"^{re.escape(source)}: https://[^\s]+/([0-9a-f]{{40}})\.tar\.gz$",
+        text,
+        re.MULTILINE,
+    )
+    if not match:
+        raise ValueError(f"{name}.spec has no pinned {source} archive SHA")
+    return match.group(1)
+
+
 def main() -> int:
     failures = []
     for name, path in COMPONENTS.items():
@@ -73,6 +89,14 @@ def main() -> int:
         make = make_ref(variable)
         if make != actual:
             failures.append(f"{name}: Makefile={make}, spec={actual}")
+    for name, (source, variable) in SECONDARY_SOURCE_REFS.items():
+        expected = make_ref(variable)
+        try:
+            actual = secondary_source_ref(name, source)
+            if actual != expected:
+                failures.append(f"{name}: {source}={actual}, Makefile={expected}")
+        except ValueError as error:
+            failures.append(str(error))
     common = common_ref()
     try:
         make_common = make_ref("ADMIRAL_COMMON_COMMIT")
