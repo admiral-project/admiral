@@ -1,11 +1,11 @@
 # SPDX-FileCopyrightText: William Moreno Reyes CP | MBA
 # SPDX-License-Identifier: Apache-2.0
 
-%global commit 5d20cbc71d77e5c8457b776d4a5ba8d15cf493e1
+%global commit 27000b7cc9e147338f5e6cc2573fbd599798945b
 
 Name:    admiral-common
-Version: 0.0.1rc4
-Release: 12%{?dist}
+Version: 0.0.1rc5
+Release: 4%{?dist}
 Summary: Common files and utilities for Admiral PaaS
 
 License: Apache-2.0
@@ -191,6 +191,18 @@ if [ "$1" -eq 0 ]; then
 fi
 
 %changelog
+* Thu Oct 01 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc5-4
+- Rebuild RC5 with Harbor support-reply and provision-contract fixes
+
+* Wed Sep 30 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc5-3
+- Rebuild RC5 with a version assertion capturing the CLI diagnostic output
+
+* Wed Sep 30 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc5-2
+- Rebuild the coordinated RC5 set with corrected CLI version injection
+
+* Wed Sep 30 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc5-1
+- Prepare the coordinated RC5 candidate for complete functional validation
+
 * Wed Sep 23 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc4-12
 - Reject unvalidated Enterprise Linux major versions
 

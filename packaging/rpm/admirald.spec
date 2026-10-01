@@ -2,11 +2,11 @@
 # SPDX-License-Identifier: Apache-2.0
 
 %global debug_package %{nil}
-%global commit e94d82011cca4197c58f0c294aa1c391b58b3c00
+%global commit 06427cad72ee4ac496d69c2506b41fddbc5d4c35
 
 Name:    admirald
-Version: 0.0.1rc4
-Release: 10%{?dist}
+Version: 0.0.1rc5
+Release: 4%{?dist}
 Summary: Admiral Control Plane - Core API and orchestration service
 
 License: Apache-2.0
@@ -73,6 +73,18 @@ restorecon -F %{_bindir}/admirald 2>/dev/null || :
 %systemd_postun_with_restart admirald.service
 
 %changelog
+* Thu Oct 01 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc5-4
+- Rebuild RC5 with Harbor support-reply and provision-contract fixes
+
+* Wed Sep 30 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc5-3
+- Rebuild RC5 with a version assertion capturing the CLI diagnostic output
+
+* Wed Sep 30 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc5-2
+- Rebuild the coordinated RC5 set with corrected CLI version injection
+
+* Wed Sep 30 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc5-1
+- Prepare the coordinated RC5 candidate for complete functional validation
+
 * Wed Sep 23 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc4-10
 - Rebuild the coordinated RC4 candidate after the EL version guard fix
 

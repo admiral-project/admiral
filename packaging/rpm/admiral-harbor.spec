@@ -1,9 +1,9 @@
 %global debug_package %{nil}
-%global commit fc7dc38bbdb741fce98607b4e8aa34aa432968ac
+%global commit 45e5b486369b671f10f45bb4d2e74e28e8129f3f
 
 Name:    admiral-harbor
-Version: 0.0.1rc4
-Release: 10%{?dist}
+Version: 0.0.1rc5
+Release: 4%{?dist}
 Summary: Admiral Customer Portal - Web UI for end users
 
 License: Apache-2.0
@@ -131,6 +131,18 @@ restorecon -R %{_localstatedir}/lib/admiral/harbor 2>/dev/null || :
 %{python3} -m pytest tests/ -x --tb=short
 
 %changelog
+* Thu Oct 01 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc5-4
+- Rebuild RC5 with Harbor support-reply and provision-contract fixes
+
+* Wed Sep 30 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc5-3
+- Rebuild RC5 with a version assertion capturing the CLI diagnostic output
+
+* Wed Sep 30 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc5-2
+- Rebuild the coordinated RC5 set with corrected CLI version injection
+
+* Wed Sep 30 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc5-1
+- Prepare the coordinated RC5 candidate for complete functional validation
+
 * Wed Sep 23 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc4-10
 - Rebuild the coordinated RC4 candidate after the EL version guard fix
 

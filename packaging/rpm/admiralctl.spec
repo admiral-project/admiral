@@ -5,8 +5,8 @@
 %global commit 98bf7ff26bdec0313320af1a885f932389feba13
 
 Name:    admiralctl
-Version: 0.0.1rc4
-Release: 10%{?dist}
+Version: 0.0.1rc5
+Release: 4%{?dist}
 Summary: Admiral Command-Line Interface
 
 License: Apache-2.0
@@ -37,7 +37,7 @@ export GOWORK=off
 export PATH=/usr/lib/golang/bin:%{_bindir}:$PATH
 export GOCACHE=%{_tmppath}/go-cache
 mkdir -p "$GOCACHE"
-go build -trimpath -buildmode=pie -ldflags="-s -w -X main.Version=%{version}" -o admiralctl ./cmd/admiralctl/
+go build -trimpath -buildmode=pie -ldflags="-s -w -X github.com/admiral-project/admiral/admiralctl/internal/version.Version=%{version}" -o admiralctl ./cmd/admiralctl/
 
 %install
 install -Dm0755 admiralctl %{buildroot}%{_bindir}/admiralctl
@@ -46,6 +46,7 @@ install -Dm0644 docs/admiralctl.1 %{buildroot}%{_mandir}/man1/admiralctl.1
 install -Dm0644 docs/admiralctl-admin.8 %{buildroot}%{_mandir}/man8/admiralctl-admin.8
 
 %check
+test "$(./admiralctl version 2>&1)" = "admiralctl %{version}"
 export GOWORK=off
 export PATH=/usr/lib/golang/bin:%{_bindir}:$PATH
 export GOCACHE=%{_tmppath}/go-cache
@@ -64,6 +65,18 @@ mkdir -p "$GOCACHE"
 restorecon -F %{_bindir}/admiralctl 2>/dev/null || :
 
 %changelog
+* Thu Oct 01 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc5-4
+- Rebuild RC5 with Harbor support-reply and provision-contract fixes
+
+* Wed Sep 30 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc5-3
+- Rebuild RC5 with a version assertion capturing the CLI diagnostic output
+
+* Wed Sep 30 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc5-2
+- Rebuild the coordinated RC5 set with corrected CLI version injection
+
+* Wed Sep 30 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc5-1
+- Prepare the coordinated RC5 candidate for complete functional validation
+
 * Wed Sep 23 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc4-10
 - Rebuild the coordinated RC4 candidate after the EL version guard fix
 

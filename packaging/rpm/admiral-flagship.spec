@@ -5,8 +5,8 @@
 %global commit c21c81b7b95d7f44d8c878f6067ff178af065feb
 
 Name:    admiral-flagship
-Version: 0.0.1rc4
-Release: 10%{?dist}
+Version: 0.0.1rc5
+Release: 4%{?dist}
 Summary: Admiral Administrative Web Console
 
 License: Apache-2.0
@@ -83,6 +83,18 @@ restorecon -R %{_prefix}/lib/admiral/flagship 2>/dev/null || :
 %{python3} -m pytest tests/ -x --tb=short
 
 %changelog
+* Thu Oct 01 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc5-4
+- Rebuild RC5 with Harbor support-reply and provision-contract fixes
+
+* Wed Sep 30 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc5-3
+- Rebuild RC5 with a version assertion capturing the CLI diagnostic output
+
+* Wed Sep 30 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc5-2
+- Rebuild the coordinated RC5 set with corrected CLI version injection
+
+* Wed Sep 30 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc5-1
+- Prepare the coordinated RC5 candidate for complete functional validation
+
 * Wed Sep 23 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc4-10
 - Rebuild the coordinated RC4 candidate after the EL version guard fix
 

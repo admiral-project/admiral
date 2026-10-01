@@ -5,8 +5,8 @@
 %global commit 1b047c66abdf305ac471f924eda1f8112b5d0335
 
 Name:    admiral-fleet
-Version: 0.0.1rc4
-Release: 11%{?dist}
+Version: 0.0.1rc5
+Release: 4%{?dist}
 Summary: Admiral Fleet Worker Agent
 
 License: Apache-2.0
@@ -89,6 +89,18 @@ loginctl enable-linger admiral-apps 2>/dev/null || :
 %systemd_postun_with_restart admiral-fleet.service
 
 %changelog
+* Thu Oct 01 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc5-4
+- Rebuild RC5 with Harbor support-reply and provision-contract fixes
+
+* Wed Sep 30 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc5-3
+- Rebuild RC5 with a version assertion capturing the CLI diagnostic output
+
+* Wed Sep 30 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc5-2
+- Rebuild the coordinated RC5 set with corrected CLI version injection
+
+* Wed Sep 30 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc5-1
+- Prepare the coordinated RC5 candidate for complete functional validation
+
 * Wed Sep 23 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc4-11
 - Rebuild the coordinated RC4 candidate after the EL version guard fix
 

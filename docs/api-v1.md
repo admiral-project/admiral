@@ -149,6 +149,17 @@ Devuelve las credenciales expuestas de la instancia. Incluye:
 - Secretos marcados con `expose: true` en la app definition.
 - Notificaciones estaticas declaradas en `notify_on_setup`.
 
+### `GET /api/v1/customer-apps/{instance_id}/operations/{operation_id}`
+
+Devuelve el estado de una operación de esa instancia para Harbor. Requiere
+`X-Admiral-Customer-ID` y valida que el cliente sea dueño de la instancia y
+que la operación pertenezca a ella. Una operación de otra instancia responde
+`404`. La respuesta contiene únicamente `id`, `instance_id` y `status`;
+no expone nodos, tareas ni metadatos de infraestructura.
+
+Harbor usa esta ruta para reconciliar restauraciones. La lista administrativa
+`GET /api/v1/operations` conserva su autenticación de operador/control plane.
+
 Respuesta `200 OK` (array):
 
 ```json
@@ -252,6 +263,7 @@ Respuesta `202 Accepted`:
 
 ```json
 {
+  "instance_id": "inst_123",
   "operation_id": "op_123",
   "status": "queued",
   "credentials": [
@@ -265,6 +277,10 @@ Respuesta `202 Accepted`:
 ```
 
 `credentials` solo aparece aqui y solo para secretos marcados con `expose: true`.
+
+`instance_id` identifica la instancia creada antes de encolar la operación.
+Harbor debe usarlo para asociar la orden y la suscripción; no necesita acceso
+a la API administrativa de operaciones.
 
 ### `POST /api/v1/customer-apps/action`
 
