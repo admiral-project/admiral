@@ -13,14 +13,15 @@ Commit `27000b7cc9e147338f5e6cc2573fbd599798945b` changes
 `ProtectHome=read-only` for catalog synchronization and reconciliation. Runtime
 validation of both packaged services after that change remains required.
 
-## Current verification limits — RC5 Release 5
+## Current verification limits — RC5 Release 6
 
 The Harbor Python suite passes **323 tests** in the current checkout, with nine
 SQLAlchemy legacy API warnings. Black, Ruff and Flake8 pass on the changed
 Python files. These are source-level checks; they do not validate packaged
 systemd units, PostgreSQL, or running Harbor services. The r4 package results
-are invalidated by the r5 source fixes, and all r5 runtime cells remain pending
-until the six Release 5 RPMs are built and installed on fresh guests.
+are invalidated by the r5 source fixes, and the r5 cross-architecture build
+failed before any runtime cell. All r6 runtime cells remain pending until the
+six coordinated Release 6 RPMs are built and installed on fresh guests.
 
 The sandbox cannot access the host system bus or libvirt socket, so an
 authoritative host service/VM inventory is still pending. MinIO remains in the

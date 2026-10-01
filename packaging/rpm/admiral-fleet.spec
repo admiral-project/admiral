@@ -9,11 +9,13 @@
 %endif
 %ifarch aarch64
 %global admiral_goarch arm64
+%global __brp_strip %{nil}
+%global __brp_strip_comment_note %{nil}
 %endif
 
 Name:    admiral-fleet
 Version: 0.0.1rc5
-Release: 5%{?dist}
+Release: 6%{?dist}
 Summary: Admiral Fleet Worker Agent
 
 License: Apache-2.0
@@ -25,6 +27,7 @@ Source2: fleet.env
 Source3: https://github.com/admiral-project/admirald/archive/06427cad72ee4ac496d69c2506b41fddbc5d4c35.tar.gz
 
 BuildRequires: golang >= 1.26.5
+BuildRequires: binutils
 BuildRequires: systemd >= 250
 BuildRequires: git
 
@@ -74,7 +77,16 @@ export GOWORK=off
 export PATH=/usr/lib/golang/bin:%{_bindir}:$PATH
 export GOCACHE=%{_tmppath}/go-cache
 mkdir -p "$GOCACHE"
-    go test ./...
+go test ./...
+%ifarch aarch64
+for binary in admiral-fleet admiral-fleet-lifecycle admiral-fleet-setup admiral-fleet-backup; do
+    readelf -h "./$binary" | grep -Fq 'Machine: AArch64'
+done
+%else
+for binary in admiral-fleet admiral-fleet-lifecycle admiral-fleet-setup admiral-fleet-backup; do
+    readelf -h "./$binary" | grep -Fq 'Machine: Advanced Micro Devices X86-64'
+done
+%endif
 
 %files
 %license LICENSE
@@ -100,6 +112,9 @@ loginctl enable-linger admiral-apps 2>/dev/null || :
 %systemd_postun_with_restart admiral-fleet.service
 
 %changelog
+* Thu Oct 01 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc5-6
+- Fix cross-architecture RPM checks and keep the coordinated release set aligned
+
 * Thu Oct 01 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc5-5
 - Rebuild the coordinated RC5 set with Fedora multi-node fixes and arm64 support
 

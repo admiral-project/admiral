@@ -9,11 +9,13 @@
 %endif
 %ifarch aarch64
 %global admiral_goarch arm64
+%global __brp_strip %{nil}
+%global __brp_strip_comment_note %{nil}
 %endif
 
 Name:    admiralctl
 Version: 0.0.1rc5
-Release: 5%{?dist}
+Release: 6%{?dist}
 Summary: Admiral Command-Line Interface
 
 License: Apache-2.0
@@ -24,6 +26,7 @@ Source1: admiralctl.yaml
 Source2: https://github.com/admiral-project/admirald/archive/06427cad72ee4ac496d69c2506b41fddbc5d4c35.tar.gz
 
 BuildRequires: golang >= 1.26.5
+BuildRequires: binutils
 BuildRequires: git
 
 Requires: admiral-common
@@ -57,12 +60,21 @@ install -Dm0644 docs/admiralctl.1 %{buildroot}%{_mandir}/man1/admiralctl.1
 install -Dm0644 docs/admiralctl-admin.8 %{buildroot}%{_mandir}/man8/admiralctl-admin.8
 
 %check
-test "$(./admiralctl version 2>&1)" = "admiralctl %{version}"
 export GOWORK=off
 export PATH=/usr/lib/golang/bin:%{_bindir}:$PATH
 export GOCACHE=%{_tmppath}/go-cache
 mkdir -p "$GOCACHE"
-    go test ./...
+go test ./...
+%ifarch aarch64
+readelf -h ./admiralctl | grep -Fq 'Machine: AArch64'
+env -u GOOS -u GOARCH -u CGO_ENABLED go build -trimpath -buildmode=pie \
+    -ldflags="-s -w -X github.com/admiral-project/admiral/admiralctl/internal/version.Version=%{version}" \
+    -o admiralctl-native-check ./cmd/admiralctl/
+test "$(./admiralctl-native-check version 2>&1)" = "admiralctl %{version}"
+%else
+readelf -h ./admiralctl | grep -Fq 'Machine: Advanced Micro Devices X86-64'
+test "$(./admiralctl version 2>&1)" = "admiralctl %{version}"
+%endif
 
 %files
 %license LICENSE
@@ -76,6 +88,9 @@ mkdir -p "$GOCACHE"
 restorecon -F %{_bindir}/admiralctl 2>/dev/null || :
 
 %changelog
+* Thu Oct 01 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc5-6
+- Fix cross-architecture RPM checks and keep the coordinated release set aligned
+
 * Thu Oct 01 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc5-5
 - Rebuild the coordinated RC5 set with Fedora multi-node fixes and arm64 support
 
