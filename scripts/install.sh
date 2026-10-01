@@ -1418,7 +1418,16 @@ if [[ "$INSTALL_DEV_MODE" != "true" ]]; then
         SECURITY_WARNINGS+=("automatic security updates are not enabled and active ($AUTOMATIC_UPDATE_TIMER).")
     fi
 
-    TIME_SYNC="$(run_target_cmd "chronyc tracking" || true)"
+    TIME_SYNC=""
+    for attempt in {1..30}; do
+        TIME_SYNC="$(run_target_cmd "chronyc tracking" || true)"
+        if [[ "$TIME_SYNC" == *"Leap status     : Normal"* ]]; then
+            break
+        fi
+        if (( attempt < 30 )); then
+            sleep 2
+        fi
+    done
     if [[ "$TIME_SYNC" != *"Leap status     : Normal"* ]]; then
         SECURITY_WARNINGS+=("chronyd has not synchronized the system clock.")
     fi

@@ -1129,6 +1129,8 @@
       basicConstraints=critical,CA:FALSE
       keyUsage=critical,digitalSignature,keyEncipherment
       extendedKeyUsage=serverAuth,clientAuth
+      subjectKeyIdentifier=hash
+      authorityKeyIdentifier=keyid,issuer
       subjectAltName={{ admiral_tls_san }}
     mode: "0600"
   delegate_to: localhost

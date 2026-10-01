@@ -713,6 +713,20 @@ done
         ):
             self.assertIn(effective_setting, installer)
 
+    def test_secure_checklist_waits_for_chrony_synchronization(self) -> None:
+        installer = INSTALLER.read_text(encoding="utf-8")
+        clock_check = installer.split('TIME_SYNC=""', 1)[1].split(
+            'NFT_EGRESS="$(run_target_cmd', 1
+        )[0]
+
+        self.assertIn("for attempt in {1..30}", clock_check)
+        self.assertIn('sleep 2', clock_check)
+        self.assertIn('"Leap status     : Normal"', clock_check)
+        self.assertIn(
+            'SECURITY_WARNINGS+=("chronyd has not synchronized the system clock.")',
+            clock_check,
+        )
+
     def test_security_updates_and_effective_bans_are_enforced(self) -> None:
         installer = INSTALLER.read_text(encoding="utf-8")
         common = COMMON_TASKS.read_text(encoding="utf-8")

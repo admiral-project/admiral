@@ -19,3 +19,13 @@ def test_internal_server_has_tls_usage_constraints() -> None:
     assert 'extendedKeyUsage=serverAuth,clientAuth' in TASKS
     assert 'subjectKeyIdentifier=hash' in TASKS
     assert 'authorityKeyIdentifier=keyid,issuer' in TASKS
+
+
+def test_portal_server_extensions_include_key_identifiers() -> None:
+    portal_task = TASKS.split(
+        "- name: Write portal-node SAN extensions to controller temporary file",
+        1,
+    )[1].split("\n- name:", 1)[0]
+
+    assert "subjectKeyIdentifier=hash" in portal_task
+    assert "authorityKeyIdentifier=keyid,issuer" in portal_task
