@@ -8,9 +8,10 @@ Wants=network-online.target postgresql.service
 Type=oneshot
 ExecStart=/usr/bin/admiral-control-plane-backup
 UMask=0077
+StateDirectory=admiral/control-plane-backups
+StateDirectoryMode=0700
 PrivateTmp=true
 NoNewPrivileges=true
 ProtectHome=true
 ProtectSystem=full
 ReadWritePaths=/var/lib/admiral/control-plane-backups
-
