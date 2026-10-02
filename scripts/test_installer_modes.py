@@ -477,6 +477,7 @@ done
         admirald = ADMIRALD_TASKS.read_text(encoding="utf-8")
         harbor = HARBOR_TASKS.read_text(encoding="utf-8")
         installer = INSTALLER.read_text(encoding="utf-8")
+        harbor_env = (ROOT / "packaging" / "config" / "harbor.env").read_text(encoding="utf-8")
 
         self.assertIn(
             "harbor_api_token = {{ admirald_harbor_api_token | default(admiral_harbor_api_token_value) }}",
@@ -486,6 +487,8 @@ done
             "ADMIRAL_HARBOR_API_TOKEN={{ admiral_harbor_api_token_value }}",
             harbor,
         )
+        self.assertIn("ADMIRAL_HARBOR_API_TOKEN=__REQUIRED__", harbor_env)
+        self.assertNotIn("ADMIRAL_INTERNAL_TOKEN=", harbor_env)
         self.assertIn("harborctl ping", installer)
 
     def test_single_node_requires_all_harbor_timers(self) -> None:

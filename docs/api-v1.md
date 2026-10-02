@@ -160,6 +160,39 @@ no expone nodos, tareas ni metadatos de infraestructura.
 Harbor usa esta ruta para reconciliar restauraciones. La lista administrativa
 `GET /api/v1/operations` conserva su autenticación de operador/control plane.
 
+Las rutas `GET /api/v1/customer-apps` y
+`GET /api/v1/customer-apps/{instance_id}` devuelven a Harbor únicamente datos de
+la aplicación visibles para el cliente. No incluyen `node_id`, `hostname`,
+`logical_instance_id`, `inspect_data`, `tier_snapshot_json` ni metadatos de
+capacidad interna. Una credencial de sistema conserva la respuesta completa
+para flujos de control plane.
+
+### `GET /api/v1/customer-apps/{instance_id}/backups`
+
+Lista los backups de esa instancia para Harbor. Requiere el token Harbor y
+`X-Admiral-Customer-ID`; Admiral comprueba que el cliente sea dueño de la
+instancia. La respuesta contiene metadatos de backup y omite el nodo y la
+ubicación de almacenamiento.
+
+### `GET /api/v1/customer-apps/{instance_id}/backups/{backup_id}`
+
+Devuelve un backup de esa instancia. Un backup de otra instancia responde
+`404`, aunque ambas instancias pertenezcan a clientes distintos.
+
+### `POST /api/v1/customer-apps/{instance_id}/backups/restore`
+
+Encola una restauración para el dueño de la instancia. El `target_app_id` del
+body, si se envía, debe coincidir con el ID de la ruta. Un backup remoto debe
+pertenecer al mismo cliente. Para un archivo que el cliente subió a Harbor,
+`backup_id` identifica el archivo de Harbor y `source` debe contener una URI
+HTTPS, su checksum y tamaño; Admiral deriva el tipo de servicio desde la app
+definition del destino.
+
+Las rutas administrativas `GET /api/v1/backups`,
+`GET /api/v1/backups/{backup_id}` y `POST /api/v1/backups/restore` conservan la
+autenticación de control plane y no aceptan el token Harbor limitado a
+clientes.
+
 Respuesta `200 OK` (array):
 
 ```json
