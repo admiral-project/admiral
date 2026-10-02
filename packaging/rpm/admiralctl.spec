@@ -15,7 +15,7 @@
 
 Name:    admiralctl
 Version: 0.0.1rc5
-Release: 17%{?dist}
+Release: 18%{?dist}
 Summary: Admiral Command-Line Interface
 
 License: Apache-2.0
@@ -88,6 +88,9 @@ test "$(./admiralctl version 2>&1)" = "admiralctl %{version}"
 restorecon -F %{_bindir}/admiralctl 2>/dev/null || :
 
 %changelog
+* Fri Oct 02 2026 Codex <codex@openai.com> - 0.0.1rc5-18
+- Rebuild the coordinated RC5 set with Fleet version telemetry fix
+
 * Fri Oct 02 2026 Codex <codex@openai.com> - 0.0.1rc5-17
 - Add the worker WireGuard peer to the hub before the Fleet readiness gate
 

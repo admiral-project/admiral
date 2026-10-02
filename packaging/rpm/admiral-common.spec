@@ -5,7 +5,7 @@
 
 Name:    admiral-common
 Version: 0.0.1rc5
-Release: 17%{?dist}
+Release: 18%{?dist}
 Summary: Common files and utilities for Admiral PaaS
 
 License: Apache-2.0
@@ -191,6 +191,9 @@ if [ "$1" -eq 0 ]; then
 fi
 
 %changelog
+* Fri Oct 02 2026 Codex <codex@openai.com> - 0.0.1rc5-18
+- Rebuild the coordinated RC5 set with Fleet version telemetry fix
+
 * Fri Oct 02 2026 Codex <codex@openai.com> - 0.0.1rc5-17
 - Add the worker WireGuard peer to the hub before the Fleet readiness gate
 

@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 %global debug_package %{nil}
-%global commit f7b8b9afa9f44a515ac6a75962bd67b1c9426a45
+%global commit 8b1dcf9dd903d761286275d5cf2586e49326dd13
 
 %ifarch x86_64
 %global admiral_goarch amd64
@@ -15,7 +15,7 @@
 
 Name:    admiral-fleet
 Version: 0.0.1rc5
-Release: 17%{?dist}
+Release: 18%{?dist}
 Summary: Admiral Fleet Worker Agent
 
 License: Apache-2.0
@@ -59,7 +59,7 @@ export CGO_ENABLED=0
 export PATH=/usr/lib/golang/bin:%{_bindir}:$PATH
 export GOCACHE=%{_tmppath}/go-cache
 mkdir -p "$GOCACHE"
-go build -trimpath -buildmode=pie -ldflags="-s -w" -o admiral-fleet ./cmd/admiral-fleet/
+go build -trimpath -buildmode=pie -ldflags="-s -w -X github.com/admiral-project/admiral/admiral-fleet/internal/agent.FleetVersion=%{version}" -o admiral-fleet ./cmd/admiral-fleet/
 go build -trimpath -buildmode=pie -ldflags="-s -w" -o admiral-fleet-lifecycle ./cmd/admiral-fleet-lifecycle/
 go build -trimpath -buildmode=pie -ldflags="-s -w" -o admiral-fleet-setup ./cmd/admiral-fleet-setup/
 go build -trimpath -buildmode=pie -ldflags="-s -w" -o admiral-fleet-backup ./cmd/admiral-fleet-backup/
@@ -77,7 +77,7 @@ export GOWORK=off
 export PATH=/usr/lib/golang/bin:%{_bindir}:$PATH
 export GOCACHE=%{_tmppath}/go-cache
 mkdir -p "$GOCACHE"
-go test ./...
+ADMIRAL_EXPECTED_FLEET_VERSION=%{version} go test -ldflags="-X github.com/admiral-project/admiral/admiral-fleet/internal/agent.FleetVersion=%{version}" ./...
 %ifarch aarch64
 for binary in admiral-fleet admiral-fleet-lifecycle admiral-fleet-setup admiral-fleet-backup; do
     readelf -h "./$binary" | grep -Eq 'Machine:[[:space:]]+AArch64'
@@ -112,6 +112,9 @@ loginctl enable-linger admiral-apps 2>/dev/null || :
 %systemd_postun_with_restart admiral-fleet.service
 
 %changelog
+* Fri Oct 02 2026 Codex <codex@openai.com> - 0.0.1rc5-18
+- Inject the packaged Fleet version into worker heartbeats
+
 * Fri Oct 02 2026 Codex <codex@openai.com> - 0.0.1rc5-17
 - Add the worker WireGuard peer to the hub before the Fleet readiness gate
 
