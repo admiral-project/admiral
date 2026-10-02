@@ -6,7 +6,7 @@
 
 Name:    admiral-flagship
 Version: 0.0.1rc5
-Release: 15%{?dist}
+Release: 17%{?dist}
 Summary: Admiral Administrative Web Console
 
 License: Apache-2.0
@@ -83,6 +83,9 @@ restorecon -R %{_prefix}/lib/admiral/flagship 2>/dev/null || :
 %{python3} -m pytest tests/ -x --tb=short
 
 %changelog
+* Fri Oct 02 2026 Codex <codex@openai.com> - 0.0.1rc5-17
+- Add the worker WireGuard peer to the hub before the Fleet readiness gate
+
 * Fri Oct 02 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc5-15
 - Rebuild coordinated RC5 set after fixing Fleet token status selection
 

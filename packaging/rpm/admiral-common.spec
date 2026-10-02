@@ -1,11 +1,11 @@
 # SPDX-FileCopyrightText: William Moreno Reyes CP | MBA
 # SPDX-License-Identifier: Apache-2.0
 
-%global commit 7e3a81d22adfd09462d37606f40d325c50f1d962
+%global commit db1a8d8766ecc0aac34093d349b219097ff8a012
 
 Name:    admiral-common
 Version: 0.0.1rc5
-Release: 15%{?dist}
+Release: 17%{?dist}
 Summary: Common files and utilities for Admiral PaaS
 
 License: Apache-2.0
@@ -191,6 +191,9 @@ if [ "$1" -eq 0 ]; then
 fi
 
 %changelog
+* Fri Oct 02 2026 Codex <codex@openai.com> - 0.0.1rc5-17
+- Add the worker WireGuard peer to the hub before the Fleet readiness gate
+
 * Fri Oct 02 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc5-15
 - Rebuild coordinated RC5 set after fixing Fleet token status selection
 

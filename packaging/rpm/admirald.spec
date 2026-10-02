@@ -15,7 +15,7 @@
 
 Name:    admirald
 Version: 0.0.1rc5
-Release: 15%{?dist}
+Release: 17%{?dist}
 Summary: Admiral Control Plane - Core API and orchestration service
 
 License: Apache-2.0
@@ -92,6 +92,9 @@ restorecon -F %{_bindir}/admirald 2>/dev/null || :
 %systemd_postun_with_restart admirald.service
 
 %changelog
+* Fri Oct 02 2026 Codex <codex@openai.com> - 0.0.1rc5-17
+- Add the worker WireGuard peer to the hub before the Fleet readiness gate
+
 * Fri Oct 02 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc5-15
 - Rebuild coordinated RC5 set after fixing Fleet token status selection
 
