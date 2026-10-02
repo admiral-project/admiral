@@ -201,16 +201,6 @@
   no_log: true
   notify: restart admiral-fleet
 
-- name: Enable and start admiral-fleet
-  systemd:
-    name: admiral-fleet
-    enabled: true
-    state: started
-    daemon_reload: true
-
-- name: Apply admiral-fleet configuration changes before registration
-  meta: flush_handlers
-
 # Fleet uses the bare hostname in --single-node.
 # Remote worker-node installs use either an explicit --node-id or the next
 # worker assignment from know_host.yaml.
@@ -239,7 +229,7 @@
   no_log: true
   when: admiral_install_mode == 'worker-node'
 
-- name: Register node with admirald (admin-to-node)
+- name: Register node with admirald before starting Fleet
   command: >
     /usr/bin/admiralctl nodes register
     --id "{{ ansible_hostname if admiral_install_mode == 'single-node' else (fleet_node_id_effective | default(fleet_node_id | default(ansible_hostname))) }}"
@@ -256,3 +246,76 @@
     ADMIRAL_INTERNAL_TOKEN: "{{ admiral_admin_token_value | default(admiral_internal_token_value | default('', true), true) }}"
     ADMIRAL_NODE_TOKEN: "{{ fleet_node_token_value }}"
   no_log: true
+
+- name: Enable and start admiral-fleet after worker registration
+  systemd:
+    name: admiral-fleet
+    enabled: true
+    state: started
+    daemon_reload: true
+
+- name: Apply admiral-fleet configuration changes after worker registration
+  meta: flush_handlers
+
+- name: Wait for the registered Fleet worker to report a healthy heartbeat
+  block:
+    - name: Poll the worker record until Fleet heartbeat and metrics are current
+      command:
+        argv:
+          - /usr/bin/admiralctl
+          - nodes
+          - show
+          - "{{ ansible_hostname if admiral_install_mode == 'single-node' else (fleet_node_id_effective | default(fleet_node_id | default(ansible_hostname))) }}"
+      delegate_to: localhost
+      environment:
+        ADMIRAL_SERVER_URL: "{{ admiral_control_plane_url }}"
+        ADMIRAL_TLS_CA_FILE: /etc/admiral/tls/ca.pem
+        ADMIRAL_INTERNAL_TOKEN: "{{ admiral_admin_token_value | default(admiral_internal_token_value | default('', true), true) }}"
+      register: admiral_fleet_heartbeat
+      changed_when: false
+      no_log: true
+      retries: 24
+      delay: 5
+      until: >-
+        (admiral_fleet_heartbeat.stdout | from_json).get('last_heartbeat') is not none
+        and (admiral_fleet_heartbeat.stdout | from_json).get('last_metrics_at') is not none
+        and (admiral_fleet_heartbeat.stdout | from_json).get('fleet_version', '') | length > 0
+        and (admiral_fleet_heartbeat.stdout | from_json).get('health_status', '') == 'healthy'
+  rescue:
+    - name: Read admiral-fleet service state after readiness timeout
+      command:
+        argv:
+          - /usr/bin/systemctl
+          - show
+          - admiral-fleet.service
+          - -p
+          - ActiveState
+          - -p
+          - SubState
+          - -p
+          - ExecMainStatus
+      register: admiral_fleet_service_state
+      changed_when: false
+      failed_when: false
+
+    - name: Read recent admiral-fleet journal after readiness timeout
+      command:
+        argv:
+          - /usr/bin/journalctl
+          - --unit
+          - admiral-fleet.service
+          - --no-pager
+          - -n
+          - "40"
+      register: admiral_fleet_journal
+      changed_when: false
+      failed_when: false
+
+    - name: Fail installation when the worker heartbeat is missing
+      fail:
+        msg: >-
+          Fleet worker '{{ ansible_hostname if admiral_install_mode == 'single-node' else (fleet_node_id_effective | default(fleet_node_id | default(ansible_hostname))) }}'
+          did not report a healthy heartbeat within 120 seconds. Service state:
+          {{ admiral_fleet_service_state.stdout | default('unavailable') }}.
+          Recent Fleet journal:
+          {{ admiral_fleet_journal.stdout | default('unavailable') }}
