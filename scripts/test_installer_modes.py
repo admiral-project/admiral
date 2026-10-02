@@ -426,7 +426,7 @@ done
         harbor = HARBOR_TASKS.read_text(encoding="utf-8")
         flagship = FLAGSHIP_TASKS.read_text(encoding="utf-8")
 
-        self.assertIn("Apply admiral-fleet configuration changes before registration", fleet)
+        self.assertIn("Apply admiral-fleet configuration changes after worker registration", fleet)
         self.assertIn("Apply admiral-harbor configuration changes before bootstrap commands", harbor)
         self.assertIn("Apply admiral-flagship configuration changes before validation", flagship)
         self.assertIn("meta: flush_handlers", fleet)
@@ -661,6 +661,31 @@ done
         self.assertIn("wg show wg-admiral allowed-ips", installer)
         self.assertIn("10.99.0.1/32", installer)
 
+    def test_worker_hub_peer_is_installed_before_fleet_heartbeat_gate(self) -> None:
+        fleet = FLEET_TASKS.read_text(encoding="utf-8")
+
+        register = fleet.index("- name: Register node with admirald before starting Fleet")
+        ensure_peer_dir = fleet.index(
+            "- name: Ensure the hub's durable WireGuard peer directory exists before Fleet startup"
+        )
+        add_peer = fleet.index(
+            "- name: Add the registered worker's WireGuard peer on the hub before Fleet startup"
+        )
+        persist_peer = fleet.index(
+            "- name: Persist the registered worker's WireGuard peer before Fleet startup"
+        )
+        start_fleet = fleet.index("- name: Enable and start admiral-fleet after worker registration")
+        heartbeat_gate = fleet.index("- name: Wait for the registered Fleet worker to report a healthy heartbeat")
+
+        self.assertLess(register, ensure_peer_dir)
+        self.assertLess(ensure_peer_dir, add_peer)
+        self.assertLess(add_peer, persist_peer)
+        self.assertLess(persist_peer, start_fleet)
+        self.assertLess(start_fleet, heartbeat_gate)
+        self.assertIn("- allowed-ips\n      - \"{{ admiral_wireguard_ip }}/32\"", fleet[add_peer:persist_peer])
+        self.assertIn("delegate_to: localhost", fleet[add_peer:persist_peer])
+        self.assertIn("/etc/wireguard/peers.d/", fleet[persist_peer:start_fleet])
+
     def test_rootless_runtime_is_prepared_and_verified(self) -> None:
         installer = INSTALLER.read_text(encoding="utf-8")
         fleet = (
@@ -812,7 +837,7 @@ done
 
     def test_worker_registration_exports_validated_admin_token(self) -> None:
         fleet = FLEET_TASKS.read_text(encoding="utf-8")
-        registration = fleet.split("- name: Register node with admirald (admin-to-node)", 1)[1].split(
+        registration = fleet.split("- name: Register node with admirald before starting Fleet", 1)[1].split(
             "- name:", 1
         )[0]
 

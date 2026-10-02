@@ -247,6 +247,49 @@
     ADMIRAL_NODE_TOKEN: "{{ fleet_node_token_value }}"
   no_log: true
 
+- name: Ensure the hub's durable WireGuard peer directory exists before Fleet startup
+  file:
+    path: /etc/wireguard/peers.d
+    state: directory
+    owner: root
+    group: root
+    mode: "0700"
+  delegate_to: localhost
+  when: admiral_install_mode == 'worker-node'
+
+- name: Add the registered worker's WireGuard peer on the hub before Fleet startup
+  command:
+    argv:
+      - wg
+      - set
+      - wg-admiral
+      - peer
+      - "{{ admiral_wg_public_key.stdout | trim }}"
+      - allowed-ips
+      - "{{ admiral_wireguard_ip }}/32"
+      - persistent-keepalive
+      - "25"
+  delegate_to: localhost
+  changed_when: true
+  no_log: true
+  when: admiral_install_mode == 'worker-node'
+
+- name: Persist the registered worker's WireGuard peer before Fleet startup
+  copy:
+    content: |
+      [Peer]
+      PublicKey = {{ admiral_wg_public_key.stdout | trim }}
+      AllowedIPs = {{ admiral_wireguard_ip }}/32
+    dest: >-
+      /etc/wireguard/peers.d/{{ (fleet_node_id_effective | default(fleet_node_id | default(ansible_hostname)))
+      | regex_replace('[^A-Za-z0-9_.-]', '_') }}.conf
+    owner: root
+    group: root
+    mode: "0600"
+  delegate_to: localhost
+  no_log: true
+  when: admiral_install_mode == 'worker-node'
+
 - name: Enable and start admiral-fleet after worker registration
   systemd:
     name: admiral-fleet
