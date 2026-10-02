@@ -1,8 +1,14 @@
 # Harbor functional validation
 
-## Status — 2026-10-01
+## Status — 2026-10-02
 
 **PENDING: complete Harbor functional validation has not been demonstrated.**
+
+The current source fix for the Release 9 subscriptions-page HTTP 500 passes
+the full Harbor suite (326/326). Its coordinated Release 10 RPM has not yet
+been built or installed. Complete installed-flow validation, local
+webhook-ordering, and backup/restore remain pending in the fresh Release 10
+single-node and multi-node matrix.
 
 The [RC4 r12 report](0.0.1rc4.tier2.validation.md) records a passing
 infrastructure and Golden WordPress matrix. Harbor HTTP 200 and authenticated
@@ -117,3 +123,30 @@ Release 7 is now superseded. The Release 8 Harbor source commit is pinned for
 the next coordinated RPM build; no Release 8 package has been built or
 runtime-tested. Fresh Harbor installed-flow, local webhook-ordering, and
 upload/restore validation remain pending after that build.
+
+## RC5 Release 9 evidence and Release 10 reset — 2026-10-02
+
+The signed Release 9 Harbor RPM completed clean Rocky 10.2 single-node
+registration, local SMTP, free provisioning, customer lifecycle, and the
+mock-paid checkout through Harbor's CSRF-protected confirmation and successful
+paid provisioning. The database contained the expected paid order, active
+subscription, paid invoice, and completed payment; `/client/billing` showed the
+paid app. The customer subscriptions page returned HTTP 500.
+
+The confirmed cause is a type mismatch: `Subscription.next_billing_at` is a
+persisted ISO string, but the customer subscription list/detail and admin
+instance detail templates call `.strftime()` on it. Issue
+[#150](https://github.com/admiral-project/admiral/issues/150) tracks the
+reproduction and fix. Harbor commit
+`5f0353d32868842f93d97db1cd42b272309633e4` renders the stored string directly
+in those three views and adds route regressions with a populated billing date.
+The full Harbor suite passes **326/326** tests. Ruff is unavailable in the
+environment.
+
+The Release 9 Rocky cell passed Golden with real MinIO backup and restore,
+Harbor Web and integral workflows, isolation, browser checks, API security,
+and final service audit; it failed only at the subscriptions page. No other
+Release 9 OS or topology was run, so Harbor has not completed its full runtime
+matrix. The coordinated package candidate has moved to Release 10 and must be
+rebuilt and revalidated from clean guests across the entire matrix. No real
+PayPal endpoint was contacted; the local mock workflow remains in scope.

@@ -5,7 +5,7 @@
 
 Name:    admiral-common
 Version: 0.0.1rc5
-Release: 8%{?dist}
+Release: 10%{?dist}
 Summary: Common files and utilities for Admiral PaaS
 
 License: Apache-2.0
@@ -191,6 +191,9 @@ if [ "$1" -eq 0 ]; then
 fi
 
 %changelog
+* Fri Oct 02 2026 Codex <codex@openai.com> - 0.0.1rc5-9
+- Rebuild all six RC5 RPMs after adding bounded database readiness before backups
+
 * Thu Oct 01 2026 Codex <codex@openai.com> - 0.0.1rc5-8
 - Rebuild the coordinated RC5 RPM set with clean-install fixes
 

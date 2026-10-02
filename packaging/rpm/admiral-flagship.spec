@@ -6,7 +6,7 @@
 
 Name:    admiral-flagship
 Version: 0.0.1rc5
-Release: 8%{?dist}
+Release: 10%{?dist}
 Summary: Admiral Administrative Web Console
 
 License: Apache-2.0
@@ -83,6 +83,9 @@ restorecon -R %{_prefix}/lib/admiral/flagship 2>/dev/null || :
 %{python3} -m pytest tests/ -x --tb=short
 
 %changelog
+* Fri Oct 02 2026 Codex <codex@openai.com> - 0.0.1rc5-9
+- Rebuild all six RC5 RPMs after adding bounded database readiness before backups
+
 * Thu Oct 01 2026 Codex <codex@openai.com> - 0.0.1rc5-8
 - Rebuild the coordinated RC5 RPM set with clean-install fixes
 

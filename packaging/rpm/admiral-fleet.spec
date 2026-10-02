@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 %global debug_package %{nil}
-%global commit 1b047c66abdf305ac471f924eda1f8112b5d0335
+%global commit 67264462bb1d7bd566bc8f2e6743399b0033a8c7
 
 %ifarch x86_64
 %global admiral_goarch amd64
@@ -15,7 +15,7 @@
 
 Name:    admiral-fleet
 Version: 0.0.1rc5
-Release: 8%{?dist}
+Release: 10%{?dist}
 Summary: Admiral Fleet Worker Agent
 
 License: Apache-2.0
@@ -112,6 +112,9 @@ loginctl enable-linger admiral-apps 2>/dev/null || :
 %systemd_postun_with_restart admiral-fleet.service
 
 %changelog
+* Fri Oct 02 2026 Codex <codex@openai.com> - 0.0.1rc5-9
+- Rebuild all six RC5 RPMs after adding bounded database readiness before backups
+
 * Thu Oct 01 2026 Codex <codex@openai.com> - 0.0.1rc5-8
 - Rebuild the coordinated RC5 RPM set with clean-install fixes
 
