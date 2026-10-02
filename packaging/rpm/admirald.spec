@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 %global debug_package %{nil}
-%global commit 4ae5a7fdfe26a233f518163c0ae58bb95848cd24
+%global commit 6e6080ff18003f6589ef9df9d36e063520af267b
 
 %ifarch x86_64
 %global admiral_goarch amd64
@@ -15,7 +15,7 @@
 
 Name:    admirald
 Version: 0.0.1rc5
-Release: 12%{?dist}
+Release: 15%{?dist}
 Summary: Admiral Control Plane - Core API and orchestration service
 
 License: Apache-2.0
@@ -92,6 +92,15 @@ restorecon -F %{_bindir}/admirald 2>/dev/null || :
 %systemd_postun_with_restart admirald.service
 
 %changelog
+* Fri Oct 02 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc5-15
+- Rebuild coordinated RC5 set after fixing Fleet token status selection
+
+* Fri Oct 02 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc5-14
+- Rebuild coordinated RC5 set after Fleet heartbeat readiness fix
+
+* Fri Oct 02 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc5-13
+- Dispatch and validate Harbor backup restores; require live Fleet storage executor
+
 * Fri Oct 02 2026 Codex <codex@openai.com> - 0.0.1rc5-9
 - Rebuild all six RC5 RPMs after adding bounded database readiness before backups
 
