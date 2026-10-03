@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 %global debug_package %{nil}
-%global commit 8b1dcf9dd903d761286275d5cf2586e49326dd13
+%global commit 83cc2fad847afdb1935070f32e257c9bdb7fac19
 
 %ifarch x86_64
 %global admiral_goarch amd64
@@ -15,7 +15,7 @@
 
 Name:    admiral-fleet
 Version: 0.0.1rc5
-Release: 18%{?dist}
+Release: 19%{?dist}
 Summary: Admiral Fleet Worker Agent
 
 License: Apache-2.0
@@ -24,7 +24,7 @@ URL:     https://github.com/admiral-project/admiral-fleet
 Source0: https://github.com/admiral-project/admiral-fleet/archive/%{commit}.tar.gz
 Source1: admiral-fleet.service
 Source2: fleet.env
-Source3: https://github.com/admiral-project/admirald/archive/6e6080ff18003f6589ef9df9d36e063520af267b.tar.gz
+Source3: https://github.com/admiral-project/admirald/archive/d53681ca3335f41d6681195734fa70c78c9b30bb.tar.gz
 
 BuildRequires: golang >= 1.26.5
 BuildRequires: binutils
