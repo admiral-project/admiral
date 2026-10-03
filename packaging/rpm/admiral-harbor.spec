@@ -3,7 +3,7 @@
 
 Name:    admiral-harbor
 Version: 0.0.1rc5
-Release: 19%{?dist}
+Release: 26%{?dist}
 Summary: Admiral Customer Portal - Web UI for end users
 
 License: Apache-2.0
@@ -131,6 +131,12 @@ restorecon -R %{_localstatedir}/lib/admiral/harbor 2>/dev/null || :
 %{python3} -m pytest tests/ -x --tb=short
 
 %changelog
+* Sat Oct 03 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc5-25
+- Rebuild coordinated RC5 RPMs with Fleet rootless restore CA handoff fix
+
+* Sat Oct 03 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc5-23
+- Rebuild coordinated RC5 RPMs with Fleet Harbor restore trust fix
+
 * Fri Oct 02 2026 Codex <codex@openai.com> - 0.0.1rc5-18
 - Rebuild the coordinated RC5 set with Fleet version telemetry fix
 

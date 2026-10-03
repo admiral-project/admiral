@@ -5,7 +5,7 @@
 
 Name:    admiral-common
 Version: 0.0.1rc5
-Release: 19%{?dist}
+Release: 26%{?dist}
 Summary: Common files and utilities for Admiral PaaS
 
 License: Apache-2.0
@@ -191,6 +191,12 @@ if [ "$1" -eq 0 ]; then
 fi
 
 %changelog
+* Sat Oct 03 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc5-25
+- Rebuild coordinated RC5 RPMs with Fleet rootless restore CA handoff fix
+
+* Sat Oct 03 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc5-23
+- Rebuild coordinated RC5 RPMs with Fleet Harbor restore trust fix
+
 * Fri Oct 02 2026 Codex <codex@openai.com> - 0.0.1rc5-18
 - Rebuild the coordinated RC5 set with Fleet version telemetry fix
 
