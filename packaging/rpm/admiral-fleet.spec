@@ -15,7 +15,7 @@
 
 Name:    admiral-fleet
 Version: 0.0.1rc5
-Release: 26%{?dist}
+Release: 27%{?dist}
 Summary: Admiral Fleet Worker Agent
 
 License: Apache-2.0
@@ -24,7 +24,7 @@ URL:     https://github.com/admiral-project/admiral-fleet
 Source0: https://github.com/admiral-project/admiral-fleet/archive/%{commit}.tar.gz
 Source1: admiral-fleet.service
 Source2: fleet.env
-Source3: https://github.com/admiral-project/admirald/archive/bffeddf3c25e9cecce42b50c5ecbfcf5c61b2f2d.tar.gz
+Source3: https://github.com/admiral-project/admirald/archive/f1f41c3c891e15b541facd79f0e4dedcc74d7082.tar.gz
 
 BuildRequires: golang >= 1.26.5
 BuildRequires: binutils
