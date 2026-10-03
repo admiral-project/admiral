@@ -440,6 +440,14 @@ done
 
         self.assertIn("Remove development mode override on secure reconciliation", admirald)
         self.assertIn("Remove legacy admiral-flagship systemd override", flagship)
+        self.assertIn(
+            "path: /etc/systemd/system/admiral-flagship.service.d/override.conf",
+            flagship,
+        )
+        self.assertNotIn(
+            "path: /etc/systemd/system/admiral-flagship.service.d\n    state: absent",
+            flagship,
+        )
         self.assertIn("40000-49999/tcp", firewall)
         self.assertIn("difference(admiral_allowed_public_ports)", firewall)
 

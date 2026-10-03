@@ -40,7 +40,7 @@
 
 - name: Remove legacy admiral-flagship systemd override
   file:
-    path: /etc/systemd/system/admiral-flagship.service.d
+    path: /etc/systemd/system/admiral-flagship.service.d/override.conf
     state: absent
   when: not (admiral_dev_mode | default(false) | bool)
   notify: restart admiral-flagship
