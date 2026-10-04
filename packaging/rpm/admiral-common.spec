@@ -1,11 +1,11 @@
 # SPDX-FileCopyrightText: William Moreno Reyes CP | MBA
 # SPDX-License-Identifier: Apache-2.0
 
-%global commit 21b6a8bbfd9142b7276776cb91f88ecf3180cab2
+%global commit 8d9d667ff834d94c7c87fc98b05525e2392b63b4
 
 Name:    admiral-common
 Version: 0.0.1rc5
-Release: 28%{?dist}
+Release: 30%{?dist}
 Summary: Common files and utilities for Admiral PaaS
 
 License: Apache-2.0
@@ -191,6 +191,12 @@ if [ "$1" -eq 0 ]; then
 fi
 
 %changelog
+* Sun Oct 04 2026 Codex <codex@openai.com> - 0.0.1rc5-30
+- Preserve packaged Harbor systemd drop-in directory permissions
+
+* Sun Oct 04 2026 Codex <codex@openai.com> - 0.0.1rc5-29
+- Preserve cancelled Harbor subscription status during reconciliation
+
 * Sun Oct 04 2026 Codex <codex@openai.com> - 0.0.1rc5-28
 - Fix admin-portal Harbor reachability over WireGuard in star mode
 

@@ -1,9 +1,9 @@
 %global debug_package %{nil}
-%global commit f31279543cc44eb1cc93dd4f63f34213314b346d
+%global commit 5149c5f2dd1f5ef4d40ae5c64df4e45f44936918
 
 Name:    admiral-harbor
 Version: 0.0.1rc5
-Release: 28%{?dist}
+Release: 30%{?dist}
 Summary: Admiral Customer Portal - Web UI for end users
 
 License: Apache-2.0
@@ -131,6 +131,12 @@ restorecon -R %{_localstatedir}/lib/admiral/harbor 2>/dev/null || :
 %{python3} -m pytest tests/ -x --tb=short
 
 %changelog
+* Sun Oct 04 2026 Codex <codex@openai.com> - 0.0.1rc5-30
+- Rebuild coordinated RC5 RPMs with Harbor packaging permission fix
+
+* Sun Oct 04 2026 Codex <codex@openai.com> - 0.0.1rc5-29
+- Preserve cancelled Harbor subscription status during reconciliation
+
 * Sun Oct 04 2026 Codex <codex@openai.com> - 0.0.1rc5-28
 - Fix admin-portal Harbor reachability over WireGuard in star mode
 

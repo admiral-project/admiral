@@ -6,7 +6,7 @@
 
 Name:    admiral-flagship
 Version: 0.0.1rc5
-Release: 28%{?dist}
+Release: 30%{?dist}
 Summary: Admiral Administrative Web Console
 
 License: Apache-2.0
@@ -83,6 +83,12 @@ restorecon -R %{_prefix}/lib/admiral/flagship 2>/dev/null || :
 %{python3} -m pytest tests/ -x --tb=short
 
 %changelog
+* Sun Oct 04 2026 Codex <codex@openai.com> - 0.0.1rc5-30
+- Rebuild coordinated RC5 RPMs with Harbor packaging permission fix
+
+* Sun Oct 04 2026 Codex <codex@openai.com> - 0.0.1rc5-29
+- Rebuild coordinated RC5 RPMs with Harbor cancellation-state fix
+
 * Sun Oct 04 2026 Codex <codex@openai.com> - 0.0.1rc5-28
 - Fix admin-portal Harbor reachability over WireGuard in star mode
 

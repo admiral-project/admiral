@@ -15,7 +15,7 @@
 
 Name:    admiral-fleet
 Version: 0.0.1rc5
-Release: 28%{?dist}
+Release: 30%{?dist}
 Summary: Admiral Fleet Worker Agent
 
 License: Apache-2.0
@@ -112,6 +112,12 @@ loginctl enable-linger admiral-apps 2>/dev/null || :
 %systemd_postun_with_restart admiral-fleet.service
 
 %changelog
+* Sun Oct 04 2026 Codex <codex@openai.com> - 0.0.1rc5-30
+- Rebuild coordinated RC5 RPMs with Harbor packaging permission fix
+
+* Sun Oct 04 2026 Codex <codex@openai.com> - 0.0.1rc5-29
+- Rebuild coordinated RC5 RPMs with Harbor cancellation-state fix
+
 * Sun Oct 04 2026 Codex <codex@openai.com> - 0.0.1rc5-28
 - Fix admin-portal Harbor reachability over WireGuard in star mode
 

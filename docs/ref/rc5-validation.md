@@ -2,9 +2,390 @@
 
 ## Status
 
-**IN PROGRESS — RC5 Release 26 is the active candidate. All six RPMs built and passed packaged tests for x86_64 and aarch64. All 12 RPMs are signed and pass `rpm -Kv`; NEVRA and SHA-256 values are recorded in the R26 manifest. The local repositories are served at `http://192.168.125.1/rc5-r26/el10/{x86_64,aarch64}/`. Release 25 exposed a resume failure when no Podman pod exists; Fleet fix `2cc434a35ed606c7390a64e7a228d9ca7ba038f6` is included in Release 26 and its two Rocky regression paths pass. Runtime validation is reset to 0/10. Three EL10 guests are online with Release 26 installed; their single-node cells remain incomplete. Fedora and all multi-node cells remain pending.**
+**RC5: NO PASS (declared 2026-10-04). Validation is stopped. Release 30 built and passed package checks for x86_64 and aarch64. Its installer completed on Rocky 10, AlmaLinux 10, and Fedora Rawhide, but no full runtime cell was completed; the R30 matrix is 0/10. All three R30 VMs are shut down. Issue #191's fix is committed locally as `8d9d667`, but its required post-install `rpm -V` and second-reconciliation checks were not completed. Do not describe RC5 as release-validated.**
 
-### Release 26 — active candidate; runtime matrix reset
+### Open issue register and proposed fixes
+
+Every open product issue below has a reproduction and proposed resolution
+recorded in its linked GitHub issue. The fixes listed here summarize those
+proposals; open status means the required packaged/runtime acceptance evidence
+is incomplete or the item remains a separate release gate. Issues #188 and
+#189 were closed after their targeted packaged checks passed; see their
+historical release sections below. Closed harness issues are excluded.
+
+| Issue | Problem and proposed fix | Status |
+|---|---|---|
+| [#191](https://github.com/admiral-project/admiral/issues/191) | Harbor's Ansible task changes the RPM-owned systemd drop-in directory from `0750` to `0755`. Keep the task at `0750`; verify clean `rpm -V` after first install and second reconciliation on Rocky, Alma, and CentOS. | Open; code committed, R30 runtime audit incomplete |
+| [#190](https://github.com/admiral-project/admiral/issues/190) | Harbor sync overwrites a locally cancelled subscription's commercial state. Preserve cancellation through the prepaid end date while still syncing technical/storage state; test before and after the due date and prevent duplicate deprovision. | Open; fix is in Harbor validation pin, packaged acceptance incomplete |
+| [#182](https://github.com/admiral-project/admiral/issues/182) | Fleet blocks authenticated uploaded-backup restores from Harbor's private WireGuard origin. Trust only an explicitly configured Harbor origin with TLS, DNS/IP, and redirect checks; retain rejection of arbitrary private URLs and add positive/negative integration tests. | Open; packaged restore acceptance incomplete |
+| [#181](https://github.com/admiral-project/admiral/issues/181) | Customer backup/restore requests bypass tier permissions. Enforce backup and restore flags in Admirald before creating an operation; return a clear denial and persist no work for denied requests. | Open; persisted-policy packaged acceptance incomplete |
+| [#167](https://github.com/admiral-project/admiral/issues/167) | Fleet API requests time out during worker setup over WireGuard. Diagnose handshake, route, listener, firewall, and authenticated API separately; fix only the failed path, keep API peer/token restrictions, and require a current heartbeat before installer success. | Open; multi-node packaged acceptance incomplete |
+| [#155](https://github.com/admiral-project/admiral/issues/155) | Harbor's internal-token client paths conflict with least-privilege service configuration. Keep the admin token out of Harbor, use customer-scoped routes for customer flows, and move operator-only storage inspection to a privileged validation context. | Open; installed-release acceptance incomplete |
+| [#153](https://github.com/admiral-project/admiral/issues/153) | Harbor cannot list backups with its scoped token. Add customer-scoped backup list/read routes bound to customer identity and instance ownership; retain the operator endpoint and test owner and cross-customer access. | Open; restore acceptance incomplete |
+| [#150](https://github.com/admiral-project/admiral/issues/150) | Subscription pages call `strftime()` on a stored ISO date. Render the stored date string directly and add route tests for customer list/detail and admin detail. | Open; installed mock-checkout acceptance incomplete |
+| [#144](https://github.com/admiral-project/admiral/issues/144) | Mock checkout redirects to the wrong host on a clean install. Derive the effective Harbor URL from installer configuration, use it for mock approval, and test approval through provisioning on a clean RPM install. | Open; installed checkout acceptance incomplete |
+| [#143](https://github.com/admiral-project/admiral/issues/143) | The control-plane backup unit fails because its state directory is absent before systemd sets up the namespace. Use `StateDirectory=admiral/control-plane-backups` with mode `0700`; test a clean unit start and MinIO artifact. | Open; recovery-backup acceptance incomplete |
+| [#141](https://github.com/admiral-project/admiral/issues/141) | AArch64 CLI package checks try to execute a foreign-architecture binary on x86_64. Run tests with a native temporary binary and inspect the target ELF with `readelf`; verify both architecture builds. | Open; build/package acceptance incomplete |
+| [#140](https://github.com/admiral-project/admiral/issues/140) | Rawhide portal certificates omit authority/key identifiers. Add `subjectKeyIdentifier=hash` and `authorityKeyIdentifier=keyid,issuer`; verify the packaged multi-node portal flow with strict TLS. | Open; Rawhide runtime acceptance incomplete |
+| [#139](https://github.com/admiral-project/admiral/issues/139) | Fedora 44 worker setup samples chrony before clock convergence. Keep the check strict but retry for up to 60 seconds; test delayed convergence and persistent failure. | Open; Fedora multi-node acceptance incomplete |
+| [#138](https://github.com/admiral-project/admiral/issues/138) | The Harbor worker omits the documented SMTP environment file. Load optional `/etc/admiral/harbor.smtp.env` in the worker unit and verify authenticated, certificate-checked delivery and retry behavior. | Open; actual packaged email delivery unverified |
+| [#137](https://github.com/admiral-project/admiral/issues/137) | Harbor cannot associate a provisioned instance using its scoped token. Return `instance_id` in the customer provisioning response and have Harbor consume it; keep the operations API operator-only and test free/paid provisioning and replay. | Open; packaged checkout acceptance incomplete |
+| [#136](https://github.com/admiral-project/admiral/issues/136) | Harbor's support page omits replies and conversation history. Render public conversation entries and a CSRF-protected reply form; retain ownership checks, escape content, and keep internal notes private. | Open; installed-browser acceptance incomplete |
+| [#135](https://github.com/admiral-project/admiral/issues/135) | The RC5 CLI RPM reports RC4. Point the linker flag at `internal/version.Version` and assert the packaged `admiralctl version` matches the RPM version. | Open; installed-package acceptance incomplete |
+| [#133](https://github.com/admiral-project/admiral/issues/133) | Catalog sync cannot read PostgreSQL's certificate under `ProtectHome=true`. Set `ProtectHome=read-only` for the packaged units and verify the timer/oneshot on all target OSes without disabling TLS. | Open; installed-service acceptance incomplete |
+| [#106](https://github.com/admiral-project/admiral/issues/106) | PayPal sandbox E2E is an alpha acceptance gate rather than a code defect. Complete and document sandbox checkout, signed/fresh/idempotent webhook, provisioning, lifecycle, cancellation, and refund using sandbox credentials only. | Open; external-provider gate not run |
+
+The issue tracker remains authoritative for full reproductions and proposed
+patch details. This register records every currently open non-harness issue
+so the release report does not imply that an open issue is resolved merely
+because a candidate contains a proposed fix.
+
+### Release 30 — final candidate; RC5 declared no pass
+
+Release 29 installation audits on Rocky 10, AlmaLinux 10, and CentOS Stream
+10 found that the Harbor playbook changed the RPM-owned systemd drop-in
+directory from `0750 root:admiral` to `0755`. `rpm -V admiral-harbor` showed
+the mode mismatch on all three systems after the packaged installer ran.
+Issue [#191](https://github.com/admiral-project/admiral/issues/191) records
+the reproduction and proposed fix: preserve `0750` in the playbook. The fix
+is local root commit `8d9d667ff834d94c7c87fc98b05525e2392b63b4` and the issue
+includes the proposal comment.
+
+Before the R30 build, the root repository and all five component submodules
+were fetched and compared with `origin/main`. The selected commits and
+reasons for retaining the RC5 validation pins are in
+[`rc5-r30/source-comparison.tsv`](../../packaging/build/validation/rc5-r30/source-comparison.tsv).
+All six Admiral RPM specs use `Release: 30`; exact common and component
+references are pinned in the Makefile/specs, and
+`python3 scripts/validate-release-refs.py` passes. Both x86_64 and aarch64
+builds and packaged tests passed, including 266 Flagship tests and 334 Harbor
+tests per architecture. Build logs are in
+[`rc5-r30/`](../../packaging/build/validation/rc5-r30/).
+
+The official installer completed on the fresh Rocky 10, AlmaLinux 10, and
+Fedora Rawhide single-node guests using the signed R30 RPMs. The three guests
+were stopped at the user's request before package audits and functional
+acceptance gates were completed. No complete R30 cell passed; matrix status
+is **0/10**. The candidate's RPM manifest, architecture builds, and installer
+logs remain in `rc5-r30/`. The user declared RC5 no pass and stopped runtime
+validation; no further guests are to be started for this candidate.
+
+| OS (x86_64) | Single-node | Star multi-node |
+|---|---|---|
+| Rocky Linux 10 | PENDING | PENDING |
+| AlmaLinux 10 | PENDING | PENDING |
+| CentOS Stream 10 | PENDING | PENDING |
+| Fedora 44 | PENDING | PENDING |
+| Fedora Rawhide | PENDING | PENDING |
+
+### Release 29 — superseded by Harbor package permission mismatch
+
+R28 Rocky 10 star testing found that Harbor's worker copied Admirald's
+`commercial_status=active` over the local cancellation state for a customer
+with a cancelled, prepaid subscription. The workload remained available,
+but Harbor changed the subscription-facing app status back to `active`. The
+reproduction and proposed fix are tracked in
+[#190](https://github.com/admiral-project/admiral/issues/190), with the
+proposal recorded in [the issue comment](https://github.com/admiral-project/admiral/issues/190#issuecomment-5975783258).
+Harbor commit `5149c5f2dd1f5ef4d40ae5c64df4e45f44936918` preserves local
+cancellation when the latest linked subscription is cancelled, while
+continuing to synchronize technical and storage state. A regression test
+covers an active remote workload and cancelled local subscription.
+
+All five component submodules were fetched and compared with the latest
+`origin/main` before building. Release-specific selections and evidence are
+recorded in
+[`source-comparison.tsv`](../../packaging/build/validation/rc5-r29/source-comparison.tsv);
+exact selected SHAs are pinned in the root Makefile and corresponding RPM
+specs. `python3 scripts/validate-release-refs.py` passed. All six specs use
+`Release: 29`.
+
+The x86_64 native build and aarch64 target build both completed with package
+tests enabled. Admirald, Fleet, and Admiralctl package checks passed;
+Flagship passed 266 tests and Harbor passed 334 tests on each build. The nine
+unique RPM artifacts were signed with the local RC5 validation key
+`31F479ABCE0CB4970A07C0D30271327D26F5D11C`. All 12 RPMs across the two
+architecture repositories pass `rpm -Kv`, including header and payload
+digests. The served repository metadata and a served Harbor RPM were fetched
+back and verified against the candidate. Logs and artifact records are in
+[`rc5-r29/`](../../packaging/build/validation/rc5-r29/), including
+[`rpm-manifest.tsv`](../../packaging/build/validation/rc5-r29/rpm-manifest.tsv),
+[`rpm-verify.log`](../../packaging/build/validation/rc5-r29/rpm-verify.log),
+and the x86_64/aarch64 build logs.
+
+Release 29 runtime matrix: **0/10 passed**. R28 runtime work is historical
+because Release 29 changed the Harbor RPM. No R29 cell completed. Rocky,
+AlmaLinux, and CentOS Stream single-node installer runs completed, but their
+package audits exposed #191. Their VMs and overlays were removed after logs
+were preserved; the release 30 build invalidates all R29 runtime evidence.
+
+| OS (x86_64) | Single-node | Star multi-node |
+|---|---|---|
+| Rocky Linux 10 | PENDING | PENDING |
+| AlmaLinux 10 | PENDING | PENDING |
+| CentOS Stream 10 | PENDING | PENDING |
+| Fedora 44 | PENDING | PENDING |
+| Fedora Rawhide | PENDING | PENDING |
+
+The R28 Rocky star reproduction and cleanup logs remain in
+[`rc5-r28/vms/`](../../packaging/build/validation/rc5-r28/vms/). No R28 cell
+counts toward Release 29.
+
+### Release 28 — superseded by Harbor cancellation-state defect
+
+Release 27 star validation found that `--admin-portal-node` bound Harbor only
+to loopback even though Admirald and remote workers address the co-located
+portal through WireGuard. The reproduction and proposed fix are tracked in
+[#189](https://github.com/admiral-project/admiral/issues/189). The fix is in
+root commit `21b6a8bbfd9142b7276776cb91f88ecf3180cab2`: admin-portal Harbor
+now binds to the hub WireGuard IP in star mode, the restricted WireGuard zone
+allows TCP/5001 from Admiral peers, and single-node mode remains loopback-only.
+The Ansible tasks assert the mode-specific bind and firewall rule. The
+candidate's common source is pinned to that commit; all five component pins
+were fetched and compared with `origin/main` before rebuilding. Their exact
+selection evidence is in
+[`source-comparison.tsv`](../../packaging/build/validation/rc5-r28/source-comparison.tsv).
+`python3 scripts/validate-release-refs.py` passed.
+
+All six RPMs use `Release: 28`. The native x86_64 build and aarch64 cross-build
+passed their packaged checks: Admirald, Fleet, and Admiralctl Go checks; 266
+Flagship tests; and 333 Harbor tests. The local R27 validation signing key
+`31F479ABCE0CB4970A07C0D30271327D26F5D11C` signed the nine unique artifacts;
+all 12 architecture-repository RPMs pass signature, header digest, and
+payload digest verification. The manifest and checksums are in
+[`rpm-manifest.tsv`](../../packaging/build/validation/rc5-r28/rpm-manifest.tsv),
+[`repo-candidate/rpm-manifest.tsv`](../../packaging/build/validation/rc5-r28/repo-candidate/rpm-manifest.tsv),
+and [`repo-candidate/SHA256SUMS`](../../packaging/build/validation/rc5-r28/repo-candidate/SHA256SUMS).
+The served R28 repositories and signing key were fetched over HTTP and match
+the candidate files.
+
+Release 28 runtime matrix: **0/10 passed** at candidate start. All R27
+runtime results were historical because R28 contained rebuilt RPMs. The
+matrix used fresh x86_64 guests, with at most three 2-GiB VMs online:
+
+| OS (x86_64) | Single-node | Star multi-node |
+|---|---|---|
+| Rocky Linux 10 | PENDING | **FAIL — Harbor cancellation state reverted during worker sync; issue #190** |
+| AlmaLinux 10 | PENDING | PENDING |
+| CentOS Stream 10 | PENDING | PENDING |
+| Fedora 44 | PENDING | PENDING |
+| Fedora Rawhide | PENDING | PENDING |
+
+R28 Rocky 10 star validation failed at the Harbor cancellation lifecycle gate;
+the complete matrix remained **0/10 passed**. The clean 10.2 hub
+and two workers installed the six R28 RPMs from the local repository. The hub
+reports healthy control plane and portal nodes; both workers have current
+healthy heartbeats and WireGuard handshakes. All three guests remain SELinux
+Enforcing. Harbor is bound to `10.99.0.1:5001`, its health/readiness endpoints
+return HTTP 200 from both workers over WireGuard, and the restricted Admiral
+firewalld zone permits TCP/5001 and TCP/8080 from `10.99.0.0/24`.
+
+On the Rocky star workers, three WordPress workloads reached running/healthy.
+The customer-owned Harbor instance on worker1 completed a mock checkout and
+provisioning, Harbor-requested database and volume backups, customer uploads
+and downloads of both backup types, and uploaded database and volume restores
+while paused. The downloaded DB and volume archives matched their source
+SHA-256 values (`26ab767f…83755f` and `071c6a9c…f3bc2e33`); after resume, the
+database marker was `rc5-r28-rocky-star-before`, the volume marker matched
+`e9481be5…68948e`, and the application returned HTTP 200. Harbor customer
+instance, billing, and support routes returned HTTP 200; a customer support
+ticket was visible in the authenticated admin ticket list/detail. The
+temporary local PayPal mock override was removed afterward; Harbor restarted
+in its packaged configuration and WireGuard health returned HTTP 200.
+Flagship's direct TLS health endpoint returned HTTP 200. Harbor rejected an
+unauthenticated customer API request with HTTP 401 and redirected the
+unauthenticated customer portal to login (HTTP 302). A customer backup POST
+without a CSRF token returned HTTP 403 and queued no operation. The public
+firewall zone does not expose ports 5001 or 8080.
+
+The encrypted control-plane backup command also completed and uploaded
+`control-plane/20261004T015843Z.tar.gz.gpg`; its local SHA-256 matches the
+generated `.sha256` record. Downloading the MinIO object returned the same
+SHA-256; object metadata reports AES256 encryption and GOVERNANCE retention
+through 2026-11-03. Catalog sync was repeated without creating duplicate
+entries (`0 new, 1 updated, 0 marked missing`); with Admirald briefly stopped,
+Harbor preserved and served its existing catalog, then sync succeeded after
+Admirald restarted. A second customer registered, was approved, logged in,
+and loaded the profile; after logout the portal redirected to login. That
+customer received HTTP 404 with no private content when requesting the first
+customer's instance, support ticket, and uploaded backup. The first
+local mock webhook rejected a bad token with HTTP 403, accepted activation,
+and treated its replay as a duplicate. A correctly priced USD 5.00 sale
+created exactly one billing event, invoice, and payment; its replay created
+none, while a wrong-amount/wrong-currency sale returned HTTP 409 and stored
+no billing event. Both paid receipts returned HTTP 200 and showed status
+`paid`. Customer cancellation persisted the `cancelled` state, the prepaid
+end date (`2026-11-03`), and an audit entry. The Harbor worker then completed
+with zero errors and reconciled three completed restore requests. The live-app
+prepaid-period check still needs to prove the workload remains available until
+that date.
+
+The first
+`dnf-makecache.service` run failed on a Rocky mirror TLS certificate error;
+restarting the distro cache service succeeded with TLS verification intact,
+and all three guests now have no failed units. Remaining acceptance checks
+include a live prepaid-period check, overdue reconciliation, pending-task
+restart recovery, app update/restart, final matrix-cell audit, and recording
+the issue #189 result. Direct command evidence is being collected in
+`packaging/build/validation/rc5-r28/vms/`.
+
+At the latest host check before VM startup, no guests were running, 5.9 GiB
+memory was available, 7.6 GiB swap was free, and 147 GiB disk space was free.
+The R28 package build logs are `build-x86_64.log` and `build-aarch64.log` in
+`packaging/build/validation/rc5-r28/`.
+
+### Release 27 — superseded; Rocky star portal reachability failure
+
+Release 26 testing found that the single-node portal health monitor tried
+`10.99.0.1:5001` before falling back to the working local portal endpoint.
+The R26 reproduction and R27 implementation are tracked in
+[#188](https://github.com/admiral-project/admiral/issues/188). Admirald commit
+`f1f41c3c891e15b541facd79f0e4dedcc74d7082` selects only `127.0.0.1` in
+single-node mode and preserves the WireGuard target in multi-node mode. Its
+table-driven address-selection tests pass; `go test ./...` and `go vet ./...`
+both passed before packaging.
+
+Before rebuilding, all five component submodules were fetched and compared
+with their latest `origin/main` commits:
+
+| Component | R27 SHA | `origin/main` SHA | Selection evidence |
+|---|---|---|---|
+| admirald | `f1f41c3c891e15b541facd79f0e4dedcc74d7082` | `e94d82011cca4197c58f0c294aa1c391b58b3c00` | Keep the RC5 validation chain with backup/restore, cleanup, and Harbor fixes plus the R27 health-monitor fix. |
+| admiral-fleet | `2cc434a35ed606c7390a64e7a228d9ca7ba038f6` | `1b047c66abdf305ac471f924eda1f8112b5d0335` | Keep the validation pin containing current RC5 restore and resume fixes. |
+| admiralctl | `68551d9398c32417f2b374ece074c2a1ab6f4d45` | `98bf7ff26bdec0313320af1a885f932389feba13` | Keep the validation pin containing storage-test completion waiting. |
+| admiral-flagship | `c21c81b7b95d7f44d8c878f6067ff178af065feb` | `c21c81b7b95d7f44d8c878f6067ff178af065feb` | Matches main. |
+| admiral-harbor | `f31279543cc44eb1cc93dd4f63f34213314b346d` | `fc7dc38bbdb741fce98607b4e8aa34aa432968ac` | Keep the validation pin with customer-scoped backup and checkout fixes. |
+
+The common RPM source remains pinned to `9ba8724d800f2213ae5b7f6f01e5cd6817142402`.
+The root Makefile and RPM specs pin these exact source revisions, including
+Admirald's new R27 commit. `python3 scripts/validate-release-refs.py` passed.
+All six Admiral RPM specs use `Release: 27`.
+
+The complete six-package build and packaged checks passed on x86_64 and
+aarch64. Admirald, Fleet, and Admiralctl Go tests passed; Flagship passed 266
+tests and Harbor passed 333 tests on both builds. The nine unique RPM files
+were signed with the local R27 validation key
+`31F479ABCE0CB4970A07C0D30271327D26F5D11C`; all 12 architecture-repository
+artifacts pass `rpm -Kv`. The prior validation key's public certificate was
+available but its private key was not present on this host, so R27 uses a new
+local-only key that must be imported by each fresh test guest. Both local
+repository metadata endpoints and the key were fetched over HTTP; a fetched
+RPM's SHA-256 matched the candidate file.
+
+The Release 27 candidate repository and manifest are at
+[`packaging/build/validation/rc5-r27/repo-candidate/`](../../packaging/build/validation/rc5-r27/repo-candidate/), with
+[`rpm-manifest.tsv`](../../packaging/build/validation/rc5-r27/repo-candidate/rpm-manifest.tsv)
+and [`SHA256SUMS`](../../packaging/build/validation/rc5-r27/repo-candidate/SHA256SUMS).
+
+Release 27 had five single-node cells pass before Rocky star failed. R26 and
+earlier results did not count toward R27, and no R27 results count toward
+Release 28. The star matrix at the time of the failure was:
+
+| OS (x86_64) | Single-node | Star multi-node |
+|---|---|---|
+| Rocky Linux 10 | PASS | **FAIL — co-located Harbor unreachable on WireGuard** |
+| AlmaLinux 10 | PASS | NOT STARTED |
+| CentOS Stream 10 | PASS | NOT STARTED |
+| Fedora 44 | PASS | NOT STARTED |
+| Fedora Rawhide | PASS | NOT STARTED |
+
+The three clean Release 27 EL10 guests have all six x86_64 RPMs installed, all
+required Admiral services active, SELinux Enforcing, `admiralctl status`
+healthy, and zero failed systemd units. The RPM-provided installer
+reconciliation completed on all three with zero failed or unreachable tasks.
+On each OS, the Golden lifecycle passed provisioning, database and volume
+backup/download/checksum/restore, marker verification, pause/resume, image
+update/restart, and cleanup. Harbor passed customer registration, admin
+approval, login, free catalog publishing/provisioning, customer and admin
+pages, support ticket/reply persistence, cross-customer isolation, CSRF and
+role checks, MinIO-backed customer backup, remote restore, uploaded-backup
+download/checksum/restore, worker processing, resume, and cleanup. The
+encrypted control-plane backup service also passed: each object was fetched
+from MinIO and matched the local SHA-256, AES256 encryption, and GOVERNANCE
+retention metadata. Issue #188's fixed single-node health monitor emitted no
+WireGuard-address probes on any EL10 guest. Per-OS logs are under
+`packaging/build/validation/rc5-r27/vms/`.
+
+R27 also exercised the denied customer-policy path on Rocky single-node using
+the Harbor API token and owner-scoped customer endpoints, bypassing portal
+button visibility. A disposable app with `manual_backups=false` and
+`restore_allowed=false` returned HTTP 403 for both customer backup and restore;
+neither request queued work. Cleanup succeeded. Evidence was added to
+[#181](https://github.com/admiral-project/admiral/issues/181#issuecomment-5974053334)
+and is in `rocky-single-customer-backup-policy-denial.log`. The issue remains
+open until the remaining R27 multi-node scope is validated.
+
+PayPal checkout and SMTP delivery remain excluded because they require external
+services. Harbor's scheduled control-plane backup timer is operator-enabled
+per the sysadmin guide; its one-shot backup service passed when run directly.
+Validation-fixture setup for MinIO was corrected without changing Admiral
+sources or RPMs; details are recorded in
+[`single-control-plane-backup-minio.log`](../../packaging/build/validation/rc5-r27/vms/single-control-plane-backup-minio.log).
+
+Fedora 44 single-node passed on a clean R27 x86_64 install. The official
+installer completed with zero failed/unreachable tasks. The customer Harbor
+path covered registration, approval, login, publication of the test free app,
+free provisioning, customer-requested database backups, pause, remote restore
+with a before/after marker, resume, healthy HTTP service, and cleanup. The
+control-plane backup oneshot completed and uploaded its encrypted artifact to
+MinIO. Final audit found all required services active, SELinux Enforcing, zero
+failed units, and no rootless workload containers or secrets. Evidence is in
+[`f44-single-package-install-audit.log`](../../packaging/build/validation/rc5-r27/vms/f44-single-package-install-audit.log),
+[`f44-single-golden-backup-restore.log`](../../packaging/build/validation/rc5-r27/vms/f44-single-golden-backup-restore.log),
+and [`f44-single-harbor-free-backup-restore.log`](../../packaging/build/validation/rc5-r27/vms/f44-single-harbor-free-backup-restore.log).
+The early fixture setup and readiness retries recovered without an Admiral
+source change; no issue or rebuild was required.
+
+Fedora Rawhide 46 single-node also passed on the R27 x86_64 candidate. The
+RPM history confirms all six Admiral packages were selected from the local
+`admiral-rc5-r27` repository. The packaged installer completed with
+`ok=238 changed=104 unreachable=0 failed=0`; all eight required services are
+active, `admiralctl status` is healthy, SELinux is Enforcing, and the final
+systemd failed-unit list is empty. Golden WordPress provisioning, MinIO-backed
+database and volume backups, checksum-verified restore, pause/resume, image
+update/restart, and cleanup succeeded. Both restore markers returned to their
+pre-backup values. Harbor registration, admin approval, login, free catalog
+publication and provisioning, customer-requested backup, pause, remote
+restore, resume, and healthy workload HTTP checks succeeded. A separate
+support-account test created a customer ticket, verified it in both customer
+and admin views, and persisted a customer reply. Flagship bootstrap login,
+profile, and authenticated dashboard returned HTTP 200. MinIO storage testing
+and the encrypted control-plane backup oneshot passed after reboot; the latter
+uploaded an artifact to the R27 test bucket. Both disposable instances
+deprovisioned successfully. The final rootless audit found zero containers,
+secrets, or Quadlet files. Evidence is in
+[`rawhide-single-package-install-audit.log`](../../packaging/build/validation/rc5-r27/vms/rawhide-single-package-install-audit.log),
+[`rawhide-single-operations.json`](../../packaging/build/validation/rc5-r27/vms/rawhide-single-operations.json),
+[`rawhide-single-backups.json`](../../packaging/build/validation/rc5-r27/vms/rawhide-single-backups.json),
+[`rawhide-single-minio-storage-test.log`](../../packaging/build/validation/rc5-r27/vms/rawhide-single-minio-storage-test.log),
+[`rawhide-single-control-plane-backup-minio.log`](../../packaging/build/validation/rc5-r27/vms/rawhide-single-control-plane-backup-minio.log),
+[`rawhide-single-harbor-support-flagship.log`](../../packaging/build/validation/rc5-r27/vms/rawhide-single-harbor-support-flagship.log),
+and [`rawhide-single-final-audit.log`](../../packaging/build/validation/rc5-r27/vms/rawhide-single-final-audit.log).
+The guest's stale SSH authorization key was repaired through NoCloud metadata
+after the workload gates; no Admiral RPM, source, or service configuration
+changed. The post-recovery service, storage, backup, and cleanup gates were
+repeated. No Admiral defect or rebuild was identified.
+
+Release 27 Rocky star result (2026-10-04): the clean Rocky 10.2 hub and two
+workers installed through the packaged installer. Both workers reached
+`healthy` with current Fleet heartbeats and metrics; both WireGuard handshakes
+were active. The co-located portal remained `unhealthy` with
+`service_unreachable`: Harbor listened only on `127.0.0.1:5001`, where its
+health endpoint returned HTTP 200, while Admirald probed `10.99.0.1:5001` and
+got connection refused. A direct Harbor request to the hub WireGuard address
+also failed. This is the supported `admin-portal-node` star profile, not an
+external-service dependency. Issue
+[#189](https://github.com/admiral-project/admiral/issues/189) records the
+reproduction and fix proposal. The local fix is in root commit
+`21b6a8bbfd9142b7276776cb91f88ecf3180cab2`; rebuilding it produced R28 and
+invalidated all R27 runtime passes. Evidence is in
+[`rocky-star-admin-portal-health-r27.log`](../../packaging/build/validation/rc5-r27/vms/rocky-star-admin-portal-health-r27.log),
+[`rocky-star-admin-installer.log`](../../packaging/build/validation/rc5-r27/vms/rocky-star-admin-installer.log),
+[`rocky-star-worker1-installer.log`](../../packaging/build/validation/rc5-r27/vms/rocky-star-worker1-installer.log),
+and [`rocky-star-worker2-installer.log`](../../packaging/build/validation/rc5-r27/vms/rocky-star-worker2-installer.log).
+No other R27 star cell was started.
+
+### Release 26 — superseded; runtime matrix invalidated by Release 27
 
 Release 25 Rocky 10.2 x86_64 validation found that resuming an instance with
 no Podman pod failed before the normal start path. Operation
