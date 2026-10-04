@@ -116,8 +116,8 @@ was deprovisioned. Harbor Web, the broader free provisioning/lifecycle/manual
 backup flow, customer isolation, Chromium, API security and final service audit
 passed in that cell. The paid failure stopped the extra workflow before its
 local webhook-ordering and upload/restore cases. No provider endpoint was
-contacted. RC5 Release 7 remains unvalidated; the CentOS evidence is recorded
-in the [RC5 validation report](rc5-validation.md).
+contacted. RC5 Release 7 remains unvalidated; the CentOS reproduction and
+proposed fix are recorded in [issue #144](https://github.com/admiral-project/admiral/issues/144).
 
 Release 7 is now superseded. The Release 8 Harbor source commit is pinned for
 the next coordinated RPM build; no Release 8 package has been built or
