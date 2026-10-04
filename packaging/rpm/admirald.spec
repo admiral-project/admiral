@@ -15,7 +15,7 @@
 
 Name:    admirald
 Version: 0.0.1rc5
-Release: 30%{?dist}
+Release: 31%{?dist}
 Summary: Admiral Control Plane - Core API and orchestration service
 
 License: Apache-2.0
@@ -92,6 +92,9 @@ restorecon -F %{_bindir}/admirald 2>/dev/null || :
 %systemd_postun_with_restart admirald.service
 
 %changelog
+* Sun Oct 04 2026 Codex <codex@openai.com> - 0.0.1rc5-31
+- Rebuild all six RC5 RPMs using the latest origin/main source pins
+
 * Sun Oct 04 2026 Codex <codex@openai.com> - 0.0.1rc5-30
 - Rebuild coordinated RC5 RPMs with Harbor packaging permission fix
 

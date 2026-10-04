@@ -15,7 +15,7 @@
 
 Name:    admiralctl
 Version: 0.0.1rc5
-Release: 30%{?dist}
+Release: 31%{?dist}
 Summary: Admiral Command-Line Interface
 
 License: Apache-2.0
@@ -88,6 +88,9 @@ test "$(./admiralctl version 2>&1)" = "admiralctl %{version}"
 restorecon -F %{_bindir}/admiralctl 2>/dev/null || :
 
 %changelog
+* Sun Oct 04 2026 Codex <codex@openai.com> - 0.0.1rc5-31
+- Rebuild all six RC5 RPMs using the latest origin/main source pins
+
 * Sun Oct 04 2026 Codex <codex@openai.com> - 0.0.1rc5-30
 - Rebuild coordinated RC5 RPMs with Harbor packaging permission fix
 
