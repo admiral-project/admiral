@@ -192,7 +192,7 @@
   file:
     path: /etc/systemd/system/admiral-harbor.service.d
     state: directory
-    mode: "0755"
+    mode: "0750"
 
 - name: Deploy admiral-harbor systemd binding override
   copy:
