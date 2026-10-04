@@ -1,11 +1,11 @@
 # SPDX-FileCopyrightText: William Moreno Reyes CP | MBA
 # SPDX-License-Identifier: Apache-2.0
 
-%global commit 9ba8724d800f2213ae5b7f6f01e5cd6817142402
+%global commit 21b6a8bbfd9142b7276776cb91f88ecf3180cab2
 
 Name:    admiral-common
 Version: 0.0.1rc5
-Release: 27%{?dist}
+Release: 28%{?dist}
 Summary: Common files and utilities for Admiral PaaS
 
 License: Apache-2.0
@@ -191,6 +191,9 @@ if [ "$1" -eq 0 ]; then
 fi
 
 %changelog
+* Sun Oct 04 2026 Codex <codex@openai.com> - 0.0.1rc5-28
+- Fix admin-portal Harbor reachability over WireGuard in star mode
+
 * Sat Oct 03 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc5-25
 - Rebuild coordinated RC5 RPMs with Fleet rootless restore CA handoff fix
 

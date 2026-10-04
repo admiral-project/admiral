@@ -15,7 +15,7 @@
 
 Name:    admirald
 Version: 0.0.1rc5
-Release: 27%{?dist}
+Release: 28%{?dist}
 Summary: Admiral Control Plane - Core API and orchestration service
 
 License: Apache-2.0
@@ -92,6 +92,9 @@ restorecon -F %{_bindir}/admirald 2>/dev/null || :
 %systemd_postun_with_restart admirald.service
 
 %changelog
+* Sun Oct 04 2026 Codex <codex@openai.com> - 0.0.1rc5-28
+- Fix admin-portal Harbor reachability over WireGuard in star mode
+
 * Sat Oct 03 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc5-25
 - Rebuild coordinated RC5 RPMs with Fleet rootless restore CA handoff fix
 

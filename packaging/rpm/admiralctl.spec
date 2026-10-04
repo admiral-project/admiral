@@ -15,7 +15,7 @@
 
 Name:    admiralctl
 Version: 0.0.1rc5
-Release: 27%{?dist}
+Release: 28%{?dist}
 Summary: Admiral Command-Line Interface
 
 License: Apache-2.0
@@ -88,6 +88,9 @@ test "$(./admiralctl version 2>&1)" = "admiralctl %{version}"
 restorecon -F %{_bindir}/admiralctl 2>/dev/null || :
 
 %changelog
+* Sun Oct 04 2026 Codex <codex@openai.com> - 0.0.1rc5-28
+- Fix admin-portal Harbor reachability over WireGuard in star mode
+
 * Sat Oct 03 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc5-25
 - Rebuild coordinated RC5 RPMs with Fleet rootless restore CA handoff fix
 
