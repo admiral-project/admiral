@@ -255,6 +255,19 @@
   register: firewall_admiral_admin_rule
   changed_when: "'ALREADY_ENABLED' not in firewall_admiral_admin_rule.stderr"
 
+- name: Permit WireGuard peers to reach Harbor on co-located admin-portal hosts
+  command:
+    argv:
+      - firewall-cmd
+      - --permanent
+      - --zone=admiral
+      - >-
+        --add-rich-rule=rule family="ipv4" source address="10.99.0.0/24"
+        port port="5001" protocol="tcp" accept
+  when: admiral_install_mode == 'admin-portal-node'
+  register: firewall_admiral_admin_portal_rule
+  changed_when: "'ALREADY_ENABLED' not in firewall_admiral_admin_portal_rule.stderr"
+
 - name: Permit admin-to-worker Fleet and workload traffic
   command:
     argv:
@@ -293,5 +306,25 @@
     firewall_admiral_zone.changed | default(false) or
     firewall_admiral_target.changed or
     firewall_admiral_admin_rule.changed | default(false) or
+    firewall_admiral_admin_portal_rule.changed | default(false) or
     firewall_admiral_worker_rules.changed | default(false) or
     firewall_admiral_portal_rule.changed | default(false)
+
+- name: Verify the admin-portal Harbor WireGuard firewall rule
+  command:
+    argv:
+      - firewall-cmd
+      - --zone=admiral
+      - >-
+        --query-rich-rule=rule family="ipv4" source address="10.99.0.0/24"
+        port port="5001" protocol="tcp" accept
+  register: firewall_admiral_admin_portal_rule_check
+  changed_when: false
+  when: admiral_install_mode == 'admin-portal-node'
+
+- name: Assert the admin-portal Harbor WireGuard firewall rule is active
+  assert:
+    that:
+      - firewall_admiral_admin_portal_rule_check.rc == 0
+    fail_msg: "Harbor TCP/5001 must be reachable from Admiral WireGuard peers in star mode."
+  when: admiral_install_mode == 'admin-portal-node'
