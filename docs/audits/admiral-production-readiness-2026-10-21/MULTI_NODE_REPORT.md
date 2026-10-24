@@ -2,9 +2,13 @@
 
 Audit ID: `ADM-AUDIT-2026-10-21`<br>
 
-## Active candidate — Release 74: 0/3 Multi-Node cells PASS
+## Active candidate — Release 74: 0/3 complete Multi-Node cells PASS
 
-Rocky Linux 10, CentOS Stream 10 and Fedora Rawhide Multi-Node cells are **NOT TESTED** on Release 74. Each requires three real same-OS guests. The R74 pass exercised only three Single-Node guests; it provides no Multi-Node evidence. The 8-GiB host has the R74 Single-Node guests shut off and 57 GiB free at report time. Prior-candidate Multi-Node results do not transfer. See [master issue #277](https://github.com/admiral-project/admiral/issues/277), [`release74-single-node.md`](evidence/release74-single-node.md) and [`ansible-seed-preflight-20261024.md`](evidence/ansible-seed-preflight-20261024.md).
+Rocky Linux 10 has seven scoped R74 scenario passes on three real guests, but its full cell is **INCOMPLETE**. CentOS Stream 10 and Fedora Rawhide Multi-Node remain **NOT TESTED**. The release gate still requires complete three-guest coverage for each OS, so the full-cell count remains 0/3 and the overall functional matrix remains 3/6. Prior-candidate results do not transfer. See [master issue #277](https://github.com/admiral-project/admiral/issues/277), [`release74-single-node.md`](evidence/release74-single-node.md), [`release74-single-node-rerun-20261024.md`](evidence/release74-single-node-rerun-20261024.md), and [`ansible-seed-preflight-20261024.md`](evidence/ansible-seed-preflight-20261024.md).
+
+## Release 74 Rocky Linux 10.2 x86_64 scoped Multi-Node execution
+
+The fresh three-guest R74 cluster installed native `0.0.1rc5-74.el10` RPMs. Seven scoped scenarios passed: workloads placed on both workers with SQL/storage/HTTP checks; three simultaneous same-key requests converged on one operation/task/instance; concurrent resize and deprovision ended deprovisioned with empty inventories; W1 reboot recovered the active workload and SQL marker; a W2 WireGuard partition made the workload unavailable and node offline/degraded, then recovered after route restoration; hub reboot recovered both workers and the active W1 workload; active W2 removal was refused and idle removal succeeded, leaving no node record or live/persistent W2 route. Test-specific transitional health observations were preserved rather than counted as completion. Each workload was deprovisioned and the relevant resource inventories were empty. This is **scoped evidence, not a complete cell pass**. PostgreSQL outage, task interruption/replay, old token rejection, failed-helper rollback, exhaustive security/isolation, resource exhaustion and performance remain untested. Full procedures, limits and per-run hashes: [`release74-rocky-multinode-progress-20261024.md`](evidence/release74-rocky-multinode-progress-20261024.md).
 
 ## Historical Release 73: scoped Multi-Node evidence, no complete cells
 
