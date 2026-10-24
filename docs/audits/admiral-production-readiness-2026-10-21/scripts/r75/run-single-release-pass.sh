@@ -60,8 +60,18 @@ ssh_args_for() {
 
 preflight_one() {
   local os=$1 ip=${ips[$1]}
+  local attempt ssh_ready=0
   local -a ssh_args=()
   mapfile -t ssh_args < <(ssh_args_for "$os")
+  for attempt in $(seq 1 90); do
+    if ssh "${ssh_args[@]}" "validator@$ip" true >/dev/null 2>&1; then
+      ssh_ready=1
+      break
+    fi
+    sleep 2
+  done
+  [[ $ssh_ready -eq 1 ]] || { echo "SSH did not become ready for $os at $ip within 180 seconds" >&2; return 1; }
+  printf 'ssh_ready os=%s ip=%s attempt=%s utc=%s\n' "$os" "$ip" "$attempt" "$(date -u +%FT%TZ)"
   ssh "${ssh_args[@]}" "validator@$ip" sudo bash -s -- "${ids[$os]}" "${suffixes[$os]}" <<'REMOTE'
 set -euo pipefail
 expected_id=$1 expected_suffix=$2
