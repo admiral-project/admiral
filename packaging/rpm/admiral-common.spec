@@ -5,7 +5,7 @@
 
 Name:    admiral-common
 Version: 0.0.1rc5
-Release:        73%{?dist}
+Release:        74%{?dist}
 Summary: Common files and utilities for Admiral PaaS
 
 License: Apache-2.0
@@ -267,6 +267,9 @@ if [ "$1" -eq 0 ]; then
 fi
 
 %changelog
+* Sat Oct 24 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc5-74
+- Prepare coordinated Release 74 validation package set
+
 * Sat Oct 24 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc5-73
 - Add least-privilege systemd socket helper to revoke removed WireGuard peers
 

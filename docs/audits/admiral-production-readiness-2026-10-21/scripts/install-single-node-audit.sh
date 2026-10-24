@@ -8,7 +8,7 @@ set -euo pipefail
   exit 2
 }
 distro=$1 ssh_key=$2 known_hosts=$3 target=$4 node_ip=$5 node_id=$6 output=$7
-release=${ADMIRAL_RC_RELEASE:-73}
+release=${ADMIRAL_RC_RELEASE:-74}
 repo_source=${ADMIRAL_AUDIT_REPO_SOURCE:-copr}
 [[ $release =~ ^[0-9]+$ ]] || { echo "invalid Admiral RPM Release: $release" >&2; exit 2; }
 [[ $repo_source == copr || $repo_source == local ]] || { echo "invalid Admiral RPM source: $repo_source" >&2; exit 2; }

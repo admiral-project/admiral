@@ -9,7 +9,7 @@ set -euo pipefail
 }
 ssh_key=$1 known_hosts=$2 target=$3 underlay_ip=$4 node_id=$5 output=$6
 distro=${7:-el10}
-release=${ADMIRAL_RC_RELEASE:-73}
+release=${ADMIRAL_RC_RELEASE:-74}
 [[ $release =~ ^[0-9]+$ ]] || { echo "invalid Admiral RPM Release: $release" >&2; exit 2; }
 [[ $underlay_ip =~ ^([0-9]{1,3}\.){3}[0-9]{1,3}$ ]] || { echo "invalid underlay IPv4" >&2; exit 2; }
 [[ $node_id =~ ^[A-Za-z0-9][A-Za-z0-9_.-]{0,62}$ ]] || { echo "invalid node id" >&2; exit 2; }

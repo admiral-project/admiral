@@ -15,7 +15,7 @@
 
 Name:    admiral-fleet
 Version: 0.0.1rc5
-Release:        73%{?dist}
+Release:        74%{?dist}
 Summary: Admiral Fleet Worker Agent
 
 License: Apache-2.0
@@ -112,6 +112,9 @@ loginctl enable-linger admiral-apps 2>/dev/null || :
 %systemd_postun_with_restart admiral-fleet.service
 
 %changelog
+* Sat Oct 24 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc5-74
+- Prepare coordinated Release 74 validation package set
+
 * Sat Oct 24 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc5-73
 - Rebuild coordinated RC5 Release 73 package set
 
