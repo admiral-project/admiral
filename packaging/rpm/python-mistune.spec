@@ -5,7 +5,7 @@
 
 Name:           python3-mistune
 Version:        3.4.0
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        A sane Markdown parser with useful plugins and rules
 
 License:        BSD-3-Clause
@@ -52,6 +52,9 @@ CFG
 %license LICENSE
 
 %changelog
+* Sat Oct 24 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 3.4.0-2
+- Rebuild with the coordinated pinned Python dependency set
+
 * Wed Oct 21 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 3.4.0-1
 - Update to Mistune 3.4.0, including the URL scheme safety fix
 - Package the upstream mistune command-line entry point

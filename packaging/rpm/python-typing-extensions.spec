@@ -5,7 +5,7 @@
 
 Name:           python3-typing-extensions
 Version:        4.16.0
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Backported and Experimental Type Hints for Python
 
 License:        PSF-2.0
@@ -40,6 +40,9 @@ sed -i '/^license-files/d' pyproject.toml
 %license LICENSE
 
 %changelog
+* Sat Oct 24 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 4.16.0-2
+- Rebuild to publish the pinned typing-extensions version for the RC5 dependency set
+
 * Thu Oct 22 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 4.16.0-1
 - Update typing-extensions to the latest upstream release
 

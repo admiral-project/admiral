@@ -2,7 +2,7 @@
 
 Audit ID: `ADM-AUDIT-2026-10-21`<br>
 Audit began: 2026-10-21 UTC<br>
-> **Active scope — 2026-10-24:** Release 73 covers Fedora Rawhide, Rocky Linux 10, AlmaLinux 10 and CentOS Stream 10 x86_64 in Single-Node and Multi-Node. Six coordinated RPMs are built; root and all five component CI runs are green. The functional matrix is **4/8 PASS, 3/8 PARTIAL, 1/8 NOT TESTED**: all four Single-Node cells passed; Rocky, AlmaLinux and CentOS Stream Multi-Node have scoped evidence but remain incomplete; Fedora Multi-Node is not tested. The audit has spanned three calendar days, 2026-10-21 through 2026-10-24. Release 72 was invalidated by #272; earlier candidate evidence is historical only. This document evaluates the broader production-readiness question separately; functional cells do not establish comprehensive security, isolation, resilience, scalability or performance.
+> **Active scope — 2026-10-24:** Four x86_64 operating systems (Fedora Rawhide, Rocky Linux 10, AlmaLinux 10 and CentOS Stream 10), each Single-Node and Multi-Node. The prior R73 dependency set had **4/8 PASS, 3/8 PARTIAL, 1/8 NOT TESTED**; all those results are historical after the Python helper RPM refresh. The active refreshed set is **0/8** pending COPR rebuilds and a fresh coordinated release run. Local native EL10 and Fedora Rawhide SQLAlchemy `%check` builds passed, but they do not prove COPR success or any runtime cell. The audit also has a broader scope than the functional release gate and does not establish comprehensive security, isolation, resilience, scalability or performance.
 
 Production readiness is **NOT VALIDATED**. The functional release gate is narrower than the full production audit and cannot establish production security, fault-tolerance, scalability or performance.
 
@@ -10,8 +10,8 @@ Production readiness is **NOT VALIDATED**. The functional release gate is narrow
 
 | Topology | Decision | Basis |
 | --- | --- | --- |
-| Single-Node | **NOT VALIDATED** | All four R73 functional cells passed, but broader isolation/security negatives, resource-exhaustion behavior, stress and performance evidence remain incomplete. |
-| Multi-Node | **NOT VALIDATED** | Rocky and AlmaLinux have scoped install, workload, concurrency, reboot, partition/rejoin and node-removal evidence, but neither R73 Multi-Node cell is complete. CentOS Stream has clean three-guest install/registration, both-worker placement, concurrency and reboot evidence on both workers; partition/rejoin, node removal, hub reboot and other coverage remain. Fedora is untested. Database outage, in-flight tasks, comprehensive isolation, resource exhaustion and performance remain incomplete. |
+| Single-Node | **NOT VALIDATED** | The four prior R73 cells passed their functional checklist, but this refreshed Python dependency set has no runtime cell evidence yet. Broader isolation/security negatives, resource-exhaustion behavior, stress and performance also remain incomplete. |
+| Multi-Node | **NOT VALIDATED** | This refreshed dependency set has no runtime cell evidence yet. Prior R73 scoped runs are historical; none completed a full Multi-Node cell. Fedora was untested, and database outage, in-flight tasks, comprehensive isolation, resource exhaustion and performance remain incomplete. |
 
 Neither topology is READY or CONDITIONALLY READY on current evidence. Exact-commit CI and scoped scenarios do not substitute for a complete matrix cell. No production system was touched.
 
@@ -36,4 +36,4 @@ The remaining Release 73 functional cells in [issue #200](https://github.com/adm
 
 ## Current answer to the audit question
 
-The broader production-readiness question remains **NOT VALIDATED**. Release 73 currently has **4/8** functional cells passed, **3/8 PARTIAL**, and **1/8 NOT TESTED**; Rocky, AlmaLinux and CentOS Stream Multi-Node have scoped results but none counts as a full cell pass. Even a complete functional matrix does not establish all security, isolation, fault-tolerance, resource-exhaustion or performance properties required for a production decision. No production-readiness claim is made.
+The broader production-readiness question remains **NOT VALIDATED**. The active refreshed package set has **0/8** runtime cells executed; the prior R73 dependency set's 4/8 result is historical and carries no credit. Even a complete functional matrix does not establish all security, isolation, fault-tolerance, resource-exhaustion or performance properties required for a production decision. No production-readiness claim is made.

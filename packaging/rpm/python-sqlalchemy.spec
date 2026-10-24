@@ -6,7 +6,7 @@
 
 Name:           python3-sqlalchemy
 Version:        2.0.55
-Release:        4%{?dist}
+Release:        5%{?dist}
 Summary:        Database toolkit and Object Relational Mapper for Python
 
 License:        MIT
@@ -15,6 +15,7 @@ Source0:        https://files.pythonhosted.org/packages/a5/bd/08864ddfffbb8914ee
 
 BuildRequires:  python3-devel
 BuildRequires:  python3-cython >= 0.29.24
+BuildRequires:  python3dist(typing-extensions) = 4.16
 BuildRequires:  gcc
 BuildRequires:  python3-pip
 BuildRequires:  python3-setuptools
@@ -25,7 +26,7 @@ Provides:       python%{python3_version}dist(sqlalchemy) = %{version}
 Provides:       python3dist(sqlalchemy) = %{version}
 Requires:       python3
 Requires:       python3-greenlet >= 1
-Requires:       python3dist(typing-extensions) >= 4.12
+Requires:       python3dist(typing-extensions) = 4.16
 
 %description
 SQLAlchemy is the Python SQL toolkit and Object Relational Mapper that gives
@@ -62,6 +63,10 @@ PYTHONPATH=%{buildroot}%{python3_sitearch}:%{buildroot}%{python3_sitelib} %{pyth
 %license LICENSE
 
 %changelog
+* Sat Oct 24 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 2.0.55-5
+- Pin build and runtime typing-extensions to version 4.16
+- Install the pinned module in buildroots before the SQLAlchemy import check
+
 * Fri Oct 23 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 2.0.55-4
 - Require compatible typing-extensions module versions without RPM release pins
 

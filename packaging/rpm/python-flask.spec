@@ -7,7 +7,7 @@
 Name:           python3-flask
 Epoch:          1
 Version:        3.1.3
-Release:        3%{?dist}
+Release:        4%{?dist}
 Summary:        A lightweight WSGI web application framework
 
 License:        BSD-3-Clause
@@ -58,6 +58,9 @@ test -f %{buildroot}%{python3_sitelib}/flask/__init__.py
 test -f %{buildroot}%{python3_sitelib}/flask-3.1.3.dist-info/METADATA
 
 %changelog
+* Sat Oct 24 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 3.1.3-4
+- Rebuild with the coordinated pinned Python dependency set
+
 * Thu Oct 22 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 3.1.3-3
 - Install Python before expanding the Python site-packages macro
 - Check that Flask is packaged under the interpreter's import path

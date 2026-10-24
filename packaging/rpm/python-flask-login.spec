@@ -5,7 +5,7 @@
 
 Name:           python3-flask-login
 Version:        0.6.3
-Release:        9%{?dist}
+Release:        10%{?dist}
 Summary:        User session management for Flask
 
 License:        MIT
@@ -40,6 +40,9 @@ common tasks of logging in, logging out, and remembering user sessions.
 %license LICENSE
 
 %changelog
+* Sat Oct 24 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.6.3-10
+- Rebuild with the coordinated pinned Python dependency set
+
 * Fri Oct 23 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.6.3-9
 - Require the pinned Flask module version without pinning its RPM release
 

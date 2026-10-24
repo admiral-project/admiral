@@ -2,18 +2,20 @@
 
 Audit ID: `ADM-AUDIT-2026-10-21`<br>
 
-## Active functional gate — four x86_64 platforms, Release 73
+## Active functional gate — four x86_64 platforms, refreshed Python dependency set
 
-The active release gate has eight cells: Fedora Rawhide, Rocky Linux 10, AlmaLinux 10 and CentOS Stream 10, each Single-Node and Multi-Node. The same exact Release 73 sources and coordinated six-package RPM set must pass all eight. Any source or RPM change invalidates all cell credit and requires a coordinated six-package rebuild.
+The active release gate has eight cells: Fedora Rawhide, Rocky Linux 10, AlmaLinux 10 and CentOS Stream 10, each Single-Node and Multi-Node. The same exact Admiral sources, Python dependency set and coordinated package set must pass all eight. Any source or package-set change invalidates all cell credit and requires a fresh candidate build and run.
 
-**Current R73 matrix: 4/8 PASS, 3/8 PARTIAL, 1/8 NOT TESTED.** All four Single-Node cells passed. Rocky Linux 10, AlmaLinux 10 and CentOS Stream 10 Multi-Node have scoped evidence but none is a complete cell; Fedora Multi-Node is not tested. The six coordinated RPMs are built, root CI and all five component CI runs are green. R72 is invalidated by #272; no R72 evidence carries forward. The acceptance checklist is tracked in [issue #200](https://github.com/admiral-project/admiral/issues/200).
+**Current refreshed dependency set: 0/8.** Previous R73 evidence (4/8 PASS, 3/8 PARTIAL, 1/8 NOT TESTED) is historical and cannot validate the refreshed package set. All eight Python helper source RPM Releases were bumped and published after the SQLAlchemy `%check` build dependency fix. Local EL10 and Fedora Rawhide SQLAlchemy builds passed; COPR rebuild and coordinated Admiral RPM rebuild are pending. See [`python-dependency-refresh-20261024.md`](evidence/python-dependency-refresh-20261024.md). R72 is also invalidated by #272; no R72 evidence carries forward. The acceptance checklist is tracked in [issue #200](https://github.com/admiral-project/admiral/issues/200).
 
 | Platform | Single-Node | Multi-Node |
 |---|---|---|
-| Fedora Rawhide x86_64 | PASS | NOT TESTED |
-| Rocky Linux 10 x86_64 | PASS | PARTIAL — placement, same-key concurrency, recovery, removal, private-UI denial and removed-peer persistence across hub reboot passed as scoped scenarios; cell incomplete |
-| AlmaLinux 10 x86_64 | PASS | PARTIAL — placement, same-key concurrency, recovery, removal, helper-failure retry, private-UI denial and removed-peer persistence across hub reboot passed as scoped scenarios; cell incomplete |
-| CentOS Stream 10 x86_64 | PASS | PARTIAL — three guests; both-worker install/placement, same-key concurrency, worker/hub reboot recovery, W2 partition/rejoin, active-removal refusal, idle peer/token revocation, helper-failure retention and successful retry, post-removal hub reboot, private-UI denial, re-enrollment and post-re-enrollment placement passed; other scenarios remain |
+| Fedora Rawhide x86_64 | NOT TESTED | NOT TESTED |
+| Rocky Linux 10 x86_64 | NOT TESTED | NOT TESTED |
+| AlmaLinux 10 x86_64 | NOT TESTED | NOT TESTED |
+| CentOS Stream 10 x86_64 | NOT TESTED | NOT TESTED |
+
+The table above is the active refreshed-set gate. The prior Release 73 per-scenario records below remain historical evidence for the previous dependency set only; they are not reclassified as failed tests, but they earn no current cell credit.
 
 Each Multi-Node cell requires three real guests of that OS. Fedora guests must receive only native `.fc46` RPMs; EL10 guests must receive only native `.el10` RPMs.
 

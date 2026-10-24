@@ -133,6 +133,26 @@ if ((${#candidate_python_rpms[@]})); then
 fi
 dnf -y update --refresh --allowerasing
 
+# Local candidate repositories are configured manually for each validation
+# lab. Use the signed local repo to install this release's Python RPM set, then
+# remove its configuration before generalizing the OS seed.
+if [[ ${ADMIRAL_AUDIT_REMOVE_LOCAL_REPO:-0} == 1 ]]; then
+  python3 - <<'PY'
+from pathlib import Path
+
+repo = Path("/etc/yum.repos.d/admiral-local.repo")
+if repo.is_symlink():
+    raise SystemExit(f"refusing to remove symlink: {repo}")
+repo.unlink(missing_ok=True)
+PY
+  dnf clean metadata
+  if [[ $os_id == fedora ]]; then
+    dnf -y update --refresh --allowerasing --allow-vendor-change
+  else
+    dnf -y update --refresh --allowerasing
+  fi
+fi
+
 printf 'Prepared audit seed for %s %s at ' "$os_id" "$version_id"
 date -u +'%Y-%m-%dT%H:%M:%SZ'
 rpm -q --qf '%{NAME}-%{VERSION}-%{RELEASE}.%{ARCH}\n' "${packages[@]}"

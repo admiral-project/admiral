@@ -5,7 +5,7 @@
 
 Name:           python3-flask-alembic
 Version:        3.3.0
-Release:        4%{?dist}
+Release:        5%{?dist}
 Summary:        Integrate Alembic with Flask
 
 License:        MIT
@@ -45,6 +45,9 @@ sed -i '/^license-files/d' pyproject.toml
 %license LICENSE.txt
 
 %changelog
+* Sat Oct 24 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 3.3.0-5
+- Rebuild with the coordinated pinned Python dependency set
+
 * Fri Oct 23 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 3.3.0-4
 - Express runtime requirements as Python module capabilities, independent of RPM release
 

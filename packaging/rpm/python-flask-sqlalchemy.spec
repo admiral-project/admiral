@@ -5,7 +5,7 @@
 
 Name:           python3-flask-sqlalchemy
 Version:        3.1.1
-Release:        10%{?dist}
+Release:        11%{?dist}
 Summary:        Add SQLAlchemy support to a Flask application
 
 License:        BSD-3-Clause
@@ -40,6 +40,9 @@ provides useful defaults and helpers for common database tasks.
 %license LICENSE.rst
 
 %changelog
+* Sat Oct 24 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 3.1.1-11
+- Rebuild with the coordinated pinned Python dependency set
+
 * Fri Oct 23 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 3.1.1-10
 - Require pinned Flask and compatible SQLAlchemy module versions without RPM release pins
 

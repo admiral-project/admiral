@@ -1,6 +1,6 @@
 # RC5 Release 73 candidate record
 
-**Status: Release 73 candidate is built from source commits on `origin/main`; CI is green on the root commit and all five selected component commits. Matrix: 4/8 PASS, 3/8 PARTIAL, 1/8 NOT TESTED.** All four Single-Node cells passed. Rocky, AlmaLinux and CentOS Stream Multi-Node have scoped results; Fedora Multi-Node is not tested. R72 is invalidated; no runtime evidence from another candidate carries forward.
+**Historical R73 status before Python dependency refresh: 4/8 PASS, 3/8 PARTIAL, 1/8 NOT TESTED. Current refreshed dependency set: 0/8; previous cell evidence is invalidated for this set.** On 2026-10-24, all eight Python helper RPM Releases were bumped and their EL10 source RPMs republished after fixing SQLAlchemy's missing pinned `typing-extensions` build requirement. Local Rocky 10 and Fedora Rawhide SQLAlchemy package builds passed `%check`, but COPR rebuilds and the coordinated Admiral package rebuild are pending. See [`python-dependency-refresh-20261024.md`](python-dependency-refresh-20261024.md). Do not use the historical R73 matrix as evidence for the refreshed dependency set.
 
 ## Scope
 
