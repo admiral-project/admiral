@@ -1,7 +1,7 @@
 # Findings
 
 Audit ID: `ADM-AUDIT-2026-10-21`<br>
-Previous candidate: Release 73 before the Python dependency refresh, **4/8 functional cells passed, 3 Multi-Node cells partially validated, 1 Multi-Node cell not tested**. That evidence is historical and invalidated for the refreshed dependency set, which is currently **0/8** pending COPR package builds and a new runtime run. SQLAlchemy's missing pinned `typing-extensions` build requirement is tracked by open HIGH issue [#274](https://github.com/admiral-project/admiral/issues/274), labeled `fix-proposed`; local native EL10 and Fedora `%check` builds passed, COPR remains unverified. R72 was invalidated by #272. Findings remain open unless explicitly resolved upstream; scoped candidate evidence does not close issues.
+**Release 74 status:** not built; all six runtime cells are **NOT TESTED (0/6 PASS)**. Release 73 and earlier evidence is historical only. The SQLAlchemy `typing-extensions` build dependency fix is tracked by [#274](https://github.com/admiral-project/admiral/issues/274) and remains `fix-proposed` pending candidate/COPR verification. Findings remain open unless explicitly resolved upstream; scoped candidate evidence does not close issues. See [master tracker #277](https://github.com/admiral-project/admiral/issues/277).
 
 Severity follows the audit criteria. Open findings remain open until a fix is revalidated in the affected topologies; a source change or passing component test alone does not close a live-system finding. Historical finding ADM-F-007 / #212 is resolved upstream and is explicitly marked below.
 

@@ -2,7 +2,11 @@
 
 Audit ID: `ADM-AUDIT-2026-10-21`<br>
 
-## Active candidate — Release 73: 4/4 Single-Node cells PASS
+## Active candidate — Release 74: 0/3 Single-Node cells PASS
+
+Release 74 has not been built or installed. Rocky Linux 10, CentOS Stream 10, and Fedora Rawhide Single-Node cells are **NOT TESTED**. The updated seed images and Ansible syntax preflight are ready; the installer playbooks must run against fresh clones after the exact Release 74 RPMs are available. Prior-candidate evidence does not transfer. See [master issue #277](https://github.com/admiral-project/admiral/issues/277) and [`ansible-seed-preflight-20261024.md`](evidence/ansible-seed-preflight-20261024.md).
+
+## Historical Release 73: 4/4 Single-Node cells PASS
 
 Fedora Rawhide, Rocky Linux 10, AlmaLinux 10 and CentOS Stream 10 x86_64 each passed the R73 functional Single-Node checklist on the exact native six-RPM candidate. The secure installation, services/API/portal checks, auth-negative probes, rootless workload lifecycle, SQL persistence, resize/update, local backup/restore, host reboot/recovery and final cleanup completed. Raw logs are retained under the ignored `packaging/build/validation/rc5-r73/runtime/single/<os>/` directories. These are functional release-gate passes, not full production-readiness certification; broader isolation, resource exhaustion, systematic fault windows and performance remain incomplete. Candidate/build/CI record: [`release73-candidate.md`](evidence/release73-candidate.md).
 

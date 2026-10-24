@@ -2,20 +2,19 @@
 
 Audit ID: `ADM-AUDIT-2026-10-21`<br>
 
-## Active functional gate — four x86_64 platforms, refreshed Python dependency set
+## Active functional gate — Release 74, three x86_64 platforms
 
-The active release gate has eight cells: Fedora Rawhide, Rocky Linux 10, AlmaLinux 10 and CentOS Stream 10, each Single-Node and Multi-Node. The same exact Admiral sources, Python dependency set and coordinated package set must pass all eight. Any source or package-set change invalidates all cell credit and requires a fresh candidate build and run.
+The active release gate has six cells: Fedora Rawhide, Rocky Linux 10 and CentOS Stream 10, each Single-Node and Multi-Node. AlmaLinux is excluded because the configured COPR environment omitted its Go RPM builds (#276). The same exact Admiral sources and coordinated native package set must pass all six. Any source or package-set change invalidates all cell credit and requires a fresh candidate build and run.
 
-**Current refreshed dependency set: 0/8.** Previous R73 evidence (4/8 PASS, 3/8 PARTIAL, 1/8 NOT TESTED) is historical and cannot validate the refreshed package set. All eight Python helper source RPM Releases were bumped and published after the SQLAlchemy `%check` build dependency fix. Local EL10 and Fedora Rawhide SQLAlchemy builds passed; COPR rebuild and coordinated Admiral RPM rebuild are pending. See [`python-dependency-refresh-20261024.md`](evidence/python-dependency-refresh-20261024.md). R72 is also invalidated by #272; no R72 evidence carries forward. The acceptance checklist is tracked in [issue #200](https://github.com/admiral-project/admiral/issues/200).
+**Release 74 status: 0/6 PASS; all cells NOT TESTED.** Release 74 has not been built. R73 evidence (4/8 PASS with scoped Multi-Node results) is historical and does not validate this candidate. Python helper packages compiled successfully and their upstream versions remain fixed for this release; see [`python-dependency-refresh-20261024.md`](evidence/python-dependency-refresh-20261024.md). The active acceptance checklist is [issue #277](https://github.com/admiral-project/admiral/issues/277); #200 is closed as not planned because AlmaLinux is blocked by its build environment.
 
 | Platform | Single-Node | Multi-Node |
 |---|---|---|
 | Fedora Rawhide x86_64 | NOT TESTED | NOT TESTED |
 | Rocky Linux 10 x86_64 | NOT TESTED | NOT TESTED |
-| AlmaLinux 10 x86_64 | NOT TESTED | NOT TESTED |
 | CentOS Stream 10 x86_64 | NOT TESTED | NOT TESTED |
 
-The table above is the active refreshed-set gate. The prior Release 73 per-scenario records below remain historical evidence for the previous dependency set only; they are not reclassified as failed tests, but they earn no current cell credit.
+The table above is the active Release 74 gate. The prior Release 73 per-scenario records below remain historical evidence and earn no current cell credit.
 
 Each Multi-Node cell requires three real guests of that OS. Fedora guests must receive only native `.fc46` RPMs; EL10 guests must receive only native `.el10` RPMs.
 

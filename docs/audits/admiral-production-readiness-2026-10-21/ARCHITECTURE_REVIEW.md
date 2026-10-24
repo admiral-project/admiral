@@ -1,5 +1,5 @@
 # Architecture review — Admiral production-readiness audit
-> **Current gate status (2026-10-24):** R73 (`0.0.1rc5-73`) is built from root commit `d84c130380ca5db3f73c32762c5f38bcccd75a10`; root CI and all five component CI runs passed. All four Single-Node cells passed. Rocky, AlmaLinux and CentOS Stream Multi-Node have scoped evidence but none is complete; Fedora Multi-Node is not tested. Matrix completion is **4/8 PASS, 3 PARTIAL, 1 NOT TESTED**. This audit spans 2026-10-21 through 2026-10-24 (three calendar days). R72 is invalidated by #272; its results are historical only.
+> **Current gate status (2026-10-24):** Release 74 is not built; its six runtime cells are **NOT TESTED (0/6 PASS)**. Root commit `6bd498dceea1f9ba72bc18fcf7fb4ec5eecf5e2e` is on `origin/main`, root CI run [40119978880](https://github.com/admiral-project/admiral/actions/runs/40119978880) passed, all five component pins match their current `origin/main`, and `validate-release-refs.py` passed. R73 evidence below is historical and does not count toward Release 74. The updated seeds and Ansible preflight are recorded in [`ansible-seed-preflight-20261024.md`](evidence/ansible-seed-preflight-20261024.md).
 > **Historical R67 status:** Six RPMs are built for Fedora and six for EL10 from the same selected source pins, in separate native builders. Exact packages passed scoped Fedora/Rocky Single-Node install, lifecycle and reboot scenarios, plus a Fedora hub-and-two-worker bootstrap and workload lifecycle on each worker. No R67 cell is complete; matrix remains 0/8.
 
 Audit started: 2026-10-21 UTC<br>
@@ -7,9 +7,9 @@ Historical audit candidate: RC5 Release 67 packages built from root commit `833d
 
 ## Scope and evidence rules
 
-This audit follows the active user-directed target matrix: Fedora Rawhide, Rocky Linux 10, AlmaLinux 10 and CentOS Stream 10 on x86_64, each in Single-Node and Multi-Node (eight cells). Rocky's Release 46 EPEL/cryptography dependency conflict is historical; the Rocky seed pins archived EPEL `python3-pyOpenSSL` 25.0.0 as a visible validation-environment exception. The host is x86_64 with KVM, 4 vCPU, 8 GiB RAM and 4 GiB swap. R47 guest observations are diagnostic only and do not count toward the rebuilt candidate. Multi-Node uses the admin/portal hub and two workers.
+The active Release 74 runtime matrix is Rocky Linux 10, CentOS Stream 10, and Fedora Rawhide on x86_64, each in Single-Node and Multi-Node (six cells). AlmaLinux is excluded because the configured COPR build environment omitted the Go RPMs; see #276. The host is x86_64 with KVM, 4 vCPU, 8 GiB RAM and 4 GiB swap. Each Multi-Node cell uses one admin/portal hub and two workers. Results from any earlier candidate are historical only.
 
-The active audit matrix includes four x86_64 distributions and two topologies. Results from a different OS, candidate, or topology do not satisfy a target cell.
+Results from a different OS, candidate, or topology do not satisfy a Release 74 target cell.
 
 Evidence is classified as static review, unit test, integration test, end-to-end test, or real fault-injection test. A successful API response alone is not proof of completed work. Each result is recorded in `TEST_MATRIX.md` and the corresponding topology report. No unexecuted scenario is marked PASS.
 

@@ -1,7 +1,7 @@
 # Resilience and failure-injection report
 
 Audit ID: `ADM-AUDIT-2026-10-21`<br>
-> **Active scope note — Release 73:** the functional gate covers Fedora Rawhide, Rocky Linux 10, AlmaLinux 10 and CentOS Stream 10 x86_64 in both topologies. Rocky and AlmaLinux Multi-Node each passed scoped real fault-injection for worker reboot, WireGuard partition/rejoin and hub reboot with an active workload. PostgreSQL/queue outage, active-task interruption, Podman/systemd errors, resource exhaustion and latency injection remain untested. Neither Multi-Node cell is complete. Details: [`release73-rocky-multinode-progress.md`](evidence/release73-rocky-multinode-progress.md) and [`release73-alma-multinode-progress.md`](evidence/release73-alma-multinode-progress.md).
+> **Release 74 status:** all six cells across Rocky Linux 10, CentOS Stream 10, and Fedora Rawhide are **NOT TESTED** because Release 74 has not been built. Historical fault-injection records below do not count toward this candidate. Active-task interruption, resource exhaustion, latency injection, and broader recovery scenarios remain untested.
 
 > **Historical R67 status:** All four Single-Node target OSes passed real host-reboot recovery and selected service/database/process-recovery probes. All four OSes passed fresh three-guest Multi-Node bootstrap, scoped placement on both workers, central PostgreSQL outage/recovery, WireGuard partition/rejoin, hub reboot recovery and Podman deletion-failure/retry. In-flight task interruption, resource exhaustion and broad recovery remain untested. Matrix remains 0/8.
 

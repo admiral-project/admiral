@@ -1,7 +1,7 @@
 # Performance report
 
 Audit ID: `ADM-AUDIT-2026-10-21`<br>
-> **Active scope note — Release 73:** no controlled benchmark or scalability campaign has run. Recovery and install durations captured during functional/fault-injection tests are not performance samples. There are no R73 p50/p95/p99 measurements; performance remains **NOT TESTED**.
+> **Release 74 status:** no controlled benchmark or scalability campaign has run. Install and recovery durations from earlier candidates are historical observations, not Release 74 performance samples. There are no current-candidate p50/p95/p99 measurements; performance remains **NOT TESTED**.
 
 > **Historical R67 status:** Scoped Single-Node install, lifecycle and reboot runs are recorded for all four OSes, plus Fedora Multi-Node functional runs. Individual installer and operation timings are observations only. No controlled R67 performance or scalability campaign has been run. Matrix remains 0/8.
 

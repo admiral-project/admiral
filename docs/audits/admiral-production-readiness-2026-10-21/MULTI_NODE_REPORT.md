@@ -2,7 +2,11 @@
 
 Audit ID: `ADM-AUDIT-2026-10-21`<br>
 
-## Active candidate — Release 73: 3/4 Multi-Node cells partially validated
+## Active candidate — Release 74: 0/3 Multi-Node cells PASS
+
+Release 74 has not been built or installed. Rocky Linux 10, CentOS Stream 10, and Fedora Rawhide Multi-Node cells are **NOT TESTED**. Each requires three fresh same-OS guests. Updated seed images are ready; execute one three-guest cell at a time on the 8-GiB lab host after the exact Release 74 RPMs are available. Prior-candidate evidence does not transfer. See [master issue #277](https://github.com/admiral-project/admiral/issues/277) and [`ansible-seed-preflight-20261024.md`](evidence/ansible-seed-preflight-20261024.md).
+
+## Historical Release 73: scoped Multi-Node evidence, no complete cells
 
 Rocky Linux 10, AlmaLinux 10 and CentOS Stream 10 have scoped R73 results on fresh three-guest clusters; all three full cells remain incomplete. CentOS has clean installs and registration on both workers, workload placement/lifecycle on each, a same-key concurrency pass, and reboot recovery with SQL persistence on both workers. Fedora Rawhide Multi-Node is `NOT TESTED`. R72's AlmaLinux/CentOS Stream results are invalidated and do not transfer. Candidate/build/CI record: [`release73-candidate.md`](evidence/release73-candidate.md).
 
@@ -273,4 +277,4 @@ Loss of the hub or central database blocks new control-plane operations and call
 
 ## Historical R65–R67 evidence and current R68 progress
 
-The active target is Fedora Rawhide, Rocky Linux 10, AlmaLinux 10 and CentOS Stream 10 on x86_64, each Single-Node and Multi-Node (eight cells). ARM64 remains a separate Tier 2 non-blocking track and is not release-gate evidence. Completion remains **0/8**. R67 observations below are historical and carry no R69 cell credit. AlmaLinux R68 now has scoped placement/lifecycle on W1 and W2, a three-client same-key concurrent-idempotency race, the active-node-removal regression and same-guest worker re-enrollment. See [`release68-alma-multinode-placement.md`](evidence/release68-alma-multinode-placement.md), [`release68-alma-multinode-concurrent-idempotency.md`](evidence/release68-alma-multinode-concurrent-idempotency.md) and [`release68-alma-multinode-node-removal.md`](evidence/release68-alma-multinode-node-removal.md). The other OSes have not yet completed R68 Multi-Node runtime validation. Remaining coverage includes active-task cancellation/compensation, outage/partition/recovery, external storage, conflicting cross-worker mutations, timeout-after-commit and callback/task interruption, cross-workload isolation negatives, latency injection and performance measurement. Do not label this hub-and-spoke setup HA.
+Historical Release 68/69 scope and observations: four x86_64 distributions were tracked in both topologies, but no complete cell was established. Those records do not apply to Release 74. AlmaLinux R68 has scoped placement/lifecycle on W1 and W2, a three-client same-key concurrent-idempotency race, the active-node-removal regression and same-guest worker re-enrollment. See [`release68-alma-multinode-placement.md`](evidence/release68-alma-multinode-placement.md), [`release68-alma-multinode-concurrent-idempotency.md`](evidence/release68-alma-multinode-concurrent-idempotency.md) and [`release68-alma-multinode-node-removal.md`](evidence/release68-alma-multinode-node-removal.md). Other historical Release 68 cells were incomplete. Remaining broader coverage includes active-task cancellation/compensation, outage/partition/recovery, external storage, conflicting cross-worker mutations, timeout-after-commit and callback/task interruption, cross-workload isolation negatives, latency injection and performance measurement. Do not label this hub-and-spoke setup HA.
