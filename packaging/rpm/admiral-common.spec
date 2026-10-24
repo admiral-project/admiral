@@ -5,7 +5,7 @@
 
 Name:    admiral-common
 Version: 0.0.1rc5
-Release:        74%{?dist}
+Release:        75%{?dist}
 Summary: Common files and utilities for Admiral PaaS
 
 License: Apache-2.0
@@ -267,6 +267,9 @@ if [ "$1" -eq 0 ]; then
 fi
 
 %changelog
+* Sat Oct 24 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc5-75
+- Rebuild coordinated RPM set with node-removal history fix
+
 * Sat Oct 24 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc5-74
 - Prepare coordinated Release 74 validation package set
 

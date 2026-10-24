@@ -2,21 +2,21 @@
 
 This tracker supersedes [#200](https://github.com/admiral-project/admiral/issues/200). The prior gate included AlmaLinux, whose configured COPR build environment skipped the Go RPMs; this environment limitation is tracked separately in #276. The active release scope is now **Rocky Linux 10, CentOS Stream 10, and Fedora Rawhide**, x86_64, Single-Node and Multi-Node.
 
-## Matrix status
+## Matrix status (updated 2026-10-24)
 
 | OS | Single-Node | Multi-Node |
 |---|---|---|
-| Rocky Linux 10 x86_64 | **PASS** | NOT TESTED |
-| CentOS Stream 10 x86_64 | **PASS** | NOT TESTED |
-| Fedora Rawhide x86_64 | **PASS** | NOT TESTED |
+| Rocky Linux 10 x86_64 | Historical R74 PASS — invalidated for active release gate | Historical R74 PASS — invalidated for active release gate |
+| CentOS Stream 10 x86_64 | Historical R74 PASS — invalidated for active release gate | **FAIL** — node removal deleted terminal instance and operation history |
+| Fedora Rawhide x86_64 | Historical R74 PASS — invalidated for active release gate | NOT TESTED |
 
-**Release 74 status: 3/6 PASS.** All Single-Node cells passed together on the exact candidate; the three Multi-Node cells are NOT TESTED. Evidence from R73 or an earlier candidate does not count toward this candidate. Any source or RPM fix invalidates the current run and requires a new coordinated Release and fresh evidence. Detailed evidence: [`release74-single-node.md`](release74-single-node.md).
+**Release 74 status: 0/6 PASS for the active release decision.** The three Single-Node cells passed together on exact R74; Rocky Multi-Node also passed its scoped six-item gate before the new defect was found. The subsequent CentOS Stream Multi-Node run reproduced data loss on normal idle-node removal, now tracked by [#278](https://github.com/admiral-project/admiral/issues/278). Per the gate rule, this actionable finding invalidates the preceding R74 candidate run as a whole. These results remain historical evidence for R74 only. A rebuilt candidate must rerun all six cells from fresh guests. See [`release74-single-node-rerun-20261024.md`](release74-single-node-rerun-20261024.md), [`release74-rocky-multinode-progress-20261024.md`](release74-rocky-multinode-progress-20261024.md), and [`release74-centos-multinode-progress-20261024.md`](release74-centos-multinode-progress-20261024.md).
 
-The six-item preflight below is a shared per-cell checklist and remains open until all six cells are prepared; every preflight item was completed for the three passing Single-Node cells. The Single-Node checklist below is complete for Rocky Linux 10, CentOS Stream 10, and Fedora Rawhide.
+The six-item preflight below is a shared per-cell checklist. It was completed for the historical R74 Single-Node cells and the R74 Rocky/CentOS Multi-Node guests, but those results cannot be carried forward to a rebuilt candidate. The Single-Node checklist below records the historical R74 procedure only.
 
 ## Required preflight for every cell
 
-- [ ] Record root commit, all five component SHAs, green CI run links, RPM NEVRAs and SHA-256 values.
+- [ ] For the next candidate, record root commit, all five component SHAs, green CI run links, RPM NEVRAs and SHA-256 values.
 - [ ] Clone the current updated OS seed into a fresh disposable VM. Record image hash, OS release, kernel, architecture, VM role, and UTC start time.
 - [ ] Verify the guest has no Admiral RPMs or runtime resources before the test.
 - [ ] Configure the candidate repository in the lab, not in the seed. Keep repositories and RPMs native to the guest OS.
@@ -47,7 +47,7 @@ Each cell requires three real VMs of the same OS: one admin/control-plane node a
 
 ## Cell decision and evidence
 
-A cell is PASS only when every applicable check above passes on the same unchanged Release 74 candidate and has reproducible evidence. Missing or failed checks are NOT TESTED, BLOCKED, or FAIL, never PASS. A Single-Node result does not imply Multi-Node success; one OS result does not imply another.
+A cell is PASS only when every applicable check above passes on the same unchanged candidate and has reproducible evidence. Missing or failed checks are NOT TESTED, BLOCKED, or FAIL, never PASS. A newly found actionable defect invalidates the preceding candidate run for the active release decision; no result from that candidate carries to a rebuilt release. A Single-Node result does not imply Multi-Node success; one OS result does not imply another.
 
 For every check, record ID, type (static/unit/integration/E2E/resilience), procedure, expected and observed result, PASS/FAIL/BLOCKED/NOT TESTED, duration, logs, and sanitized evidence hashes. Do not delete evidence of failures. This six-cell functional gate does not claim full security, performance, HA, or production-readiness certification.
 
@@ -61,6 +61,7 @@ For every check, record ID, type (static/unit/integration/E2E/resilience), proce
 - [#270 verify staged seed helper RPM signatures](https://github.com/admiral-project/admiral/issues/270)
 - [#269 apply EPEL pyOpenSSL compatibility pin to AlmaLinux](https://github.com/admiral-project/admiral/issues/269)
 - [#267 return conflict when removing a node with active instances](https://github.com/admiral-project/admiral/issues/267)
+- [#278 preserve instance and operation history on node removal](https://github.com/admiral-project/admiral/issues/278)
 - [#260 avoid stale available state after declared service stops](https://github.com/admiral-project/admiral/issues/260)
 - [#259 detect stale healthy availability after user systemd restart](https://github.com/admiral-project/admiral/issues/259)
 - [#258 provide SQLAlchemy 2.0.31 or newer in EL10 COPR](https://github.com/admiral-project/admiral/issues/258)

@@ -15,7 +15,7 @@
 
 Name:    admiralctl
 Version: 0.0.1rc5
-Release:        74%{?dist}
+Release:        75%{?dist}
 Summary: Admiral Command-Line Interface
 
 License: Apache-2.0
@@ -23,7 +23,7 @@ ExclusiveArch: x86_64 aarch64
 URL:     https://github.com/admiral-project/admiralctl
 Source0: https://github.com/admiral-project/admiralctl/archive/%{commit}.tar.gz
 Source1: admiralctl.yaml
-Source2: https://github.com/admiral-project/admirald/archive/83b4dd4db8963ac40a51c00fb9e52a9f2081df5c.tar.gz
+Source2: https://github.com/admiral-project/admirald/archive/65afd58947c56edaef041737d7f775e7b4038182.tar.gz
 
 BuildRequires: golang >= 1.26.10
 BuildRequires: binutils
@@ -87,6 +87,9 @@ test "$(./admiralctl version 2>&1)" = "admiralctl %{version}"
 restorecon -F %{_bindir}/admiralctl 2>/dev/null || :
 
 %changelog
+* Sat Oct 24 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc5-75
+- Rebuild coordinated RPM set with node-removal history fix
+
 * Sat Oct 24 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc5-74
 - Prepare coordinated Release 74 validation package set
 

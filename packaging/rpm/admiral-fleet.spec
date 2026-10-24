@@ -15,7 +15,7 @@
 
 Name:    admiral-fleet
 Version: 0.0.1rc5
-Release:        74%{?dist}
+Release:        75%{?dist}
 Summary: Admiral Fleet Worker Agent
 
 License: Apache-2.0
@@ -24,7 +24,7 @@ URL:     https://github.com/admiral-project/admiral-fleet
 Source0: https://github.com/admiral-project/admiral-fleet/archive/%{commit}.tar.gz
 Source1: admiral-fleet.service
 Source2: fleet.env
-Source3: https://github.com/admiral-project/admirald/archive/83b4dd4db8963ac40a51c00fb9e52a9f2081df5c.tar.gz
+Source3: https://github.com/admiral-project/admirald/archive/65afd58947c56edaef041737d7f775e7b4038182.tar.gz
 
 BuildRequires: golang >= 1.26.10
 BuildRequires: binutils
@@ -112,6 +112,9 @@ loginctl enable-linger admiral-apps 2>/dev/null || :
 %systemd_postun_with_restart admiral-fleet.service
 
 %changelog
+* Sat Oct 24 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc5-75
+- Rebuild coordinated RPM set with node-removal history fix
+
 * Sat Oct 24 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc5-74
 - Prepare coordinated Release 74 validation package set
 

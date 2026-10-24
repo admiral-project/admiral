@@ -4,7 +4,7 @@
 set -euo pipefail
 [[ $# -eq 4 ]] || { echo "usage: $0 {el10|fedora} SSH_KEY KNOWN_HOSTS USER@GUEST" >&2; exit 2; }
 distro=$1 ssh_key=$2 known_hosts=$3 target=$4
-release=${ADMIRAL_RC_RELEASE:-74}
+release=${ADMIRAL_RC_RELEASE:-75}
 [[ $release =~ ^[0-9]+$ ]] || { echo "invalid Admiral RPM Release: $release" >&2; exit 2; }
 case "$distro" in
   el10) repo_name=admiral-local-el10.repo; mistune_nevra=python3-mistune-3.4.0-1.el10.noarch ;;
