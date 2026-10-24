@@ -19,8 +19,9 @@ known_hosts_dir=${R75_KNOWN_HOSTS_DIR:-/var/lib/libvirt/images/admiral-validatio
 [[ ! -e $runtime ]] || { echo "refusing to overwrite existing evidence: $runtime" >&2; exit 1; }
 mkdir -p "$runtime/single/rocky" "$runtime/single/centos" "$runtime/single/fedora"
 chmod 0700 "$runtime" "$runtime/single" "$runtime/single/rocky" "$runtime/single/centos" "$runtime/single/fedora"
-exec > >(tee -a "$runtime/orchestrator.log") 2>&1
+: > "$runtime/orchestrator.log"
 chmod 0600 "$runtime/orchestrator.log"
+exec > >(tee -a "$runtime/orchestrator.log") 2>&1
 finish() {
   local rc=$?
   trap - EXIT
