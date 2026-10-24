@@ -17,8 +17,9 @@ guest="validator@$guest_ip"
 node_id="adm-r75-$os-single"
 [[ -r $key && -r $known_hosts ]] || { echo "missing SSH material for $os" >&2; exit 2; }
 umask 077
-exec > >(tee -a "$evidence/functional.log") 2>&1
+: > "$evidence/functional.log"
 chmod 0600 "$evidence/functional.log"
+exec > >(tee -a "$evidence/functional.log") 2>&1
 ssh_args=(-i "$key" -o IdentitiesOnly=yes -o BatchMode=yes -o StrictHostKeyChecking=yes -o "UserKnownHostsFile=$known_hosts" -o ConnectTimeout=5)
 remote() { ssh "${ssh_args[@]}" "$guest" "$@"; }
 upload_fixture() {
@@ -94,7 +95,7 @@ rows=json.load(open(sys.argv[3],encoding='utf-8'))
 prefix=f'r75-'
 test_rows=[row for row in rows if str(row.get('customer_id','')).startswith(prefix)]
 expected={
-    f'r75-{os}',f'r75-resize-{os}',f'r75-backup-{os}',
+    f'r75-single-r75-{os}',f'r75-resize-{os}',f'r75-backup-{os}',
     f'r75-control-{os}',f'r75-reboot-{os}',
 }
 customers={str(row.get('customer_id','')) for row in test_rows}

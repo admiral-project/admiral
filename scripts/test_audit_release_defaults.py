@@ -25,6 +25,10 @@ SEED_PREPARATION = (
     ROOT
     / "docs/audits/admiral-production-readiness-2026-10-21/scripts/prepare-audit-seed-guest.sh"
 )
+R75_SINGLE_LANE = (
+    ROOT
+    / "docs/audits/admiral-production-readiness-2026-10-21/scripts/r75/run-single-lane.sh"
+)
 
 
 def test_audit_helpers_default_to_the_coordinated_rpm_release():
@@ -85,3 +89,17 @@ def test_staged_candidate_python_rpms_require_the_pinned_signing_key():
     assert 'rpmkeys --checksig --verbose "$candidate_rpm"' in seed_setup
     assert "grep -Eiq 'signature.*: OK'" in seed_setup
     assert 'dnf install -y --setopt=localpkg_gpgcheck=1' in seed_setup
+
+
+def test_r75_terminal_audit_matches_lifecycle_customer_and_protects_log_creation():
+    lane = R75_SINGLE_LANE.read_text(encoding="utf-8")
+    lifecycle = (
+        ROOT
+        / "docs/audits/admiral-production-readiness-2026-10-21/scripts/r75/single-node-lifecycle.sh"
+    ).read_text(encoding="utf-8")
+
+    assert 'customer="r75-single-${suffix}"' in lifecycle
+    assert "f'r75-single-r75-{os}'" in lane
+    assert lane.index(': > "$evidence/functional.log"') < lane.index(
+        'exec > >(tee -a "$evidence/functional.log")'
+    )
