@@ -14,8 +14,8 @@ candidate_repo="$repo_root/rc5-r${release}"
 
 # Build inputs must be kept separate by distro. Callers building in containers
 # should set these to the mounted Admiral RPM directories.
-el10_rpms=${ADMIRAL_EL10_RPM_DIR:-$project_root/packaging/build/validation/rc5-r${release}/el10-rpmbuild/RPMS}
-fedora_rpms=${ADMIRAL_FEDORA_RPM_DIR:-$project_root/packaging/build/validation/rc5-r${release}/fedora-rpmbuild/RPMS}
+el10_rpms=${ADMIRAL_EL10_RPM_DIR:-$project_root/packaging/build/validation/rc5-r${release}/el10/RPMS}
+fedora_rpms=${ADMIRAL_FEDORA_RPM_DIR:-$project_root/packaging/build/validation/rc5-r${release}/fedora/RPMS}
 fedora_tag=${ADMIRAL_FEDORA_DIST_TAG:-fc46}
 
 mkdir -p "$validation_dir"

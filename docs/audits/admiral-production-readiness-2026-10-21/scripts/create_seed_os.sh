@@ -53,7 +53,7 @@ case "$os" in
   fedora)
     family=fedora
     repo_file="$validation_dir/admiral-local-fedora.repo"
-    rpm_build="$validation_dir/fedora-rpmbuild/RPMS"
+    rpm_build="$validation_dir/fedora/RPMS"
     expected_os_id=fedora
     required_repos=(rawhide copr:copr.fedorainfracloud.org:admiral-project:admiral)
     forbidden_suffix=el10
@@ -62,7 +62,7 @@ case "$os" in
   rocky)
     family=el10
     repo_file="$validation_dir/admiral-local-el10.repo"
-    rpm_build="$validation_dir/el10-rpmbuild/RPMS"
+    rpm_build="$validation_dir/el10/RPMS"
     expected_os_id=rocky
     required_repos=(baseos appstream crb epel copr:copr.fedorainfracloud.org:admiral-project:admiral)
     forbidden_suffix=fc46
@@ -71,7 +71,7 @@ case "$os" in
   alma)
     family=el10
     repo_file="$validation_dir/admiral-local-el10.repo"
-    rpm_build="$validation_dir/el10-rpmbuild/RPMS"
+    rpm_build="$validation_dir/el10/RPMS"
     expected_os_id=almalinux
     required_repos=(baseos appstream crb epel copr:copr.fedorainfracloud.org:admiral-project:admiral)
     forbidden_suffix=fc46
@@ -80,7 +80,7 @@ case "$os" in
   centos)
     family=el10
     repo_file="$validation_dir/admiral-local-el10.repo"
-    rpm_build="$validation_dir/el10-rpmbuild/RPMS"
+    rpm_build="$validation_dir/el10/RPMS"
     expected_os_id=centos
     required_repos=(baseos appstream crb epel copr:copr.fedorainfracloud.org:admiral-project:admiral)
     forbidden_suffix=fc46
@@ -251,6 +251,7 @@ scp -i "$ssh_private_key" -o IdentitiesOnly=yes -o BatchMode=yes \
   -o StrictHostKeyChecking=yes -o "UserKnownHostsFile=$known_hosts" \
   "$target:/var/tmp/admiral-seed-verification.txt" "$evidence_dir/verification.txt" || true
 (( verify_rc == 0 )) || { echo "seed verification failed (status $verify_rc); leaving VM for diagnosis" >&2; exit "$verify_rc"; }
+set +e
 ssh "${ssh_args[@]}" "$target" 'sudo bash -s' <<REMOTE
 set -e
 cloud-init clean --logs --machine-id
@@ -274,6 +275,9 @@ PY
 sync
 systemctl poweroff
 REMOTE
+poweroff_ssh_rc=$?
+set -e
+printf 'guest_poweroff_ssh_exit_code=%s\n' "$poweroff_ssh_rc"
 
 for attempt in $(seq 1 60); do
   state=$(virsh domstate "$name" 2>/dev/null | tr -d '\r' || true)
