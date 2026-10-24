@@ -20,6 +20,19 @@ The six Admiral RPMs are Release 75. They were prepared at root commit `b88370d9
 | `admiral-flagship` | `b7325bbc71fc474a521496e593b2967e4d555ac1` |
 | `admiral-harbor` | `dd39e9a74bf658ecf6fd6e9f8bd30b2ddf82d7db` |
 
+CI was green for the root package-preparation commit and all five component submodule commits used by the RPMs:
+
+| Repository | CI run |
+|---|---|
+| Root project/package preparation (`b88370d`) | [40134458726](https://github.com/admiral-project/admiral/actions/runs/40134458726) |
+| `admirald` | [40134043032](https://github.com/admiral-project/admirald/actions/runs/40134043032) |
+| `admiral-fleet` | [40069777965](https://github.com/admiral-project/admiral-fleet/actions/runs/40069777965) |
+| `admiralctl` | [40030034925](https://github.com/admiral-project/admiralctl/actions/runs/40030034925) |
+| `admiral-flagship` | [39795263415](https://github.com/admiral-project/admiral-flagship/actions/runs/39795263415) |
+| `admiral-harbor` | [39795262318](https://github.com/admiral-project/admiral-harbor/actions/runs/39795262318) |
+
+The R75 harness correction commit `9104ca0` passed root CI [40137247001](https://github.com/admiral-project/admiral/actions/runs/40137247001). The documentation commit recording this evidence also passed root CI [40138894596](https://github.com/admiral-project/admiral/actions/runs/40138894596).
+
 EL10 RPMs were built in an EL10 environment and installed only on Rocky Linux and CentOS Stream. Fedora Rawhide received its native `.fc46` RPMs built in the Fedora builder. No cross-distro or `--nodeps` installation was used.
 
 The lab host is Rocky Linux 10 x86_64 with 8 GiB RAM and 4 GiB swap. Three isolated KVM guests ran in parallel, each with 2 vCPU and 2 GiB RAM:
