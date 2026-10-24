@@ -10,7 +10,7 @@ Production readiness is **NOT VALIDATED**. The functional release gate is narrow
 
 | Topology | Decision | Basis |
 | --- | --- | --- |
-| Single-Node | **NOT VALIDATED** | The three R74 functional cells passed. Broader isolation/security negatives, resource-exhaustion behavior, stress and controlled performance also remain incomplete, so this is not a full production-readiness finding. |
+| Single-Node | **NOT VALIDATED** | The three R74 functional cells passed twice on fresh guests, most recently together in one parallel run. Broader isolation/security negatives, resource-exhaustion behavior, stress and controlled performance also remain incomplete, so this is not a full production-readiness finding. See [`release74-single-node-rerun-20261024.md`](evidence/release74-single-node-rerun-20261024.md). |
 | Multi-Node | **NOT VALIDATED** | All three R74 cells remain NOT TESTED. Database outage, in-flight tasks, comprehensive isolation, resource exhaustion and performance remain incomplete. |
 
 Neither topology is READY or CONDITIONALLY READY on current evidence. Exact-commit CI and scoped scenarios do not substitute for a complete matrix cell. No production system was touched.
@@ -36,4 +36,4 @@ The six Release 74 functional cells in [issue #277](https://github.com/admiral-p
 
 ## Current answer to the audit question
 
-The broader production-readiness question remains **NOT VALIDATED**. Release 74 has **3/6** functional runtime cells passed (all Single-Node); the Multi-Node cells remain untested. Even a complete functional matrix does not establish all security, isolation, fault-tolerance, resource-exhaustion or performance properties required for a production decision. No production-readiness claim is made. R74 execution details: [`release74-single-node.md`](evidence/release74-single-node.md).
+The broader production-readiness question remains **NOT VALIDATED**. Release 74 has **3/6** functional runtime cells passed (all Single-Node); the Multi-Node cells remain untested. Even a complete functional matrix does not establish all security, isolation, fault-tolerance, resource-exhaustion or performance properties required for a production decision. No production-readiness claim is made. R74 execution details: [`release74-single-node.md`](evidence/release74-single-node.md) and the fresh-VM rerun [`release74-single-node-rerun-20261024.md`](evidence/release74-single-node-rerun-20261024.md).

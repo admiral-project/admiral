@@ -4,6 +4,8 @@
 
 **Three of six Release 74 functional cells PASS in one coordinated pass.** The Rocky Linux 10 x86_64, CentOS Stream 10 x86_64 and Fedora Rawhide x86_64 Single-Node cells ran concurrently against fresh guest clones. Each passed the Release 74 Single-Node checklist in master issue [#277](https://github.com/admiral-project/admiral/issues/277) after correcting the noted local harness checks. The other three cells (Multi-Node on each OS) are **NOT TESTED**. No new product defect was identified. This does not mean the complete security/resilience/performance audit or production readiness passed.
 
+A second full fresh-VM pass on the same exact Release 74 RPM candidate also passed all three Single-Node cells together after fixing the launcher script's executable bit. Its source/tooling identity, six stage results per OS, updated boot IDs and raw-log hashes are in [`release74-single-node-rerun-20261024.md`](release74-single-node-rerun-20261024.md). The rerun preserves the initial launcher and early-boot preflight failures separately; neither entered a product test. Current matrix remains 3/6 because Multi-Node is NOT TESTED.
+
 This report distinguishes the final check result from the first harness result: Rocky and Fedora's first final cleanup probe failed to change directory from `/home/validator`, which has mode 0700. That probe did not inspect runtime state. The command was rerun from `/tmp` and passed. Fedora's functional log also contains `_reboot: command not found`, caused by the local lane script being edited while that already-running shell was reading it; the reboot test had already passed. Both raw errors are preserved. These were test harness errors, not suppressed product failures.
 
 ## Candidate and CI identity

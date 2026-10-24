@@ -4,7 +4,7 @@ Audit ID: `ADM-AUDIT-2026-10-21`. The active release gate covers Rocky Linux 10,
 
 ## Active candidate — Release 74
 
-**Release 74 is built; matrix status is 3/6 PASS.** Rocky Linux 10, CentOS Stream 10 and Fedora Rawhide each passed the Single-Node functional gate in one coordinated parallel run. All three Multi-Node cells remain NOT TESTED. Exact sources, RPM manifests, seed identities, VM details, logs and limitations are recorded in [`release74-single-node.md`](evidence/release74-single-node.md). The active checklist is tracked in [master issue #277](https://github.com/admiral-project/admiral/issues/277).
+**Release 74 is built; matrix status is 3/6 PASS.** Rocky Linux 10, CentOS Stream 10 and Fedora Rawhide each passed the Single-Node functional gate in a coordinated parallel run, and all three passed a second fresh-VM run together after a launcher fix. All three Multi-Node cells remain NOT TESTED. Candidate identity and original evidence are in [`release74-single-node.md`](evidence/release74-single-node.md); the fresh-VM rerun is in [`release74-single-node-rerun-20261024.md`](evidence/release74-single-node-rerun-20261024.md). The active checklist is tracked in [master issue #277](https://github.com/admiral-project/admiral/issues/277).
 
 Earlier R73 Single-Node and Multi-Node reports remain historical, candidate-specific evidence only. Fedora must use native Fedora packages/tooling, and EL10 guests must use EL10 RPMs. Do not bypass DNF dependency resolution or cross-install binaries.
 
