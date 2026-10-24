@@ -41,8 +41,7 @@ The audit helper configures the candidate repository per guest and installs
 the exact native RPM set through DNF. It does not run a full OS update during
 the playbook run.
 
-No release-candidate installation playbook was run during this preflight:
-the next candidate remains gated on issue triage, fixes, and green CI.
+This was a seed-only preflight; at that point no candidate installation playbook had been run. The prepared seed hashes were later used by the Release 74 Single-Node pass. The exact install/run results are documented in [`release74-single-node.md`](release74-single-node.md).
 
 The local regression suites run after updating the audit-repository tests:
 

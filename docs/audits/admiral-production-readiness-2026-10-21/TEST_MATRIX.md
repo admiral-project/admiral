@@ -6,13 +6,13 @@ Audit ID: `ADM-AUDIT-2026-10-21`<br>
 
 The active release gate has six cells: Fedora Rawhide, Rocky Linux 10 and CentOS Stream 10, each Single-Node and Multi-Node. AlmaLinux is excluded because the configured COPR environment omitted its Go RPM builds (#276). The same exact Admiral sources and coordinated native package set must pass all six. Any source or package-set change invalidates all cell credit and requires a fresh candidate build and run.
 
-**Release 74 status: 0/6 PASS; all cells NOT TESTED.** Release 74 has not been built. R73 evidence (4/8 PASS with scoped Multi-Node results) is historical and does not validate this candidate. Python helper packages compiled successfully and their upstream versions remain fixed for this release; see [`python-dependency-refresh-20261024.md`](evidence/python-dependency-refresh-20261024.md). The active acceptance checklist is [issue #277](https://github.com/admiral-project/admiral/issues/277); #200 is closed as not planned because AlmaLinux is blocked by its build environment.
+**Release 74 status: 3/6 PASS.** All three Single-Node cells passed together using the exact unchanged R74 candidate. All three Multi-Node cells are NOT TESTED. Historical R73 evidence does not count toward these results. Candidate identity, test details, retained raw-log hashes and limits: [`release74-single-node.md`](evidence/release74-single-node.md). The active acceptance checklist is [issue #277](https://github.com/admiral-project/admiral/issues/277); #200 is closed as not planned because AlmaLinux is blocked by its build environment.
 
 | Platform | Single-Node | Multi-Node |
 |---|---|---|
-| Fedora Rawhide x86_64 | NOT TESTED | NOT TESTED |
-| Rocky Linux 10 x86_64 | NOT TESTED | NOT TESTED |
-| CentOS Stream 10 x86_64 | NOT TESTED | NOT TESTED |
+| Fedora Rawhide x86_64 | **PASS** | NOT TESTED |
+| Rocky Linux 10 x86_64 | **PASS** | NOT TESTED |
+| CentOS Stream 10 x86_64 | **PASS** | NOT TESTED |
 
 The table above is the active Release 74 gate. The prior Release 73 per-scenario records below remain historical evidence and earn no current cell credit.
 

@@ -6,11 +6,13 @@ This tracker supersedes [#200](https://github.com/admiral-project/admiral/issues
 
 | OS | Single-Node | Multi-Node |
 |---|---|---|
-| Rocky Linux 10 x86_64 | NOT TESTED | NOT TESTED |
-| CentOS Stream 10 x86_64 | NOT TESTED | NOT TESTED |
-| Fedora Rawhide x86_64 | NOT TESTED | NOT TESTED |
+| Rocky Linux 10 x86_64 | **PASS** | NOT TESTED |
+| CentOS Stream 10 x86_64 | **PASS** | NOT TESTED |
+| Fedora Rawhide x86_64 | **PASS** | NOT TESTED |
 
-**Release 74 status: 0/6 PASS.** Evidence from R73 or an earlier candidate does not count toward this candidate. Any source or RPM fix invalidates the current run and requires a new coordinated Release and fresh evidence.
+**Release 74 status: 3/6 PASS.** All Single-Node cells passed together on the exact candidate; the three Multi-Node cells are NOT TESTED. Evidence from R73 or an earlier candidate does not count toward this candidate. Any source or RPM fix invalidates the current run and requires a new coordinated Release and fresh evidence. Detailed evidence: [`release74-single-node.md`](release74-single-node.md).
+
+The six-item preflight below is a shared per-cell checklist and remains open until all six cells are prepared; every preflight item was completed for the three passing Single-Node cells. The Single-Node checklist below is complete for Rocky Linux 10, CentOS Stream 10, and Fedora Rawhide.
 
 ## Required preflight for every cell
 
@@ -23,14 +25,14 @@ This tracker supersedes [#200](https://github.com/admiral-project/admiral/issues
 
 ## Single-Node checklist
 
-- [ ] Run the supported secure `admiral-install --single-node` flow and record the complete Ansible recap; require exit code 0, failed=0, unreachable=0.
-- [ ] Verify all expected services, TLS/API/portal health, SELinux enforcing, and no failed units.
-- [ ] Provision a real workload and verify running/healthy/available state, HTTP 200, and a persistent PostgreSQL marker.
-- [ ] Replay the same idempotency key; verify no duplicate operation, task, instance, or runtime resources.
-- [ ] Exercise update/resize and stop/start/restart; verify configuration and data continuity.
-- [ ] Create a backup, restore it, verify checksum and marker, and reject restore in an invalid lifecycle state.
-- [ ] Reboot the VM; verify changed boot ID, service convergence, HTTP 200, and marker persistence.
-- [ ] Deprovision and verify no test containers, pods, volumes, Quadlets, units, files, or database-owned runtime records remain.
+- [x] Run the supported secure `admiral-install --single-node` flow and record the complete Ansible recap; require exit code 0, failed=0, unreachable=0.
+- [x] Verify all expected services, TLS/API/portal health, SELinux enforcing, and no failed units.
+- [x] Provision a real workload and verify running/healthy/available state, HTTP 200, and a persistent PostgreSQL marker.
+- [x] Replay the same idempotency key; verify no duplicate operation, task, instance, or runtime resources.
+- [x] Exercise update/resize and stop/start/restart; verify configuration and data continuity.
+- [x] Create a backup, restore it, verify checksum and marker, and reject restore in an invalid lifecycle state.
+- [x] Reboot the VM; verify changed boot ID, service convergence, HTTP 200, and marker persistence.
+- [x] Deprovision and verify no test containers, pods, volumes, Quadlets, units, files, or database-owned runtime records remain.
 
 ## Multi-Node checklist
 

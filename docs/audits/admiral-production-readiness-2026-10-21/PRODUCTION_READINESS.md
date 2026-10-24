@@ -2,7 +2,7 @@
 
 Audit ID: `ADM-AUDIT-2026-10-21`<br>
 Audit began: 2026-10-21 UTC<br>
-> **Active scope — Release 74, 2026-10-24:** Rocky Linux 10, CentOS Stream 10, and Fedora Rawhide x86_64, each Single-Node and Multi-Node. Release 74 has not been built; all six cells are **NOT TESTED (0/6 PASS)**. Earlier candidate results are historical and do not transfer. The audit also has a broader scope than the functional release gate and does not establish comprehensive security, isolation, resilience, scalability or performance.
+> **Active scope — Release 74, 2026-10-24:** Rocky Linux 10, CentOS Stream 10, and Fedora Rawhide x86_64, each Single-Node and Multi-Node. The functional matrix is **3/6 PASS**: all three Single-Node cells passed together; all three Multi-Node cells are NOT TESTED. The audit also has a broader scope than the functional release gate and does not establish comprehensive security, isolation, resilience, scalability or performance.
 
 Production readiness is **NOT VALIDATED**. The functional release gate is narrower than the full production audit and cannot establish production security, fault-tolerance, scalability or performance.
 
@@ -10,8 +10,8 @@ Production readiness is **NOT VALIDATED**. The functional release gate is narrow
 
 | Topology | Decision | Basis |
 | --- | --- | --- |
-| Single-Node | **NOT VALIDATED** | Release 74 is not built and none of its three OS cells has runtime evidence. Broader isolation/security negatives, resource-exhaustion behavior, stress and performance also remain incomplete. |
-| Multi-Node | **NOT VALIDATED** | Release 74 is not built and none of its three OS cells has runtime evidence. Database outage, in-flight tasks, comprehensive isolation, resource exhaustion and performance remain incomplete. |
+| Single-Node | **NOT VALIDATED** | The three R74 functional cells passed. Broader isolation/security negatives, resource-exhaustion behavior, stress and controlled performance also remain incomplete, so this is not a full production-readiness finding. |
+| Multi-Node | **NOT VALIDATED** | All three R74 cells remain NOT TESTED. Database outage, in-flight tasks, comprehensive isolation, resource exhaustion and performance remain incomplete. |
 
 Neither topology is READY or CONDITIONALLY READY on current evidence. Exact-commit CI and scoped scenarios do not substitute for a complete matrix cell. No production system was touched.
 
@@ -36,4 +36,4 @@ The six Release 74 functional cells in [issue #277](https://github.com/admiral-p
 
 ## Current answer to the audit question
 
-The broader production-readiness question remains **NOT VALIDATED**. Release 74 is not built and has **0/6** runtime cells executed; all earlier candidate results are historical and carry no credit. Even a complete functional matrix does not establish all security, isolation, fault-tolerance, resource-exhaustion or performance properties required for a production decision. No production-readiness claim is made.
+The broader production-readiness question remains **NOT VALIDATED**. Release 74 has **3/6** functional runtime cells passed (all Single-Node); the Multi-Node cells remain untested. Even a complete functional matrix does not establish all security, isolation, fault-tolerance, resource-exhaustion or performance properties required for a production decision. No production-readiness claim is made. R74 execution details: [`release74-single-node.md`](evidence/release74-single-node.md).

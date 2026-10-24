@@ -3,6 +3,8 @@
 Audit ID: `ADM-AUDIT-2026-10-21`<br>
 > **Release 74 status:** no controlled benchmark or scalability campaign has run. Install and recovery durations from earlier candidates are historical observations, not Release 74 performance samples. There are no current-candidate p50/p95/p99 measurements; performance remains **NOT TESTED**.
 
+R74 cold workload provisioning took approximately 242.5 seconds on Rocky Linux 10, 247.9 seconds on CentOS Stream 10 and 241.5 seconds on Fedora Rawhide while the three guests ran in parallel and pulled/extracted PostgreSQL images. This is one shared-host cold-start observation, not a controlled benchmark; the sample cannot isolate Admiral from registry, disk, host contention or image extraction. No R74 load sweep, resource-profile sampling, repeated latency distribution, or p50/p95/p99 measurement was performed. See [`release74-single-node.md`](evidence/release74-single-node.md).
+
 > **Historical R67 status:** Scoped Single-Node install, lifecycle and reboot runs are recorded for all four OSes, plus Fedora Multi-Node functional runs. Individual installer and operation timings are observations only. No controlled R67 performance or scalability campaign has been run. Matrix remains 0/8.
 
 Historical R68 performance status (no R69 evidence): **NOT VALIDATED — no controlled performance campaign; matrix 0/8.** No R68 run has measured progressive workload/concurrency load, repeated latency samples, p50/p95/p99, or controlled CPU/memory/I/O/file-descriptor consumption. R67 installer timings below are historical single functional observations and do not count as R68 performance evidence.

@@ -1,0 +1,8 @@
+b373bc7fcad0775aa4f4d66905d0ba91eb594e266b44e560744ddd0861ff43af  scripts/r74/host-reboot.sh
+a0b4c9c9d27600975e6579b49efaec4ff2edd066759e5713bdf55f24221a6901  scripts/r74/run-single-lane.sh
+d03bce2851a930258b5241badd7df455cc5f26f5b8a68b2a04dbceb0aaae0d91  scripts/r74/run-single-pass.sh
+1a7a6782ef319eec679fd3d714385ed821d1ab77fb660d483139b680edd59f86  scripts/r74/single-backup-restore.sh
+74c09cf62204782ef64682a31ab56e242d0cbe4c7db652da274a827a15f1c1b2  scripts/r74/single-control-plane-lifecycle.sh
+458e14141e474c29383d319e2ce10ccb4604be502e11738ac384967258959f82  scripts/r74/single-node-lifecycle.sh
+16ee69a7fa248725e45b6f04426e3b3916577a5504d3a29c42740fa533f7b300  scripts/r74/single-node-postcheck.sh
+6f5b023741719a3c743f67d10a9d6c1c258a483b7d3a01cb8ddf07d35acbf807  scripts/r74/single-resize-functional.sh

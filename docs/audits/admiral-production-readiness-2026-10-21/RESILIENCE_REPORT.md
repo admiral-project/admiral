@@ -1,7 +1,9 @@
 # Resilience and failure-injection report
 
 Audit ID: `ADM-AUDIT-2026-10-21`<br>
-> **Release 74 status:** all six cells across Rocky Linux 10, CentOS Stream 10, and Fedora Rawhide are **NOT TESTED** because Release 74 has not been built. Historical fault-injection records below do not count toward this candidate. Active-task interruption, resource exhaustion, latency injection, and broader recovery scenarios remain untested.
+> **Release 74 status:** all three Single-Node cells passed the reboot and service-lifecycle checks described below; all three Multi-Node cells remain **NOT TESTED**. Historical fault-injection records below do not count toward this candidate. Active-task interruption, resource exhaustion, latency injection, and broader recovery scenarios remain untested.
+
+R74 Single-Node checks on Rocky Linux 10.2, CentOS Stream 10 and Fedora Rawhide passed real VM reboot recovery: boot IDs changed; services and workload converged to healthy/available; HTTP returned 200; and a PostgreSQL marker written before reboot remained present. Instance lifecycle and admirald systemd stop/start/restart checks also passed. This is scoped E2E recovery evidence only. Process-kill crash recovery, Podman daemon loss, network loss, disk/memory exhaustion, injected write failures, interrupted deployment, external dependency loss and stale Multi-Node recovery remain NOT TESTED on R74. Raw evidence: [`release74-single-node.md`](evidence/release74-single-node.md).
 
 > **Historical R67 status:** All four Single-Node target OSes passed real host-reboot recovery and selected service/database/process-recovery probes. All four OSes passed fresh three-guest Multi-Node bootstrap, scoped placement on both workers, central PostgreSQL outage/recovery, WireGuard partition/rejoin, hub reboot recovery and Podman deletion-failure/retry. In-flight task interruption, resource exhaustion and broad recovery remain untested. Matrix remains 0/8.
 

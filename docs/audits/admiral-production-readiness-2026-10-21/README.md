@@ -4,7 +4,7 @@ Audit ID: `ADM-AUDIT-2026-10-21`. The active release gate covers Rocky Linux 10,
 
 ## Active candidate — Release 74
 
-**Release 74 has not been built; matrix status is 0/6.** The Release 73 candidate and earlier runtime evidence do not count toward Release 74. The six-cell checklist is tracked in [master issue #277](https://github.com/admiral-project/admiral/issues/277). Release 74 RPMs remain gated on issue triage, fixes, local tests and green CI. The successful Python dependency builds and historical R73 evidence are recorded in [dependency refresh evidence](evidence/python-dependency-refresh-20261024.md) and the [R73 candidate record](evidence/release73-candidate.md).
+**Release 74 is built; matrix status is 3/6 PASS.** Rocky Linux 10, CentOS Stream 10 and Fedora Rawhide each passed the Single-Node functional gate in one coordinated parallel run. All three Multi-Node cells remain NOT TESTED. Exact sources, RPM manifests, seed identities, VM details, logs and limitations are recorded in [`release74-single-node.md`](evidence/release74-single-node.md). The active checklist is tracked in [master issue #277](https://github.com/admiral-project/admiral/issues/277).
 
 Earlier R73 Single-Node and Multi-Node reports remain historical, candidate-specific evidence only. Fedora must use native Fedora packages/tooling, and EL10 guests must use EL10 RPMs. Do not bypass DNF dependency resolution or cross-install binaries.
 
@@ -28,4 +28,4 @@ For a fresh Single-Node guest, run `scripts/install-single-node-audit.sh el10 ..
 
 For each Multi-Node cell, keep the isolated underlay (`10.77.0.0/24`) separate from the WireGuard overlay (`10.99.0.0/24`). Enroll workers with `scripts/install-worker-audit.sh`, strict SSH host-key pins and the exact native candidate repository. Capture hub and worker inventories, health, workload placement on each worker, SQL markers, HTTP 200, idempotent retries, worker recovery/rejoin, controlled node removal and cleanup.
 
-Only complete evidence from the exact R73 RPM set can pass a cell. A functional cell pass does not certify all production security, resilience or performance properties.
+Release 74 cell results apply only to the exact R74 source and native RPM sets in the linked evidence. A functional cell pass does not certify all production security, resilience or performance properties. Reproduction scripts for this pass are in [`scripts/r74/`](scripts/r74/).

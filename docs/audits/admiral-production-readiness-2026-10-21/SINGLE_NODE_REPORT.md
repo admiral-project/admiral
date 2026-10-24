@@ -2,9 +2,11 @@
 
 Audit ID: `ADM-AUDIT-2026-10-21`<br>
 
-## Active candidate — Release 74: 0/3 Single-Node cells PASS
+## Active candidate — Release 74: 3/3 Single-Node cells PASS
 
-Release 74 has not been built or installed. Rocky Linux 10, CentOS Stream 10, and Fedora Rawhide Single-Node cells are **NOT TESTED**. The updated seed images and Ansible syntax preflight are ready; the installer playbooks must run against fresh clones after the exact Release 74 RPMs are available. Prior-candidate evidence does not transfer. See [master issue #277](https://github.com/admiral-project/admiral/issues/277) and [`ansible-seed-preflight-20261024.md`](evidence/ansible-seed-preflight-20261024.md).
+Rocky Linux 10.2, CentOS Stream 10 and Fedora Rawhide x86_64 each passed the Release 74 Single-Node functional gate in one coordinated parallel pass on 2026-10-24. Each used a fresh clone of its updated native seed, the exact six native R74 RPMs, secure Ansible setup, workload creation/idempotency/deprovision, resize with SQL continuity, backup/restore with checksum and invalid-state rejection, instance and control-plane lifecycle, real host reboot with HTTP and SQL persistence, and final resource cleanup. Ansible recaps were `failed=0`, `unreachable=0`; all 23 observed test operations per OS ended successfully. The initial final-check failures on Rocky and Fedora were harness issues and passed on immediate corrected checks; Fedora also records a runner-edit race. These observations and corrections are retained, not hidden. Full run identity, timings, raw evidence hashes and limits: [`release74-single-node.md`](evidence/release74-single-node.md). Reproduction helpers: [`scripts/r74/`](scripts/r74/). See [master issue #277](https://github.com/admiral-project/admiral/issues/277).
+
+These are functional candidate-cell passes, not full Single-Node production-readiness approval. Comprehensive isolation/security negatives, resource exhaustion, stress and percentile performance sampling remain incomplete.
 
 ## Historical Release 73: 4/4 Single-Node cells PASS
 

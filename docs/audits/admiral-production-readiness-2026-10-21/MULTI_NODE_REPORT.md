@@ -4,7 +4,7 @@ Audit ID: `ADM-AUDIT-2026-10-21`<br>
 
 ## Active candidate — Release 74: 0/3 Multi-Node cells PASS
 
-Release 74 has not been built or installed. Rocky Linux 10, CentOS Stream 10, and Fedora Rawhide Multi-Node cells are **NOT TESTED**. Each requires three fresh same-OS guests. Updated seed images are ready; execute one three-guest cell at a time on the 8-GiB lab host after the exact Release 74 RPMs are available. Prior-candidate evidence does not transfer. See [master issue #277](https://github.com/admiral-project/admiral/issues/277) and [`ansible-seed-preflight-20261024.md`](evidence/ansible-seed-preflight-20261024.md).
+Rocky Linux 10, CentOS Stream 10 and Fedora Rawhide Multi-Node cells are **NOT TESTED** on Release 74. Each requires three real same-OS guests. The R74 pass exercised only three Single-Node guests; it provides no Multi-Node evidence. The 8-GiB host has the R74 Single-Node guests shut off and 57 GiB free at report time. Prior-candidate Multi-Node results do not transfer. See [master issue #277](https://github.com/admiral-project/admiral/issues/277), [`release74-single-node.md`](evidence/release74-single-node.md) and [`ansible-seed-preflight-20261024.md`](evidence/ansible-seed-preflight-20261024.md).
 
 ## Historical Release 73: scoped Multi-Node evidence, no complete cells
 
