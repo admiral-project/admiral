@@ -2,11 +2,15 @@
 
 Audit ID: `ADM-AUDIT-2026-10-21`<br>
 
-## Active candidate — Release 74: 3/3 Single-Node cells PASS
+## Active candidate — Release 75: 3/3 Single-Node cells PASS
 
-Rocky Linux 10.2, CentOS Stream 10 and Fedora Rawhide x86_64 passed the Release 74 Single-Node functional gate in the original coordinated run and again in a fresh-VM parallel rerun on 2026-10-24. Each latest lane used the exact six native R74 RPMs, secure Ansible setup, workload creation/idempotency/deprovision, resize with SQL continuity, backup/restore with checksum and invalid-state rejection, instance and control-plane lifecycle, real host reboot with HTTP and SQL persistence, and final runtime cleanup. The latest Ansible recaps were `failed=0`, `unreachable=0`; all six lane stages passed on each OS. The earlier harness failures and the later executable-bit fix are retained in the evidence. Full original run details: [`release74-single-node.md`](evidence/release74-single-node.md); fresh-VM rerun, IDs, raw evidence hashes and limits: [`release74-single-node-rerun-20261024.md`](evidence/release74-single-node-rerun-20261024.md). Reproduction helpers: [`scripts/r74/`](scripts/r74/). See [master issue #277](https://github.com/admiral-project/admiral/issues/277).
+Rocky Linux 10.2, CentOS Stream 10 and Fedora Rawhide 46 x86_64 passed the Release 75 Single-Node functional gate together on fresh seeded VMs on 2026-10-24. Each lane installed only the matching native six-RPM set, completed secure Ansible setup, workload creation/idempotency/deprovision, resize with SQL continuity, backup/restore with checksum and invalid-state rejection, instance and control-plane lifecycle, real host reboot with HTTP and SQL persistence, and final terminal-state/resource audit. All seven recorded test groups passed on each OS; installer recaps had zero failures or unreachable hosts. Candidate refs, exact NEVRAs and RPM hashes, test IDs, raw-log manifest fingerprint and limitations are recorded in [`release75-single-node-20261024.md`](evidence/release75-single-node-20261024.md). The first R75 harness attempt is retained but excluded. Reproduction helpers: [`scripts/r75/`](scripts/r75/). See [master issue #277](https://github.com/admiral-project/admiral/issues/277).
 
 These are functional candidate-cell passes, not full Single-Node production-readiness approval. Comprehensive isolation/security negatives, resource exhaustion, stress and percentile performance sampling remain incomplete.
+
+## Historical Release 74: 3/3 Single-Node cells PASS; no Release 75 credit
+
+All three R74 Single-Node cells passed on fresh guests. This is prior-candidate evidence only and does not count toward Release 75. Details: [`release74-single-node-rerun-20261024.md`](evidence/release74-single-node-rerun-20261024.md).
 
 ## Historical Release 73: 4/4 Single-Node cells PASS
 

@@ -1,5 +1,5 @@
 # Architecture review — Admiral production-readiness audit
-> **Current gate status (2026-10-24):** Release 74 has four of six functional cells PASS: Rocky Linux 10, CentOS Stream 10 and Fedora Rawhide Single-Node, plus Rocky Linux Multi-Node. CentOS Stream and Fedora Rawhide Multi-Node remain NOT TESTED. Candidate root commit `d6e5cacb7c35807417f19b7f970c1d1f6a2d387c` has successful root CI [40120683532](https://github.com/admiral-project/admiral/actions/runs/40120683532); the exact component pins, CI, runtime evidence and test limits are in [`release74-single-node.md`](evidence/release74-single-node.md) and [`release74-rocky-multinode-progress-20261024.md`](evidence/release74-rocky-multinode-progress-20261024.md). All five component pins matched `origin/main`, and `validate-release-refs.py` passed at candidate build time. R73 evidence below is historical and does not count toward Release 74.
+> **Current gate status (2026-10-24):** Release 75 has three of six functional cells PASS: Rocky Linux 10, CentOS Stream 10 and Fedora Rawhide Single-Node. All three Multi-Node cells are NOT TESTED for R75. The six packages were built from the exact pins recorded in [`release75-single-node-20261024.md`](evidence/release75-single-node-20261024.md); the tested VM evidence is candidate-specific. Earlier release results are historical and do not count toward Release 75.
 > **Historical R67 status:** Six RPMs are built for Fedora and six for EL10 from the same selected source pins, in separate native builders. Exact packages passed scoped Fedora/Rocky Single-Node install, lifecycle and reboot scenarios, plus a Fedora hub-and-two-worker bootstrap and workload lifecycle on each worker. No R67 cell is complete; matrix remains 0/8.
 
 Audit started: 2026-10-21 UTC<br>
@@ -7,9 +7,9 @@ Historical audit candidate: RC5 Release 67 packages built from root commit `833d
 
 ## Scope and evidence rules
 
-The active Release 74 runtime matrix is Rocky Linux 10, CentOS Stream 10, and Fedora Rawhide on x86_64, each in Single-Node and Multi-Node (six cells). AlmaLinux is excluded because the configured COPR build environment omitted the Go RPMs; see #276. The host is x86_64 with KVM, 4 vCPU, 8 GiB RAM and 4 GiB swap. Each Multi-Node cell uses one admin/portal hub and two workers. Results from any earlier candidate are historical only.
+The active Release 75 runtime matrix is Rocky Linux 10, CentOS Stream 10, and Fedora Rawhide on x86_64, each in Single-Node and Multi-Node (six cells). AlmaLinux is excluded because the configured COPR build environment omitted the Go RPMs; see #276. The host is x86_64 with KVM, 4 vCPU, 8 GiB RAM and 4 GiB swap. Each Multi-Node cell uses one admin/portal hub and two workers. Results from any earlier candidate are historical only.
 
-Results from a different OS, candidate, or topology do not satisfy a Release 74 target cell.
+Results from a different OS, candidate, or topology do not satisfy a Release 75 target cell.
 
 Evidence is classified as static review, unit test, integration test, end-to-end test, or real fault-injection test. A successful API response alone is not proof of completed work. Each result is recorded in `TEST_MATRIX.md` and the corresponding topology report. No unexecuted scenario is marked PASS.
 

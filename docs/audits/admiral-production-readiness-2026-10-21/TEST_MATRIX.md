@@ -2,23 +2,23 @@
 
 Audit ID: `ADM-AUDIT-2026-10-21`<br>
 
-## Active functional gate — Release 74, three x86_64 platforms
+## Active functional gate — Release 75, three x86_64 platforms
 
 The active release gate has six cells: Fedora Rawhide, Rocky Linux 10 and CentOS Stream 10, each Single-Node and Multi-Node. AlmaLinux is excluded because the configured COPR environment omitted its Go RPM builds (#276). The same exact Admiral sources and coordinated native package set must pass all six. Any source or package-set change invalidates all cell credit and requires a fresh candidate build and run.
 
-**Release 74 status: 4/6 complete cells PASS.** All three Single-Node cells passed together on fresh VMs using the exact unchanged candidate. Rocky Multi-Node passed its full functional checklist on three real guests; CentOS Stream and Fedora Rawhide Multi-Node remain NOT TESTED. Historical R73 evidence does not count toward these results. Candidate identity and Single-Node results: [`release74-single-node.md`](evidence/release74-single-node.md) and [`release74-single-node-rerun-20261024.md`](evidence/release74-single-node-rerun-20261024.md). Rocky Multi-Node evidence and the separate broader-audit limitations: [`release74-rocky-multinode-progress-20261024.md`](evidence/release74-rocky-multinode-progress-20261024.md). The active acceptance checklist is [issue #277](https://github.com/admiral-project/admiral/issues/277); #200 is closed as not planned because AlmaLinux is blocked by its build environment.
+**Release 75 status: 3/6 complete cells PASS.** All three Single-Node cells passed together on fresh VMs using the exact R75 RPMs. All three Multi-Node cells are NOT TESTED on R75. R74 and earlier evidence does not transfer to this candidate. Single-Node evidence, candidate refs, package hashes, procedure, stage results and raw-log manifest fingerprint: [`release75-single-node-20261024.md`](evidence/release75-single-node-20261024.md). The active acceptance checklist is [issue #277](https://github.com/admiral-project/admiral/issues/277); AlmaLinux remains excluded because the configured COPR build environment omitted its Go RPMs (#276).
 
 | Platform | Single-Node | Multi-Node |
 |---|---|---|
 | Fedora Rawhide x86_64 | **PASS** | NOT TESTED |
-| Rocky Linux 10 x86_64 | **PASS** | **PASS** |
+| Rocky Linux 10 x86_64 | **PASS** | NOT TESTED |
 | CentOS Stream 10 x86_64 | **PASS** | NOT TESTED |
 
-The table above is the active Release 74 gate. The prior Release 73 per-scenario records below remain historical evidence and earn no current cell credit.
+The table above is the active Release 75 gate. Previous Release 74 Multi-Node results and all earlier per-scenario records remain historical evidence and earn no current cell credit.
 
 Each Multi-Node cell requires three real guests of that OS. Fedora guests must receive only native `.fc46` RPMs; EL10 guests must receive only native `.el10` RPMs.
 
-### Release 74 Rocky Linux Multi-Node cell results
+### Historical Release 74 Rocky Linux Multi-Node cell results — no Release 75 credit
 
 Seven scenario checks covered all six Multi-Node checklist items on a real three-guest Rocky Linux 10.2 R74 cluster: secure bootstrap/enrollment; placement on both workers; three-client idempotency and conflicting update/delete; worker reboot and WireGuard partition/rejoin; active-worker removal refusal followed by idle removal; and hub reboot with an active workload. All passed. PostgreSQL outage, task replay/interruption, removal token rejection, comprehensive security/isolation, resource pressure and performance remain outside the functional cell gate and NOT TESTED in the broader audit. See [`Rocky Multi-Node evidence`](evidence/release74-rocky-multinode-progress-20261024.md).
 

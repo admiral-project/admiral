@@ -2,11 +2,11 @@
 
 Audit ID: `ADM-AUDIT-2026-10-21`<br>
 
-## Active candidate — Release 74: 1/3 complete Multi-Node cells PASS
+## Active candidate — Release 75: 0/3 complete Multi-Node cells PASS
 
-Rocky Linux 10 passed its Release 74 functional Multi-Node cell on three real guests. CentOS Stream 10 and Fedora Rawhide Multi-Node remain **NOT TESTED**. One of three Multi-Node cells and four of six overall functional cells have passed; wider production audit coverage remains incomplete. Prior-candidate results do not transfer. See [master issue #277](https://github.com/admiral-project/admiral/issues/277), [`release74-single-node.md`](evidence/release74-single-node.md), [`release74-single-node-rerun-20261024.md`](evidence/release74-single-node-rerun-20261024.md), and [`ansible-seed-preflight-20261024.md`](evidence/ansible-seed-preflight-20261024.md).
+No Release 75 Multi-Node cell has been executed. Rocky Linux 10, CentOS Stream 10 and Fedora Rawhide remain **NOT TESTED** for this candidate. The three Release 75 Single-Node cells passed, so the active functional matrix stands at 3/6; wider production audit coverage remains incomplete. Prior-candidate results do not transfer. See [master issue #277](https://github.com/admiral-project/admiral/issues/277) and [`release75-single-node-20261024.md`](evidence/release75-single-node-20261024.md).
 
-## Release 74 Rocky Linux 10.2 x86_64 functional cell — PASS
+## Historical Release 74 Rocky Linux 10.2 x86_64 functional cell — no Release 75 credit
 
 The fresh three-guest R74 cluster installed native `0.0.1rc5-74.el10` RPMs. All six Multi-Node acceptance checks passed: secure install/enrollment; explicit placement on W1 and W2; three-client idempotency and conflicting update/delete; worker reboot and WireGuard partition/rejoin; active-worker removal refusal followed by idle removal; and hub reboot with active workload. Test-specific transitional health observations were retained, and each operation was awaited through its real result. SQL data survived worker/hub reboot and network partition; HTTP returned 200 after recovery; deprovisioned workloads left empty inventories. The exact functional gate cell is **PASS**. PostgreSQL outage, task interruption/replay, old token rejection, failed-helper rollback, exhaustive security/isolation, resource exhaustion and performance remain outside this cell gate and untested in the broader audit. Full procedures, limits and per-run hashes: [`release74-rocky-multinode-progress-20261024.md`](evidence/release74-rocky-multinode-progress-20261024.md).
 

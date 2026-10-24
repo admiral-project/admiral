@@ -1,7 +1,7 @@
 # Findings
 
 Audit ID: `ADM-AUDIT-2026-10-21`<br>
-**Release 74 status:** six native RPMs installed and three Single-Node runtime cells passed; three Multi-Node cells remain **NOT TESTED**. The exact R74 evidence found no new product defect. Cold PostgreSQL image startup produced transient early health observations before converging; this pre-existing behavior is tracked by [#236](https://github.com/admiral-project/admiral/issues/236), and the R74 observation is linked in [`release74-single-node.md`](evidence/release74-single-node.md). Findings remain open unless explicitly resolved upstream; scoped candidate evidence does not close issues. See [master tracker #277](https://github.com/admiral-project/admiral/issues/277).
+**Release 75 status:** all three Single-Node functional cells passed; all three Multi-Node cells remain **NOT TESTED** for this candidate. The exact R75 functional evidence found no new product defect. Startup transitions were observed during recovery and converged within the test timeout; the final readiness and persistence assertions passed. Findings remain open unless explicitly resolved upstream; scoped candidate evidence does not close issues. See [master tracker #277](https://github.com/admiral-project/admiral/issues/277) and [`release75-single-node-20261024.md`](evidence/release75-single-node-20261024.md).
 
 Severity follows the audit criteria. Open findings remain open until a fix is revalidated in the affected topologies; a source change or passing component test alone does not close a live-system finding. Historical finding ADM-F-007 / #212 is resolved upstream and is explicitly marked below.
 
