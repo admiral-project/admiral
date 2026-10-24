@@ -38,8 +38,8 @@ sign_distro() {
   shopt -s nullglob
   local -a rpms=("$directory"/*.rpm)
   shopt -u nullglob
-  [[ ${#rpms[@]} -eq 14 ]] || {
-    echo "$distro repo has ${#rpms[@]} RPMs; expected six Admiral and eight Python helper RPMs" >&2
+  [[ ${#rpms[@]} -eq 6 ]] || {
+    echo "$distro repo has ${#rpms[@]} RPMs; expected exactly six Admiral RPMs" >&2
     return 1
   }
 

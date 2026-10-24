@@ -124,23 +124,25 @@ def test_publisher_stages_matching_nevras_and_records_hashes(tmp_path):
     for distro, tag in (("el10", "el10"), ("fedora", "fc46")):
         repo = tmp_path / "repo/rc5-r67" / distro / "x86_64"
         rpms = sorted(repo.glob("*.rpm"))
-        assert len(rpms) == 14
+        assert len(rpms) == 6
         assert all(f".{tag}." in rpm.name for rpm in rpms)
         manifest = (repo / "RPM-MANIFEST.tsv").read_text().splitlines()
-        assert len(manifest) == 15
+        assert len(manifest) == 7
         assert f"{tag}" in "\n".join(manifest)
         assert (repo / "SHA256SUMS").is_file()
+        assert not any(rpm.name.startswith("python3-") for rpm in rpms)
 
 
-def test_publisher_rejects_el10_helpers_for_fedora(tmp_path):
+def test_publisher_keeps_python_helpers_out_of_fedora_candidate_repo(tmp_path):
     el10 = _create_rpm_inputs(tmp_path / "inputs", "el10")
     fedora_build = _create_rpm_inputs(tmp_path / "fedora", "fc46")[0]
 
     result = _run_publisher(tmp_path, el10, (fedora_build, el10[1]))
 
-    assert result.returncode != 0
-    assert "rejecting non-fedora helper RPM" in result.stderr
-    assert not (tmp_path / "repo/rc5-r67/fedora/x86_64").exists()
+    assert result.returncode == 0, result.stdout + result.stderr
+    repo = tmp_path / "repo/rc5-r67/fedora/x86_64"
+    assert len(list(repo.glob("*.rpm"))) == 6
+    assert not list(repo.glob("python3-*.rpm"))
 
 
 def test_publisher_rejects_stale_mixed_rpm_already_in_candidate_repo(tmp_path):
@@ -155,4 +157,4 @@ def test_publisher_rejects_stale_mixed_rpm_already_in_candidate_repo(tmp_path):
     result = _run_publisher(tmp_path, el10, fedora)
 
     assert result.returncode != 0
-    assert "repository has 15 RPM files; expected exactly 14" in result.stderr
+    assert "fedora repository has 7 RPM files; expected exactly six Admiral RPMs" in result.stderr

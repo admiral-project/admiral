@@ -48,8 +48,14 @@ def test_audit_helpers_default_to_the_coordinated_rpm_release():
 
 def test_single_node_installer_selects_native_candidate_dist_tag():
     helper = AUDIT_HELPERS[0].read_text()
-    assert "el10) repo_name=admiral-local-el10.repo; rpm_suffix=el10;" in helper
-    assert "fedora) repo_name=admiral-local-fedora.repo; rpm_suffix=fc46;" in helper
+    assert re.search(
+        r"el10\)\s*repo_name=admiral-local-el10\.repo;\s*rpm_suffix=el10\s*;;",
+        helper,
+    )
+    assert re.search(
+        r"fedora\)\s*repo_name=admiral-local-fedora\.repo;\s*rpm_suffix=fc46\s*;;",
+        helper,
+    )
     assert 'packages+=("${package}-0.0.1rc5-${expected_release}.${rpm_suffix}")' in helper
     assert '[[ $actual == "0.0.1rc5-${expected_release}.${rpm_suffix}" ]]' in helper
 

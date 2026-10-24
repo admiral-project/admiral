@@ -12,46 +12,21 @@ validation_dir="$project_root/packaging/build/validation/rc5-r${release}"
 repo_root=${ADMIRAL_VALIDATION_REPO_ROOT:-/var/lib/libvirt/images/admiral-validation/repo}
 candidate_repo="$repo_root/rc5-r${release}"
 
-# Build and support inputs must be kept separate by distro. Callers building in
-# containers should set these to the mounted artifact and helper-RPM directories.
-el10_rpms=${ADMIRAL_EL10_RPM_DIR:-$project_root/packaging/build/RPMS}
-fedora_rpms=${ADMIRAL_FEDORA_RPM_DIR:-$project_root/packaging/build/fedora/RPMS}
-el10_support=${ADMIRAL_EL10_SUPPORT_REPO:-$project_root/packaging/build/repos/el10-rc5-r66-x86_64}
-fedora_support=${ADMIRAL_FEDORA_SUPPORT_REPO:-$project_root/packaging/build/repos/fedora-rawhide46-rc5-r66-x86_64}
+# Build inputs must be kept separate by distro. Callers building in containers
+# should set these to the mounted Admiral RPM directories.
+el10_rpms=${ADMIRAL_EL10_RPM_DIR:-$project_root/packaging/build/validation/rc5-r${release}/el10-rpmbuild/RPMS}
+fedora_rpms=${ADMIRAL_FEDORA_RPM_DIR:-$project_root/packaging/build/validation/rc5-r${release}/fedora-rpmbuild/RPMS}
 fedora_tag=${ADMIRAL_FEDORA_DIST_TAG:-fc46}
 
 mkdir -p "$validation_dir"
 admiral_packages=(admiral-common admirald admiral-fleet admiralctl admiral-flagship admiral-harbor)
 
 publish_distro() {
-  local distro=$1 tag=$2 rpm_dir=$3 support_dir=$4 destination="$candidate_repo/$1/x86_64"
+  local distro=$1 tag=$2 rpm_dir=$3 destination="$candidate_repo/$1/x86_64"
   [[ -d $rpm_dir ]] || { echo "missing $distro Admiral RPM directory: $rpm_dir" >&2; return 1; }
-  [[ -d $support_dir ]] || { echo "missing $distro Python support RPM directory: $support_dir" >&2; return 1; }
 
-  local -a helper_rpms=()
   local -A expected_files=()
-  shopt -s nullglob
-  for rpm in "$support_dir"/python3-*.rpm; do
-    local name nevra
-    name=$(basename -- "$rpm")
-    nevra=$(rpm -qp --qf '%{NAME}-%{VERSION}-%{RELEASE}.%{ARCH}' "$rpm")
-    [[ $name == *".$tag."* && $nevra == *".$tag."* ]] || {
-      echo "rejecting non-$distro helper RPM in $support_dir: $name ($nevra)" >&2
-      return 1
-    }
-    helper_rpms+=("$rpm")
-  done
-  shopt -u nullglob
-  [[ ${#helper_rpms[@]} -eq 8 ]] || {
-    echo "expected 8 distro-native Python helper RPMs in $support_dir, found ${#helper_rpms[@]}" >&2
-    return 1
-  }
-
   mkdir -p "$destination"
-  for rpm in "${helper_rpms[@]}"; do
-    install -m 0644 "$rpm" "$destination/"
-    expected_files[$(basename -- "$rpm")]=1
-  done
 
   for package in "${admiral_packages[@]}"; do
     local rpm arch nevra
@@ -71,8 +46,8 @@ publish_distro() {
   done
 
   local -a staged_rpms=("$destination"/*.rpm)
-  [[ ${#staged_rpms[@]} -eq ${#expected_files[@]} ]] || {
-    echo "$distro repository has ${#staged_rpms[@]} RPM files; expected exactly ${#expected_files[@]}" >&2
+  [[ ${#staged_rpms[@]} -eq 6 && ${#staged_rpms[@]} -eq ${#expected_files[@]} ]] || {
+    echo "$distro repository has ${#staged_rpms[@]} RPM files; expected exactly six Admiral RPMs" >&2
     return 1
   }
   for rpm in "${staged_rpms[@]}"; do
@@ -103,12 +78,12 @@ publish_distro() {
         done
     done
   )
-  printf '[%s] published %s Admiral RPMs and %s distro-native Python helper RPMs\n' \
-    "$distro" "${#admiral_packages[@]}" "${#helper_rpms[@]}"
+  printf '[%s] published exactly %s Admiral RPMs; Python helper RPMs are supplied by the OS/COPR repositories\n' \
+    "$distro" "${#admiral_packages[@]}"
 }
 
 if [[ $scope == el10 || $scope == all ]]; then
-  publish_distro el10 el10 "$el10_rpms" "$el10_support"
+  publish_distro el10 el10 "$el10_rpms"
   cat > "$validation_dir/admiral-local-el10.repo" <<EOF
 [admiral-local]
 name=Admiral RC5 Release ${release} local validation (EL10)
@@ -122,7 +97,7 @@ EOF
 fi
 
 if [[ $scope == fedora || $scope == all ]]; then
-  publish_distro fedora "$fedora_tag" "$fedora_rpms" "$fedora_support"
+  publish_distro fedora "$fedora_tag" "$fedora_rpms"
   cat > "$validation_dir/admiral-local-fedora.repo" <<EOF
 [admiral-local]
 name=Admiral RC5 Release ${release} local validation (Fedora Rawhide)

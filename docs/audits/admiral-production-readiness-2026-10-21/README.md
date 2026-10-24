@@ -1,12 +1,12 @@
 # Admiral release validation — x86_64
 
-Audit ID: `ADM-AUDIT-2026-10-21`. The active release gate covers Fedora Rawhide, Rocky Linux 10, AlmaLinux 10 and CentOS Stream 10 on x86_64, each in Single-Node and Multi-Node modes (eight cells). Every Multi-Node cell uses three real guests of the same OS: one admin node and two workers.
+Audit ID: `ADM-AUDIT-2026-10-21`. The active release gate covers Rocky Linux 10, CentOS Stream 10 and Fedora Rawhide on x86_64, each in Single-Node and Multi-Node modes (six cells). Every Multi-Node cell uses three real guests of the same OS: one admin node and two workers.
 
-## Active candidate — Release 73
+## Active candidate — Release 74
 
-**Status: Release 73 six-RPM candidate is built; root and all five component CI runs are green. Matrix: 4/8 PASS, 3/8 PARTIAL, 1/8 NOT TESTED.** All four Single-Node cells passed. Rocky, AlmaLinux and CentOS Stream Multi-Node have scoped evidence but remain incomplete; Fedora Multi-Node is not tested. The audit has run across three calendar days, 2026-10-21 through 2026-10-24. R72 is invalidated after its worker-removal scenario reproduced #272 on AlmaLinux 10 and CentOS Stream 10; no R72 evidence carries into R73. See the [R72 candidate record](evidence/release72-candidate.md) and the [R73 candidate record](evidence/release73-candidate.md).
+**Release 74 has not been built; matrix status is 0/6.** The Release 73 candidate and earlier runtime evidence do not count toward Release 74. The six-cell checklist is tracked in [master issue #277](https://github.com/admiral-project/admiral/issues/277). Release 74 RPMs remain gated on issue triage, fixes, local tests and green CI. The successful Python dependency builds and historical R73 evidence are recorded in [dependency refresh evidence](evidence/python-dependency-refresh-20261024.md) and the [R73 candidate record](evidence/release73-candidate.md).
 
-The release gate checklist is tracked in [master issue #200](https://github.com/admiral-project/admiral/issues/200). The Single-Node checks behind the four PASS cells are itemized in [issue #273](https://github.com/admiral-project/admiral/issues/273). Exact candidate references and CI are in the release record; Rocky, AlmaLinux and CentOS Stream runtime evidence is in [`release73-rocky-multinode-progress.md`](evidence/release73-rocky-multinode-progress.md), [`release73-alma-multinode-progress.md`](evidence/release73-alma-multinode-progress.md) and [`release73-centos-multinode-progress.md`](evidence/release73-centos-multinode-progress.md). Rocky and CentOS seed freshness records are linked from those reports. Continue Fedora Multi-Node and the remaining scenarios in the three partial cells. Do not bypass DNF dependency resolution or install RPMs built for another distribution.
+Earlier R73 Single-Node and Multi-Node reports remain historical, candidate-specific evidence only. Fedora must use native Fedora packages/tooling, and EL10 guests must use EL10 RPMs. Do not bypass DNF dependency resolution or cross-install binaries.
 
 ## Reports
 
@@ -22,7 +22,7 @@ The release gate checklist is tracked in [master issue #200](https://github.com/
 
 ## Reproducing the lab
 
-Run `scripts/host-preflight.sh` on the isolated KVM host. Use immutable, updated QCOW2 seeds under `/var/lib/libvirt/images/admiral-validation/seeds/`, the isolated `default` and `admiral-validation` libvirt networks, and the R73 signed local RPM repository served from `192.168.122.1:80`. `scripts/create-audit-vm.sh` creates a 2-vCPU/2-GiB guest, generates a unique Ed25519 SSH host key on the trusted host, and writes mode-0600 cloud-init and known-host files. Preserve raw evidence in the ignored validation directory with mode 0600; scan logs for credentials before copying sanitized records into this audit.
+Run `scripts/host-preflight.sh` on the isolated KVM host. Use the updated QCOW2 seeds under `/var/lib/libvirt/images/admiral-validation/seeds/` and isolated libvirt networks. Configure the candidate repository explicitly for each test lab; repository configuration is not baked into the OS seed. `scripts/create-audit-vm.sh` creates a 2-vCPU/2-GiB guest, generates a unique Ed25519 SSH host key on the trusted host, and writes mode-0600 cloud-init and known-host files. Preserve raw evidence in the ignored validation directory with mode 0600; scan logs for credentials before copying sanitized records into this audit.
 
 For a fresh Single-Node guest, run `scripts/install-single-node-audit.sh el10 ...` or `scripts/install-single-node-audit.sh fedora ...`. The helper installs the native candidate through normal DNF resolution and invokes `admiral-install --single-node --validation-seed`; it records install time, package NEVRA changes and the transaction. Updated seeds avoid repeating OS updates. Preserve failed attempts and do not use production services.
 

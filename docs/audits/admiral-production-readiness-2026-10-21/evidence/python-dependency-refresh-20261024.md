@@ -30,11 +30,26 @@ All eight Python library spec `Release` values were incremented. SQLAlchemy now 
 | `PY-RPM-SQLA-EL10-01` | Native package build; Rocky Linux 10.2 x86_64 | Build `python3-sqlalchemy-2.0.55-5.el10`; `%check` imports SQLAlchemy and `sqlalchemy.cyextension.util`, asserts version 2.0.55 and a native `.so` extension. RPM SHA-256 `bf8735376c74f786b45cc0740172997ef9fecc0deef929a6b503aa59d9dac18f`; build log SHA-256 `5d77bb815638b3f6ccb7090012c6cefd0a7f6b4b7e44ba1854ff7bebe6d39c07`. | PASS — local build; not COPR |
 | `PY-RPM-SQLA-FEDORA-01` | Native package build; fresh Fedora Rawhide container / Fedora 46 x86_64 | Rebuild the SRPM with Fedora-native Python 3.15 and `python3-typing-extensions-4.16.0-4.fc46`; same `%check` assertions passed. | PASS — local build; not COPR |
 | `PY-RPM-SQLA-METADATA-01` | RPM metadata inspection | Confirm exact generic capability `python3dist(typing-extensions) = 4.16` in build and runtime requirements. | PASS |
-| `PY-RPM-SQLA-COPR-01` | COPR clean buildroots | Rebuild the published SQLAlchemy source and dependent helper set, confirm build logs and published native artifacts. | NOT TESTED — waiting on COPR |
+| `PY-RPM-SQLA-COPR-01` | COPR clean buildroots | Build all eight helper SRPMs in `alma+epel-10-x86_64_v2`, `rhel+epel-10-x86_64` and `fedora-rawhide-x86_64`; SQLAlchemy `%check` passed in the relevant x86_64 chroots. | PASS — eight COPR build records below |
 
 Local Fedora build artifact SHA-256: `c708b60df0739a4f6ed7461bee5ea473b35650bbf5e5730a0e9674991033d1ed`.
 
 The ignored local validation directory retains detailed logs and binaries at `packaging/build/validation/rc5-r73/python-deps-republish-20261024/`; those generated files are not checked into Git. The Fedora verified build log SHA-256 is `a6382d50fabfdbc6c14f133deba606bdab3719129af012f75948bd8d146718ca`.
+
+COPR build records (all eight have `succeeded` state in the target x86_64 chroots):
+
+| Package | COPR build |
+|---|---|
+| `python3-alembic` | [11202990](https://copr.fedorainfracloud.org/coprs/admiral-project/admiral/build/11202990/) |
+| `python3-flask` | [11202991](https://copr.fedorainfracloud.org/coprs/admiral-project/admiral/build/11202991/) |
+| `python3-flask-alembic` | [11202992](https://copr.fedorainfracloud.org/coprs/admiral-project/admiral/build/11202992/) |
+| `python3-flask-login` | [11202993](https://copr.fedorainfracloud.org/coprs/admiral-project/admiral/build/11202993/) |
+| `python3-flask-sqlalchemy` | [11202994](https://copr.fedorainfracloud.org/coprs/admiral-project/admiral/build/11202994/) |
+| `python3-mistune` | [11202995](https://copr.fedorainfracloud.org/coprs/admiral-project/admiral/build/11202995/) |
+| `python3-sqlalchemy` | [11202996](https://copr.fedorainfracloud.org/coprs/admiral-project/admiral/build/11202996/) |
+| `python3-typing-extensions` | [11202997](https://copr.fedorainfracloud.org/coprs/admiral-project/admiral/build/11202997/) |
+
+The six coordinated Admiral Release 73 COPR builds also completed successfully: builds 11203001–11203006. The refreshed R73 set remains historical and earns no cell credit for Release 74.
 
 ## Reproduction
 

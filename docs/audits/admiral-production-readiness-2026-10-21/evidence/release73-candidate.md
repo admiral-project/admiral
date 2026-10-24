@@ -38,7 +38,7 @@ The root repository fetched every component `origin/main` before preparing R73. 
 
 ## Runtime matrix
 
-All R73 cells use the exact Release 73 candidate. Four Single-Node cells passed their functional checklist. Rocky, AlmaLinux and CentOS Stream have scoped three-guest runtime evidence; the CentOS runs include installation and placement on both workers, same-key concurrency and worker reboot recovery on both nodes. None of the three Multi-Node cells is complete. Current gate: **4/8 PASS, 3/8 PARTIAL, 1/8 NOT TESTED**. See [`release73-rocky-multinode-progress.md`](release73-rocky-multinode-progress.md), [`release73-alma-multinode-progress.md`](release73-alma-multinode-progress.md), [`release73-centos-multinode-progress.md`](release73-centos-multinode-progress.md), and the acceptance checklist in master issue [#200](https://github.com/admiral-project/admiral/issues/200).
+For the pre-refresh R73 dependency set, four Single-Node cells passed their functional checklist. Rocky, AlmaLinux and CentOS Stream had scoped three-guest runtime evidence; none of the three Multi-Node cells was complete. Historical result: **4/8 PASS, 3/8 PARTIAL, 1/8 NOT TESTED**. These reports do not give cell credit to the refreshed dependency set (currently 0/8). See [`release73-rocky-multinode-progress.md`](release73-rocky-multinode-progress.md), [`release73-alma-multinode-progress.md`](release73-alma-multinode-progress.md), [`release73-centos-multinode-progress.md`](release73-centos-multinode-progress.md), and the acceptance checklist in master issue [#200](https://github.com/admiral-project/admiral/issues/200).
 
 | Platform | Single-Node | Multi-Node |
 |---|---|---|

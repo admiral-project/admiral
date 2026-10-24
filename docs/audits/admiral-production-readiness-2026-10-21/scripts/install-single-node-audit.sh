@@ -1,41 +1,48 @@
 #!/usr/bin/env bash
 # SPDX-License-Identifier: Apache-2.0
-# Install the exact local RC candidate and run the supported secure installer.
+# Install the exact candidate and run the supported secure installer.
 set -euo pipefail
 [[ $# -eq 7 ]] || {
   echo "usage: $0 {el10|fedora} SSH_KEY KNOWN_HOSTS USER@GUEST NODE_IP NODE_ID OUTPUT_LOG" >&2
+  echo "set ADMIRAL_AUDIT_REPO_SOURCE=copr|local (default: copr)" >&2
   exit 2
 }
 distro=$1 ssh_key=$2 known_hosts=$3 target=$4 node_ip=$5 node_id=$6 output=$7
 release=${ADMIRAL_RC_RELEASE:-73}
+repo_source=${ADMIRAL_AUDIT_REPO_SOURCE:-copr}
 [[ $release =~ ^[0-9]+$ ]] || { echo "invalid Admiral RPM Release: $release" >&2; exit 2; }
+[[ $repo_source == copr || $repo_source == local ]] || { echo "invalid Admiral RPM source: $repo_source" >&2; exit 2; }
 [[ $node_id =~ ^[A-Za-z0-9][A-Za-z0-9_.-]{0,62}$ ]] || { echo "invalid node id" >&2; exit 2; }
 [[ $node_ip =~ ^([0-9]{1,3}\.){3}[0-9]{1,3}$ ]] || { echo "invalid guest IPv4" >&2; exit 2; }
 case "$distro" in
-  el10) repo_name=admiral-local-el10.repo; rpm_suffix=el10; mistune_nevra=python3-mistune-3.4.0-1.el10.noarch ;;
-  fedora) repo_name=admiral-local-fedora.repo; rpm_suffix=fc46; mistune_nevra=python3-mistune-3.4.0-1.fc46.noarch ;;
+  el10) repo_name=admiral-local-el10.repo; rpm_suffix=el10 ;;
+  fedora) repo_name=admiral-local-fedora.repo; rpm_suffix=fc46 ;;
   *) echo "unsupported distribution profile: $distro" >&2; exit 2 ;;
 esac
 repo_file=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/../../../.." && pwd)/packaging/build/validation/rc5-r${release}/$repo_name
-[[ -r $repo_file ]] || { echo "local candidate repository config not found: $repo_file" >&2; exit 1; }
+if [[ $repo_source == local ]]; then
+  [[ -r $repo_file ]] || { echo "local candidate repository config not found: $repo_file" >&2; exit 1; }
+fi
 [[ -r $ssh_key && -r $known_hosts ]] || { echo "SSH identity or known-hosts file not readable" >&2; exit 1; }
 mkdir -p "$(dirname "$output")"
 umask 077
 ssh_args=(-i "$ssh_key" -o BatchMode=yes -o StrictHostKeyChecking=yes -o UserKnownHostsFile="$known_hosts")
 {
   printf 'audit_start_utc=%s\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
-  remote_repo_tmp=$(ssh "${ssh_args[@]}" "$target" 'umask 077; mktemp /tmp/admiral-local.repo.XXXXXX')
-  [[ $remote_repo_tmp =~ ^/tmp/admiral-local\.repo\.[[:alnum:]]{6}$ ]] || {
-    echo 'guest returned an unexpected candidate repository staging path' >&2
-    exit 1
-  }
-  scp "${ssh_args[@]}" "$repo_file" "$target:$remote_repo_tmp"
-  ssh "${ssh_args[@]}" "$target" sudo install -o root -g root -m 0644 \
-    "$remote_repo_tmp" /etc/yum.repos.d/admiral-local.repo
-  ssh "${ssh_args[@]}" "$target" rm -f -- "$remote_repo_tmp"
-  ssh "${ssh_args[@]}" "$target" sudo bash -s -- "$distro" "$mistune_nevra" "$release" "$rpm_suffix" <<'REMOTE'
+  if [[ $repo_source == local ]]; then
+    remote_repo_tmp=$(ssh "${ssh_args[@]}" "$target" 'umask 077; mktemp /tmp/admiral-local.repo.XXXXXX')
+    [[ $remote_repo_tmp =~ ^/tmp/admiral-local\.repo\.[[:alnum:]]{6}$ ]] || {
+      echo 'guest returned an unexpected candidate repository staging path' >&2
+      exit 1
+    }
+    scp "${ssh_args[@]}" "$repo_file" "$target:$remote_repo_tmp"
+    ssh "${ssh_args[@]}" "$target" sudo install -o root -g root -m 0644 \
+      "$remote_repo_tmp" /etc/yum.repos.d/admiral-local.repo
+    ssh "${ssh_args[@]}" "$target" rm -f -- "$remote_repo_tmp"
+  fi
+  ssh "${ssh_args[@]}" "$target" sudo bash -s -- "$distro" "$release" "$rpm_suffix" <<'REMOTE'
 set -euo pipefail
-distribution=$1 expected_mistune_nevra=$2 expected_release=$3 rpm_suffix=$4
+distribution=$1 expected_release=$2 rpm_suffix=$3
 dnf install -y dnf-plugins-core
 if [[ $distribution == el10 ]]; then
   dnf install -y epel-release
@@ -46,12 +53,20 @@ packages=()
 for package in admiral-common admirald admiralctl admiral-fleet admiral-harbor admiral-flagship; do
   packages+=("${package}-0.0.1rc5-${expected_release}.${rpm_suffix}")
 done
+python_helpers=(python3-alembic python3-flask python3-flask-alembic python3-flask-login python3-flask-sqlalchemy python3-mistune python3-sqlalchemy python3-typing-extensions)
+python_before=$(rpm -q --qf '%{NAME}-%{VERSION}-%{RELEASE}.%{ARCH}\n' "${python_helpers[@]}" | sort)
 dnf install -y "${packages[@]}"
 for package in admiral-common admirald admiralctl admiral-fleet admiral-harbor admiral-flagship; do
   actual=$(rpm -q --qf '%{VERSION}-%{RELEASE}\n' "$package")
   [[ $actual == "0.0.1rc5-${expected_release}.${rpm_suffix}" ]] || { echo "$package has unexpected NEVRA: $actual" >&2; exit 1; }
 done
-rpm -q --qf '%{NAME}-%{VERSION}-%{RELEASE}.%{ARCH}\n' python3-mistune | grep -Fx "$expected_mistune_nevra"
+python_after=$(rpm -q --qf '%{NAME}-%{VERSION}-%{RELEASE}.%{ARCH}\n' "${python_helpers[@]}" | sort)
+[[ $python_before == "$python_after" ]] || {
+  echo 'Python helper RPM baseline changed during Admiral installation' >&2
+  diff -u <(printf '%s\n' "$python_before") <(printf '%s\n' "$python_after") || true
+  exit 1
+}
+printf 'python_helper_baseline_unchanged\n%s\n' "$python_after"
 REMOTE
   ssh "${ssh_args[@]}" "$target" sudo bash -s -- "$node_ip" "$node_id" <<'REMOTE'
 set -euo pipefail
