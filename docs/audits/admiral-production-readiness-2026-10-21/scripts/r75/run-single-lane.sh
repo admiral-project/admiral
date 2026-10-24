@@ -62,8 +62,10 @@ do_host_reboot() {
   ADMIRAL_RC_RELEASE=75 bash "$scripts/host-reboot.sh" "$os" "adm-r75-$os-single" "$guest" "$key" "$known_hosts" "r75-reboot-$os"
 }
 do_final_cleanup_check() {
-  remote 'sudo bash -s --' <<'REMOTE'
+  remote "sudo bash -s -- '$os' '$node_id'" <<'REMOTE'
 set -euo pipefail
+umask 077
+os=$1 node_id=$2
 cd /tmp
 failed=$(systemctl --failed --no-legend --no-pager)
 printf 'failed_units=%s\n' "${failed:-none}"
@@ -82,6 +84,38 @@ printf 'final_rootless_containers=%s pods=%s volumes=%s\n' "${containers:-none}"
 printf 'final_boot_id=%s\n' "$(cat /proc/sys/kernel/random/boot_id)"
 printf 'final_candidate_rpms=\n'
 rpm -q admiral-common admirald admiral-fleet admiralctl admiral-harbor admiral-flagship
+instances_file=$(mktemp)
+trap 'rm -f -- "$instances_file"' EXIT
+admiralctl instances list --output json >"$instances_file"
+python3 - "$os" "$node_id" "$instances_file" <<'PY'
+import json,sys
+os,node_id=sys.argv[1:3]
+rows=json.load(open(sys.argv[3],encoding='utf-8'))
+prefix=f'r75-'
+test_rows=[row for row in rows if str(row.get('customer_id','')).startswith(prefix)]
+expected={
+    f'r75-{os}',f'r75-resize-{os}',f'r75-backup-{os}',
+    f'r75-control-{os}',f'r75-reboot-{os}',
+}
+customers={str(row.get('customer_id','')) for row in test_rows}
+if customers!=expected or len(test_rows)!=5:
+    raise SystemExit(f'expected 5 unique R75 test instances, found {len(test_rows)} rows for {sorted(customers)}')
+ids={str(row.get('id','')) for row in test_rows}
+for row in test_rows:
+    print('terminal_instance id={id} node={node_id} technical={technical_status} commercial={commercial_status} customer={customer_id}'.format(**row))
+    if row.get('node_id')!=node_id or row.get('technical_status')!='deprovisioned' or row.get('commercial_status')!='cancelled':
+        raise SystemExit(f'instance was not retained in the expected terminal state: {row.get("id")}')
+operations=json.loads(__import__('subprocess').check_output(['admiralctl','operations','list','--output','json'],text=True))
+selected=[row for row in operations if str(row.get('instance_id','')) in ids]
+print(f'operation_response_count={len(operations)} selected_r75_operations={len(selected)}')
+if len(selected)!=23:
+    raise SystemExit(f'expected 23 durable R75 operation records, found {len(selected)}')
+for row in selected:
+    print('terminal_operation id={id} action={action} status={status} instance={instance_id}'.format(**row))
+    if row.get('status')!='succeeded':
+        raise SystemExit(f'operation is not terminal-succeeded: {row.get("id")} {row.get("status")}')
+print('terminal_state_audit=PASS')
+PY
 printf 'final_cleanup=PASS\n'
 REMOTE
 }
