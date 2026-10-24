@@ -55,18 +55,10 @@ packages=()
 for package in admiral-common admirald admiralctl admiral-fleet admiral-harbor admiral-flagship; do
   packages+=("${package}-0.0.1rc5-${release}.${rpm_suffix}")
 done
-if [[ $distro == el10 ]]; then
-  # The immutable seed contains support packages to make ordinary
-  # provisioning fast. Remove the version-gated packages on this disposable
-  # hub so the exact candidate transaction must resolve them again.
-  dnf remove -y --noautoremove python3-flask python3-mistune
-  dnf install -y "${packages[@]}"
-else
-  # Fedora Rawhide support RPMs use the local repository with priority
-  # 1. Keep normal Fedora/COPR repos enabled so DNF resolves any missing OS
-  # requirements using the same enabled package universe as the installer.
-  dnf install -y "${packages[@]}"
-fi
+# The immutable OS seed already contains the coherent, tested Python runtime
+# baseline. Keep it unchanged: install the exact Admiral NEVRAs with ordinary
+# DNF dependency resolution, without updating or reinstalling support RPMs.
+dnf install -y "${packages[@]}"
 
 for package in admiral-common admirald admiralctl admiral-fleet admiral-harbor admiral-flagship; do
   actual=$(rpm -q --qf '%{VERSION}-%{RELEASE}.%{ARCH}\n' "$package")
