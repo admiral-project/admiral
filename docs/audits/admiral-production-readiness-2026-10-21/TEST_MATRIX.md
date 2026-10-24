@@ -6,31 +6,31 @@ Audit ID: `ADM-AUDIT-2026-10-21`<br>
 
 The active release gate has six cells: Fedora Rawhide, Rocky Linux 10 and CentOS Stream 10, each Single-Node and Multi-Node. AlmaLinux is excluded because the configured COPR environment omitted its Go RPM builds (#276). The same exact Admiral sources and coordinated native package set must pass all six. Any source or package-set change invalidates all cell credit and requires a fresh candidate build and run.
 
-**Release 74 status: 3/6 complete cells PASS.** All three Single-Node cells passed together on fresh VMs using the exact unchanged candidate. Rocky Multi-Node has seven passed scoped scenarios on three real guests but is incomplete as a cell; CentOS Stream and Fedora Rawhide Multi-Node remain NOT TESTED. Historical R73 evidence does not count toward these results. Candidate identity and Single-Node results: [`release74-single-node.md`](evidence/release74-single-node.md) and [`release74-single-node-rerun-20261024.md`](evidence/release74-single-node-rerun-20261024.md). Rocky's scoped Multi-Node evidence and limitations: [`release74-rocky-multinode-progress-20261024.md`](evidence/release74-rocky-multinode-progress-20261024.md). The active acceptance checklist is [issue #277](https://github.com/admiral-project/admiral/issues/277); #200 is closed as not planned because AlmaLinux is blocked by its build environment.
+**Release 74 status: 4/6 complete cells PASS.** All three Single-Node cells passed together on fresh VMs using the exact unchanged candidate. Rocky Multi-Node passed its full functional checklist on three real guests; CentOS Stream and Fedora Rawhide Multi-Node remain NOT TESTED. Historical R73 evidence does not count toward these results. Candidate identity and Single-Node results: [`release74-single-node.md`](evidence/release74-single-node.md) and [`release74-single-node-rerun-20261024.md`](evidence/release74-single-node-rerun-20261024.md). Rocky Multi-Node evidence and the separate broader-audit limitations: [`release74-rocky-multinode-progress-20261024.md`](evidence/release74-rocky-multinode-progress-20261024.md). The active acceptance checklist is [issue #277](https://github.com/admiral-project/admiral/issues/277); #200 is closed as not planned because AlmaLinux is blocked by its build environment.
 
 | Platform | Single-Node | Multi-Node |
 |---|---|---|
 | Fedora Rawhide x86_64 | **PASS** | NOT TESTED |
-| Rocky Linux 10 x86_64 | **PASS** | **INCOMPLETE — scoped scenarios passed** |
+| Rocky Linux 10 x86_64 | **PASS** | **PASS** |
 | CentOS Stream 10 x86_64 | **PASS** | NOT TESTED |
 
 The table above is the active Release 74 gate. The prior Release 73 per-scenario records below remain historical evidence and earn no current cell credit.
 
 Each Multi-Node cell requires three real guests of that OS. Fedora guests must receive only native `.fc46` RPMs; EL10 guests must receive only native `.el10` RPMs.
 
-### Release 74 Rocky Linux Multi-Node scoped results
+### Release 74 Rocky Linux Multi-Node cell results
 
-Seven scenario checks passed on a real three-guest Rocky Linux 10.2 R74 cluster: explicit placement on both workers; three-client idempotency; concurrent resize/deprovision; worker reboot; WireGuard partition/rejoin; hub reboot with active workload; and active-worker removal refusal followed by idle removal. These checks do not complete the cell. PostgreSQL outage, task replay/interruption, removal token rejection, comprehensive security/isolation, resource pressure and performance remain NOT TESTED. See the linked [`Rocky Multi-Node evidence`](evidence/release74-rocky-multinode-progress-20261024.md).
+Seven scenario checks covered all six Multi-Node checklist items on a real three-guest Rocky Linux 10.2 R74 cluster: secure bootstrap/enrollment; placement on both workers; three-client idempotency and conflicting update/delete; worker reboot and WireGuard partition/rejoin; active-worker removal refusal followed by idle removal; and hub reboot with an active workload. All passed. PostgreSQL outage, task replay/interruption, removal token rejection, comprehensive security/isolation, resource pressure and performance remain outside the functional cell gate and NOT TESTED in the broader audit. See [`Rocky Multi-Node evidence`](evidence/release74-rocky-multinode-progress-20261024.md).
 
 | Test ID | Expected result | Release 74 observation | Status |
 |---|---|---|---|
-| `R74-ROCKY-MN-PLACEMENT-01` | Run workloads on W1 and W2; replay idempotency key; verify storage, SQL, HTTP, and cleanup | Both placements and replays succeeded; 1 GiB limit, SQL marker, HTTP 200 and empty per-instance inventories | PASS, scoped |
-| `R74-ROCKY-MN-CONCURRENT-IDEMPOTENCY-01` | Three identical concurrent requests produce one operation/task/instance | All clients returned one W2 operation/task/instance; HTTP 200 and cleanup passed | PASS, scoped |
-| `R74-ROCKY-MN-UPDATE-DELETE-01` | Concurrent resize/deprovision settle consistently and clean resources | Both operations succeeded; instance stayed deprovisioned and inventory was empty | PASS, scoped |
-| `R74-ROCKY-MN-WORKER-REBOOT-01` | Worker reboot restores active workload and persisted data | Changed boot ID; workload/SQL/HTTP recovered; cleanup passed | PASS, scoped |
-| `R74-ROCKY-MN-PARTITION-01` | Partition becomes unavailable/offline; route restoration recovers worker and workload | Instance unavailable, worker offline/degraded, then first-poll rejoin with SQL and HTTP intact | PASS, scoped |
-| `R74-ROCKY-MN-HUB-REBOOT-01` | Hub reboot restores services, workers, active workload and data | Services, two routes/handshakes, fresh heartbeats, workload/SQL/HTTP recovered by poll 3 | PASS, scoped |
-| `R74-ROCKY-MN-NODE-REMOVE-01` | Reject active-worker removal; allow idle removal and verify route deletion | Active removal refused; idle removal deleted node; live and persistent W2 routes absent | PASS, scoped |
+| `R74-ROCKY-MN-PLACEMENT-01` | Run workloads on W1 and W2; replay idempotency key; verify storage, SQL, HTTP, and cleanup | Both placements and replays succeeded; 1 GiB limit, SQL marker, HTTP 200 and empty per-instance inventories | PASS |
+| `R74-ROCKY-MN-CONCURRENT-IDEMPOTENCY-01` | Three identical concurrent requests produce one operation/task/instance | All clients returned one W2 operation/task/instance; HTTP 200 and cleanup passed | PASS |
+| `R74-ROCKY-MN-UPDATE-DELETE-01` | Concurrent resize/deprovision settle consistently and clean resources | Both operations succeeded; instance stayed deprovisioned and inventory was empty | PASS |
+| `R74-ROCKY-MN-WORKER-REBOOT-01` | Worker reboot restores active workload and persisted data | Changed boot ID; workload/SQL/HTTP recovered; cleanup passed | PASS |
+| `R74-ROCKY-MN-PARTITION-01` | Partition becomes unavailable/offline; route restoration recovers worker and workload | Instance unavailable, worker offline/degraded, then first-poll rejoin with SQL and HTTP intact | PASS |
+| `R74-ROCKY-MN-HUB-REBOOT-01` | Hub reboot restores services, workers, active workload and data | Services, two routes/handshakes, fresh heartbeats, workload/SQL/HTTP recovered by poll 3 | PASS |
+| `R74-ROCKY-MN-NODE-REMOVE-01` | Reject active-worker removal; allow idle removal and verify route deletion | Active removal refused; idle removal deleted node; live and persistent W2 routes absent | PASS |
 
 ### R73 CentOS Stream 10 Multi-Node scoped records
 

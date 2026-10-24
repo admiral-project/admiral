@@ -2,7 +2,7 @@
 
 Audit ID: `ADM-AUDIT-2026-10-21`<br>
 Audit began: 2026-10-21 UTC<br>
-> **Active scope — Release 74, 2026-10-24:** Rocky Linux 10, CentOS Stream 10, and Fedora Rawhide x86_64, each Single-Node and Multi-Node. The functional matrix is **3/6 complete cells PASS**: all three Single-Node cells passed together. Rocky Multi-Node has seven passed scoped scenarios but is incomplete as a cell; CentOS Stream and Fedora Rawhide Multi-Node are NOT TESTED. The audit does not establish comprehensive security, isolation, resilience, scalability or performance.
+> **Active scope — Release 74, 2026-10-24:** Rocky Linux 10, CentOS Stream 10, and Fedora Rawhide x86_64, each Single-Node and Multi-Node. The functional matrix is **4/6 complete cells PASS**: all three Single-Node cells and Rocky Multi-Node passed their functional gates. CentOS Stream and Fedora Rawhide Multi-Node are NOT TESTED. The audit does not establish comprehensive security, isolation, resilience, scalability or performance.
 
 Production readiness is **NOT VALIDATED**. The functional release gate is narrower than the full production audit and cannot establish production security, fault-tolerance, scalability or performance.
 
@@ -11,7 +11,7 @@ Production readiness is **NOT VALIDATED**. The functional release gate is narrow
 | Topology | Decision | Basis |
 | --- | --- | --- |
 | Single-Node | **NOT VALIDATED** | The three R74 functional cells passed twice on fresh guests, most recently together in one parallel run. Broader isolation/security negatives, resource-exhaustion behavior, stress and controlled performance also remain incomplete, so this is not a full production-readiness finding. See [`release74-single-node-rerun-20261024.md`](evidence/release74-single-node-rerun-20261024.md). |
-| Multi-Node | **NOT VALIDATED** | Rocky has seven scoped R74 scenario passes but no complete cell; CentOS Stream and Fedora Rawhide are NOT TESTED. Database outage, in-flight tasks, comprehensive isolation, resource exhaustion and performance remain incomplete. |
+| Multi-Node | **NOT VALIDATED** | Rocky passed its functional cell; CentOS Stream and Fedora Rawhide are NOT TESTED. Database outage, in-flight tasks, comprehensive isolation, resource exhaustion and performance remain incomplete. |
 
 Neither topology is READY or CONDITIONALLY READY on current evidence. Exact-commit CI and scoped scenarios do not substitute for a complete matrix cell. No production system was touched.
 
@@ -36,4 +36,4 @@ The six Release 74 functional cells in [issue #277](https://github.com/admiral-p
 
 ## Current answer to the audit question
 
-The broader production-readiness question remains **NOT VALIDATED**. Release 74 has **3/6** complete functional cells passed (all Single-Node); Rocky Multi-Node has scoped results but remains incomplete, while CentOS Stream and Fedora Rawhide Multi-Node are not tested. Even a complete functional matrix does not establish all security, isolation, fault-tolerance, resource-exhaustion or performance properties required for a production decision. No production-readiness claim is made. R74 evidence: [`release74-single-node-rerun-20261024.md`](evidence/release74-single-node-rerun-20261024.md) and [`release74-rocky-multinode-progress-20261024.md`](evidence/release74-rocky-multinode-progress-20261024.md).
+The broader production-readiness question remains **NOT VALIDATED**. Release 74 has **4/6** functional cells passed (all three Single-Node and Rocky Multi-Node); CentOS Stream and Fedora Rawhide Multi-Node are not tested. Even a complete functional matrix does not establish all security, isolation, fault-tolerance, resource-exhaustion or performance properties required for a production decision. No production-readiness claim is made. R74 evidence: [`release74-single-node-rerun-20261024.md`](evidence/release74-single-node-rerun-20261024.md) and [`release74-rocky-multinode-progress-20261024.md`](evidence/release74-rocky-multinode-progress-20261024.md).
