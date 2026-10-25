@@ -1,0 +1,38 @@
+issue=271 os=fedora candidate=rc6-r4-epoch0-0.0.1rc6-4 run_tag=r4-fedora start_utc=2026-10-25T20:47:38Z
+Getting image source signatures
+Copying blob sha256:b03391528c09a32b246077f57eb2ca6ea34a435d107085c00adf7b708b38ad94
+Copying config sha256:f80f2e27add7e01cdb46b9a61c69870db77c07d141f4019de23ba3b6cc725c72
+Writing manifest to image destination
+issue=271 os=fedora candidate=rc6-r4-epoch0-0.0.1rc6-4 node_ip=192.168.122.71 start_utc=2026-10-25T20:47:40Z
+variant=loopback baseline_poll=2026-10-25T20:47:46Z health=stopped availability=unavailable checked_at=2026-10-25T20:47:43.783754Z
+variant=loopback baseline_poll=2026-10-25T20:47:47Z health=stopped availability=unavailable checked_at=2026-10-25T20:47:43.783754Z
+variant=loopback baseline_poll=2026-10-25T20:47:49Z health=stopped availability=unavailable checked_at=2026-10-25T20:47:43.783754Z
+variant=loopback baseline_poll=2026-10-25T20:47:50Z health=healthy availability=available checked_at=2026-10-25T20:47:49.358432Z
+variant=loopback instance=inst_39e7e9c23818e341 redirect=http://127.0.0.1:18081/leak baseline=2026-10-25T20:47:49.358432Z
+variant=loopback utc=2026-10-25T20:47:51Z health=healthy availability=available checked_at=2026-10-25T20:47:49.358432Z target_hits=0
+variant=loopback utc=2026-10-25T20:47:52Z health=healthy availability=available checked_at=2026-10-25T20:47:49.358432Z target_hits=0
+variant=loopback utc=2026-10-25T20:47:53Z health=healthy availability=available checked_at=2026-10-25T20:47:49.358432Z target_hits=0
+variant=loopback utc=2026-10-25T20:47:54Z health=healthy availability=available checked_at=2026-10-25T20:47:54.274396Z target_hits=0
+variant=loopback utc=2026-10-25T20:47:55Z health=healthy availability=available checked_at=2026-10-25T20:47:54.274396Z target_hits=0
+variant=loopback utc=2026-10-25T20:47:56Z health=healthy availability=available checked_at=2026-10-25T20:47:54.274396Z target_hits=0
+variant=loopback utc=2026-10-25T20:47:58Z health=healthy availability=available checked_at=2026-10-25T20:47:54.274396Z target_hits=0
+variant=loopback utc=2026-10-25T20:47:59Z health=healthy availability=available checked_at=2026-10-25T20:47:54.274396Z target_hits=0
+variant=loopback utc=2026-10-25T20:48:00Z health=healthy availability=available checked_at=2026-10-25T20:47:59.346941Z target_hits=0
+variant=loopback target_requests=0 periodic_reports=2 result=PASS
+variant=node-address baseline_poll=2026-10-25T20:48:13Z health=stopped availability=unavailable checked_at=2026-10-25T20:48:09.397741Z
+variant=node-address baseline_poll=2026-10-25T20:48:14Z health=stopped availability=unavailable checked_at=2026-10-25T20:48:09.397741Z
+variant=node-address baseline_poll=2026-10-25T20:48:15Z health=healthy availability=available checked_at=2026-10-25T20:48:15.062021Z
+variant=node-address instance=inst_c16ed3984cb8dab0 redirect=http://192.168.122.71:18081/leak baseline=2026-10-25T20:48:15.062021Z
+variant=node-address utc=2026-10-25T20:48:16Z health=healthy availability=available checked_at=2026-10-25T20:48:15.062021Z target_hits=0
+variant=node-address utc=2026-10-25T20:48:17Z health=healthy availability=available checked_at=2026-10-25T20:48:15.062021Z target_hits=0
+variant=node-address utc=2026-10-25T20:48:18Z health=healthy availability=available checked_at=2026-10-25T20:48:15.062021Z target_hits=0
+variant=node-address utc=2026-10-25T20:48:20Z health=healthy availability=available checked_at=2026-10-25T20:48:15.062021Z target_hits=0
+variant=node-address utc=2026-10-25T20:48:21Z health=healthy availability=available checked_at=2026-10-25T20:48:19.980858Z target_hits=0
+variant=node-address utc=2026-10-25T20:48:22Z health=healthy availability=available checked_at=2026-10-25T20:48:19.980858Z target_hits=0
+variant=node-address utc=2026-10-25T20:48:23Z health=healthy availability=available checked_at=2026-10-25T20:48:19.980858Z target_hits=0
+variant=node-address utc=2026-10-25T20:48:24Z health=healthy availability=available checked_at=2026-10-25T20:48:19.980858Z target_hits=0
+variant=node-address utc=2026-10-25T20:48:25Z health=healthy availability=available checked_at=2026-10-25T20:48:24.921823Z target_hits=0
+variant=node-address target_requests=0 periodic_reports=2 result=PASS
+target_listener_requests=0
+issue_271_redirect_health_checks=PASS
+evidence_dir=/var/tmp/rc6-271-fedora-r4-fedora
