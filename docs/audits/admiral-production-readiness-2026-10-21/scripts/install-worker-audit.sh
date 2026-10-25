@@ -37,8 +37,8 @@ hub_bootstrap_key=""
 worker_bootstrap_installed=0
 rc=1
 candidate_version=${ADMIRAL_RC_VERSION:-0.0.1rc6}
-candidate_release=${ADMIRAL_RC_RELEASE:-4}
-candidate_epoch=${ADMIRAL_RC_EPOCH:-0}
+candidate_release=${ADMIRAL_RC_RELEASE:-1}
+candidate_epoch=${ADMIRAL_RC_EPOCH:-5}
 candidate_dist_tag=${ADMIRAL_RC_DIST_TAG:-el10}
 [[ $candidate_version =~ ^0\.0\.1rc[0-9]+$ ]] || { echo 'invalid Admiral RPM version' >&2; exit 2; }
 [[ $candidate_release =~ ^[0-9]+$ && $candidate_epoch =~ ^[0-9]{1,4}$ ]] || {

@@ -9,9 +9,9 @@ set -euo pipefail
 }
 ssh_key=$1 known_hosts=$2 target=$3 underlay_ip=$4 node_id=$5 output=$6
 distro=${7:-el10}
-release=${ADMIRAL_RC_RELEASE:-4}
+release=${ADMIRAL_RC_RELEASE:-1}
 version=${ADMIRAL_RC_VERSION:-0.0.1rc6}
-epoch=${ADMIRAL_RC_EPOCH:-0}
+epoch=${ADMIRAL_RC_EPOCH:-5}
 candidate_id=${ADMIRAL_RC_DIR:-${version#0.0.1}-r${release}}
 [[ $release =~ ^[0-9]+$ ]] || { echo "invalid Admiral RPM Release: $release" >&2; exit 2; }
 [[ $epoch =~ ^[0-9]{1,4}$ ]] || { echo "invalid Admiral RPM Epoch: $epoch" >&2; exit 2; }

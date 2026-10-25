@@ -24,6 +24,10 @@ AUDIT_HELPERS = (
     / "docs/audits/admiral-production-readiness-2026-10-21/scripts/install-admin-portal-audit.sh",
     ROOT
     / "docs/audits/admiral-production-readiness-2026-10-21/scripts/install-worker-audit.sh",
+    ROOT
+    / "docs/audits/admiral-production-readiness-2026-10-21/scripts/install-admin-portal-audit.sh",
+    ROOT
+    / "docs/audits/admiral-production-readiness-2026-10-21/scripts/rc6/issue-213-dev-to-single.sh",
 )
 SEED_PREPARATION = (
     ROOT
@@ -45,20 +49,30 @@ RC6_SINGLE_LANE = (
 
 def test_audit_helpers_default_to_the_coordinated_rpm_release():
     releases = set()
+    epochs = set()
     for package in RPM_SPECS:
         spec = ROOT / f"packaging/rpm/{package}.spec"
         match = re.search(r"^Release:\s*(\d+)%\{\?dist\}", spec.read_text(), re.MULTILINE)
         assert match, f"missing numeric Release in {spec}"
         releases.add(match.group(1))
+        epoch = re.search(r"^Epoch:\s*(\d+)$", spec.read_text(), re.MULTILINE)
+        epochs.add(epoch.group(1) if epoch else "0")
 
     assert len(releases) == 1, f"Admiral RPM Release values differ: {sorted(releases)}"
+    assert len(epochs) == 1, f"Admiral RPM Epoch values differ: {sorted(epochs)}"
     expected = releases.pop()
+    expected_epoch = epochs.pop()
     for helper in AUDIT_HELPERS:
         text = helper.read_text()
         match = re.search(r"ADMIRAL_RC_RELEASE:-([0-9]+)", text)
         assert match, f"missing default candidate release in {helper}"
         assert match.group(1) == expected, (
             f"{helper} defaults to Release {match.group(1)}, but RPM specs use {expected}"
+        )
+        epoch = re.search(r"ADMIRAL_RC_EPOCH:-([0-9]+)", text)
+        assert epoch, f"missing default candidate epoch in {helper}"
+        assert epoch.group(1) == expected_epoch, (
+            f"{helper} defaults to Epoch {epoch.group(1)}, but RPM specs use {expected_epoch}"
         )
 
 
@@ -81,6 +95,17 @@ def test_candidate_install_helpers_do_not_bypass_dnf_vendor_resolution():
         text = helper.read_text()
         assert "--allow-vendor-change" not in text, helper
         assert "--nodeps" not in text, helper
+
+
+def test_candidate_bootstrap_uses_native_platform_rpm_suffix():
+    helper = (
+        ROOT
+        / "docs/audits/admiral-production-readiness-2026-10-21/scripts/bootstrap-candidate-node.sh"
+    ).read_text()
+    assert "el10) repo_name=admiral-local-el10.repo; rpm_suffix=el10" in helper
+    assert "fedora) repo_name=admiral-local-fedora.repo; rpm_suffix=fc46" in helper
+    assert 'packages+=("${package}-${expected_version}-${expected_release}.${rpm_suffix}")' in helper
+    assert "${expected_epoch}:${expected_version}-${expected_release}.${rpm_suffix}" in helper
 
 
 def test_multinode_installers_use_local_repository_and_preserve_seed_python_rpms():
