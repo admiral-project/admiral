@@ -1,0 +1,8 @@
+Running as unit: rc6-e5-cleanup-portal-customer-attempt2b.service
+{"apps_removed": 1, "cleanup": "complete", "email": "rc6-e5-caddy-20261025t235025z-9c68a6@example.test", "subscriptions_removed": 1}
+Finished with result: success
+Main processes terminated with: code=exited, status=0/SUCCESS
+Service runtime: 2.170s
+CPU time consumed: 2.094s
+Memory peak: 57.6M (swap: 0B)
+cleanup_exit=0

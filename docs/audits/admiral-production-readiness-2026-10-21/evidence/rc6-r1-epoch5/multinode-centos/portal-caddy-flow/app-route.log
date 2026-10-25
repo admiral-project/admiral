@@ -1,0 +1,2 @@
+app_http=200 tls_verify=0
+curl_exit=0

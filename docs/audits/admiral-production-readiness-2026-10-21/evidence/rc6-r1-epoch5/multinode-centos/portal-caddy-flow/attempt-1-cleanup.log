@@ -1,0 +1,9 @@
+{"apps_removed": 0, "cleanup": "complete", "email": "rc6-e5-caddy-20261025t234827z-fcf474@example.test", "subscriptions_removed": 0}
+
+STDERR
+Running as unit: rc6-e5-cleanup-caddy-attempt1.service
+Finished with result: success
+Main processes terminated with: code=exited, status=0/SUCCESS
+Service runtime: 1.916s
+CPU time consumed: 1.842s
+Memory peak: 57.3M (swap: 0B)

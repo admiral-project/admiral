@@ -1,0 +1,15 @@
+routed_portal_test_email=rc6-e5-caddy-20261025t235025z-9c68a6@example.test
+independent_portal_signup=pending
+independent_portal_pending_login=rejected
+independent_portal_customer_approved=id:6
+independent_portal_catalog=published
+independent_portal_free_deploy=PASS instance_id=inst_0eef6e5b468e70e2
+independent_portal_customer_flow=PASS
+
+STDERR
+Running as unit: rc6-e5-independent-portal-caddy-attempt2.service
+Finished with result: success
+Main processes terminated with: code=exited, status=0/SUCCESS
+Service runtime: 3.783s
+CPU time consumed: 457ms
+Memory peak: 11.7M (swap: 0B)
