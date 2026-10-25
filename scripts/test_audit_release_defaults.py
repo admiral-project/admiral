@@ -21,6 +21,8 @@ AUDIT_HELPERS = (
     ROOT
     / "docs/audits/admiral-production-readiness-2026-10-21/scripts/install-admin-audit.sh",
     ROOT
+    / "docs/audits/admiral-production-readiness-2026-10-21/scripts/install-admin-portal-audit.sh",
+    ROOT
     / "docs/audits/admiral-production-readiness-2026-10-21/scripts/install-worker-audit.sh",
 )
 SEED_PREPARATION = (
