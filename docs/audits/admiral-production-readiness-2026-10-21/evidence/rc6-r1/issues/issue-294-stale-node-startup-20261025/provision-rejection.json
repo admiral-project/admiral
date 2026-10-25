@@ -1,0 +1,18 @@
+{
+  "code": "no_node_available_for_requested_tier",
+  "message": "No hay nodos disponibles con capacidad suficiente para este tier.",
+  "error": "No hay nodos disponibles con capacidad suficiente para este tier.",
+  "detail": "No hay nodos disponibles con capacidad suficiente para este tier. La politica de capacidad impide asignar mas workloads al nodo evaluado.",
+  "operation_id": "op_a7e970c5feaf65bb",
+  "task_id": "task_aead8045774fe6ac",
+  "requested_node_id": "rc6r1fedora-single",
+  "node_evaluations": [
+    {
+      "node_id": "rc6r1fedora-single",
+      "eligible": false,
+      "rejection_reasons": [
+        "metrics_stale"
+      ]
+    }
+  ]
+}

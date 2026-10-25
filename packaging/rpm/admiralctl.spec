@@ -15,7 +15,7 @@
 
 Name:    admiralctl
 Version: 0.0.1rc6
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary: Admiral Command-Line Interface
 
 License: Apache-2.0
@@ -23,7 +23,7 @@ ExclusiveArch: x86_64 aarch64
 URL:     https://github.com/admiral-project/admiralctl
 Source0: https://github.com/admiral-project/admiralctl/archive/%{commit}.tar.gz
 Source1: admiralctl.yaml
-Source2: https://github.com/admiral-project/admirald/archive/421c6007f9cf51a7e3bf23a6e2173bb0a39e27d3.tar.gz
+Source2: https://github.com/admiral-project/admirald/archive/0fd76b6c902cfae179cfe6fb3e685c935a350cf7.tar.gz
 
 BuildRequires: golang >= 1.26.10
 BuildRequires: binutils
@@ -87,6 +87,9 @@ test "$(./admiralctl version 2>&1)" = "admiralctl %{version}"
 restorecon -F %{_bindir}/admiralctl 2>/dev/null || :
 
 %changelog
+* Sun Oct 25 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc6-2
+- Rebuild coordinated RC6 Release 2 with stale worker startup reconciliation
+
 * Sun Oct 25 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc6-5
 - Rebuild coordinated RC6 Release 5 with direct Worker-to-Portal WireGuard restore path
 

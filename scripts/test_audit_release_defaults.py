@@ -147,7 +147,7 @@ def test_r75_audit_matches_lifecycle_customer_and_precreates_logs():
 
 def test_rc6_single_lane_uses_the_selected_epoch_and_release():
     lane = RC6_SINGLE_LANE.read_text(encoding="utf-8")
-    assert "package_release=${RC6_PACKAGE_RELEASE:-1}" in lane
+    assert "package_release=${RC6_PACKAGE_RELEASE:-2}" in lane
     assert "expected_epoch=${RC6_EXPECTED_EPOCH:-0}" in lane
     assert "ADMIRAL_RC_RELEASE=$package_release" in lane
     assert 'expected_epoch:0.0.1rc6-$expected_release.$expected_dist' in lane

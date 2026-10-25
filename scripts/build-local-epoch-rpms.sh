@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Build an isolated, local-only RC6 RPM set with a temporary Epoch.
-# Never publish these artifacts: final RC6-1 packages are rebuilt from the
+# Never publish these artifacts: final coordinated no-Epoch RC6 packages are rebuilt from the
 # unmodified RPM specs after all fixes and evidence are complete.
 set -euo pipefail
 

@@ -15,7 +15,7 @@
 
 Name:    admiral-fleet
 Version: 0.0.1rc6
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary: Admiral Fleet Worker Agent
 
 License: Apache-2.0
@@ -24,7 +24,7 @@ URL:     https://github.com/admiral-project/admiral-fleet
 Source0: https://github.com/admiral-project/admiral-fleet/archive/%{commit}.tar.gz
 Source1: admiral-fleet.service
 Source2: fleet.env
-Source3: https://github.com/admiral-project/admirald/archive/421c6007f9cf51a7e3bf23a6e2173bb0a39e27d3.tar.gz
+Source3: https://github.com/admiral-project/admirald/archive/0fd76b6c902cfae179cfe6fb3e685c935a350cf7.tar.gz
 
 BuildRequires: golang >= 1.26.10
 BuildRequires: binutils
@@ -112,6 +112,9 @@ loginctl enable-linger admiral-apps 2>/dev/null || :
 %systemd_postun_with_restart admiral-fleet.service
 
 %changelog
+* Sun Oct 25 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc6-2
+- Rebuild coordinated RC6 Release 2 with stale worker startup reconciliation
+
 * Sun Oct 25 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc6-5
 - Rebuild coordinated RC6 Release 5 with direct Worker-to-Portal WireGuard restore path
 
