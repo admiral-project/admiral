@@ -25,7 +25,11 @@ Expected: the worker installation helper must work from an already unprivileged 
 
 Observed: the actual Rocky worker reinstallation/re-enrollment helper exited 0. Its final checks reported node ID `rc6r4-rocky-worker`, role `worker`, `active/healthy`; the temporary bootstrap SSH key was rejected while pinned validator access remained available. Installer Ansible recap: `ok=146 changed=13 unreachable=0 failed=0 skipped=228`. WireGuard handshake and Podman 5.8.2 checks succeeded.
 
-Result: **PASS for the targeted #284 installer/re-enrollment regression**. This is not a full-cell pass.
+The same helper then ran against the dedicated portal using its persisted node ID `portal-001`. It exited 0 and reported `verified_node_id=portal-001 verified_node_role=portal node_status=active node_health=healthy`; the bootstrap key was rejected while the pinned validator key remained usable. The installer completed without failed or unreachable Ansible tasks. A post-run control-plane query showed exactly one active portal (`portal-001`) and one active worker; on the portal guest Harbor was active and Fleet inactive.
+
+One initial portal attempt used a new node ID instead of the guest's persisted `portal-001` ID. That harness invocation failed because the existing registration token identifier could not be reused for a different node ID. The resulting extra control-plane row was removed, its absence verified, and the scenario was rerun with the persistent ID above. This failed invocation was a test-setup error, not a product result; its local mode-0600 log and the Admin journal records are retained separately.
+
+Result: **PASS for the targeted #284 worker and dedicated-portal installer/re-enrollment regressions**. This is not a full-cell pass.
 
 ## Reproduction and artifacts
 
@@ -35,6 +39,10 @@ Raw mode-0600 logs and JSON snapshots are retained on the lab host at:
 
 `/var/lib/libvirt/images/admiral-validation/validation/rc6-r4/epoch2/rocky-multinode-node-removal/`
 
-The per-file SHA-256 manifest verifies with `sha256sum -c SHA256SUMS`; manifest SHA-256 is `36ab59e94773a03fba2af5d555f4d4dec0cc4284b2f5a89ce235a16ed263feda`. The worker re-enrollment log is retained at `/var/lib/libvirt/images/admiral-validation/validation/rc6-r4/epoch2/rocky-worker-reenroll.log` with mode 0600. The local candidate RPM SHA-256 manifest is in `/var/lib/libvirt/images/admiral-validation/repo/rc6-epoch2/SHA256SUMS`.
+The per-file SHA-256 manifest verifies with `sha256sum -c SHA256SUMS`; manifest SHA-256 is `36ab59e94773a03fba2af5d555f4d4dec0cc4284b2f5a89ce235a16ed263feda`. The local candidate RPM SHA-256 manifest is in `/var/lib/libvirt/images/admiral-validation/repo/rc6-epoch2/SHA256SUMS`. Mode-0600 logs are retained on the lab host at:
+
+- #284 worker: `/var/lib/libvirt/images/admiral-validation/validation/rc6-r4/epoch2/rocky-worker-reenroll.log` (SHA-256 `a1b477fb33398559f21d5f998d382a247156b1c6be9f28486699be9b4c22394d`)
+- #284 portal (correct persistent ID): `/var/lib/libvirt/images/admiral-validation/validation/rc6-r4/epoch2/rocky-portal-reenroll-correct-id.log` (SHA-256 `6967a3a6c0ea9e49ef816fc5b440059f3f3ebf3b16d7e3c502229fcfb58ef1bc`)
+- Failed portal harness attempt: `/var/lib/libvirt/images/admiral-validation/validation/rc6-r4/epoch2/rocky-portal-reenroll.log`
 
 The removal run observed transient Fleet readiness retries while PostgreSQL was starting; the service subsequently became healthy and the scripted scenario completed. This report does not characterize startup as retry-free.

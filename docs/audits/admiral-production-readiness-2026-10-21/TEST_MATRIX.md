@@ -2,19 +2,18 @@
 
 Audit ID: `ADM-AUDIT-2026-10-21`<br>
 
-## Active functional gate — RC6, four x86_64 platforms
+## Active functional gate — RC6, three x86_64 platforms
 
-The active release gate has **eight cells**: Fedora Rawhide, Rocky Linux 10, AlmaLinux 10, and CentOS Stream 10, each in Single-Node and Multi-Node mode. Each OS must receive its native RPM build; EL10 binaries must not be installed on Fedora. Environment-specific packaging/build failures do not remove an OS from the active runtime scope unless the project explicitly changes the gate.
+The active release gate has **six cells**: Fedora Rawhide, Rocky Linux 10, and CentOS Stream 10, each in Single-Node and Multi-Node mode. Each OS must receive its native RPM build; EL10 binaries must not be installed on Fedora. AlmaLinux 10 is excluded from this candidate matrix because the available COPR build environment lacks the Go runtime/toolchain needed to build Admiral Go RPMs (#276); this is an environment limitation, not a runtime compatibility conclusion.
 
 **Topology and candidate correction (2026-10-25):** R75 Single-Node results are historical for their exact candidate. R75's three Multi-Node runs used `--admin-portal-node` plus worker spokes and did not validate an independent Portal role; they are **NOT TESTED for the required Multi-Node cells**. Earlier RC6-1 Single-Node runs predate the current component pins and receive no current-candidate credit. Each Multi-Node cell requires three real guests running the same OS and exact candidate: `--admin-node`, `--worker-node`, and `--portal-node`. The active checklist is [issue #283](https://github.com/admiral-project/admiral/issues/283).
 
-The current Release 3 package set has **0/8 complete cells**. Rocky three-node installation and named runtime subsets have been exercised, but the Harbor customer flow failed with an incomplete POST redirect and is tracked by [issue #289](https://github.com/admiral-project/admiral/issues/289). Release 3 receives no cell credit; a fix requires a new candidate and fresh affected checks. See [`rc6-release3-rocky-independent-portal-progress.md`](evidence/rc6-release3-rocky-independent-portal-progress.md) for exact observations. The six EL10 Release 3 RPMs built successfully and root CI is green; Fedora-native Release 3 RPMs and the other OS cells remain untested.
+The latest local diagnostic set is Epoch 2, Release 4. The formal matrix remains **0/6 complete cells**. Targeted Rocky Multi-Node history-preservation validation for #278 passed. The worker and dedicated-portal installer/re-enrollment checks for #284 passed. The independent Harbor customer flow for #289 and all complete cell runs remain pending. Diagnostic Epoch 2 RPMs and partial scenario passes do not earn cell credit. Exact target evidence is recorded in [`rc6-epoch2-rocky-multinode-issues-278-284.md`](evidence/rc6-epoch2-rocky-multinode-issues-278-284.md).
 
 | Platform | Single-Node | Multi-Node (Admin + Worker + independent Portal) |
 |---|---|---|
 | Fedora Rawhide x86_64 | NOT TESTED | NOT TESTED |
-| Rocky Linux 10 x86_64 | NOT TESTED | IN PROGRESS — no cell credit; Harbor flow failed (#289) |
-| AlmaLinux 10 x86_64 | NOT TESTED | NOT TESTED |
+| Rocky Linux 10 x86_64 | NOT TESTED on final candidate | Targeted #278 passed on diagnostic Epoch 2/R4; no cell credit |
 | CentOS Stream 10 x86_64 | NOT TESTED | NOT TESTED |
 
 Prior-candidate runs do not transfer to Release 3. A complete cell requires all applicable checks on a single unchanged candidate; a partial scenario PASS does not make its cell pass.
