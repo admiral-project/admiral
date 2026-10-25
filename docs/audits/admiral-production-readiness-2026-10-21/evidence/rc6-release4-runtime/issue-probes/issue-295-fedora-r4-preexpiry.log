@@ -1,0 +1,26 @@
+candidate=0:0.0.1rc6-4.fc46.noarch
+worker_result=success worker_status=0
+Running as unit: admiral-audit-issue295-r4-inspect-pre.service; invocation ID: 43f8a74294664699917aeeee11c13361
+{"app_next_billing_at": "2026-11-01", "commercial_status": "cancelled", "customer_id": "hcus_7604b72769814f80", "email": "rc6-issue295-harbor-flow@example.invalid", "instance_id": "inst_78f42f35f070dd19", "paypal_subscription_id_present": false, "signup_status": "active", "subscription_next_billing_at": "2026-11-01", "subscription_status": "cancelled", "technical_status": "running"}
+          Finished with result: success
+Main processes terminated with: code=exited, status=0/SUCCESS
+               Service runtime: 2.207s
+             CPU time consumed: 2.106s
+                   Memory peak: 69.8M (swap: 0B)
+Traceback (most recent call last):
+  File "<stdin>", line 3, in <module>
+  File "/usr/lib64/python3.15/json/__init__.py", line 306, in load
+    return loads(fp.read(),
+        cls=cls, object_hook=object_hook,
+        parse_float=parse_float, parse_int=parse_int,
+        parse_constant=parse_constant, object_pairs_hook=object_pairs_hook,
+        array_hook=array_hook, **kw)
+  File "/usr/lib64/python3.15/json/__init__.py", line 371, in loads
+    return _default_decoder.decode(s)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^
+  File "/usr/lib64/python3.15/json/decoder.py", line 358, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib64/python3.15/json/decoder.py", line 376, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)

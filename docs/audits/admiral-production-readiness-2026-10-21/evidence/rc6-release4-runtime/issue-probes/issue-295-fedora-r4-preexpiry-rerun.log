@@ -1,0 +1,9 @@
+Running as unit: admiral-audit-issue295-r4-inspect-pre-rerun.service; invocation ID: 3655ae1b023544a0b72bea11f80e1497
+{"app_next_billing_at": "2026-11-01", "commercial_status": "cancelled", "customer_id": "hcus_7604b72769814f80", "email": "rc6-issue295-harbor-flow@example.invalid", "instance_id": "inst_78f42f35f070dd19", "paypal_subscription_id_present": false, "signup_status": "active", "subscription_next_billing_at": "2026-11-01", "subscription_status": "cancelled", "technical_status": "running"}
+          Finished with result: success
+Main processes terminated with: code=exited, status=0/SUCCESS
+               Service runtime: 2.961s
+             CPU time consumed: 2.781s
+                   Memory peak: 69.9M (swap: 0B)
+[{"action": "provision_app", "id": "op_1340f7ac6f7d6e66", "instance_id": "inst_78f42f35f070dd19", "status": "succeeded"}]
+pre_expiry_deprovision_count=0 PASS

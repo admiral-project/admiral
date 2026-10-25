@@ -1,0 +1,27 @@
+Running as unit: admiral-audit-issue295-r4-wait.service; invocation ID: 9b264a14923e484aab2641914ab45cde
+Traceback (most recent call last):
+  File "<string>", line 3, in <module>
+    last=get_operation(op,instance_id=inst,customer_id=cust); print(json.dumps({k:last.get(k) for k in ("id","action","status","instance_id","node_id","error_message")},sort_keys=True),flush=True)
+  File "/usr/lib/admiral/harbor/app/admiral_client.py", line 193, in get_operation
+    return _request(
+        "GET",
+    ...<2 lines>...
+        customer_id=customer_id,
+    )
+  File "/usr/lib/admiral/harbor/app/admiral_client.py", line 42, in _request
+    url = current_app.config["ADMIRAL_API_URL"] + path
+          ^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.15/site-packages/werkzeug/local.py", line 318, in __get__
+    obj = instance._get_current_object()
+  File "/usr/lib/python3.15/site-packages/werkzeug/local.py", line 519, in _get_current_object
+    raise RuntimeError(unbound_message) from None
+RuntimeError: Working outside of application context.
+
+This typically means that you attempted to use functionality that needed
+the current application. To solve this, set up an application context
+with app.app_context(). See the documentation for more information.
+          Finished with result: exit-code
+Main processes terminated with: code=exited, status=1/FAILURE
+               Service runtime: 1.885s
+             CPU time consumed: 1.763s
+                   Memory peak: 67.3M (swap: 0B)

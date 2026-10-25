@@ -1,0 +1,12 @@
+final_rootless_containers=none pods=none volumes=none
+[{"id": "op_9de4b98295688cee", "instance_id": "inst_78f42f35f070dd19", "status": "succeeded"}]
+deprovision_count=1 PASS
+Running as unit: admiral-audit-issue295-r4-cleanup-rerun.service
+{"cleanup": "complete", "customer_id": "hcus_7604b72769814f80"}
+          Finished with result: success
+Main processes terminated with: code=exited, status=0/SUCCESS
+               Service runtime: 2.202s
+             CPU time consumed: 2.015s
+                   Memory peak: 71.6M (swap: 0B)
+fixture_cleanup=PASS
+issue_295_r4_fedora=PASS

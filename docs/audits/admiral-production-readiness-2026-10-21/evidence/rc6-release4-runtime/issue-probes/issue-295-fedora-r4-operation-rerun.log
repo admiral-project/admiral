@@ -1,0 +1,8 @@
+Running as unit: admiral-audit-issue295-r4-wait-rerun.service; invocation ID: 8093ea67e22b43e7bf73a41e867ea69f
+{"action": null, "error_message": null, "id": "op_9de4b98295688cee", "instance_id": "inst_78f42f35f070dd19", "node_id": null, "status": "succeeded"}
+deprovision_operation=succeeded PASS
+          Finished with result: success
+Main processes terminated with: code=exited, status=0/SUCCESS
+               Service runtime: 1.981s
+             CPU time consumed: 1.890s
+                   Memory peak: 69.2M (swap: 0B)

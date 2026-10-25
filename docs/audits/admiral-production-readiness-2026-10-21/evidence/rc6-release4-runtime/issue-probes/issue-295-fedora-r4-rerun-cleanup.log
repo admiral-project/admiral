@@ -1,0 +1,18 @@
+worker_result=success worker_status=0
+Starting admiral-harbor-worker.service - Admiral Harbor reconciliation worker...
+[worker] INFO Security headers initialized
+[worker] INFO Worker started at 2026-10-25T20:44:13.108508+00:00
+[worker] INFO Worker finished: Actions: 1, Errors: 0
+admiral-harbor-worker.service: Deactivated successfully.
+Finished admiral-harbor-worker.service - Admiral Harbor reconciliation worker.
+admiral-harbor-worker.service: Consumed 2.237s CPU time over 2.382s wall clock time, 71.2M memory peak.
+[{"action": "deprovision_app", "id": "op_9de4b98295688cee", "instance_id": "inst_78f42f35f070dd19", "status": "succeeded"}, {"action": "provision_app", "id": "op_1340f7ac6f7d6e66", "instance_id": "inst_78f42f35f070dd19", "status": "succeeded"}]
+rerun_deprovision_count=1 succeeded PASS
+Running as unit: admiral-audit-issue295-r4-inspect-final.service
+{"app_next_billing_at": "2026-10-24", "commercial_status": "cancelled", "customer_id": "hcus_7604b72769814f80", "email": "rc6-issue295-harbor-flow@example.invalid", "instance_id": "inst_78f42f35f070dd19", "paypal_subscription_id_present": false, "signup_status": "active", "subscription_next_billing_at": "2026-10-24", "subscription_status": "cancelled", "technical_status": "deprovisioned"}
+          Finished with result: success
+Main processes terminated with: code=exited, status=0/SUCCESS
+               Service runtime: 2.450s
+             CPU time consumed: 2.289s
+                   Memory peak: 69.9M (swap: 0B)
+cannot chdir to /home/validator: Permission denied
