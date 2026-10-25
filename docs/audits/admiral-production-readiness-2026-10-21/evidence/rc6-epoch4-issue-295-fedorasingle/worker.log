@@ -1,0 +1,27 @@
+Oct 25 17:12:32 rc6e4f190retry systemd[1]: Starting admiral-harbor-worker.service - Admiral Harbor reconciliation worker...
+Oct 25 17:12:34 rc6e4f190retry python3[12791]: [worker] INFO Security headers initialized
+Oct 25 17:12:34 rc6e4f190retry python3[12791]: [worker] INFO Worker started at 2026-10-25T17:12:34.996214+00:00
+Oct 25 17:12:35 rc6e4f190retry python3[12791]: [worker] INFO Worker finished: Actions: 1, Errors: 0
+Oct 25 17:12:35 rc6e4f190retry systemd[1]: admiral-harbor-worker.service: Deactivated successfully.
+Oct 25 17:12:35 rc6e4f190retry systemd[1]: Finished admiral-harbor-worker.service - Admiral Harbor reconciliation worker.
+Oct 25 17:12:35 rc6e4f190retry systemd[1]: admiral-harbor-worker.service: Consumed 2.657s CPU time over 2.821s wall clock time, 71.3M memory peak.
+Oct 25 17:12:46 rc6e4f190retry systemd[1]: Starting admiral-harbor-worker.service - Admiral Harbor reconciliation worker...
+Oct 25 17:12:48 rc6e4f190retry python3[12998]: [worker] INFO Security headers initialized
+Oct 25 17:12:48 rc6e4f190retry python3[12998]: [worker] INFO Worker started at 2026-10-25T17:12:48.596305+00:00
+Oct 25 17:12:49 rc6e4f190retry python3[12998]: [worker] INFO Queued deprovision op_1f5e9835331c869c after prepaid period for sub_b06529ab24304ffaab6a
+Oct 25 17:12:49 rc6e4f190retry python3[12998]: [worker] INFO Worker finished: Actions: 2, Errors: 0
+Oct 25 17:12:49 rc6e4f190retry systemd[1]: admiral-harbor-worker.service: Deactivated successfully.
+Oct 25 17:12:49 rc6e4f190retry systemd[1]: Finished admiral-harbor-worker.service - Admiral Harbor reconciliation worker.
+Oct 25 17:12:49 rc6e4f190retry systemd[1]: admiral-harbor-worker.service: Consumed 2.645s CPU time over 3.601s wall clock time, 71.4M memory peak.
+Oct 25 17:13:01 rc6e4f190retry systemd[1]: Starting admiral-harbor-worker.service - Admiral Harbor reconciliation worker...
+Oct 25 17:13:03 rc6e4f190retry python3[13517]: [worker] INFO Security headers initialized
+Oct 25 17:13:03 rc6e4f190retry python3[13517]: [worker] INFO Worker started at 2026-10-25T17:13:03.993932+00:00
+Oct 25 17:13:04 rc6e4f190retry python3[13517]: [worker] INFO Worker finished: Actions: 1, Errors: 0
+Oct 25 17:13:04 rc6e4f190retry systemd[1]: admiral-harbor-worker.service: Deactivated successfully.
+Oct 25 17:13:04 rc6e4f190retry systemd[1]: Finished admiral-harbor-worker.service - Admiral Harbor reconciliation worker.
+Oct 25 17:13:04 rc6e4f190retry systemd[1]: admiral-harbor-worker.service: Consumed 3.327s CPU time over 3.754s wall clock time, 73.3M memory peak.
+[{"action": "deprovision_app", "admin_user": "harbor-token", "created_at": "2026-10-25T17:12:48.747073Z", "error_message": null, "id": "op_1f5e9835331c869c", "instance_id": "inst_9712cdc4cdc27b98", "node_id": "rc6e4f190retry", "status": "succeeded", "task_id": "task_3df1da38369d309a", "updated_at": "2026-10-25T17:12:56.452133Z"}, {"action": "provision_app", "admin_user": "harbor-token", "created_at": "2026-10-25T17:11:15.709389Z", "error_message": null, "id": "op_8646c07385ff89c9", "instance_id": "inst_9712cdc4cdc27b98", "node_id": "rc6e4f190retry", "status": "succeeded", "task_id": "task_b61bdff6103368f1", "updated_at": "2026-10-25T17:11:53.428588Z"}]
+admiral-common	4	0.0.1rc6	2.fc46	noarch
+admiral-flagship	4	0.0.1rc6	2.fc46	noarch
+admiral-fleet	4	0.0.1rc6	2.fc46	x86_64
+admiral-harbor	4	0.0.1rc6	2.fc46	noarch
