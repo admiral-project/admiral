@@ -137,7 +137,9 @@ esac
 evidence_dir="$validation_dir/runtime/seed-refresh-$(date -u +%Y%m%d)/$os"
 mkdir -p "$evidence_dir"
 host_log="$evidence_dir/create-seed.log"
+exec 9>&1
 exec > >(tee -a "$host_log") 2>&1
+host_log_tee_pid=$!
 
 printf 'os=%s family=%s release=%s\n' "$os" "$family" "$release"
 printf 'vm=%s nat=%s mac=%s\n' "$name" "$nat_ip" "$nat_mac"
@@ -319,7 +321,6 @@ printf 'seed_file_sha256=' >> "$evidence_dir/seed-metadata.txt"
 sha256sum "$output_seed" >> "$evidence_dir/seed-metadata.txt"
 printf 'seed_info:\n' >> "$evidence_dir/seed-metadata.txt"
 qemu-img info "$output_seed" >> "$evidence_dir/seed-metadata.txt"
-sha256sum "$evidence_dir"/* > "$evidence_dir/SHA256SUMS"
 
 # Remove only successful temporary builder artifacts. Failed runs intentionally
 # retain their VM, overlay and cloud-init files for root-cause investigation.
@@ -349,3 +350,21 @@ PY
 
 printf 'Seed complete: %s\n' "$output_seed"
 printf 'Evidence: %s\n' "$evidence_dir"
+printf 'evidence_manifest=SHA256SUMS\n'
+
+# Stop writing the tee log before hashing it. Exclude the output manifest so
+# its checksum list is verifiable instead of hashing the empty redirected file.
+exec 1>&9 2>&1
+exec 9>&-
+wait "$host_log_tee_pid"
+(
+  cd "$evidence_dir"
+  find . -maxdepth 1 -type f ! -name SHA256SUMS -print0 | sort -z | xargs -0 sha256sum
+) > "$evidence_dir/SHA256SUMS"
+chmod 0600 "$evidence_dir/SHA256SUMS"
+(
+  cd "$evidence_dir"
+  sha256sum -c SHA256SUMS --quiet
+)
+printf 'seed_evidence_manifest_sha256='
+sha256sum "$evidence_dir/SHA256SUMS"
