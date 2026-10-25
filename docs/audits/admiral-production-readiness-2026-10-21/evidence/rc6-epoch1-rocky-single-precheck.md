@@ -8,10 +8,11 @@ Result: **PASS for local iteration; NOT a release-matrix cell**
 - Candidate payload: Admiral `0.0.1rc6-1.el10`, built with temporary RPM Epoch 1.
 - Purpose: exercise the current fixes locally while keeping package ordering above
   earlier local RPMs. These RPMs are not publishable and do not count toward RC6.
-- OS: Rocky Linux 10.2 x86_64, clone `rc6-epoch1-rocky-sn-retry` from the updated
+- OS: Rocky Linux 10.2 x86_64, clone `rc6-epoch1-rocky-sn-439` from the updated
   Rocky validation seed.
-- VM address: `192.168.122.124`.
-- Root audit commit used by the runner: `d41605fd01773fd1fe13d9867cc161309956b876`.
+- VM address: `192.168.122.125`.
+- Root audit commit used by the runner: `4392031e8c1440bd128becf06dde63909c0822fc`
+  (CI run [40162892881](https://github.com/admiral-project/admiral/actions/runs/40162892881), green).
 - Component refs: admirald `51e2a5b6f1da7e2cb568e94b6d1836eba058e422`, Fleet
   `fc6909f6c41507d04aa204ebeafbbaaa4ef2c686`, admiralctl
   `fa2a65e866310bd82bea78859804b6c3aea7989a`, Flagship
@@ -23,7 +24,7 @@ Result: **PASS for local iteration; NOT a release-matrix cell**
 
 ## Installation evidence
 
-The clean guest installation completed at `2026-10-25T04:33:47Z` in 287 seconds.
+The clean guest installation completed at `2026-10-25T04:51:01Z` in 288 seconds.
 Ansible reported 231 tasks, 94 changed, 0 unreachable and 0 failed. The local
 repository was copied to the guest before firewall hardening and used via
 `file://`; the Python helper RPM baseline was unchanged. The six installed
@@ -37,7 +38,7 @@ retry used a fresh guest and completed successfully.
 
 ## Executed functional stages
 
-All six stages completed on the same guest between `04:34:36Z` and `04:39:25Z`:
+All six stages completed on the same guest between `04:51:07Z` and `04:55:29Z`:
 
 | Stage | Result | Evidence observed |
 | --- | --- | --- |
@@ -57,17 +58,18 @@ in the same directory. Reproduction command:
 
 ```bash
 RC6_EXPECTED_EPOCH=1 \
-RC6_RUNTIME_ROOT=/var/lib/libvirt/images/admiral-validation/evidence/rc6-epoch1 \
+RC6_RUNTIME_ROOT=/var/lib/libvirt/images/admiral-validation/evidence/rc6-epoch1-439 \
 RC6_SSH_KEY=/var/lib/libvirt/images/admiral-validation/keys/validator_ed25519 \
 RC6_KNOWN_HOSTS_DIR=/var/lib/libvirt/images/admiral-validation/cloud-init \
 bash docs/audits/admiral-production-readiness-2026-10-21/scripts/rc6/run-single-lane.sh \
-  rocky 192.168.122.124 rc6-epoch1-rocky-sn-retry
+  rocky 192.168.122.125 rc6-epoch1-rocky-sn-439
 ```
 
 Restricted raw lab logs (not copied into this repository) are stored at:
 
 - `/var/lib/libvirt/images/admiral-validation/evidence/rc6-epoch1/rocky/install-single-node-retry.log`
-- `/var/lib/libvirt/images/admiral-validation/evidence/rc6-epoch1/functional/rocky-single/lane.log`
+- `/var/lib/libvirt/images/admiral-validation/evidence/rc6-epoch1/rocky/install-single-node-439.log`
+- `/var/lib/libvirt/images/admiral-validation/evidence/rc6-epoch1-439/functional/rocky-single/lane.log`
 - RPM metadata and SHA-256 manifest: `packaging/build/local-epoch1-rc6-el10-x86_64/repo/RPM-MANIFEST.tsv`
 
 ## Limitations
