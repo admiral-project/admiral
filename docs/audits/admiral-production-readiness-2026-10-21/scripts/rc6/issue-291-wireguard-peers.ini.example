@@ -1,0 +1,15 @@
+[admin]
+rc6r4rocky-admin-mn ansible_host=10.77.0.20 admiral_node_name=rc6r4rocky-admin-mn ansible_user=validator ansible_ssh_private_key_file=/path/to/temporary-admin-validation-key ansible_ssh_common_args='-o IdentitiesOnly=yes -o BatchMode=yes -o StrictHostKeyChecking=yes -o UserKnownHostsFile=/path/to/pinned-admin-known-hosts' ansible_remote_tmp=/var/tmp/.ansible/tmp ansible_python_interpreter=/usr/bin/python3
+
+[workers]
+rc6r4rocky-worker-mn ansible_host=10.77.0.21 fleet_public_ip=10.77.0.21 fleet_node_id=rc6r4rocky-worker-mn admiral_node_name=rc6r4rocky-worker-mn ansible_user=admiral-ssh ansible_ssh_private_key_file=/var/lib/admiral/ssh-delivery/rc6r4rocky-worker-mn.ed25519 ansible_ssh_common_args='-o IdentitiesOnly=yes -o BatchMode=yes -o StrictHostKeyChecking=yes -o UserKnownHostsFile=/path/to/pinned-worker-known-hosts' ansible_remote_tmp=/var/tmp/.ansible/tmp ansible_python_interpreter=/usr/bin/python3
+
+[portal]
+rc6r4rocky-portal-mn ansible_host=10.77.0.22 fleet_public_ip=10.77.0.22 fleet_node_id=rc6r4rocky-portal-mn admiral_node_name=rc6r4rocky-portal-mn ansible_user=admiral-ssh ansible_ssh_private_key_file=/var/lib/admiral/ssh-delivery/rc6r4rocky-portal-mn.ed25519 ansible_ssh_common_args='-o IdentitiesOnly=yes -o BatchMode=yes -o StrictHostKeyChecking=yes -o UserKnownHostsFile=/path/to/pinned-portal-known-hosts' ansible_remote_tmp=/var/tmp/.ansible/tmp ansible_python_interpreter=/usr/bin/python3
+
+[admin:vars]
+admiral_wireguard_subnet=10.99.0.0/24
+admiral_wireguard_hub_ip=10.99.0.1
+
+[all:vars]
+ansible_become=true

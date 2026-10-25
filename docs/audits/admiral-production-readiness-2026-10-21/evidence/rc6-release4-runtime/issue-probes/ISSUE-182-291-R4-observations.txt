@@ -1,0 +1,50 @@
+Run date: 2026-10-25 UTC
+Candidate: 0.0.1rc6-4.el10 (all three Rocky 10.2 x86_64 VMs)
+Topology: admin 10.99.0.1 / worker 10.99.0.2 / independent portal 10.99.0.3
+
+Installed RPMs:
+  Admin: admiral-common, admirald, admiral-fleet, admiralctl, admiral-flagship, admiral-harbor
+  Worker: admiral-common, admiral-fleet
+  Portal: admiral-common, admiral-harbor
+  NEVR on each installed package: 0:0.0.1rc6-4.el10 (RPM reported no explicit Epoch)
+
+Packaged peer playbook SHA-256:
+  942ccc2d481d8e33b8990cc6d4c262496d5871583feda437efe505c8023ed0c3
+
+WireGuard peer reconciliation:
+  First run with the wrong Admin self-SSH identity: Admin unreachable=1; no changes applied.
+  Corrected exact-candidate packaged playbook run:
+    Admin  ok=15 changed=2 unreachable=0 failed=0
+    Worker ok=16 changed=4 unreachable=0 failed=0
+    Portal ok=23 changed=6 unreachable=0 failed=0
+  Idempotent rerun:
+    Admin  ok=14 changed=0 unreachable=0 failed=0
+    Worker ok=13 changed=0 unreachable=0 failed=0
+    Portal ok=19 changed=0 unreachable=0 failed=0
+  Worker HTTPS probe to https://10.99.0.3:5001/health with lab CA: HTTP 200, {"status":"healthy"}.
+
+Harbor customer flow:
+  Signup pending; pending login rejected; admin approval id=2; catalog published.
+  Free DB-backed app provisioned: inst_f29b4c04e6e742a2 on rc6r4rocky-worker-mn.
+  SQL marker created before backup: rc6-r4-issue182-original.
+  Backup operation op_d8213233d98b50e8 succeeded; backup bk_d024d4cb78980dbe.
+  Backup bytes=736; SHA-256=53703f2d021f3e250475dea6c7908ad5e8f69ead6653ccb3a53981b27c9d9fa0.
+  Uploaded owner backup=upbk_70be4ecc8881; owner download bytes and SHA-256 matched.
+  Restore op_9753ca0311a474fb failed before peer reconciliation: connect: no route to host.
+  Restore op_15ebcd43cfaf45c0 succeeded after packaged peer/firewall reconciliation.
+  Resume op_e95ab1d1ae50f1a7 succeeded; instance reached running/healthy/available.
+  Direct SQL check after restore returned rc6-r4-issue182-original.
+  Negative origin https://10.99.0.2:5001 rejected: private restore source is not a registered Harbor portal.
+  Negative origin https://169.254.169.254:5001 rejected: private restore source is not a registered Harbor portal.
+  restore_backup operation count before/after the two negative probes: 2 / 2.
+  Final resume op_96d40b2aa900f9bd succeeded; instance again reached running/healthy/available and marker remained.
+  Deprovision op_b58a0459744585fb succeeded; no matching Worker containers, volumes, or Quadlet files remained.
+
+Non-counted harness observations:
+  - Initial fixture lacked explicit backup policy; its customer deploy passed but backup request returned no operation ID. Fixture was corrected and the test was rerun with a new customer.
+  - Initial upload/restore used the default Harbor external origin; Admirald rejected it as unregistered. Test setup then set the registered Portal origin https://10.99.0.3:5001.
+  - The first post-install restore reproduced missing Worker-to-Portal routing; the installed playbook reconciled exact peers and firewall allow rules.
+
+Raw installer and Ansible logs remain mode 0600 on the Admin VM under
+/var/lib/admiral/validation/rc6-r4/issue-182/. Synthetic backup artifacts and
+temporary credentials were not committed.

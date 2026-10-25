@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import html
 import importlib.util
 import os
 from pathlib import Path
@@ -25,6 +26,7 @@ _helpers = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(_helpers)
 Portal = _helpers.Portal
 csrf_for = _helpers.csrf_for
+portal_origin = os.environ.get("HARBOR_TEST_PORTAL_ORIGIN", "https://10.99.0.3:5001")
 
 
 def portal() -> Portal:
@@ -182,7 +184,13 @@ def request_restore(client: Portal, instance_id: str, slug: str, backup_id: str)
     )
     match = re.search(r"Restore queued with operation\s+(op_[A-Za-z0-9]+)", result, re.IGNORECASE)
     if match is None:
-        raise RuntimeError("uploaded restore was not queued; response did not contain a restore operation")
+        excerpt = re.sub(r"<[^>]+>", " ", result)
+        excerpt = html.unescape(re.sub(r"\s+", " ", excerpt)).strip()
+        excerpt = re.sub(r"(https?://[^?\s]+)\?[^\s]+", r"\1?<redacted>", excerpt)
+        raise RuntimeError(
+            "uploaded restore was not queued; response did not contain a restore operation; "
+            f"response={excerpt[:1200]}"
+        )
     print(f"uploaded_restore_operation={match.group(1)}")
     return match.group(1)
 
@@ -211,11 +219,13 @@ def negative_restore(client: Portal, instance_id: str, slug: str, backup_id: str
         detail = re.sub(r"\s+", " ", error.group(1)).strip() if error else "Admirald rejected the restore request"
         print(f"untrusted_restore_origin_rejected={origin} error={detail}")
     finally:
-        set_origin("https://10.99.0.100:5001")
+        set_origin(portal_origin)
 
 
 def set_origin(origin: str) -> None:
     if origin not in {
+        portal_origin,
+        "https://10.99.0.3:5001",
         "https://10.99.0.100:5001",
         "https://10.99.0.2:5001",
         "https://169.254.169.254:5001",
