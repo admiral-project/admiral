@@ -1,9 +1,9 @@
 %global debug_package %{nil}
-%global commit 034924d23016a1fda48716c29528076378cf934e
+%global commit dd4818b6e2bc53eea4495fc5e374a4893cfcb107
 
 Name:    admiral-harbor
 Version: 0.0.1rc6
-Release:        3%{?dist}
+Release:        4%{?dist}
 Summary: Admiral Customer Portal - Web UI for end users
 
 License: Apache-2.0
@@ -126,6 +126,9 @@ restorecon -R %{_localstatedir}/lib/admiral/harbor 2>/dev/null || :
 %{python3} -m pytest tests/ -x --tb=short
 
 %changelog
+* Sun Oct 25 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc6-4
+- Rebuild coordinated RC6 Release 4 with Harbor mutation redirect fix
+
 * Sat Oct 24 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc5-75
 - Rebuild coordinated RPM set with node-removal history fix
 

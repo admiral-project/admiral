@@ -6,7 +6,7 @@
 
 Name:    admiral-flagship
 Version: 0.0.1rc6
-Release:        3%{?dist}
+Release:        4%{?dist}
 Summary: Admiral Administrative Web Console
 
 License: Apache-2.0
@@ -81,6 +81,9 @@ restorecon -R %{_prefix}/lib/admiral/flagship 2>/dev/null || :
 %{python3} -m pytest tests/ -x --tb=short
 
 %changelog
+* Sun Oct 25 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc6-4
+- Rebuild coordinated RC6 Release 4 with Harbor mutation redirect fix
+
 * Sat Oct 24 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc5-75
 - Rebuild coordinated RPM set with node-removal history fix
 

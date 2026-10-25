@@ -15,7 +15,7 @@
 
 Name:    admirald
 Version: 0.0.1rc6
-Release:        3%{?dist}
+Release:        4%{?dist}
 Summary: Admiral Control Plane - Core API and orchestration service
 
 License: Apache-2.0
@@ -90,6 +90,9 @@ restorecon -F %{_bindir}/admirald 2>/dev/null || :
 %systemd_postun_with_restart admirald.service
 
 %changelog
+* Sun Oct 25 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc6-4
+- Rebuild coordinated RC6 Release 4 with Harbor mutation redirect fix
+
 * Sat Oct 24 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc5-75
 - Rebuild coordinated RPM set with node-removal history fix
 
