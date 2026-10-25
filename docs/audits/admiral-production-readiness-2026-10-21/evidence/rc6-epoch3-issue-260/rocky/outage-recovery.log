@@ -1,0 +1,40 @@
+issue=260 os=rocky candidate=RC6-Epoch3-Release5 start_utc=2026-10-25T11:14:29Z
+os=rocky start_utc=2026-10-25T11:14:31Z
+instance_id=inst_fc63193756934041 db_unit=admiral-inst_fc63193756934041-db.service
+active
+127.0.0.1:5432 - accepting connections
+CREATE TABLE
+TRUNCATE TABLE
+INSERT 0 1
+db_unit_after_stop=inactive utc=2026-10-25T11:14:44Z
+outage_poll=1 utc=2026-10-25T11:14:45Z api=failed unhealthy unavailable db_runtime=absent
+outage_poll=2 utc=2026-10-25T11:14:50Z api=failed unhealthy unavailable db_runtime=absent
+outage_poll=3 utc=2026-10-25T11:14:55Z api=failed unhealthy unavailable db_runtime=absent
+outage_poll=4 utc=2026-10-25T11:15:01Z api=failed unhealthy unavailable db_runtime=absent
+outage_poll=5 utc=2026-10-25T11:15:07Z api=failed unhealthy unavailable db_runtime=absent
+outage_poll=6 utc=2026-10-25T11:15:12Z api=failed unhealthy unavailable db_runtime=absent
+outage_poll=7 utc=2026-10-25T11:15:17Z api=failed unhealthy unavailable db_runtime=absent
+outage_poll=8 utc=2026-10-25T11:15:23Z api=failed unhealthy unavailable db_runtime=absent
+outage_poll=9 utc=2026-10-25T11:15:28Z api=failed unhealthy unavailable db_runtime=absent
+outage_poll=10 utc=2026-10-25T11:15:34Z api=failed unhealthy unavailable db_runtime=absent
+outage_poll=11 utc=2026-10-25T11:15:39Z api=failed unhealthy unavailable db_runtime=absent
+outage_poll=12 utc=2026-10-25T11:15:44Z api=failed unhealthy unavailable db_runtime=absent
+outage_observation_seconds=55 healthy_available_polls=0 late_healthy_available_polls=0 first_unavailable_elapsed_seconds=2 samples=12
+recovery_poll=1 utc=2026-10-25T11:15:46Z unit=active db=127.0.0.1:5432 - accepting connections api=failed unhealthy unavailable
+recovery_poll=2 utc=2026-10-25T11:15:51Z unit=active db=127.0.0.1:5432 - accepting connections api=running healthy available
+r69-db-outage-persisted
+{
+  "action": "deprovision_app",
+  "admin_user": "system",
+  "created_at": "2026-10-25T11:15:52.475104Z",
+  "error_message": null,
+  "id": "op_b3386a0ce1440c2a",
+  "instance_id": "inst_fc63193756934041",
+  "node_id": "rc6e3-rocky-sn",
+  "status": "succeeded",
+  "task_id": "task_eeb0bd6f96d978b4",
+  "updated_at": "2026-10-25T11:15:59.272958Z"
+}
+deprovision_exit=0
+database_service_outage_and_recovery=PASS
+end_utc=2026-10-25T11:16:00Z

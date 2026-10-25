@@ -1,0 +1,40 @@
+issue=260 os=fedora candidate=RC6-Epoch3-Release5 start_utc=2026-10-25T11:14:29Z
+os=fedora start_utc=2026-10-25T11:14:31Z
+instance_id=inst_bf2f1f4a7b9050a5 db_unit=admiral-inst_bf2f1f4a7b9050a5-db.service
+active
+127.0.0.1:5432 - accepting connections
+CREATE TABLE
+TRUNCATE TABLE
+INSERT 0 1
+db_unit_after_stop=inactive utc=2026-10-25T11:14:50Z
+outage_poll=1 utc=2026-10-25T11:14:50Z api=running unhealthy unavailable db_runtime=absent
+outage_poll=2 utc=2026-10-25T11:14:56Z api=failed unhealthy unavailable db_runtime=absent
+outage_poll=3 utc=2026-10-25T11:15:02Z api=failed unhealthy unavailable db_runtime=absent
+outage_poll=4 utc=2026-10-25T11:15:07Z api=failed unhealthy unavailable db_runtime=absent
+outage_poll=5 utc=2026-10-25T11:15:13Z api=failed unhealthy unavailable db_runtime=absent
+outage_poll=6 utc=2026-10-25T11:15:19Z api=failed unhealthy unavailable db_runtime=absent
+outage_poll=7 utc=2026-10-25T11:15:24Z api=failed unhealthy unavailable db_runtime=absent
+outage_poll=8 utc=2026-10-25T11:15:29Z api=failed unhealthy unavailable db_runtime=absent
+outage_poll=9 utc=2026-10-25T11:15:35Z api=failed unhealthy unavailable db_runtime=absent
+outage_poll=10 utc=2026-10-25T11:15:40Z api=failed unhealthy unavailable db_runtime=absent
+outage_poll=11 utc=2026-10-25T11:15:46Z api=failed unhealthy unavailable db_runtime=absent
+outage_poll=12 utc=2026-10-25T11:15:51Z api=failed unhealthy unavailable db_runtime=absent
+outage_observation_seconds=55 healthy_available_polls=0 late_healthy_available_polls=0 first_unavailable_elapsed_seconds=1 samples=12
+recovery_poll=1 utc=2026-10-25T11:15:52Z unit=active db=127.0.0.1:5432 - accepting connections api=failed unhealthy unavailable
+recovery_poll=2 utc=2026-10-25T11:15:58Z unit=active db=127.0.0.1:5432 - accepting connections api=running healthy available
+r69-db-outage-persisted
+{
+  "action": "deprovision_app",
+  "admin_user": "system",
+  "created_at": "2026-10-25T11:15:59.127035Z",
+  "error_message": null,
+  "id": "op_46b01fc83615e835",
+  "instance_id": "inst_bf2f1f4a7b9050a5",
+  "node_id": "rc6e3-fedora-sn",
+  "status": "succeeded",
+  "task_id": "task_21066a940a04e13e",
+  "updated_at": "2026-10-25T11:16:07.931736Z"
+}
+deprovision_exit=0
+database_service_outage_and_recovery=PASS
+end_utc=2026-10-25T11:16:09Z

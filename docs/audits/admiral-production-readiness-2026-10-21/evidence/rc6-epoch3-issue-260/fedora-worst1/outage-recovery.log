@@ -1,0 +1,9 @@
+issue=260 os=fedora candidate=RC6-Epoch3-Release5 acceptance=61-samples-over-60s-per-second start_utc=2026-10-25T11:24:48Z
+os=fedora start_utc=2026-10-25T11:24:50Z
+instance_id=inst_2ad0fa3e80f92f96 db_unit=admiral-inst_2ad0fa3e80f92f96-db.service
+active
+127.0.0.1:5432 - accepting connections
+CREATE TABLE
+TRUNCATE TABLE
+INSERT 0 1
+database workload did not have a current healthy baseline before outage

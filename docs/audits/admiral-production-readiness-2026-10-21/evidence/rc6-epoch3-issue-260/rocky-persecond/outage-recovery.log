@@ -1,0 +1,89 @@
+issue=260 os=rocky candidate=RC6-Epoch3-Release5 acceptance=61-samples-over-60s-per-second start_utc=2026-10-25T11:16:46Z
+os=rocky start_utc=2026-10-25T11:16:48Z
+instance_id=inst_9204e4c5b7a16d32 db_unit=admiral-inst_9204e4c5b7a16d32-db.service
+active
+127.0.0.1:5432 - accepting connections
+CREATE TABLE
+TRUNCATE TABLE
+INSERT 0 1
+db_unit_after_stop=inactive utc=2026-10-25T11:17:03Z
+outage_poll=0 elapsed_seconds=2 utc=2026-10-25T11:17:04Z unit=inactive api=failed unhealthy unavailable db_runtime=absent
+outage_poll=1 elapsed_seconds=4 utc=2026-10-25T11:17:06Z unit=inactive api=failed unhealthy unavailable db_runtime=absent
+outage_poll=2 elapsed_seconds=5 utc=2026-10-25T11:17:07Z unit=inactive api=failed unhealthy unavailable db_runtime=absent
+outage_poll=3 elapsed_seconds=7 utc=2026-10-25T11:17:09Z unit=inactive api=failed unhealthy unavailable db_runtime=absent
+outage_poll=4 elapsed_seconds=8 utc=2026-10-25T11:17:10Z unit=inactive api=failed unhealthy unavailable db_runtime=absent
+outage_poll=5 elapsed_seconds=10 utc=2026-10-25T11:17:12Z unit=inactive api=failed unhealthy unavailable db_runtime=absent
+outage_poll=6 elapsed_seconds=11 utc=2026-10-25T11:17:13Z unit=inactive api=failed unhealthy unavailable db_runtime=absent
+outage_poll=7 elapsed_seconds=12 utc=2026-10-25T11:17:14Z unit=inactive api=failed unhealthy unavailable db_runtime=absent
+outage_poll=8 elapsed_seconds=14 utc=2026-10-25T11:17:16Z unit=inactive api=failed unhealthy unavailable db_runtime=absent
+outage_poll=9 elapsed_seconds=15 utc=2026-10-25T11:17:17Z unit=inactive api=failed unhealthy unavailable db_runtime=absent
+outage_poll=10 elapsed_seconds=17 utc=2026-10-25T11:17:19Z unit=inactive api=failed unhealthy unavailable db_runtime=absent
+outage_poll=11 elapsed_seconds=18 utc=2026-10-25T11:17:20Z unit=inactive api=failed unhealthy unavailable db_runtime=absent
+outage_poll=12 elapsed_seconds=19 utc=2026-10-25T11:17:21Z unit=inactive api=failed unhealthy unavailable db_runtime=absent
+outage_poll=13 elapsed_seconds=21 utc=2026-10-25T11:17:23Z unit=inactive api=failed unhealthy unavailable db_runtime=absent
+outage_poll=14 elapsed_seconds=22 utc=2026-10-25T11:17:24Z unit=inactive api=failed unhealthy unavailable db_runtime=absent
+outage_poll=15 elapsed_seconds=24 utc=2026-10-25T11:17:26Z unit=inactive api=failed unhealthy unavailable db_runtime=absent
+outage_poll=16 elapsed_seconds=25 utc=2026-10-25T11:17:27Z unit=inactive api=failed unhealthy unavailable db_runtime=absent
+outage_poll=17 elapsed_seconds=27 utc=2026-10-25T11:17:29Z unit=inactive api=failed unhealthy unavailable db_runtime=absent
+outage_poll=18 elapsed_seconds=28 utc=2026-10-25T11:17:30Z unit=inactive api=failed unhealthy unavailable db_runtime=absent
+outage_poll=19 elapsed_seconds=30 utc=2026-10-25T11:17:32Z unit=inactive api=failed unhealthy unavailable db_runtime=absent
+outage_poll=20 elapsed_seconds=31 utc=2026-10-25T11:17:33Z unit=inactive api=failed unhealthy unavailable db_runtime=absent
+outage_poll=21 elapsed_seconds=32 utc=2026-10-25T11:17:34Z unit=inactive api=failed unhealthy unavailable db_runtime=absent
+outage_poll=22 elapsed_seconds=34 utc=2026-10-25T11:17:36Z unit=inactive api=failed unhealthy unavailable db_runtime=absent
+outage_poll=23 elapsed_seconds=35 utc=2026-10-25T11:17:37Z unit=inactive api=failed unhealthy unavailable db_runtime=absent
+outage_poll=24 elapsed_seconds=36 utc=2026-10-25T11:17:38Z unit=inactive api=failed unhealthy unavailable db_runtime=absent
+outage_poll=25 elapsed_seconds=38 utc=2026-10-25T11:17:40Z unit=inactive api=failed unhealthy unavailable db_runtime=absent
+outage_poll=26 elapsed_seconds=39 utc=2026-10-25T11:17:41Z unit=inactive api=failed unhealthy unavailable db_runtime=absent
+outage_poll=27 elapsed_seconds=41 utc=2026-10-25T11:17:43Z unit=inactive api=failed unhealthy unavailable db_runtime=absent
+outage_poll=28 elapsed_seconds=42 utc=2026-10-25T11:17:44Z unit=inactive api=failed unhealthy unavailable db_runtime=absent
+outage_poll=29 elapsed_seconds=43 utc=2026-10-25T11:17:45Z unit=inactive api=failed unhealthy unavailable db_runtime=absent
+outage_poll=30 elapsed_seconds=45 utc=2026-10-25T11:17:47Z unit=inactive api=failed unhealthy unavailable db_runtime=absent
+outage_poll=31 elapsed_seconds=46 utc=2026-10-25T11:17:48Z unit=inactive api=failed unhealthy unavailable db_runtime=absent
+outage_poll=32 elapsed_seconds=47 utc=2026-10-25T11:17:49Z unit=inactive api=failed unhealthy unavailable db_runtime=absent
+outage_poll=33 elapsed_seconds=49 utc=2026-10-25T11:17:51Z unit=inactive api=failed unhealthy unavailable db_runtime=absent
+outage_poll=34 elapsed_seconds=50 utc=2026-10-25T11:17:52Z unit=inactive api=failed unhealthy unavailable db_runtime=absent
+outage_poll=35 elapsed_seconds=52 utc=2026-10-25T11:17:54Z unit=inactive api=failed unhealthy unavailable db_runtime=absent
+outage_poll=36 elapsed_seconds=53 utc=2026-10-25T11:17:55Z unit=inactive api=failed unhealthy unavailable db_runtime=absent
+outage_poll=37 elapsed_seconds=54 utc=2026-10-25T11:17:56Z unit=inactive api=failed unhealthy unavailable db_runtime=absent
+outage_poll=38 elapsed_seconds=56 utc=2026-10-25T11:17:58Z unit=inactive api=failed unhealthy unavailable db_runtime=absent
+outage_poll=39 elapsed_seconds=57 utc=2026-10-25T11:17:59Z unit=inactive api=failed unhealthy unavailable db_runtime=absent
+outage_poll=40 elapsed_seconds=58 utc=2026-10-25T11:18:00Z unit=inactive api=failed unhealthy unavailable db_runtime=absent
+outage_poll=41 elapsed_seconds=60 utc=2026-10-25T11:18:02Z unit=inactive api=failed unhealthy unavailable db_runtime=absent
+outage_poll=42 elapsed_seconds=62 utc=2026-10-25T11:18:04Z unit=inactive api=failed unhealthy unavailable db_runtime=absent
+outage_poll=43 elapsed_seconds=63 utc=2026-10-25T11:18:05Z unit=inactive api=failed unhealthy unavailable db_runtime=absent
+outage_poll=44 elapsed_seconds=64 utc=2026-10-25T11:18:06Z unit=inactive api=failed unhealthy unavailable db_runtime=absent
+outage_poll=45 elapsed_seconds=66 utc=2026-10-25T11:18:08Z unit=inactive api=failed unhealthy unavailable db_runtime=absent
+outage_poll=46 elapsed_seconds=67 utc=2026-10-25T11:18:09Z unit=inactive api=failed unhealthy unavailable db_runtime=absent
+outage_poll=47 elapsed_seconds=69 utc=2026-10-25T11:18:11Z unit=inactive api=failed unhealthy unavailable db_runtime=absent
+outage_poll=48 elapsed_seconds=70 utc=2026-10-25T11:18:12Z unit=inactive api=failed unhealthy unavailable db_runtime=absent
+outage_poll=49 elapsed_seconds=71 utc=2026-10-25T11:18:13Z unit=inactive api=failed unhealthy unavailable db_runtime=absent
+outage_poll=50 elapsed_seconds=73 utc=2026-10-25T11:18:15Z unit=inactive api=failed unhealthy unavailable db_runtime=absent
+outage_poll=51 elapsed_seconds=74 utc=2026-10-25T11:18:16Z unit=inactive api=failed unhealthy unavailable db_runtime=absent
+outage_poll=52 elapsed_seconds=75 utc=2026-10-25T11:18:17Z unit=inactive api=failed unhealthy unavailable db_runtime=absent
+outage_poll=53 elapsed_seconds=77 utc=2026-10-25T11:18:19Z unit=inactive api=failed unhealthy unavailable db_runtime=absent
+outage_poll=54 elapsed_seconds=78 utc=2026-10-25T11:18:20Z unit=inactive api=failed unhealthy unavailable db_runtime=absent
+outage_poll=55 elapsed_seconds=79 utc=2026-10-25T11:18:21Z unit=inactive api=failed unhealthy unavailable db_runtime=absent
+outage_poll=56 elapsed_seconds=81 utc=2026-10-25T11:18:23Z unit=inactive api=failed unhealthy unavailable db_runtime=absent
+outage_poll=57 elapsed_seconds=82 utc=2026-10-25T11:18:24Z unit=inactive api=failed unhealthy unavailable db_runtime=absent
+outage_poll=58 elapsed_seconds=83 utc=2026-10-25T11:18:25Z unit=inactive api=failed unhealthy unavailable db_runtime=absent
+outage_poll=59 elapsed_seconds=85 utc=2026-10-25T11:18:27Z unit=inactive api=failed unhealthy unavailable db_runtime=absent
+outage_poll=60 elapsed_seconds=86 utc=2026-10-25T11:18:28Z unit=inactive api=failed unhealthy unavailable db_runtime=absent
+outage_observation_seconds=60 healthy_available_polls=0 late_healthy_available_polls=0 first_unavailable_elapsed_seconds=2 samples=61
+recovery_poll=1 utc=2026-10-25T11:18:29Z unit=active db=127.0.0.1:5432 - accepting connections api=failed unhealthy unavailable
+recovery_poll=2 utc=2026-10-25T11:18:35Z unit=active db=127.0.0.1:5432 - accepting connections api=running healthy available
+r69-db-outage-persisted
+{
+  "action": "deprovision_app",
+  "admin_user": "system",
+  "created_at": "2026-10-25T11:18:36.194795Z",
+  "error_message": null,
+  "id": "op_34fab36e3eaca9ac",
+  "instance_id": "inst_9204e4c5b7a16d32",
+  "node_id": "rc6e3-rocky-sn",
+  "status": "succeeded",
+  "task_id": "task_4063f0809a538e57",
+  "updated_at": "2026-10-25T11:18:42.280422Z"
+}
+deprovision_exit=0
+database_service_outage_and_recovery=PASS
+end_utc=2026-10-25T11:18:44Z

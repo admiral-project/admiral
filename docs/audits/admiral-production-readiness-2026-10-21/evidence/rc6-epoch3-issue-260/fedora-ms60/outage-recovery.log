@@ -1,0 +1,89 @@
+issue=260 os=fedora candidate=RC6-Epoch3-Release5 acceptance=61-samples-over-60s-per-second start_utc=2026-10-25T11:20:22Z
+os=fedora start_utc=2026-10-25T11:20:24Z
+instance_id=inst_04573630cfd30d0b db_unit=admiral-inst_04573630cfd30d0b-db.service
+active
+127.0.0.1:5432 - accepting connections
+CREATE TABLE
+TRUNCATE TABLE
+INSERT 0 1
+db_unit_after_stop=inactive utc=2026-10-25T11:20:45Z
+outage_poll=0 elapsed_ms=8 utc=2026-10-25T11:20:45Z response_ms=347 unit=inactive api=failed unhealthy unavailable db_runtime=absent
+outage_poll=1 elapsed_ms=1019 utc=2026-10-25T11:20:46Z response_ms=328 unit=inactive api=failed unhealthy unavailable db_runtime=absent
+outage_poll=2 elapsed_ms=2016 utc=2026-10-25T11:20:47Z response_ms=363 unit=inactive api=failed unhealthy unavailable db_runtime=absent
+outage_poll=3 elapsed_ms=3019 utc=2026-10-25T11:20:48Z response_ms=335 unit=inactive api=failed unhealthy unavailable db_runtime=absent
+outage_poll=4 elapsed_ms=4015 utc=2026-10-25T11:20:49Z response_ms=422 unit=inactive api=failed unhealthy unavailable db_runtime=absent
+outage_poll=5 elapsed_ms=5036 utc=2026-10-25T11:20:50Z response_ms=320 unit=inactive api=failed unhealthy unavailable db_runtime=absent
+outage_poll=6 elapsed_ms=6012 utc=2026-10-25T11:20:51Z response_ms=333 unit=inactive api=failed unhealthy unavailable db_runtime=absent
+outage_poll=7 elapsed_ms=7044 utc=2026-10-25T11:20:52Z response_ms=377 unit=inactive api=failed unhealthy unavailable db_runtime=absent
+outage_poll=8 elapsed_ms=8021 utc=2026-10-25T11:20:53Z response_ms=316 unit=inactive api=failed unhealthy unavailable db_runtime=absent
+outage_poll=9 elapsed_ms=9018 utc=2026-10-25T11:20:54Z response_ms=375 unit=inactive api=failed unhealthy unavailable db_runtime=absent
+outage_poll=10 elapsed_ms=10017 utc=2026-10-25T11:20:55Z response_ms=307 unit=inactive api=failed unhealthy unavailable db_runtime=absent
+outage_poll=11 elapsed_ms=11011 utc=2026-10-25T11:20:56Z response_ms=411 unit=inactive api=failed unhealthy unavailable db_runtime=absent
+outage_poll=12 elapsed_ms=12015 utc=2026-10-25T11:20:57Z response_ms=331 unit=inactive api=failed unhealthy unavailable db_runtime=absent
+outage_poll=13 elapsed_ms=13021 utc=2026-10-25T11:20:58Z response_ms=331 unit=inactive api=failed unhealthy unavailable db_runtime=absent
+outage_poll=14 elapsed_ms=14015 utc=2026-10-25T11:20:59Z response_ms=352 unit=inactive api=failed unhealthy unavailable db_runtime=absent
+outage_poll=15 elapsed_ms=15048 utc=2026-10-25T11:21:01Z response_ms=470 unit=inactive api=failed unhealthy unavailable db_runtime=absent
+outage_poll=16 elapsed_ms=16023 utc=2026-10-25T11:21:01Z response_ms=424 unit=inactive api=failed unhealthy unavailable db_runtime=absent
+outage_poll=17 elapsed_ms=17014 utc=2026-10-25T11:21:02Z response_ms=417 unit=inactive api=failed unhealthy unavailable db_runtime=absent
+outage_poll=18 elapsed_ms=18014 utc=2026-10-25T11:21:03Z response_ms=489 unit=inactive api=failed unhealthy unavailable db_runtime=absent
+outage_poll=19 elapsed_ms=19013 utc=2026-10-25T11:21:04Z response_ms=422 unit=inactive api=failed unhealthy unavailable db_runtime=absent
+outage_poll=20 elapsed_ms=20039 utc=2026-10-25T11:21:05Z response_ms=373 unit=inactive api=failed unhealthy unavailable db_runtime=absent
+outage_poll=21 elapsed_ms=21013 utc=2026-10-25T11:21:06Z response_ms=346 unit=inactive api=failed unhealthy unavailable db_runtime=absent
+outage_poll=22 elapsed_ms=22020 utc=2026-10-25T11:21:07Z response_ms=323 unit=inactive api=failed unhealthy unavailable db_runtime=absent
+outage_poll=23 elapsed_ms=23020 utc=2026-10-25T11:21:08Z response_ms=331 unit=inactive api=failed unhealthy unavailable db_runtime=absent
+outage_poll=24 elapsed_ms=24019 utc=2026-10-25T11:21:09Z response_ms=338 unit=inactive api=failed unhealthy unavailable db_runtime=absent
+outage_poll=25 elapsed_ms=25019 utc=2026-10-25T11:21:10Z response_ms=320 unit=inactive api=failed unhealthy unavailable db_runtime=absent
+outage_poll=26 elapsed_ms=26013 utc=2026-10-25T11:21:11Z response_ms=280 unit=inactive api=failed unhealthy unavailable db_runtime=absent
+outage_poll=27 elapsed_ms=27012 utc=2026-10-25T11:21:12Z response_ms=310 unit=inactive api=failed unhealthy unavailable db_runtime=absent
+outage_poll=28 elapsed_ms=28015 utc=2026-10-25T11:21:13Z response_ms=351 unit=inactive api=failed unhealthy unavailable db_runtime=absent
+outage_poll=29 elapsed_ms=29053 utc=2026-10-25T11:21:15Z response_ms=363 unit=inactive api=failed unhealthy unavailable db_runtime=absent
+outage_poll=30 elapsed_ms=30023 utc=2026-10-25T11:21:15Z response_ms=303 unit=inactive api=failed unhealthy unavailable db_runtime=absent
+outage_poll=31 elapsed_ms=31016 utc=2026-10-25T11:21:16Z response_ms=305 unit=inactive api=failed unhealthy unavailable db_runtime=absent
+outage_poll=32 elapsed_ms=32018 utc=2026-10-25T11:21:17Z response_ms=419 unit=inactive api=failed unhealthy unavailable db_runtime=absent
+outage_poll=33 elapsed_ms=33013 utc=2026-10-25T11:21:18Z response_ms=311 unit=inactive api=failed unhealthy unavailable db_runtime=absent
+outage_poll=34 elapsed_ms=34014 utc=2026-10-25T11:21:19Z response_ms=436 unit=inactive api=failed unhealthy unavailable db_runtime=absent
+outage_poll=35 elapsed_ms=35022 utc=2026-10-25T11:21:20Z response_ms=344 unit=inactive api=failed unhealthy unavailable db_runtime=absent
+outage_poll=36 elapsed_ms=36017 utc=2026-10-25T11:21:21Z response_ms=353 unit=inactive api=failed unhealthy unavailable db_runtime=absent
+outage_poll=37 elapsed_ms=37020 utc=2026-10-25T11:21:22Z response_ms=339 unit=inactive api=failed unhealthy unavailable db_runtime=absent
+outage_poll=38 elapsed_ms=38019 utc=2026-10-25T11:21:23Z response_ms=314 unit=inactive api=failed unhealthy unavailable db_runtime=absent
+outage_poll=39 elapsed_ms=39015 utc=2026-10-25T11:21:24Z response_ms=311 unit=inactive api=failed unhealthy unavailable db_runtime=absent
+outage_poll=40 elapsed_ms=40014 utc=2026-10-25T11:21:25Z response_ms=306 unit=inactive api=failed unhealthy unavailable db_runtime=absent
+outage_poll=41 elapsed_ms=41017 utc=2026-10-25T11:21:26Z response_ms=307 unit=inactive api=failed unhealthy unavailable db_runtime=absent
+outage_poll=42 elapsed_ms=42017 utc=2026-10-25T11:21:27Z response_ms=448 unit=inactive api=failed unhealthy unavailable db_runtime=absent
+outage_poll=43 elapsed_ms=43052 utc=2026-10-25T11:21:29Z response_ms=344 unit=inactive api=failed unhealthy unavailable db_runtime=absent
+outage_poll=44 elapsed_ms=44020 utc=2026-10-25T11:21:29Z response_ms=537 unit=inactive api=failed unhealthy unavailable db_runtime=absent
+outage_poll=45 elapsed_ms=45076 utc=2026-10-25T11:21:31Z response_ms=335 unit=inactive api=failed unhealthy unavailable db_runtime=absent
+outage_poll=46 elapsed_ms=46016 utc=2026-10-25T11:21:31Z response_ms=318 unit=inactive api=failed unhealthy unavailable db_runtime=absent
+outage_poll=47 elapsed_ms=47022 utc=2026-10-25T11:21:32Z response_ms=318 unit=inactive api=failed unhealthy unavailable db_runtime=absent
+outage_poll=48 elapsed_ms=48019 utc=2026-10-25T11:21:33Z response_ms=361 unit=inactive api=failed unhealthy unavailable db_runtime=absent
+outage_poll=49 elapsed_ms=49021 utc=2026-10-25T11:21:34Z response_ms=335 unit=inactive api=failed unhealthy unavailable db_runtime=absent
+outage_poll=50 elapsed_ms=50019 utc=2026-10-25T11:21:35Z response_ms=361 unit=inactive api=failed unhealthy unavailable db_runtime=absent
+outage_poll=51 elapsed_ms=51018 utc=2026-10-25T11:21:36Z response_ms=343 unit=inactive api=failed unhealthy unavailable db_runtime=absent
+outage_poll=52 elapsed_ms=52019 utc=2026-10-25T11:21:37Z response_ms=355 unit=inactive api=failed unhealthy unavailable db_runtime=absent
+outage_poll=53 elapsed_ms=53016 utc=2026-10-25T11:21:38Z response_ms=429 unit=inactive api=failed unhealthy unavailable db_runtime=absent
+outage_poll=54 elapsed_ms=54018 utc=2026-10-25T11:21:39Z response_ms=346 unit=inactive api=failed unhealthy unavailable db_runtime=absent
+outage_poll=55 elapsed_ms=55021 utc=2026-10-25T11:21:40Z response_ms=342 unit=inactive api=failed unhealthy unavailable db_runtime=absent
+outage_poll=56 elapsed_ms=56015 utc=2026-10-25T11:21:41Z response_ms=334 unit=inactive api=failed unhealthy unavailable db_runtime=absent
+outage_poll=57 elapsed_ms=57023 utc=2026-10-25T11:21:42Z response_ms=460 unit=inactive api=failed unhealthy unavailable db_runtime=absent
+outage_poll=58 elapsed_ms=58027 utc=2026-10-25T11:21:43Z response_ms=344 unit=inactive api=failed unhealthy unavailable db_runtime=absent
+outage_poll=59 elapsed_ms=59018 utc=2026-10-25T11:21:44Z response_ms=319 unit=inactive api=failed unhealthy unavailable db_runtime=absent
+outage_poll=60 elapsed_ms=60015 utc=2026-10-25T11:21:45Z response_ms=310 unit=inactive api=failed unhealthy unavailable db_runtime=absent
+outage_observation_ms=60015 samples=61 healthy_available_polls=0 stale_after_5s_polls=0 first_unavailable_elapsed_ms=8 sample_interval_target_ms=1000
+recovery_poll=1 utc=2026-10-25T11:21:52Z unit=active db=127.0.0.1:5432 - accepting connections api=failed unhealthy unavailable
+recovery_poll=2 utc=2026-10-25T11:21:57Z unit=active db=127.0.0.1:5432 - accepting connections api=running healthy available
+r69-db-outage-persisted
+{
+  "action": "deprovision_app",
+  "admin_user": "system",
+  "created_at": "2026-10-25T11:21:58.22226Z",
+  "error_message": null,
+  "id": "op_56c8fa4e2781199e",
+  "instance_id": "inst_04573630cfd30d0b",
+  "node_id": "rc6e3-fedora-sn",
+  "status": "succeeded",
+  "task_id": "task_1b476df173459f21",
+  "updated_at": "2026-10-25T11:22:06.617397Z"
+}
+deprovision_exit=0
+database_service_outage_and_recovery=PASS
+end_utc=2026-10-25T11:22:08Z
