@@ -296,6 +296,23 @@ def test_single_node_audit_stages_local_repo_on_guest_before_firewall_setup():
     assert script.index('tar -C "$repo_dir" -cf - .') < script.index('admiral-install --single-node')
 
 
+def test_multinode_audit_stages_local_repo_before_node_bootstrap():
+    admin = (
+        ROOT
+        / "docs/audits/admiral-production-readiness-2026-10-21/scripts/install-admin-audit.sh"
+    ).read_text(encoding="utf-8")
+    spoke = WORKER_INSTALL_SCRIPT.read_text(encoding="utf-8")
+
+    for script, install_marker in (
+        (admin, "admiral-install --admin-node"),
+        (spoke, 'sudo -n admiral-install --${role}-node'),
+    ):
+        assert "ADMIRAL_LOCAL_REPO_DIR" in script
+        assert 'remote_repo_dir=/var/tmp/admiral-audit-local-repo' in script
+        assert 'tar -C "$repo_dir" -cf - .' in script
+        assert script.index('tar -C "$repo_dir" -cf - .') < script.index(install_marker)
+
+
 def test_worker_bootstrap_rejects_old_argument_shape_without_mutation():
     result = subprocess.run(
         ["bash", str(WORKER_INSTALL_SCRIPT)],

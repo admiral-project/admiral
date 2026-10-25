@@ -30,4 +30,12 @@ For a fresh Single-Node guest, run `scripts/install-single-node-audit.sh el10 ..
 
 For each Multi-Node cell, keep the isolated underlay (`10.77.0.0/24`) separate from the WireGuard overlay (`10.99.0.0/24`). Enroll workers with `scripts/install-worker-audit.sh`, strict SSH host-key pins and the exact native candidate repository. Capture hub and worker inventories, health, workload placement on each worker, SQL markers, HTTP 200, idempotent retries, worker recovery/rejoin, controlled node removal and cleanup.
 
+For a local-only Epoch candidate, configure a per-lab repo file with
+`baseurl=file:///var/tmp/admiral-audit-local-repo` and pass both
+`ADMIRAL_LOCAL_REPO_CONFIG` and `ADMIRAL_LOCAL_REPO_DIR` to
+`install-admin-audit.sh` and `install-worker-audit.sh`. The helpers stage the
+repo before secure-mode firewall rules are applied, verify the installed RPM
+EVR including Epoch, and fail if the Python RPM baseline changes. These local
+Epoch runs are diagnostic only and do not count as release cells.
+
 Release 74 cell results apply only to the exact R74 source and native RPM sets in the linked evidence. A functional cell pass does not certify all production security, resilience or performance properties. Reproduction scripts for this pass are in [`scripts/r74/`](scripts/r74/).

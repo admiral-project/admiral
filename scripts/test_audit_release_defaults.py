@@ -19,7 +19,9 @@ AUDIT_HELPERS = (
     ROOT
     / "docs/audits/admiral-production-readiness-2026-10-21/scripts/bootstrap-candidate-node.sh",
     ROOT
-    / "docs/audits/admiral-production-readiness-2026-10-21/scripts/install-admin-portal-audit.sh",
+    / "docs/audits/admiral-production-readiness-2026-10-21/scripts/install-admin-audit.sh",
+    ROOT
+    / "docs/audits/admiral-production-readiness-2026-10-21/scripts/install-worker-audit.sh",
 )
 SEED_PREPARATION = (
     ROOT
@@ -73,6 +75,30 @@ def test_candidate_install_helpers_do_not_bypass_dnf_vendor_resolution():
         text = helper.read_text()
         assert "--allow-vendor-change" not in text, helper
         assert "--nodeps" not in text, helper
+
+
+def test_multinode_installers_use_local_repository_and_preserve_seed_python_rpms():
+    admin = (
+        ROOT
+        / "docs/audits/admiral-production-readiness-2026-10-21/scripts/install-admin-audit.sh"
+    ).read_text()
+    spoke = (
+        ROOT
+        / "docs/audits/admiral-production-readiness-2026-10-21/scripts/install-worker-audit.sh"
+    ).read_text()
+
+    for helper, install_marker in (
+        (admin, "admiral-install --admin-node"),
+        (spoke, 'sudo -n admiral-install --${role}-node'),
+    ):
+        assert "ADMIRAL_LOCAL_REPO_DIR" in helper
+        assert 'tar -C "$repo_dir" -cf - .' in helper
+        assert helper.index('tar -C "$repo_dir" -cf - .') < helper.index(install_marker)
+
+    assert "--disablerepo='copr:*'" in admin
+    assert "expected_epoch" in admin
+    assert "verify_candidate_rpms" in spoke
+    assert "python_package_baseline" in spoke
 
 
 def test_rocky_and_alma_seed_profiles_pin_verified_pyopenssl():

@@ -36,6 +36,16 @@ bootstrap_public_key=""
 hub_bootstrap_key=""
 worker_bootstrap_installed=0
 rc=1
+candidate_version=${ADMIRAL_RC_VERSION:-0.0.1rc6}
+candidate_release=${ADMIRAL_RC_RELEASE:-1}
+candidate_epoch=${ADMIRAL_RC_EPOCH:-0}
+candidate_dist_tag=${ADMIRAL_RC_DIST_TAG:-el10}
+[[ $candidate_version =~ ^0\.0\.1rc[0-9]+$ ]] || { echo 'invalid Admiral RPM version' >&2; exit 2; }
+[[ $candidate_release =~ ^[0-9]+$ && $candidate_epoch =~ ^[0-9]{1,4}$ ]] || {
+  echo 'invalid Admiral RPM release or epoch' >&2
+  exit 2
+}
+[[ $candidate_dist_tag == el10 || $candidate_dist_tag == fc46 ]] || { echo 'invalid Admiral RPM dist tag' >&2; exit 2; }
 
 ssh_to() {
   local ip=$1 known_hosts=$2
@@ -50,6 +60,21 @@ if [[ -n ${ADMIRAL_LOCAL_REPO_CONFIG:-} ]]; then
     echo "candidate repository configuration is unreadable: $ADMIRAL_LOCAL_REPO_CONFIG" >&2
     exit 1
   }
+  repo_dir=${ADMIRAL_LOCAL_REPO_DIR:-}
+  if [[ -n $repo_dir ]]; then
+    [[ -d $repo_dir && ! -L $repo_dir && -s $repo_dir/repodata/repomd.xml ]] || {
+      echo "local candidate RPM repository is incomplete: $repo_dir" >&2
+      exit 1
+    }
+    if find "$repo_dir" -type l -print -quit | grep -q .; then
+      echo "refusing symlinks in local candidate RPM repository: $repo_dir" >&2
+      exit 1
+    fi
+    remote_repo_dir=/var/tmp/admiral-audit-local-repo
+    ssh_to "$worker_ip" "$worker_known_hosts" sudo install -d -o root -g root -m 0755 "$remote_repo_dir"
+    tar -C "$repo_dir" -cf - . | ssh_to "$worker_ip" "$worker_known_hosts" \
+      sudo tar --no-same-owner -xf - -C "$remote_repo_dir"
+  fi
   remote_repo_tmp=$(ssh_to "$worker_ip" "$worker_known_hosts" 'umask 077; mktemp /tmp/admiral-local.repo.XXXXXX')
   [[ $remote_repo_tmp =~ ^/tmp/admiral-local\.repo\.[[:alnum:]]{6}$ ]] || {
     echo 'spoke returned an unexpected candidate repository staging path' >&2
@@ -66,7 +91,38 @@ fi
 capture_rpm_manifest() {
   local ip=$1 known_hosts=$2
   ssh_to "$ip" "$known_hosts" \
-    "rpm -qa --qf '%{NAME}-%{VERSION}-%{RELEASE}.%{ARCH}\\n' | sort"
+    "rpm -qa --qf '%{NAME}-%{EPOCHNUM}:%{VERSION}-%{RELEASE}.%{ARCH}\\n' | sort"
+}
+
+python_package_baseline() {
+  printf '%s\n' "$1" | awk '$1 ~ /^python3-/ { print }'
+}
+
+verify_candidate_rpms() {
+  local ip=$1 known_hosts=$2 node_role=$3
+  ssh_to "$ip" "$known_hosts" sudo bash -s -- \
+    "$candidate_version" "$candidate_release" "$candidate_epoch" "$candidate_dist_tag" "$node_role" <<'REMOTE'
+set -euo pipefail
+version=$1 release=$2 epoch=$3 dist_tag=$4 role=$5
+case "$role" in
+  admin) required=(admiral-common admirald admiralctl admiral-flagship) ;;
+  worker) required=(admiral-common admiral-fleet) ;;
+  portal) required=(admiral-common admiral-harbor) ;;
+  *) echo "unsupported node role: $role" >&2; exit 2 ;;
+esac
+for package in "${required[@]}"; do
+  rpm -q "$package" >/dev/null || { echo "required role RPM is missing: $package" >&2; exit 1; }
+done
+for package in admiral-common admirald admiral-fleet admiralctl admiral-harbor admiral-flagship; do
+  if rpm -q "$package" >/dev/null 2>&1; then
+    actual=$(rpm -q --qf '%{EPOCHNUM}:%{VERSION}-%{RELEASE}' "$package")
+    [[ $actual == "$epoch:$version-$release.$dist_tag" ]] || {
+      echo "$package has unexpected candidate EVR: $actual" >&2
+      exit 1
+    }
+  fi
+done
+REMOTE
 }
 
 remove_worker_bootstrap_key() {
@@ -139,6 +195,8 @@ worker_rpm_after=$(capture_rpm_manifest "$worker_ip" "$worker_known_hosts")
 worker_rpm_status=$?
 set -e
 {
+  printf 'candidate=%s-%s epoch=%s dist_tag=%s spoke_role=%s node=%s\n' \
+    "$candidate_version" "$candidate_release" "$candidate_epoch" "$candidate_dist_tag" "$role" "$node_id"
   printf 'installer_start_utc=%s installer_end_utc=%s installer_elapsed_seconds=%s ssh_exit_code=%s\n' \
     "$install_start_utc" "$install_end_utc" "$install_elapsed" "$rc"
   printf 'hub_package_nevra_delta_begin (minus=before, plus=after)\n'
@@ -156,6 +214,25 @@ set -e
   fi
   printf 'worker_package_nevra_delta_end\n'
 } >>"$output"
+
+if [[ $rc -eq 0 ]]; then
+  verify_candidate_rpms "$hub_underlay_ip" "$hub_known_hosts" admin
+  verify_candidate_rpms "$worker_ip" "$worker_known_hosts" "$role"
+  hub_python_before=$(python_package_baseline "$hub_rpm_before")
+  hub_python_after=$(python_package_baseline "$hub_rpm_after")
+  worker_python_before=$(python_package_baseline "$worker_rpm_before")
+  worker_python_after=$(python_package_baseline "$worker_rpm_after")
+  if [[ $hub_python_before != "$hub_python_after" ]]; then
+    echo 'hub Python RPM baseline changed during spoke installation' >&2
+    diff -u <(printf '%s\n' "$hub_python_before") <(printf '%s\n' "$hub_python_after") || true
+    rc=1
+  fi
+  if [[ $worker_python_before != "$worker_python_after" ]]; then
+    echo 'spoke Python RPM baseline changed during installation' >&2
+    diff -u <(printf '%s\n' "$worker_python_before") <(printf '%s\n' "$worker_python_after") || true
+    rc=1
+  fi
+fi
 
 if [[ $rc -eq 0 ]]; then
   if [[ $role == worker ]]; then
