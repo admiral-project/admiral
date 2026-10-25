@@ -527,6 +527,10 @@ done
         firewall = FIREWALL_TASKS.read_text(encoding="utf-8")
 
         self.assertIn("Remove development mode override on secure reconciliation", admirald)
+        dev_mode_task = admirald.split(
+            "- name: Set ADMIRAL_ENV=development in dev mode", 1
+        )[1].split("\n- name:", 1)[0]
+        self.assertIn("Environment=ADMIRAL_DEV_MODE=true", dev_mode_task)
         self.assertIn("Remove legacy admiral-flagship systemd override", flagship)
         self.assertIn(
             "path: /etc/systemd/system/admiral-flagship.service.d/override.conf",
