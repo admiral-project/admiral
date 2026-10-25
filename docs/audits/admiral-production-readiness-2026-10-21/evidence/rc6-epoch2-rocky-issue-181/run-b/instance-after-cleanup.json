@@ -1,0 +1,7 @@
+{
+  "availability_reason": "instance_deprovisioned",
+  "effective_availability": "unavailable",
+  "health_status": "stopped",
+  "id": "inst_06ee31c47f084046",
+  "technical_status": "deprovisioned"
+}

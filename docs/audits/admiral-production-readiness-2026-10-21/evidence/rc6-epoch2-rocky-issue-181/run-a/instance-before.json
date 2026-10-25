@@ -1,0 +1,8 @@
+{
+  "effective_availability": "unavailable",
+  "health_status": "unhealthy",
+  "id": "inst_fd587441d41d1909",
+  "node_id": "rc6r4-rocky-worker",
+  "technical_status": "running",
+  "tier_snapshot_json": "{\"app_name\":\"e2e-backup-policy\",\"name\":\"free\",\"cpu\":1,\"memory\":\"512M\",\"storage\":\"1G\",\"price_monthly\":0,\"free\":true,\"backup_policy_json\":\"{\\\"enabled\\\":true,\\\"schedule\\\":\\\"disabled\\\",\\\"time\\\":\\\"\\\",\\\"timezone\\\":\\\"\\\",\\\"retention\\\":{\\\"count\\\":7,\\\"days\\\":30},\\\"manual_backups\\\":true,\\\"backup_database\\\":false,\\\"backup_volumes\\\":true,\\\"restore_allowed\\\":false}\"}"
+}

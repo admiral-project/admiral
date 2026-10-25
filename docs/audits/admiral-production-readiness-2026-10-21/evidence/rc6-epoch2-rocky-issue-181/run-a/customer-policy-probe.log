@@ -1,0 +1,7 @@
+issue_181_disallowed_controls=hidden
+issue_181_forged_database_backup=denied
+issue_181_api_backup_http=403 body={"error":"Manual database backups are disabled for this tier"}
+issue_181_forged_restore=denied
+issue_181_api_restore_http=403 body={"error":"Restore is disabled for this tier"}
+issue_181_cross_customer_instance_access=404
+issue_181_customer_policy_probe=PASS

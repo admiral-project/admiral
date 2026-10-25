@@ -42,9 +42,11 @@ class Portal:
     def __init__(self, base_url: str, host: str) -> None:
         self.base_url = base_url.rstrip("/")
         self.cookies = http.cookiejar.CookieJar()
-        # The routed hostname's CA/name are verified by the separate curl gate;
-        # urllib connects to the private lab admin address while preserving Host.
-        context = ssl._create_unverified_context()
+        # Use the routed hostname in the URL so TLS SNI matches Caddy's site;
+        # the isolated guest resolver must map it to the private Admin address.
+        # The system trust store or HARBOR_TEST_CA_CERT must trust the lab CA.
+        ca_cert = os.environ.get("HARBOR_TEST_CA_CERT")
+        context = ssl.create_default_context(cafile=ca_cert)
         self.opener = build_opener(HTTPCookieProcessor(self.cookies), HTTPSHandler(context=context))
         self.host = host
 
@@ -100,7 +102,10 @@ def main() -> int:
     admin_password = os.environ["HARBOR_TEST_ADMIN_PASSWORD"]
     customer_email = os.environ["HARBOR_TEST_CUSTOMER_EMAIL"]
     customer_password = os.environ["HARBOR_TEST_CUSTOMER_PASSWORD"]
-    slug = "e2e-portal-free"
+    slug = os.environ.get("HARBOR_TEST_APP_SLUG", "e2e-portal-free").strip()
+    app_display_name = os.environ.get("HARBOR_TEST_APP_DISPLAY_NAME", "E2E Portal Free").strip()
+    tier_name = os.environ.get("HARBOR_TEST_TIER_NAME", "free").strip()
+    require(bool(slug) and bool(app_display_name) and bool(tier_name), "app slug, display name, and tier must be set")
     require(urlparse(base_url).scheme == "https", "portal test URL must use HTTPS")
 
     customer = Portal(base_url, host)
@@ -188,15 +193,15 @@ def main() -> int:
     )
     require(status == 200 and urlparse(final_url).path == "/client/", "approved customer login failed")
     status, _, catalog = customer.request("/catalog")
-    require(status == 200 and "E2E Portal Free" in catalog, "published app is not visible in portal catalog")
+    require(status == 200 and app_display_name in catalog, "published app is not visible in portal catalog")
     status, _, app_page = customer.request(f"/apps/{slug}")
-    require(status == 200 and 'name="tier_name" value="free"' in app_page, "free app tier is not deployable")
+    require(status == 200 and f'name="tier_name" value="{tier_name}"' in app_page, "selected app tier is not deployable")
     csrf = csrf_for(app_page)
     status, final_url, page = customer.request(
         f"/client/apps/{slug}/deploy",
         method="POST",
         csrf=csrf,
-        data={"tier_name": "free", "csrf_token": csrf},
+        data={"tier_name": tier_name, "csrf_token": csrf},
     )
     require(status == 200, f"customer free deployment returned HTTP {status}")
     match = re.search(r"/client/instances/(inst_[A-Za-z0-9]+)/welcome", urlparse(final_url).path)
