@@ -1,0 +1,25 @@
+/var/tmp/admiral-rc6-candidate/admiral-common-0.0.1rc6-5.fc46.noarch.rpm:
+    Header OpenPGP V4 EdDSA/SHA512 signature, key fingerprint: 8bde296d7c6668c144840d8dfd3e9c0da739252e: OK
+    Header SHA256 digest: OK
+    Payload SHA256 digest: OK
+/var/tmp/admiral-rc6-candidate/admiralctl-0.0.1rc6-5.fc46.x86_64.rpm:
+    Header OpenPGP V4 EdDSA/SHA512 signature, key fingerprint: 8bde296d7c6668c144840d8dfd3e9c0da739252e: OK
+    Header SHA256 digest: OK
+    Payload SHA256 digest: OK
+/var/tmp/admiral-rc6-candidate/admirald-0.0.1rc6-5.fc46.x86_64.rpm:
+    Header OpenPGP V4 EdDSA/SHA512 signature, key fingerprint: 8bde296d7c6668c144840d8dfd3e9c0da739252e: OK
+    Header SHA256 digest: OK
+    Payload SHA256 digest: OK
+/var/tmp/admiral-rc6-candidate/admiral-flagship-0.0.1rc6-5.fc46.noarch.rpm:
+    Header OpenPGP V4 EdDSA/SHA512 signature, key fingerprint: 8bde296d7c6668c144840d8dfd3e9c0da739252e: OK
+    Header SHA256 digest: OK
+    Payload SHA256 digest: OK
+/var/tmp/admiral-rc6-candidate/admiral-fleet-0.0.1rc6-5.fc46.x86_64.rpm:
+    Header OpenPGP V4 EdDSA/SHA512 signature, key fingerprint: 8bde296d7c6668c144840d8dfd3e9c0da739252e: OK
+    Header SHA256 digest: OK
+    Payload SHA256 digest: OK
+/var/tmp/admiral-rc6-candidate/admiral-harbor-0.0.1rc6-5.fc46.noarch.rpm:
+    Header OpenPGP V4 EdDSA/SHA512 signature, key fingerprint: 8bde296d7c6668c144840d8dfd3e9c0da739252e: OK
+    Header SHA256 digest: OK
+    Payload SHA256 digest: OK
+verified_admiral_rpm_count=6

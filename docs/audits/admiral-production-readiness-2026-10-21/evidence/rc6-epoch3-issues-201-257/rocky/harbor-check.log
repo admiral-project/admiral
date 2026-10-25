@@ -1,0 +1,5 @@
+2026-10-25T12:18:00Z
+service=active
+health_http_status=200 body={"status":"healthy"}
+ready_http_status=200 body={"admirald":"ok","database":"ok","status":"ok","timestamp":"2026-10-25T12:18:00.529011+00:00"}
+listening_socket=LISTEN 0      2048   127.0.0.1:5001 0.0.0.0:*

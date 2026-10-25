@@ -1,0 +1,37 @@
+/var/tmp/admiral-rc6-candidate/admiral-common-0.0.1rc6-5.el10.noarch.rpm:
+    Header V4 EdDSA/SHA512 Signature, key ID a739252e: OK
+    Header SHA256 digest: OK
+    Header SHA1 digest: OK
+    Payload SHA256 digest: OK
+    MD5 digest: OK
+/var/tmp/admiral-rc6-candidate/admiralctl-0.0.1rc6-5.el10.x86_64.rpm:
+    Header V4 EdDSA/SHA512 Signature, key ID a739252e: OK
+    Header SHA256 digest: OK
+    Header SHA1 digest: OK
+    Payload SHA256 digest: OK
+    MD5 digest: OK
+/var/tmp/admiral-rc6-candidate/admirald-0.0.1rc6-5.el10.x86_64.rpm:
+    Header V4 EdDSA/SHA512 Signature, key ID a739252e: OK
+    Header SHA256 digest: OK
+    Header SHA1 digest: OK
+    Payload SHA256 digest: OK
+    MD5 digest: OK
+/var/tmp/admiral-rc6-candidate/admiral-flagship-0.0.1rc6-5.el10.noarch.rpm:
+    Header V4 EdDSA/SHA512 Signature, key ID a739252e: OK
+    Header SHA256 digest: OK
+    Header SHA1 digest: OK
+    Payload SHA256 digest: OK
+    MD5 digest: OK
+/var/tmp/admiral-rc6-candidate/admiral-fleet-0.0.1rc6-5.el10.x86_64.rpm:
+    Header V4 EdDSA/SHA512 Signature, key ID a739252e: OK
+    Header SHA256 digest: OK
+    Header SHA1 digest: OK
+    Payload SHA256 digest: OK
+    MD5 digest: OK
+/var/tmp/admiral-rc6-candidate/admiral-harbor-0.0.1rc6-5.el10.noarch.rpm:
+    Header V4 EdDSA/SHA512 Signature, key ID a739252e: OK
+    Header SHA256 digest: OK
+    Header SHA1 digest: OK
+    Payload SHA256 digest: OK
+    MD5 digest: OK
+verified_admiral_rpm_count=6

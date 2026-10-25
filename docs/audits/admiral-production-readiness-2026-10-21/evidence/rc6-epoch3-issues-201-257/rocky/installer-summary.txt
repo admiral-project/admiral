@@ -1,0 +1,7 @@
+Sanitized installer summary
+os=rocky
+installer_exit=0
+installer_completed_utc=2026-10-25T12:17:55Z
+play_recap=localhost: ok=231 changed=96 unreachable=0 failed=0 skipped=148 rescued=0 ignored=0
+harbor_check_utc=2026-10-25T12:18:00Z
+Raw installer log intentionally excluded because it may contain generated credentials.

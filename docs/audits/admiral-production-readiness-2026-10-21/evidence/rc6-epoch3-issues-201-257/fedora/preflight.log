@@ -1,0 +1,10 @@
+checked_utc=2026-10-25T12:07:09Z
+os=fedora version=46 arch=x86_64
+repo id                                                repo name
+copr:copr.fedorainfracloud.org:admiral-project:admiral Copr repo for admiral owned by admiral-project
+fedora-cisco-openh264                                  Fedora rawhide openh264 (From Cisco) - x86_64
+rawhide                                                Fedora - Rawhide - Developmental packages for the next Fedora release
+admiral_local_repo=absent
+Admiral_packages_preinstalled=none
+python3-flask-1:3.1.3-6.fc45.noarch
+python3-mistune-3.4.0-2.fc46.noarch

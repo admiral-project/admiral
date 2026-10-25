@@ -1,0 +1,96 @@
+2026-10-25T12:04:13Z
+Last metadata expiration check: 1:38:41 ago on Sun 25 Oct 2026 10:25:34 AM UTC.
+Dependencies resolved.
+===================================================================================================================
+ Package                    Arch    Version           Repository                                               Size
+===================================================================================================================
+Installing:
+ admiral-common             noarch  3:0.0.1rc6-5.el10 @commandline                                            122 k
+ admiral-flagship           noarch  3:0.0.1rc6-5.el10 @commandline                                            1.5 M
+ admiral-fleet              x86_64  3:0.0.1rc6-5.el10 @commandline                                            5.4 M
+ admiral-harbor             noarch  3:0.0.1rc6-5.el10 @commandline                                            1.1 M
+Installing dependencies:
+ acl                        x86_64  2.4.0-1.el10_2    baseos                                                   75 k
+ python3-alembic            noarch  1.20.1-5.el10     copr:copr.fedorainfracloud.org:admiral-project:admiral  498 k
+ python3-blinker            noarch  1.9.0-1.el10_0    epel                                                     27 k
+ python3-click              noarch  8.1.7-7.el10_3    epel                                                    226 k
+ python3-flask              noarch  1:3.1.3-4.el10    copr:copr.fedorainfracloud.org:admiral-project:admiral   82 k
+ python3-flask-alembic      noarch  3.3.0-5.el10      copr:copr.fedorainfracloud.org:admiral-project:admiral   36 k
+ python3-flask-login        noarch  0.6.3-10.el10     copr:copr.fedorainfracloud.org:admiral-project:admiral   38 k
+ python3-flask-sqlalchemy   noarch  3.1.1-11.el10     copr:copr.fedorainfracloud.org:admiral-project:admiral   54 k
+ python3-itsdangerous       noarch  2.2.0-1.el10_0    epel                                                     41 k
+ python3-mako               noarch  1.2.3-9.el10      appstream                                               223 k
+ python3-mistune            noarch  3.4.0-2.el10      copr:copr.fedorainfracloud.org:admiral-project:admiral  170 k
+
+Transaction Summary
+===================================================================================================================
+Install  15 Packages
+
+Total size: 9.6 M
+Total download size: 1.4 M
+Installed size: 34 M
+Downloading Packages:
+(1/11): python3-flask-alembic-3.3.0-5.el10.noar 122 kB/s |  36 kB     00:00    
+(2/11): python3-flask-3.1.3-4.el10.noarch.rpm   263 kB/s |  82 kB     00:00    
+(3/11): python3-alembic-1.20.1-5.el10.noarch.rp 1.2 MB/s | 498 kB     00:00    
+(4/11): python3-flask-login-0.6.3-10.el10.noarc 174 kB/s |  38 kB     00:00    
+(5/11): python3-flask-sqlalchemy-3.1.1-11.el10. 218 kB/s |  54 kB     00:00    
+(6/11): python3-mistune-3.4.0-2.el10.noarch.rpm 719 kB/s | 170 kB     00:00    
+(7/11): python3-blinker-1.9.0-1.el10_0.noarch.r  84 kB/s |  27 kB     00:00    
+(8/11): python3-itsdangerous-2.2.0-1.el10_0.noa 150 kB/s |  41 kB     00:00    
+(9/11): python3-click-8.1.7-7.el10_3.noarch.rpm 591 kB/s | 226 kB     00:00    
+(10/11): acl-2.4.0-1.el10_2.x86_64.rpm          361 kB/s |  75 kB     00:00    
+(11/11): python3-mako-1.2.3-9.el10.noarch.rpm   7.9 kB/s | 223 kB     00:28    
+--------------------------------------------------------------------------------
+Total                                            50 kB/s | 1.4 MB     00:29     
+Running transaction check
+Transaction check succeeded.
+Running transaction test
+Transaction test succeeded.
+Running transaction
+  Preparing        :                                                        1/1 
+  Installing       : python3-mako-1.2.3-9.el10.noarch                      1/15 
+  Installing       : python3-alembic-1.20.1-5.el10.noarch                  2/15 
+  Installing       : acl-2.4.0-1.el10_2.x86_64                             3/15 
+  Running scriptlet: admiral-common-3:0.0.1rc6-5.el10.noarch               4/15 
+Creating group 'admiral' with GID 992.
+Creating user 'admiral' (Admiral service account) with UID 992 and GID 992.
+Creating group 'admiral-apps' with GID 991.
+Creating user 'admiral-apps' (Admiral rootless apps) with UID 991 and GID 991.
+
+  Installing       : admiral-common-3:0.0.1rc6-5.el10.noarch               4/15 
+  Running scriptlet: admiral-common-3:0.0.1rc6-5.el10.noarch               4/15 
+  Installing       : python3-itsdangerous-2.2.0-1.el10_0.noarch            5/15 
+  Installing       : python3-click-8.1.7-7.el10_3.noarch                   6/15 
+  Installing       : python3-blinker-1.9.0-1.el10_0.noarch                 7/15 
+  Installing       : python3-flask-1:3.1.3-4.el10.noarch                   8/15 
+  Installing       : python3-flask-alembic-3.3.0-5.el10.noarch             9/15 
+  Installing       : python3-flask-login-0.6.3-10.el10.noarch             10/15 
+  Installing       : python3-flask-sqlalchemy-3.1.1-11.el10.noarch        11/15 
+  Installing       : python3-mistune-3.4.0-2.el10.noarch                  12/15 
+  Installing       : admiral-harbor-3:0.0.1rc6-5.el10.noarch              13/15 
+  Running scriptlet: admiral-harbor-3:0.0.1rc6-5.el10.noarch              13/15 
+  Installing       : admiral-flagship-3:0.0.1rc6-5.el10.noarch            14/15 
+  Running scriptlet: admiral-flagship-3:0.0.1rc6-5.el10.noarch            14/15 
+  Installing       : admiral-fleet-3:0.0.1rc6-5.el10.x86_64               15/15 
+  Running scriptlet: admiral-fleet-3:0.0.1rc6-5.el10.x86_64               15/15 
+
+Installed:
+  acl-2.4.0-1.el10_2.x86_64                                                     
+  admiral-common-3:0.0.1rc6-5.el10.noarch                                       
+  admiral-flagship-3:0.0.1rc6-5.el10.noarch                                     
+  admiral-fleet-3:0.0.1rc6-5.el10.x86_64                                        
+  admiral-harbor-3:0.0.1rc6-5.el10.noarch                                       
+  python3-alembic-1.20.1-5.el10.noarch                                          
+  python3-blinker-1.9.0-1.el10_0.noarch                                         
+  python3-click-8.1.7-7.el10_3.noarch                                           
+  python3-flask-1:3.1.3-4.el10.noarch                                           
+  python3-flask-alembic-3.3.0-5.el10.noarch                                     
+  python3-flask-login-0.6.3-10.el10.noarch                                      
+  python3-flask-sqlalchemy-3.1.1-11.el10.noarch                                 
+  python3-itsdangerous-2.2.0-1.el10_0.noarch                                    
+  python3-mako-1.2.3-9.el10.noarch                                              
+  python3-mistune-3.4.0-2.el10.noarch                                           
+
+Complete!
+2026-10-25T12:04:56Z

@@ -1,0 +1,7 @@
+Sanitized installer summary
+os=fedora
+installer_exit=0
+installer_completed_utc=2026-10-25T12:15:46Z
+play_recap=localhost: ok=237 changed=98 unreachable=0 failed=0 skipped=142 rescued=0 ignored=0
+harbor_check_utc=2026-10-25T12:16:06Z
+Raw installer log intentionally excluded because it may contain generated credentials.

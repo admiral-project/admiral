@@ -1,0 +1,44 @@
+Package                   Arch   Version            Repository                                                  Size
+Removing:
+ python3-flask            noarch 1:3.1.3-6.fc45     rawhide                                                968.2 KiB
+ python3-mistune          noarch 0:3.4.0-2.fc46     copr:copr.fedorainfracloud.org:admiral-project:admiral 727.7 KiB
+Removing dependent packages:
+ python3-flask-alembic    noarch 0:3.3.0-5.fc46     copr:copr.fedorainfracloud.org:admiral-project:admiral 128.5 KiB
+ python3-flask-login      noarch 0:0.6.3-13.fc45    rawhide                                                103.2 KiB
+ python3-flask-sqlalchemy noarch 0:3.1.1-11.fc46    copr:copr.fedorainfracloud.org:admiral-project:admiral 192.9 KiB
+Removing unused dependencies:
+ libtomcrypt              x86_64 0:1.18.2-24.fc45   rawhide                                                942.7 KiB
+ libtommath               x86_64 0:1.3.1~rc1-8.fc45 rawhide                                                130.3 KiB
+ python3-alembic          noarch 0:1.20.1-5.fc46    copr:copr.fedorainfracloud.org:admiral-project:admiral   3.1 MiB
+ python3-beaker           noarch 0:1.12.1-16.fc45   rawhide                                                490.6 KiB
+ python3-blinker          noarch 0:1.9.0-10.fc45    rawhide                                                 83.4 KiB
+ python3-click            noarch 1:8.4.2-1.fc45     rawhide                                                  1.3 MiB
+ python3-crypto           x86_64 0:2.6.1-63.fc45    rawhide                                                  2.2 MiB
+ python3-itsdangerous     noarch 0:2.2.0-9.fc45     rawhide                                                110.7 KiB
+ python3-mako             noarch 0:1.4.1-2.fc46     rawhide                                                705.0 KiB
+ python3-paste            noarch 0:3.10.1-17.fc45   rawhide                                                  2.7 MiB
+ python3-setuptools       noarch 0:84.0.0-1.fc46    rawhide                                                  7.4 MiB
+
+Transaction Summary:
+ Removing:          16 packages
+
+After this operation, 21 MiB will be freed (install 0 B, remove 21 MiB).
+Running transaction
+[ 1/17] Prepare transaction             100% |  74.0   B/s |  16.0   B |  00m00s
+[ 2/17] Removing python3-flask-alembic- 100% | 363.0   B/s |  20.0   B |  00m00s
+[ 3/17] Removing python3-alembic-0:1.20 100% |   2.0 KiB/s | 297.0   B |  00m00s
+[ 4/17] Removing python3-flask-sqlalche 100% |   1.7 KiB/s |  41.0   B |  00m00s
+[ 5/17] Removing python3-flask-login-0: 100% | 787.0   B/s |  37.0   B |  00m00s
+[ 6/17] Removing python3-flask-1:3.1.3- 100% |   1.1 KiB/s |  95.0   B |  00m00s
+[ 7/17] Removing python3-beaker-0:1.12. 100% |   3.5 KiB/s |  97.0   B |  00m00s
+[ 8/17] Removing python3-paste-0:3.10.1 100% |   5.0 KiB/s | 347.0   B |  00m00s
+[ 9/17] Removing python3-crypto-0:2.6.1 100% |   5.1 KiB/s | 439.0   B |  00m00s
+[10/17] Removing python3-setuptools-0:8 100% |   1.5 KiB/s | 927.0   B |  00m01s
+[11/17] Removing python3-blinker-0:1.9. 100% | 846.0   B/s |  22.0   B |  00m00s
+[12/17] Removing python3-click-1:8.4.2- 100% |   2.2 KiB/s |  63.0   B |  00m00s
+[13/17] Removing python3-itsdangerous-0 100% | 527.0   B/s |  38.0   B |  00m00s
+[14/17] Removing python3-mako-0:1.4.1-2 100% | 947.0   B/s | 126.0   B |  00m00s
+[15/17] Removing python3-mistune-0:3.4. 100% |   1.5 KiB/s | 139.0   B |  00m00s
+[16/17] Removing libtomcrypt-0:1.18.2-2 100% | 318.0   B/s |   7.0   B |  00m00s
+[17/17] Removing libtommath-0:1.3.1~rc1 100% |  13.0   B/s |   7.0   B |  00m01s
+Complete!

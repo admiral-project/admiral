@@ -1,0 +1,8 @@
+3:admirald-0.0.1rc6-5.el10.x86_64
+3:admiralctl-0.0.1rc6-5.el10.x86_64
+3:admiral-common-0.0.1rc6-5.el10.noarch
+3:admiral-fleet-0.0.1rc6-5.el10.x86_64
+3:admiral-flagship-0.0.1rc6-5.el10.noarch
+3:admiral-harbor-0.0.1rc6-5.el10.noarch
+1:python3-flask-3.1.3-4.el10.noarch
+0:python3-mistune-3.4.0-2.el10.noarch

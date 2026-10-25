@@ -1,0 +1,90 @@
+2026-10-25T12:04:13Z
+Updating and loading repositories:
+Repositories loaded.
+Package                   Arch   Version            Repository                                                  Size
+Installing:
+ admiral-common           noarch 3:0.0.1rc6-5.fc46  @commandline                                           356.5 KiB
+ admiral-flagship         noarch 3:0.0.1rc6-5.fc46  @commandline                                             3.8 MiB
+ admiral-fleet            x86_64 3:0.0.1rc6-5.fc46  @commandline                                            24.2 MiB
+ admiral-harbor           noarch 3:0.0.1rc6-5.fc46  @commandline                                             1.6 MiB
+Installing dependencies:
+ acl                      x86_64 0:2.4.0-2.fc45     rawhide                                                218.8 KiB
+ libtomcrypt              x86_64 0:1.18.2-24.fc45   rawhide                                                942.7 KiB
+ libtommath               x86_64 0:1.3.1~rc1-8.fc45 rawhide                                                130.3 KiB
+ python3-alembic          noarch 0:1.20.1-5.fc46    copr:copr.fedorainfracloud.org:admiral-project:admiral   3.1 MiB
+ python3-blinker          noarch 0:1.9.0-10.fc45    rawhide                                                 83.4 KiB
+ python3-click            noarch 1:8.4.2-1.fc45     rawhide                                                  1.3 MiB
+ python3-flask            noarch 1:3.1.3-6.fc45     rawhide                                                968.2 KiB
+ python3-flask-alembic    noarch 0:3.3.0-5.fc46     copr:copr.fedorainfracloud.org:admiral-project:admiral 128.5 KiB
+ python3-flask-login      noarch 0:0.6.3-13.fc45    rawhide                                                103.2 KiB
+ python3-flask-sqlalchemy noarch 0:3.1.1-11.fc46    copr:copr.fedorainfracloud.org:admiral-project:admiral 192.9 KiB
+ python3-itsdangerous     noarch 0:2.2.0-9.fc45     rawhide                                                110.7 KiB
+ python3-mako             noarch 0:1.4.1-2.fc46     rawhide                                                705.0 KiB
+ python3-mistune          noarch 0:3.4.0-2.fc46     copr:copr.fedorainfracloud.org:admiral-project:admiral 727.7 KiB
+ python3-paste            noarch 0:3.10.1-17.fc45   rawhide                                                  2.7 MiB
+ python3-setuptools       noarch 0:84.0.0-1.fc46    rawhide                                                  7.4 MiB
+Installing weak dependencies:
+ cockpit-bridge           noarch 0:370-1.fc46       rawhide                                                  2.2 MiB
+ python3-beaker           noarch 0:1.12.1-16.fc45   rawhide                                                490.6 KiB
+ python3-crypto           x86_64 0:2.6.1-63.fc45    rawhide                                                  2.2 MiB
+
+Transaction Summary:
+ Installing:        22 packages
+
+Total size of inbound packages is 15 MiB. Need to download 6 MiB.
+After this operation, 54 MiB extra will be used (install 54 MiB, remove 0 B).
+[ 1/18] python3-blinker-0:1.9.0-10.fc45 100% | 333.3 KiB/s |  28.7 KiB |  00m00s
+[ 2/18] acl-0:2.4.0-2.fc45.x86_64       100% | 466.7 KiB/s |  76.5 KiB |  00m00s
+[ 3/18] python3-flask-1:3.1.3-6.fc45.no 100% |   1.1 MiB/s | 227.8 KiB |  00m00s
+[ 4/18] python3-itsdangerous-0:2.2.0-9. 100% | 938.9 KiB/s |  48.8 KiB |  00m00s
+[ 5/18] python3-click-1:8.4.2-1.fc45.no 100% |   1.8 MiB/s | 291.5 KiB |  00m00s
+[ 6/18] python3-flask-login-0:0.6.3-13. 100% | 929.3 KiB/s |  45.5 KiB |  00m00s
+[ 7/18] python3-flask-alembic-0:3.3.0-5 100% | 152.0 KiB/s |  38.3 KiB |  00m00s
+[ 8/18] python3-mistune-0:3.4.0-2.fc46. 100% | 636.0 KiB/s | 183.2 KiB |  00m00s
+[ 9/18] python3-mako-0:1.4.1-2.fc46.noa 100% |   2.5 MiB/s | 208.8 KiB |  00m00s
+[10/18] python3-flask-sqlalchemy-0:3.1. 100% | 132.8 KiB/s |  57.9 KiB |  00m00s
+[11/18] cockpit-bridge-0:370-1.fc46.noa 100% |   8.4 MiB/s | 772.6 KiB |  00m00s
+[12/18] python3-beaker-0:1.12.1-16.fc45 100% |   2.8 MiB/s | 147.9 KiB |  00m00s
+[13/18] python3-paste-0:3.10.1-17.fc45. 100% |  11.5 MiB/s | 674.0 KiB |  00m00s
+[14/18] python3-alembic-0:1.20.1-5.fc46 100% |   1.7 MiB/s | 529.3 KiB |  00m00s
+[15/18] python3-crypto-0:2.6.1-63.fc45. 100% |  10.0 MiB/s | 571.7 KiB |  00m00s
+[16/18] libtomcrypt-0:1.18.2-24.fc45.x8 100% |   6.0 MiB/s | 409.3 KiB |  00m00s
+[17/18] libtommath-0:1.3.1~rc1-8.fc45.x 100% |   1.2 MiB/s |  64.3 KiB |  00m00s
+[18/18] python3-setuptools-0:84.0.0-1.f 100% |   9.7 MiB/s |   1.7 MiB |  00m00s
+--------------------------------------------------------------------------------
+[18/18] Total                           100% |   4.2 MiB/s |   6.0 MiB |  00m01s
+Running transaction
+[ 1/24] Verify package files            100% |  89.0   B/s |  22.0   B |  00m00s
+[ 2/24] Prepare transaction             100% |  84.0   B/s |  22.0   B |  00m00s
+[ 3/24] Installing libtommath-0:1.3.1~r 100% |   4.1 MiB/s | 131.4 KiB |  00m00s
+[ 4/24] Installing libtomcrypt-0:1.18.2 100% |  16.8 MiB/s | 943.8 KiB |  00m00s
+[ 5/24] Installing python3-setuptools-0 100% |   7.6 MiB/s |   7.6 MiB |  00m01s
+[ 6/24] Installing python3-paste-0:3.10 100% |   8.4 MiB/s |   2.7 MiB |  00m00s
+[ 7/24] Installing python3-mako-0:1.4.1 100% |   4.1 MiB/s | 727.4 KiB |  00m00s
+[ 8/24] Installing python3-alembic-0:1. 100% |  10.0 MiB/s |   3.2 MiB |  00m00s
+[ 9/24] Installing python3-mistune-0:3. 100% |   5.9 MiB/s | 753.4 KiB |  00m00s
+[10/24] Installing python3-itsdangerous 100% |   3.1 MiB/s | 117.6 KiB |  00m00s
+[11/24] Installing python3-click-1:8.4. 100% |  17.1 MiB/s |   1.3 MiB |  00m00s
+[12/24] Installing python3-blinker-0:1. 100% |   2.8 MiB/s |  87.3 KiB |  00m00s
+[13/24] Installing python3-flask-1:3.1. 100% |   8.7 MiB/s | 985.0 KiB |  00m00s
+[14/24] Installing python3-flask-alembi 100% |   5.4 MiB/s | 132.2 KiB |  00m00s
+[15/24] Installing python3-flask-login- 100% |   3.0 MiB/s | 109.9 KiB |  00m00s
+[16/24] Installing python3-flask-sqlalc 100% |   5.4 MiB/s | 200.7 KiB |  00m00s
+[17/24] Installing acl-0:2.4.0-2.fc45.x 100% | 494.9 KiB/s | 222.7 KiB |  00m00s
+>>> Running sysusers scriptlet: admiral-common-3:0.0.1rc6-5.fc46.noarch
+>>> Finished sysusers scriptlet: admiral-common-3:0.0.1rc6-5.fc46.noarch
+>>> Scriptlet output:
+>>> Creating group 'admiral' with GID 987.
+>>> Creating user 'admiral' (Admiral service account) with UID 987 and GID 987.
+>>> Creating group 'admiral-apps' with GID 986.
+>>> Creating user 'admiral-apps' (Admiral rootless apps) with UID 986 and GID 986.
+>>> 
+[18/24] Installing admiral-common-3:0.0 100% |  60.5 KiB/s | 375.2 KiB |  00m06s
+[19/24] Installing admiral-flagship-3:0 100% |  23.7 MiB/s |   3.8 MiB |  00m00s
+[20/24] Installing admiral-fleet-3:0.0. 100% |  38.7 MiB/s |  24.2 MiB |  00m01s
+[21/24] Installing admiral-harbor-3:0.0 100% |   3.9 MiB/s |   1.7 MiB |  00m00s
+[22/24] Installing python3-beaker-0:1.1 100% |   5.8 MiB/s | 508.2 KiB |  00m00s
+[23/24] Installing python3-crypto-0:2.6 100% |   9.9 MiB/s |   2.3 MiB |  00m00s
+[24/24] Installing cockpit-bridge-0:370 100% |   1.2 MiB/s |   2.2 MiB |  00m02s
+Complete!
+2026-10-25T12:04:30Z
