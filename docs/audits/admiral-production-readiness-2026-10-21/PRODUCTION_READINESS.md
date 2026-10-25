@@ -2,6 +2,7 @@
 
 Audit ID: `ADM-AUDIT-2026-10-21`<br>
 Audit began: 2026-10-21 UTC<br>
+Release 75 functional closeout: [RELEASE75_VALIDATION_CLOSURE.md](RELEASE75_VALIDATION_CLOSURE.md).
 > **Active scope — Release 75, 2026-10-25:** Rocky Linux 10, CentOS Stream 10, and Fedora Rawhide x86_64, each Single-Node and Multi-Node. The functional matrix is **6/6 complete cells PASS** on the exact unchanged R75 candidate. Prior-release evidence does not transfer. The audit does not establish comprehensive security, isolation, resilience, scalability or performance.
 
 Production readiness is **NOT VALIDATED**. The functional release gate is narrower than the full production audit and cannot establish production security, fault-tolerance, scalability or performance.
