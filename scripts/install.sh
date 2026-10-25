@@ -1257,7 +1257,10 @@ fi
 
 case "$INSTALL_MODE" in
     single-node)
-        REQUIRED_SERVICES=(postgresql caddy admirald admiral-fleet admiral-flagship admiral-harbor admiral-harbor-worker.timer admiral-harbor-catalog-sync.timer firewalld auditd fail2ban)
+        REQUIRED_SERVICES=(postgresql caddy admirald admiral-fleet admiral-flagship admiral-harbor admiral-harbor-worker.timer admiral-harbor-catalog-sync.timer firewalld auditd)
+        if [[ "$INSTALL_DEV_MODE" != "true" ]]; then
+            REQUIRED_SERVICES+=(fail2ban)
+        fi
         ;;
     admin-node)
         REQUIRED_SERVICES=(postgresql caddy admirald admiral-flagship firewalld auditd fail2ban wg-quick@wg-admiral admiral-wireguard-peer-revoke.socket)

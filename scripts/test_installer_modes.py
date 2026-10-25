@@ -849,6 +849,15 @@ done
         self.assertIn('if [[ "$INSTALL_DEV_MODE" != "true" ]]', installer)
         self.assertIn('[[ "$requested_role" == "single" ]] && return 0', installer)
 
+    def test_single_node_readiness_only_requires_fail2ban_in_secure_mode(self) -> None:
+        installer = INSTALLER.read_text(encoding="utf-8")
+        single_node_case = installer.split("    single-node)", 1)[1].split(
+            "\n    admin-node)", 1
+        )[0]
+
+        self.assertIn("REQUIRED_SERVICES+=(fail2ban)", single_node_case)
+        self.assertIn('if [[ "$INSTALL_DEV_MODE" != "true" ]]', single_node_case)
+
     def test_role_transition_is_limited_to_dev_to_single(self) -> None:
         content = PLAYBOOK.read_text(encoding="utf-8")
 
