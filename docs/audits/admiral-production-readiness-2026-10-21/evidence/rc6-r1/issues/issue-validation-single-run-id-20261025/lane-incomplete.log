@@ -1,0 +1,25 @@
+candidate=0.0.1rc6-1 epoch=0 os=rocky guest=192.168.122.208 node=rc6r1rocky-single root_commit=2ef7b5fc5b93be3b5d435da319b2ff4fd71569b3 start_utc=2026-10-25T15:34:36Z
+ADMIRALD_COMMIT=421c6007f9cf51a7e3bf23a6e2173bb0a39e27d3
+FLEET_COMMIT=fc6909f6c41507d04aa204ebeafbbaaa4ef2c686
+ADMIRALCTL_COMMIT=fa2a65e866310bd82bea78859804b6c3aea7989a
+FLAGSHIP_COMMIT=b7325bbc71fc474a521496e593b2967e4d555ac1
+HARBOR_COMMIT=dd4818b6e2bc53eea4495fc5e374a4893cfcb107
+
+=== stage=workload_create_idempotency_deprovision start_utc=2026-10-25T15:34:36Z ===
+id=rc6r1rocky-single
+os=Rocky 10.2
+status=active
+health_status=healthy
+available_for_provisioning=True
+wireguard_ip=10.99.0.1
+fleet_version=0.0.1rc6
+Application definition "e2e-whoami" applied successfully!
+test=RC6-SINGLE-NODE-LIFECYCLE start_utc=2026-10-25T15:34:37Z node=rc6r1rocky-single
+id=op_a33a19800bf40032
+instance_id=inst_557deb764381eda3
+node_id=rc6r1rocky-single
+status=succeeded
+created_at=2026-10-25T13:07:08.766549Z
+updated_at=2026-10-25T13:08:07.633024Z
+idempotency_replay_same_operation=True
+idempotency_replay_same_instance=True
