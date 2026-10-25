@@ -1,0 +1,6 @@
+2a4282640464a435b95e3b9fb5d9314ee47cc9714e6a8e138783cb8e20baf240  RPMS/noarch/admiral-common-0.0.1rc6-4.el10.noarch.rpm
+e8c07839370087ef6f9e7e12193bc7a9803a37c8ccc541cfcf69152828945d6f  RPMS/noarch/admiral-flagship-0.0.1rc6-4.el10.noarch.rpm
+256b068f3479dcbbdcb17437c658b127c19269d14d3423940cd637e4636af960  RPMS/noarch/admiral-harbor-0.0.1rc6-4.el10.noarch.rpm
+8360679b0dd4d44187079d776b84b4d8ea28440a129bba7cc6603a8ac9f57dcc  RPMS/x86_64/admiral-fleet-0.0.1rc6-4.el10.x86_64.rpm
+0e27305575e555702f390051c6b79414406d203a83e52e23ed03603e0fa1f563  RPMS/x86_64/admiralctl-0.0.1rc6-4.el10.x86_64.rpm
+65d3fa0808d26756becd6db3f09fb491dc7a399e44ea99c3fe78c1fb6532b7df  RPMS/x86_64/admirald-0.0.1rc6-4.el10.x86_64.rpm
