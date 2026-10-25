@@ -1,0 +1,264 @@
+candidate=0.0.1rc6-1 epoch=0 os=rocky guest=192.168.122.208 node=rc6r1rocky-single run_id=R1rockyRetry2 root_commit=f70e45fee85043cde3eadf725df173488bbdac2a start_utc=2026-10-25T15:46:44Z
+ADMIRALD_COMMIT=421c6007f9cf51a7e3bf23a6e2173bb0a39e27d3
+FLEET_COMMIT=fc6909f6c41507d04aa204ebeafbbaaa4ef2c686
+ADMIRALCTL_COMMIT=fa2a65e866310bd82bea78859804b6c3aea7989a
+FLAGSHIP_COMMIT=b7325bbc71fc474a521496e593b2967e4d555ac1
+HARBOR_COMMIT=dd4818b6e2bc53eea4495fc5e374a4893cfcb107
+
+=== stage=workload_create_idempotency_deprovision start_utc=2026-10-25T15:46:44Z ===
+id=rc6r1rocky-single
+os=Rocky 10.2
+status=active
+health_status=healthy
+available_for_provisioning=True
+wireguard_ip=10.99.0.1
+fleet_version=0.0.1rc6
+Application definition "e2e-whoami" applied successfully!
+test=RC6-SINGLE-NODE-LIFECYCLE start_utc=2026-10-25T15:46:45Z node=rc6r1rocky-single
+id=op_da9fc35b5950a332
+instance_id=inst_2c84190ddc7bb04f
+node_id=rc6r1rocky-single
+status=succeeded
+created_at=2026-10-25T15:46:46.217839Z
+updated_at=2026-10-25T15:46:50.169783Z
+idempotency_replay_same_operation=True
+idempotency_replay_same_instance=True
+database_ready_attempt=2 utc=2026-10-25T15:46:57Z
+admiral-inst_2c84190ddc7bb04f-infra|Up 9 seconds|127.0.0.1:40017->80/tcp
+admiral-inst_2c84190ddc7bb04f-app|Up 8 seconds|127.0.0.1:40017->80/tcp
+admiral-inst_2c84190ddc7bb04f-db|Up 8 seconds|127.0.0.1:40017->80/tcp, 5432/tcp
+app_endpoint=127.0.0.1:40017
+CREATE TABLE
+INSERT 0 1
+              value               
+----------------------------------
+ rc6-single-inst_2c84190ddc7bb04f
+(1 row)
+
+local_workload_http_status=200 endpoint=127.0.0.1:40017
+id=inst_2c84190ddc7bb04f
+node_id=rc6r1rocky-single
+technical_status=running
+health_status=healthy
+effective_availability=available
+availability_reason=None
+deprovision_operation=op_d4e0b3c7812c2561 status=succeeded
+remaining_matching_containers=none
+remaining_matching_pods=none
+remaining_matching_volumes=none
+remaining_matching_units=none
+remaining_matching_files=none
+single_node_lifecycle=PASS node=rc6r1rocky-single instance=inst_2c84190ddc7bb04f end_utc=2026-10-25T15:47:08Z
+private-run-evidence=/var/tmp/rc6-single-lifecycle.3LLvpmyq
+stage=workload_create_idempotency_deprovision result=PASS end_utc=2026-10-25T15:47:08Z
+
+=== stage=resize_data_continuity start_utc=2026-10-25T15:47:08Z ===
+test=RC6-SN-RESIZE
+start_utc=2026-10-25T15:47:09Z
+instance_id=inst_c584bc8bba7605a8
+tier=small state=small running healthy available
+before_resize_http=200 endpoint=127.0.0.1:40018
+before_resize_sql_marker=rc6-resize-marker
+resize_target=medium requested_utc=2026-10-25T15:47:21Z
+resize_operation= op_db17c8de0e4f2533 status= succeeded tier= None
+tier=medium state=medium running healthy available
+after_medium_http=200 endpoint=127.0.0.1:40018
+after_medium_sql_marker=rc6-resize-marker
+resize_target=small requested_utc=2026-10-25T15:47:35Z
+resize_operation= op_c1d921c6c12ae3df status= succeeded tier= None
+tier=small state=small running healthy available
+after_small_http=200 endpoint=127.0.0.1:40018
+after_small_sql_marker=rc6-resize-marker
+resize_data_and_health=PASS
+end_utc=2026-10-25T15:47:46Z
+stage=resize_data_continuity result=PASS end_utc=2026-10-25T15:47:52Z
+
+=== stage=backup_restore_checksum_negative_state start_utc=2026-10-25T15:47:52Z ===
+candidate=RC6 os=rocky customer=rc6-backup-rocky-R1rockyRetry2 start_utc=2026-10-25T15:47:53Z
+provision_operation= op_39ae7a4e01f1700a instance= inst_2f705fdb808ac67a status= succeeded
+ready_poll=1 utc=2026-10-25T15:48:04Z running healthy available
+CREATE TABLE
+TRUNCATE TABLE
+INSERT 0 1
+  value   
+----------
+ original
+(1 row)
+
+{
+  "action": "backup_database",
+  "admin_user": "system",
+  "created_at": "2026-10-25T15:48:05.340012Z",
+  "error_message": null,
+  "id": "op_f25d329c3f566f02",
+  "instance_id": "inst_2f705fdb808ac67a",
+  "node_id": "rc6r1rocky-single",
+  "status": "succeeded",
+  "task_id": "task_2bbb6b81e4ba6632",
+  "updated_at": "2026-10-25T15:48:08.270747Z"
+}
+id=bk_7d4b8d0c9ed466b9
+instance_id=inst_2f705fdb808ac67a
+backup_type=database
+service=db
+status=succeeded
+storage_backend=local
+size_bytes=709
+checksum_sha256=97a5bd5171c43b47c2ac0a16fa746386d363e7460957849691882af5363561df
+storage_uri_admin=None
+Error: restore backup failed: HTTP 409 - Restore is only allowed when the app is paused
+Usage:
+  admiralctl backups restore [flags]
+
+Flags:
+      --backup-id string     Backup ID to restore (required)
+  -h, --help                 help for restore
+      --instance-id string   Target instance ID (required)
+      --service string       Service name matching the backup source (required)
+      --source-type string   Optional source type override
+      --source-uri string    Optional source URI override
+      --target-node string   Optional target node ID
+      --verify-checksum      Verify checksum during restore (default true)
+
+Global Flags:
+      --ca-cert string    CA certificate file for admirald HTTPS validation
+      --operator string   Operator name for audit logs
+      --server string     Control plane server endpoint URL
+
+Error: restore backup failed: HTTP 409 - Restore is only allowed when the app is paused
+restore_while_running_exit=1
+UPDATE 1
+        value         
+----------------------
+ mutated-after-backup
+(1 row)
+
+{
+  "action": "pause_app",
+  "admin_user": "system",
+  "created_at": "2026-10-25T15:48:10.677834Z",
+  "error_message": null,
+  "id": "op_5458be46dccd51bc",
+  "instance_id": "inst_2f705fdb808ac67a",
+  "node_id": "rc6r1rocky-single",
+  "status": "succeeded",
+  "task_id": "task_0d0e43aa4155b757",
+  "updated_at": "2026-10-25T15:48:14.232418Z"
+}
+Restore queued successfully!
+Operation ID: op_78fe80cf93ea8af9
+restore_poll=1 utc=2026-10-25T15:48:14Z status=queued
+restore_poll=2 utc=2026-10-25T15:48:17Z status=queued
+restore_poll=3 utc=2026-10-25T15:48:19Z status=queued
+restore_poll=4 utc=2026-10-25T15:48:21Z status=queued
+restore_poll=5 utc=2026-10-25T15:48:23Z status=succeeded
+post_restore_ready_poll=1 utc=2026-10-25T15:48:27Z running stopped unavailable
+post_restore_ready_poll=2 utc=2026-10-25T15:48:33Z running healthy available
+original
+app_after_restore_endpoint=127.0.0.1:40019 http=200
+Are you sure you want to delete backup bk_7d4b8d0c9ed466b9? (y/N): Backup bk_7d4b8d0c9ed466b9 deleted.
+{
+  "action": "deprovision_app",
+  "admin_user": "system",
+  "created_at": "2026-10-25T15:48:34.048975Z",
+  "error_message": null,
+  "id": "op_1064a92bf35ed2ab",
+  "instance_id": "inst_2f705fdb808ac67a",
+  "node_id": "rc6r1rocky-single",
+  "status": "succeeded",
+  "task_id": "task_9d8aeca4b238f090",
+  "updated_at": "2026-10-25T15:48:41.305302Z"
+}
+deprovision_operation=op_1064a92bf35ed2ab status=succeeded
+remaining_matching_containers=none
+remaining_matching_pods=none
+remaining_matching_volumes=none
+remaining_matching_units=none
+remaining_matching_files=none
+deleted_backup_tombstone_retained=True id=bk_7d4b8d0c9ed466b9 status=deleted
+deleted_backup_artifact_absent=/var/lib/admiral/backups/inst_2f705fdb808ac67a/postgresql-database-op_f25d329c3f566f02.tar.gz
+backup_restore_and_marker_integrity=PASS
+backup_test_end_utc=2026-10-25T15:48:42Z instance_id=inst_2f705fdb808ac67a backup_id=bk_7d4b8d0c9ed466b9
+stage=backup_restore_checksum_negative_state result=PASS end_utc=2026-10-25T15:48:42Z
+
+=== stage=instance_and_admirald_lifecycle start_utc=2026-10-25T15:48:42Z ===
+test=RC6-rocky-SN-CONTROL-PLANE-LIFECYCLE
+start_utc=2026-10-25T15:48:43Z
+instance_id=inst_64edd28e3c905942
+initial_poll=1 state=running stopped unavailable
+initial_available_poll=2 http=200 endpoint=127.0.0.1:40020
+action=pause requested_utc=2026-10-25T15:48:53Z
+operation= op_2f7a50e2a513df37 action_status= succeeded
+action=resume requested_utc=2026-10-25T15:48:58Z
+operation= op_631604817311d230 action_status= succeeded
+resume_poll=1 state=running stopped unavailable
+resume_available_poll=2 http=200 endpoint=127.0.0.1:40020
+action=stop requested_utc=2026-10-25T15:49:08Z
+operation= op_377f527624a2c790 action_status= succeeded
+action=start requested_utc=2026-10-25T15:49:12Z
+operation= op_bb8e4061852218be action_status= succeeded
+start_poll=1 state=running stopped unavailable
+start_poll=2 state=running stopped unavailable
+start_available_poll=3 http=200 endpoint=127.0.0.1:40020
+action=restart requested_utc=2026-10-25T15:49:23Z
+operation= None action_status= succeeded
+restart_poll=1 state=running unhealthy unavailable
+restart_available_poll=2 http=200 endpoint=127.0.0.1:40020
+admirald_restart_available_poll=1 http=200 endpoint=127.0.0.1:40020
+admiralctl_status_while_service_stopped_exit=1
+admirald_start_available_poll=1 http=200 endpoint=127.0.0.1:40020
+instance_and_control_plane_lifecycle=PASS
+end_utc=2026-10-25T15:49:44Z
+cleanup_rc=0
+stage=instance_and_admirald_lifecycle result=PASS end_utc=2026-10-25T15:49:54Z
+
+=== stage=host_reboot_persistence start_utc=2026-10-25T15:49:54Z ===
+test=R1-rocky-SN-REBOOT guest=rc6r1rocky-single start_utc=2026-10-25T15:49:54Z
+idempotency_key=r1-rocky-reboot-20261025T154954Z-1879203
+boot_id_before=95a1d0aa-0634-4651-b160-1991c312516a
+pre_reboot_setup_started_utc=2026-10-25T15:49:55Z
+provision_status= succeeded instance_id= inst_c798ddcb4304763f operation_id= op_d826077c7ba7a164
+provision_readiness_poll=1 utc=2026-10-25T15:50:13Z api=running healthy available db_state=running db_ready=1
+database_readiness_seconds_tested=1
+CREATE TABLE
+TRUNCATE TABLE
+INSERT 0 1
+reboot_requested_utc=2026-10-25T15:50:13Z instance_id=inst_c798ddcb4304763f operation_id=op_d826077c7ba7a164
+reboot_request_issued_utc=2026-10-25T15:50:14Z
+reboot_ssh_exit=0 (disconnect after reboot request is expected)
+reboot_confirmed_attempt=8 boot_id_after=311ab212-b242-42ba-aeb1-45c8e383e65a utc=2026-10-25T15:50:55Z
+post_reboot_start_utc=2026-10-25T15:50:56Z instance_id=inst_c798ddcb4304763f operation_id=op_d826077c7ba7a164
+post_reboot_poll=1 utc=2026-10-25T15:50:58Z status=running healthy unavailable running_containers=3 db_ready=1
+post_reboot_poll=2 utc=2026-10-25T15:51:05Z status=stopped stopped unavailable running_containers=3 db_ready=1
+post_reboot_poll=3 utc=2026-10-25T15:51:11Z status=running healthy available running_containers=3 db_ready=1
+post_reboot_http=200 port=40021
+r1-reboot-persisted
+{
+  "action": "deprovision_app",
+  "admin_user": "system",
+  "created_at": "2026-10-25T15:51:12.58705Z",
+  "error_message": null,
+  "id": "op_b7317f63f2508cb5",
+  "instance_id": "inst_c798ddcb4304763f",
+  "node_id": "rc6r1rocky-single",
+  "status": "succeeded",
+  "task_id": "task_8a3b31f41bf89228",
+  "updated_at": "2026-10-25T15:51:18.78721Z"
+}
+host_reboot_recovery_and_sql_marker=PASS
+provision_readiness_consistency=PASS
+post_reboot_end_utc=2026-10-25T15:51:20Z
+stage=host_reboot_persistence result=PASS end_utc=2026-10-25T15:51:20Z
+
+=== stage=final_services_resources_rpms start_utc=2026-10-25T15:51:20Z ===
+failed_units=none
+0:admiral-common-0.0.1rc6-1.el10.noarch
+0:admirald-0.0.1rc6-1.el10.x86_64
+0:admiral-fleet-0.0.1rc6-1.el10.x86_64
+0:admiralctl-0.0.1rc6-1.el10.x86_64
+0:admiral-harbor-0.0.1rc6-1.el10.noarch
+0:admiral-flagship-0.0.1rc6-1.el10.noarch
+final_rootless_containers=none pods=none volumes=none
+final_boot_id=311ab212-b242-42ba-aeb1-45c8e383e65a
+stage=final_services_resources_rpms result=PASS end_utc=2026-10-25T15:51:21Z
+single_node_lane=os:rocky result:PASS failed_stages:0 end_utc:2026-10-25T15:51:21Z

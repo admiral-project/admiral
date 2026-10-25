@@ -13,7 +13,7 @@ The active exact candidate is RC6 Release 1, `0.0.1rc6-1` with no explicit Epoch
 | Platform | Single-Node | Multi-Node (Admin + Worker + independent Portal) |
 |---|---|---|
 | Fedora Rawhide x86_64 | PARTIAL — five functional stages passed on exact RC6 Release 1; aggregate lane failed at final check because rootless Podman invocation inherited inaccessible `/home/validator`; independent final-state recheck passed; no cell credit | NOT TESTED |
-| Rocky Linux 10 x86_64 | PARTIAL — five functional stages passed on exact RC6 Release 1; aggregate lane failed at final check because rootless Podman invocation inherited inaccessible `/home/validator`; independent final-state recheck passed; no cell credit | Targeted #182, #278, #289 and #291 passed on exact RC6 Release 1; no cell credit |
+| Rocky Linux 10 x86_64 | Functional lane PASS — all six stages passed twice on the same exact RC6 Release 1 guest, including reboot and clean final inventory. Formal cell credit pending remaining applicable release-wide issue gates; see [`Rocky repeated lane`](evidence/rc6-r1/single-node-rocky-repeat-20261025/REPORT.md) | Targeted #182, #278, #289 and #291 passed on exact RC6 Release 1; no cell credit |
 | CentOS Stream 10 x86_64 | NOT TESTED | NOT TESTED |
 
 Prior-candidate runs do not transfer to RC6 Release 1. A complete cell requires all applicable checks on a single unchanged candidate; a partial scenario PASS does not make its cell pass.
