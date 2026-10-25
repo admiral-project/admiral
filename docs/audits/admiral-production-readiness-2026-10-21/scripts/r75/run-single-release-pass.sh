@@ -110,7 +110,8 @@ REMOTE
 install_one() {
   local os=$1 distro=${profiles[$1]} ip=${ips[$1]}
   local known_hosts="$known_hosts_dir/${guests[$os]}/known_hosts"
-  ADMIRAL_RC_RELEASE=75 ADMIRAL_AUDIT_REPO_SOURCE=local R75_SSH_KEY="$R75_SSH_KEY" \
+  ADMIRAL_RC_VERSION=0.0.1rc5 ADMIRAL_RC_RELEASE=75 ADMIRAL_RC_DIR=rc5-r75 \
+  ADMIRAL_AUDIT_REPO_SOURCE=local R75_SSH_KEY="$R75_SSH_KEY" \
     bash "$audit_dir/scripts/install-single-node-audit.sh" "$distro" "$R75_SSH_KEY" \
     "$known_hosts" "validator@$ip" "$ip" "adm-r75-$os-single" \
     "$runtime/single/$os/install-helper.log"

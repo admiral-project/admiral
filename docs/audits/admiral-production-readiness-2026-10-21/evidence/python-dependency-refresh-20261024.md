@@ -2,7 +2,7 @@
 
 ## Candidate status
 
-This refresh republished all eight Python helper source RPMs for the Admiral RC5 Release 73 dependency set. It fixes the SQLAlchemy source build requirement for `typing-extensions`; it does not itself constitute a COPR build or a runtime matrix run. **Superseded by Release 75:** the refreshed helpers are published from COPR builds 11202990–11202997, the coordinated Admiral set from 11203001–11203006, and the `0.0.1rc5-75` candidate passed 6/6 active cells (Fedora Rawhide, Rocky Linux 10 and CentOS Stream 10 × Single/Multi-Node). AlmaLinux 10 is Tier 2 and outside the active matrix ([#276](https://github.com/admiral-project/admiral/issues/276)); see [`RELEASE75_VALIDATION_CLOSURE.md`](../RELEASE75_VALIDATION_CLOSURE.md).
+This refresh republished all eight Python helper source RPMs for the Admiral RC5 Release 73 dependency set. It fixes the SQLAlchemy source build requirement for `typing-extensions`; it does not itself constitute a COPR build or a runtime matrix run. The R75 Single-Node results remain historical candidate-specific evidence; its Multi-Node runs used the wrong admin/portal-plus-workers topology and do not validate the required independent portal. See [`RELEASE75_VALIDATION_CLOSURE.md`](../RELEASE75_VALIDATION_CLOSURE.md).
 
 Issue [#274](https://github.com/admiral-project/admiral/issues/274) is closed: the COPR rebuild, which was its external confirmation gate, succeeded. Master tracker: [#277](https://github.com/admiral-project/admiral/issues/277).
 

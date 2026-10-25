@@ -247,12 +247,18 @@ def test_reboot_harness_uses_accessible_working_directory_before_rootless_comman
 def test_worker_bootstrap_uses_both_pinned_hosts_and_a_temporary_revoked_key():
     script = WORKER_INSTALL_SCRIPT.read_text(encoding="utf-8")
 
-    assert "[[ $# -eq 10 ]]" in script
-    assert "HUB_UNDERLAY_IP HUB_WIREGUARD_IP WORKER_UNDERLAY_IP" in script
+    assert "[[ $# -eq 10 || $# -eq 11 ]]" in script
+    assert "HUB_UNDERLAY_IP HUB_WIREGUARD_IP SPOKE_UNDERLAY_IP" in script
+    assert "[worker|portal]" in script
+    assert "role=${11:-worker}" in script
     assert "--admin-endpoint '$hub_underlay_ip'" in script
     assert 'ssh_to "$hub_underlay_ip" "$hub_known_hosts"' in script
     assert 'ssh_to "$hub_ip" "$hub_known_hosts"' not in script
     assert "ADMIRAL_API_URL=https://$hub_wg_ip:8080" in script
+    assert "--${role}-node" in script
+    assert "/etc/admiral/harbor.env" in script
+    assert "verified_node_role=%s" in script
+    assert 'node_health == healthy' in script
     assert "ADMIRAL_LOCAL_REPO_CONFIG" in script
     assert "StrictHostKeyChecking=yes" in script
     assert "UserKnownHostsFile=$known_hosts" in script
@@ -280,7 +286,7 @@ def test_worker_bootstrap_rejects_old_argument_shape_without_mutation():
     )
 
     assert result.returncode == 2
-    assert "HUB_UNDERLAY_IP HUB_WIREGUARD_IP WORKER_UNDERLAY_IP" in result.stderr
+    assert "HUB_UNDERLAY_IP HUB_WIREGUARD_IP SPOKE_UNDERLAY_IP" in result.stderr
 
 
 def test_worker_bootstrap_never_overwrites_existing_evidence(tmp_path):

@@ -1,13 +1,15 @@
 #!/usr/bin/env bash
 # SPDX-License-Identifier: Apache-2.0
-# Run the supported worker bootstrap from an installed admin-portal node.
+# Run the supported worker or dedicated portal bootstrap from an admin node.
 set -euo pipefail
-[[ $# -eq 10 ]] || {
-  echo "usage: $0 ADMIN_SSH_KEY HUB_KNOWN_HOSTS WORKER_KNOWN_HOSTS HUB_UNDERLAY_IP HUB_WIREGUARD_IP WORKER_UNDERLAY_IP NODE_ID WORKER_WIREGUARD_IP HOST_FINGERPRINT OUTPUT_LOG" >&2
+[[ $# -eq 10 || $# -eq 11 ]] || {
+  echo "usage: $0 ADMIN_SSH_KEY HUB_KNOWN_HOSTS SPOKE_KNOWN_HOSTS HUB_UNDERLAY_IP HUB_WIREGUARD_IP SPOKE_UNDERLAY_IP NODE_ID SPOKE_WIREGUARD_IP HOST_FINGERPRINT OUTPUT_LOG [worker|portal]" >&2
   exit 2
 }
 admin_key=$1 hub_known_hosts=$2 worker_known_hosts=$3 hub_underlay_ip=$4 hub_wg_ip=$5 worker_ip=$6
 node_id=$7 wg_ip=$8 fingerprint=$9 output=${10}
+role=${11:-worker}
+[[ $role == worker || $role == portal ]] || { echo "unsupported spoke role: $role" >&2; exit 2; }
 [[ $node_id =~ ^[A-Za-z0-9][A-Za-z0-9_.-]{0,62}$ ]] || { echo "invalid node id" >&2; exit 2; }
 [[ $hub_underlay_ip =~ ^([0-9]{1,3}\.){3}[0-9]{1,3}$ && $hub_wg_ip =~ ^([0-9]{1,3}\.){3}[0-9]{1,3}$ && $worker_ip =~ ^([0-9]{1,3}\.){3}[0-9]{1,3}$ ]] || { echo "invalid IPv4 address" >&2; exit 2; }
 [[ $wg_ip =~ ^([0-9]{1,3}\.){3}[0-9]{1,3}$ ]] || { echo "invalid worker WireGuard address" >&2; exit 2; }
@@ -29,7 +31,7 @@ mkdir -p "$(dirname "$output")"
 start=$(date -u +%Y-%m-%dT%H:%M:%SZ)
 temp_dir=$(mktemp -d)
 chmod 0700 "$temp_dir"
-bootstrap_private_key="$temp_dir/worker-bootstrap.ed25519"
+bootstrap_private_key="$temp_dir/${role}-bootstrap.ed25519"
 bootstrap_public_key=""
 hub_bootstrap_key=""
 worker_bootstrap_installed=0
@@ -50,7 +52,7 @@ if [[ -n ${ADMIRAL_LOCAL_REPO_CONFIG:-} ]]; then
   }
   remote_repo_tmp=$(ssh_to "$worker_ip" "$worker_known_hosts" 'umask 077; mktemp /tmp/admiral-local.repo.XXXXXX')
   [[ $remote_repo_tmp =~ ^/tmp/admiral-local\.repo\.[[:alnum:]]{6}$ ]] || {
-    echo 'worker returned an unexpected candidate repository staging path' >&2
+    echo 'spoke returned an unexpected candidate repository staging path' >&2
     exit 1
   }
   scp -i "$admin_key" -o IdentitiesOnly=yes -o BatchMode=yes \
@@ -97,11 +99,11 @@ cleanup() {
 }
 trap cleanup EXIT
 
-ssh-keygen -q -t ed25519 -N '' -C "admiral-audit-worker-$node_id" -f "$bootstrap_private_key"
+ssh-keygen -q -t ed25519 -N '' -C "admiral-audit-$role-$node_id" -f "$bootstrap_private_key"
 chmod 0600 "$bootstrap_private_key" "$bootstrap_private_key.pub"
 bootstrap_public_key=$(<"$bootstrap_private_key.pub")
 
-# Grant only this temporary key to the worker's existing validator account.
+# Grant only this temporary key to the spoke's existing validator account.
 bootstrap_public_key_b64=$(printf '%s' "$bootstrap_public_key" | base64 -w0)
 ssh_to "$worker_ip" "$worker_known_hosts" \
   "python3 -c 'import base64,os,pathlib,stat,sys,tempfile; p=pathlib.Path.home()/\".ssh\"; a=p/\"authorized_keys\"; key=base64.b64decode(sys.argv[1]).decode(); p.mkdir(mode=0o700,exist_ok=True); os.chmod(p,0o700); s=a.lstat() if a.exists() or a.is_symlink() else None; (s is None or (stat.S_ISREG(s.st_mode) and not stat.S_ISLNK(s.st_mode))) or sys.exit(3); lines=a.read_text().splitlines() if s else []; (key in lines) or lines.append(key); fd,tmp=tempfile.mkstemp(prefix=\".authorized_keys.audit-\",dir=p); os.close(fd); pathlib.Path(tmp).write_text(\"\\n\".join(lines)+\"\\n\"); os.chmod(tmp,0o600); os.replace(tmp,a)' '$bootstrap_public_key_b64'"
@@ -122,10 +124,9 @@ install_start_utc=$(date -u +%Y-%m-%dT%H:%M:%SZ)
 install_started=$SECONDS
 set +e
 # The admin endpoint is the hub's reachable underlay address. The installer
-# derives the overlay address separately from the configured WireGuard subnet
-# and must render that overlay address in the Fleet API URL.
+# derives the overlay address separately from the configured WireGuard subnet.
 ssh_to "$hub_underlay_ip" "$hub_known_hosts" \
-  "sudo -n admiral-install --worker-node --validation-seed --yes --node-id '$node_id' --public-ip '$worker_ip' --wireguard-ip '$wg_ip' --admin-endpoint '$hub_underlay_ip' --ssh-user validator --ssh-key '$hub_bootstrap_key' --ssh-fingerprint '$fingerprint'" \
+  "sudo -n admiral-install --${role}-node --validation-seed --yes --node-id '$node_id' --public-ip '$worker_ip' --wireguard-ip '$wg_ip' --admin-endpoint '$hub_underlay_ip' --ssh-user validator --ssh-key '$hub_bootstrap_key' --ssh-fingerprint '$fingerprint'" \
   >"$output" 2>&1
 rc=$?
 set -e
@@ -157,11 +158,68 @@ set -e
 } >>"$output"
 
 if [[ $rc -eq 0 ]]; then
-  if ! ssh_to "$worker_ip" "$worker_known_hosts" \
-    "sudo grep -Fx 'ADMIRAL_API_URL=https://$hub_wg_ip:8080' /etc/admiral/fleet.env" >/dev/null; then
-    echo "worker Fleet API URL does not use the expected hub WireGuard overlay $hub_wg_ip" >&2
-    rc=1
+  if [[ $role == worker ]]; then
+    if ! ssh_to "$worker_ip" "$worker_known_hosts" \
+      "sudo grep -Fx 'ADMIRAL_API_URL=https://$hub_wg_ip:8080' /etc/admiral/fleet.env" >/dev/null; then
+      echo "worker Fleet API URL does not use the expected hub WireGuard overlay $hub_wg_ip" >&2
+      rc=1
+    elif ! ssh_to "$worker_ip" "$worker_known_hosts" sudo systemctl is-active --quiet admiral-fleet.service; then
+      echo 'worker Fleet service is not active' >&2
+      rc=1
+    elif ssh_to "$worker_ip" "$worker_known_hosts" sudo systemctl is-active --quiet admiral-harbor.service; then
+      echo 'worker unexpectedly serves Harbor' >&2
+      rc=1
+    fi
+  else
+    if ! ssh_to "$worker_ip" "$worker_known_hosts" \
+      "sudo grep -Fx 'ADMIRAL_API_URL=https://$hub_wg_ip:8080' /etc/admiral/harbor.env" >/dev/null; then
+      echo "portal Harbor API URL does not use the expected hub WireGuard overlay $hub_wg_ip" >&2
+      rc=1
+    elif ! ssh_to "$worker_ip" "$worker_known_hosts" sudo systemctl is-active --quiet admiral-harbor.service; then
+      echo 'portal Harbor service is not active' >&2
+      rc=1
+    elif ssh_to "$worker_ip" "$worker_known_hosts" sudo systemctl is-active --quiet admiral-fleet.service; then
+      echo 'portal unexpectedly serves worker Fleet' >&2
+      rc=1
+    fi
   fi
+fi
+
+if [[ $rc -eq 0 ]]; then
+  health_timeout=${ADMIRAL_SPOKE_HEALTH_TIMEOUT:-300}
+  [[ $health_timeout =~ ^[0-9]+$ ]] || { echo 'invalid spoke health timeout' >&2; rc=1; }
+  health_deadline=$((SECONDS + health_timeout))
+  while [[ $rc -eq 0 ]]; do
+    nodes_json=$(ssh_to "$hub_underlay_ip" "$hub_known_hosts" \
+      'runuser -u validator -- env HOME=/home/validator admiralctl nodes list --output json')
+    if node_state=$(printf '%s\n' "$nodes_json" | python3 -c '
+import json,sys
+nodes=json.load(sys.stdin)
+node_id,role=sys.argv[1:]
+matches=[node for node in nodes if node.get("id")==node_id]
+if len(matches)!=1 or matches[0].get("node_role")!=role:
+    raise SystemExit(f"expected one node {node_id!r} with role {role!r}; got {matches!r}")
+print("{}\t{}".format(matches[0].get("status", ""), matches[0].get("health_status", "")))
+' "$node_id" "$role"); then
+      :
+    else
+      echo "node $node_id is missing or has the wrong role (expected $role)" >&2
+      rc=1
+      break
+    fi
+    IFS=$'\t' read -r node_status node_health <<<"$node_state"
+    if [[ $node_status == active && $node_health == healthy ]]; then
+      printf 'verified_node_id=%s verified_node_role=%s node_status=%s node_health=%s\n' \
+        "$node_id" "$role" "$node_status" "$node_health"
+      break
+    fi
+    if (( SECONDS >= health_deadline )); then
+      echo "node $node_id did not become active/healthy within ${health_timeout}s (status=$node_status health=$node_health)" >&2
+      rc=1
+      break
+    fi
+    sleep 5
+  done
 fi
 
 if [[ $rc -eq 0 ]]; then

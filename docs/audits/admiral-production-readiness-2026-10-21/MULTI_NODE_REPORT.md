@@ -2,17 +2,23 @@
 
 Audit ID: `ADM-AUDIT-2026-10-21`<br>
 
-## Active candidate — Release 75: 3/3 complete Multi-Node cells PASS
+## Topology correction — R75 Multi-Node evidence is invalid for the release gate
 
-The exact unchanged R75 RPM candidate passed Multi-Node on Rocky Linux 10, CentOS Stream 10 and Fedora Rawhide. Together with the three passing Single-Node cells, the active functional matrix stands at **6/6 PASS**. Wider production audit coverage remains incomplete; prior-candidate results do not transfer. See [master issue #277](https://github.com/admiral-project/admiral/issues/277), the [R75 Rocky report](evidence/release75-rocky-multinode-20261024.md), the [R75 CentOS Stream report](evidence/release75-centos-multinode-20261024.md), and the [R75 Fedora Rawhide report](evidence/release75-fedora-multinode-20261025.md).
+The required Multi-Node roles are `--admin-node`, `--worker-node`, and an
+independent `--portal-node`. R75 used `--admin-portal-node` plus workers.
+Therefore its Rocky, CentOS Stream, and Fedora Multi-Node runs are historical
+observations only and receive **no cell credit**. In particular, they did not
+validate independent Harbor installation, WireGuard API access, portal routing,
+or customer workflows. The RC6 Multi-Node matrix is **0/3 PASS** until these
+three-node topologies are run against the exact candidate.
 
 | Platform | Secure install and enrollment | Placement, replay and cleanup | Concurrency | Worker reboot and partition/rejoin | Node removal | Hub reboot | Cell |
 |---|---:|---:|---:|---:|---:|---:|---:|
-| Rocky Linux 10 x86_64 | PASS | PASS | PASS | PASS | PASS | PASS | **PASS** |
-| CentOS Stream 10 x86_64 | PASS | PASS | PASS | PASS | PASS | PASS | **PASS** |
-| Fedora Rawhide x86_64 | PASS | PASS | PASS | PASS | PASS | PASS | **PASS** |
+| Rocky Linux 10 x86_64 | Historical observation | Historical observation | Historical observation | Historical observation | Historical observation | Historical observation | **NO GATE CREDIT** |
+| CentOS Stream 10 x86_64 | Historical observation | Historical observation | Historical observation | Historical observation | Historical observation | Historical observation | **NO GATE CREDIT** |
+| Fedora Rawhide x86_64 | Historical observation | Historical observation | Historical observation | Historical observation | Historical observation | Historical observation | **NO GATE CREDIT** |
 
-The Fedora Rawhide row is supported by the exact-candidate three-VM run documented in [`release75-fedora-multinode-20261025.md`](evidence/release75-fedora-multinode-20261025.md). Its auth and lateral-network check is scoped and does not establish comprehensive isolation. Earlier harness failures remain recorded in the private hash manifest; the corrected candidate checks passed.
+The R75 reports document those earlier `admin-portal + workers` observations. They did not exercise `--portal-node` and cannot establish independent Harbor behavior. Do not interpret their scenario-level PASS entries as current Multi-Node gate PASS.
 
 ## Historical Release 74 Rocky Linux 10.2 x86_64 functional cell — no Release 75 credit
 

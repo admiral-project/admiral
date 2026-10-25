@@ -1,5 +1,5 @@
 # Architecture review — Admiral production-readiness audit
-> **Current gate status (2026-10-24):** Release 75 has three of six functional cells PASS: Rocky Linux 10, CentOS Stream 10 and Fedora Rawhide Single-Node. All three Multi-Node cells are NOT TESTED for R75. The six packages were built from the exact pins recorded in [`release75-single-node-20261024.md`](evidence/release75-single-node-20261024.md); the tested VM evidence is candidate-specific. Earlier release results are historical and do not count toward Release 75.
+> **Topology correction (2026-10-25):** The required Multi-Node topology is `--admin-node` + `--worker-node` + independent `--portal-node`. R75 used `--admin-portal-node` + workers, so its three Multi-Node results do not validate this gate or independent Harbor. R75 Single-Node evidence remains historical PASS only for that exact RC5 candidate. The active RC6 matrix has no completed cells yet.
 > **Historical R67 status:** Six RPMs are built for Fedora and six for EL10 from the same selected source pins, in separate native builders. Exact packages passed scoped Fedora/Rocky Single-Node install, lifecycle and reboot scenarios, plus a Fedora hub-and-two-worker bootstrap and workload lifecycle on each worker. No R67 cell is complete; matrix remains 0/8.
 
 Audit started: 2026-10-21 UTC<br>
@@ -7,7 +7,7 @@ Historical audit candidate: RC5 Release 67 packages built from root commit `833d
 
 ## Scope and evidence rules
 
-The active Release 75 runtime matrix is Rocky Linux 10, CentOS Stream 10, and Fedora Rawhide on x86_64, each in Single-Node and Multi-Node (six cells). AlmaLinux is excluded because the configured COPR build environment omitted the Go RPMs; see #276. The host is x86_64 with KVM, 4 vCPU, 8 GiB RAM and 4 GiB swap. Each Multi-Node cell uses one admin/portal hub and two workers. Results from any earlier candidate are historical only.
+The active runtime matrix is Rocky Linux 10, CentOS Stream 10, and Fedora Rawhide on x86_64, each in Single-Node and Multi-Node (six cells). AlmaLinux is excluded because the configured COPR build environment omitted the Go RPMs; see #276. The host is x86_64 with KVM, 4 vCPU, 8 GiB RAM and 4 GiB swap. Each Multi-Node cell requires one admin node, one worker node, and one independent portal node. R75's different topology receives no Multi-Node credit. Results from any earlier candidate are historical only.
 
 Results from a different OS, candidate, or topology do not satisfy a Release 75 target cell.
 
@@ -36,7 +36,7 @@ The installer installs control plane, Fleet, Harbor, Flagship, PostgreSQL, Caddy
 
 ### Multi-Node
 
-The implementation and `docs/multi_node_setup_v1.md` describe a star topology: one admin/control-plane hub (the audited profile combines admin and portal roles) with one or more worker spokes. SSH/Ansible is the setup and maintenance channel. WireGuard is the private control/workload channel. Fleet obtains work from `admirald`, reports heartbeats and results, and uses the PostgreSQL-backed queue indirectly through the API. Workload ports are routed through the hub/Caddy to worker WireGuard addresses. Worker-to-worker coordination, multiple control-plane consensus, automatic failover, and multi-region operation are not implemented guarantees.
+The installer supports separate `admin-node`, `worker-node`, and `portal-node` roles. The required release topology is one admin/control-plane hub, one Fleet worker spoke, and one independent Harbor portal spoke. SSH/Ansible is the setup and maintenance channel. WireGuard is the private control/workload channel. Fleet obtains work from `admirald`, reports heartbeats and results, and uses the PostgreSQL-backed queue indirectly through the API. Harbor calls the admin API over the private WireGuard address; public portal routes must reach Harbor on the portal node. R75 co-hosted Harbor on the admin node, so independent portal registration, API reachability, routing, and customer workflows were not validated there. Worker-to-worker coordination, multiple control-plane consensus, automatic failover, and multi-region operation are not implemented guarantees.
 
 The documented hub-and-spoke design does not constitute a replicated control plane. Loss of the hub or its PostgreSQL database removes the central task and API authority. In the AlmaLinux three-VM probe, a suspended worker was marked offline after 145 seconds and became unavailable for provisioning; after VM resume it rejoined in 59 seconds. No automatic workload migration was observed or expected. This proves one whole-VM outage/rejoin path only; hub/database failure and network partitions remain untested.
 

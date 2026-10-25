@@ -1,8 +1,10 @@
 # Release 75 CentOS Stream Multi-Node validation
 
-**Result: PASS for the Release 75 CentOS Stream 10 x86_64 Multi-Node functional cell.**
+> **Topology correction (2026-10-25):** This run used an admin/portal hub plus workers. Its observed results remain historical, but the run does not validate the required independent `--portal-node` and receives no Multi-Node release-gate credit.
 
-**Release 75 functional matrix after this run: 5/6 cells PASS.** All three Single-Node cells, Rocky Linux Multi-Node, and CentOS Stream Multi-Node passed on the same unchanged R75 RPM candidate. Fedora Rawhide Multi-Node remains NOT TESTED. This is functional release-gate evidence, not a complete production-readiness certification.
+**Corrected gate result: NOT TESTED for the required independent-portal Multi-Node cell.** The observed checks below passed only for the historical `--admin-portal-node` + workers topology; they are not a cell PASS.
+
+This report preserves scoped historical observations for the old topology. It does not validate Harbor installed independently, its WireGuard API connection to Admirald, public routing to the portal guest, or customer workflows through that guest. No R75 Multi-Node gate credit is assigned.
 
 ## Candidate and source identity
 
@@ -69,4 +71,4 @@ Two retained preliminary failures were test-environment/harness issues, not prod
 
 ## Decision and limits
 
-This completes the Release 75 functional Multi-Node cell for **CentOS Stream 10 x86_64**. The full Release 75 matrix is now **5/6 PASS**, with only Fedora Rawhide Multi-Node pending. This does not validate PostgreSQL outage or in-flight task interruption, exhaustive security/isolation, memory/disk exhaustion, broad stress/performance percentiles, external S3/volume backup and restore, consensus, or automatic workload migration. These are outside this functional cell and remain NOT TESTED; this result is not a full production-readiness certification.
+These checks do not complete the required Release 75 Multi-Node cell for **CentOS Stream 10 x86_64** because Harbor was co-hosted on the admin node. Independent portal installation, registration, private API connectivity, public routing and customer workflows remain **NOT TESTED**. This report has no Multi-Node release-gate credit. PostgreSQL outage and in-flight task interruption, exhaustive security/isolation, memory/disk exhaustion, broad stress/performance percentiles, external S3/volume backup and restore, consensus, and automatic workload migration also remain outside the executed checks; production readiness remains **NOT VALIDATED**.

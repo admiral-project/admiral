@@ -5,8 +5,8 @@
 %global commit b7325bbc71fc474a521496e593b2967e4d555ac1
 
 Name:    admiral-flagship
-Version: 0.0.1rc5
-Release:        75%{?dist}
+Version: 0.0.1rc6
+Release:        1%{?dist}
 Summary: Admiral Administrative Web Console
 
 License: Apache-2.0

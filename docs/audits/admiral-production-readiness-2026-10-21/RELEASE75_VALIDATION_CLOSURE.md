@@ -1,10 +1,22 @@
-# Release 75 functional validation — closeout
+# Release 75 functional validation — historical closeout with topology correction
 
 Audit ID: `ADM-AUDIT-2026-10-21`<br>
 Scope: Rocky Linux 10, CentOS Stream 10, and Fedora Rawhide x86_64; Single-Node and Multi-Node.<br>
-Result: **6/6 functional cells PASS.**
+Historical result: **3/6 cells remain applicable; the three Multi-Node PASS claims are invalid for the required topology.**
 
-This closes the Release 75 functional E2E gate. It does not close the broader production-readiness audit: see [PRODUCTION_READINESS.md](PRODUCTION_READINESS.md) for the remaining security, resilience, and performance work. No production systems were used.
+## Topology correction (2026-10-25)
+
+The release gate requires `--admin-node` + `--worker-node` + independent
+`--portal-node`. R75 used `--admin-portal-node` + worker spokes. Its Multi-Node
+runs did not validate Harbor on a separate host, the portal's WireGuard API
+path, or customer workflows through that portal. Keep the raw R75 evidence as
+historical observations, but remove all Multi-Node release-gate credit. The
+current RC6 matrix is 0/6 complete; all six cells must run on the exact RC6
+candidate with the corrected topology.
+
+The three Single-Node cells remain historical PASS for the exact R75 candidate.
+The three Multi-Node results are invalid for the required topology and do not
+close those cells. No production systems were used.
 
 ## Candidate identity
 
@@ -24,13 +36,16 @@ All six cells used the unchanged `0.0.1rc5-75` RPM candidate prepared at root co
 | OS / topology | Result | Run evidence | Private raw manifest SHA-256 |
 |---|---:|---|---|
 | Rocky Linux 10 x86_64 / Single-Node | **PASS** | [Three-OS coordinated Single-Node report](evidence/release75-single-node-20261024.md) | `fc7b8b88b4a74e103907bc9ddb5ab87a9ac9d7baf25d795a268bf463c69b5f66` |
-| Rocky Linux 10 x86_64 / Multi-Node | **PASS** | [Rocky Multi-Node report](evidence/release75-rocky-multinode-20261024.md) | `7bfcf54f859e2caa1df5eca8fa0758087ee1e24d206cff7c551a4b158f15b93d` |
+| Rocky Linux 10 x86_64 / Multi-Node | **INVALIDATED — topology mismatch** | [Historical Rocky report](evidence/release75-rocky-multinode-20261024.md) | `7bfcf54f859e2caa1df5eca8fa0758087ee1e24d206cff7c551a4b158f15b93d` |
 | CentOS Stream 10 x86_64 / Single-Node | **PASS** | [Three-OS coordinated Single-Node report](evidence/release75-single-node-20261024.md) | `fc7b8b88b4a74e103907bc9ddb5ab87a9ac9d7baf25d795a268bf463c69b5f66` |
-| CentOS Stream 10 x86_64 / Multi-Node | **PASS** | [CentOS Stream Multi-Node report](evidence/release75-centos-multinode-20261024.md) | `96436bd2c532d831a3298386df7066f4ea72122d3e7f9f754e1914fc37b29129` |
+| CentOS Stream 10 x86_64 / Multi-Node | **INVALIDATED — topology mismatch** | [Historical CentOS Stream report](evidence/release75-centos-multinode-20261024.md) | `96436bd2c532d831a3298386df7066f4ea72122d3e7f9f754e1914fc37b29129` |
 | Fedora Rawhide 46 x86_64 / Single-Node | **PASS** | [Three-OS coordinated Single-Node report](evidence/release75-single-node-20261024.md) | `fc7b8b88b4a74e103907bc9ddb5ab87a9ac9d7baf25d795a268bf463c69b5f66` |
-| Fedora Rawhide 46 x86_64 / Multi-Node | **PASS** | [Fedora Multi-Node report](evidence/release75-fedora-multinode-20261025.md) | `18eb11d50f7882f0afb7fa3da819da15eb90041dc3583adeeb1d47c374fac6ac` |
+| Fedora Rawhide 46 x86_64 / Multi-Node | **INVALIDATED — topology mismatch** | [Historical Fedora report](evidence/release75-fedora-multinode-20261025.md) | `18eb11d50f7882f0afb7fa3da819da15eb90041dc3583adeeb1d47c374fac6ac` |
 
-All functional cells used fresh disposable VMs and the exact unchanged R75 packages. The Single-Node run executed all three OS lanes together. Each Multi-Node cell used three real VMs: one hub/admin node and two workers. The reports contain the OS/kernel/architecture, seed hashes, VM roles, exact RPM identities, procedures, expected and observed results, run timings, retained harness attempts, limits, and reproduction instructions.
+The R75 Multi-Node runs used three real VMs but assigned Harbor to the admin
+host and used two workers. They did not install Harbor as an independent portal
+spoke. Their logs remain preserved as historical evidence; no portal-node
+workflow is inferred from them.
 
 The tracked reports and scripts are committed. Raw run logs are intentionally kept in the ignored, access-restricted local validation tree because they can contain operational data. The manifest fingerprints above identify those retained files; each active run manifest and the corrected Fedora seed manifest were verified. The earlier invalidated Single-Node preliminary attempt remains preserved and is not included in any PASS claim.
 
@@ -38,7 +53,9 @@ The tracked reports and scripts are committed. Raw run logs are intentionally ke
 
 Single-Node passed secure installation and service checks, workload provision/idempotency, resize and data continuity, local backup/restore and invalid-state rejection, service lifecycle, actual guest reboot with PostgreSQL marker persistence, and final operation/resource cleanup.
 
-Each Multi-Node cell passed secure enrollment and worker health, explicit placement on both workers, same-key replay, a three-client duplicate-provision race, concurrent resize/deprovision, worker reboot, WireGuard partition/rejoin, hub reboot with a live workload, active-node removal refusal, idle-node removal, and postrun cleanup. Scoped anonymous API rejection and lateral worker TCP denial were recorded. These checks do not establish exhaustive security/isolation or high-availability guarantees.
+Those prior Multi-Node scenario checks applied only to the old topology. The
+required independent portal registration, Harbor-to-Admirald WireGuard path,
+public portal routing, and customer workflows remain NOT TESTED.
 
 ## Reproduction scripts
 
@@ -59,13 +76,17 @@ The following per-OS runners reproduce placement/replay, concurrent idempotency,
 ### Lab preparation and installation support
 
 - [create_seed_os.sh](scripts/create_seed_os.sh), [create-audit-vm.sh](scripts/create-audit-vm.sh), [prepare-audit-cloud-init.py](scripts/prepare-audit-cloud-init.py), [prepare-audit-seed-guest.sh](scripts/prepare-audit-seed-guest.sh), and [cleanup-audit-vm.sh](scripts/cleanup-audit-vm.sh) — updated seeds, disposable guests, pinned host keys, and safe VM cleanup.
-- [publish-candidate-repo.sh](scripts/publish-candidate-repo.sh), [sign-local-validation-repo.sh](scripts/sign-local-validation-repo.sh), [install-single-node-audit.sh](scripts/install-single-node-audit.sh), [bootstrap-candidate-node.sh](scripts/bootstrap-candidate-node.sh), [install-admin-portal-audit.sh](scripts/install-admin-portal-audit.sh), and [install-worker-audit.sh](scripts/install-worker-audit.sh) — isolated native candidate repositories and secure setup.
+- [publish-candidate-repo.sh](scripts/publish-candidate-repo.sh), [sign-local-validation-repo.sh](scripts/sign-local-validation-repo.sh), [install-single-node-audit.sh](scripts/install-single-node-audit.sh), [bootstrap-candidate-node.sh](scripts/bootstrap-candidate-node.sh), [install-admin-audit.sh](scripts/install-admin-audit.sh), and [install-worker-audit.sh](scripts/install-worker-audit.sh) — isolated native candidate repositories and secure setup. The spoke helper takes an optional final `worker|portal` role; RC6 Multi-Node uses a separate admin, worker, and portal guest.
 - Focused auth/lateral-network probes and some Rocky postrun commands were issued directly; their output is retained in the private raw run logs rather than a standalone wrapper script.
 
 ## CI, tracker, and closeout boundaries
 
 Root CI passed for the R75 runtime evidence commit [3c4d6db / run 40147625018](https://github.com/admiral-project/admiral/actions/runs/40147625018), the seed-manifest tooling fix [1d87058 / run 40147974868](https://github.com/admiral-project/admiral/actions/runs/40147974868), and the latest audit-documentation commit [9ce9ecc / run 40149559666](https://github.com/admiral-project/admiral/actions/runs/40149559666). The packaged component CI runs are listed above and in the candidate report.
 
-The master functional tracker [#277](https://github.com/admiral-project/admiral/issues/277) records 6/6 PASS and remains open for the broader audit. The seed-manifest tooling item [#282](https://github.com/admiral-project/admiral/issues/282) remains open with `fix-proposed`; its fix changes validation tooling only and does not require an RPM rebuild or invalidate the R75 product candidate.
+The master tracker [#277](https://github.com/admiral-project/admiral/issues/277)
+must reflect the corrected topology: R75 has three historical Single-Node
+passes, while its Multi-Node cells have no gate credit. The seed-manifest
+tooling item [#282](https://github.com/admiral-project/admiral/issues/282)
+remains tracked separately.
 
 Production readiness remains **NOT VALIDATED**. Comprehensive isolation/security negatives, PostgreSQL/task interruption and replay, broader fault injection, resource exhaustion, external S3/R2 and volume backup/restore, and controlled performance/scalability percentiles remain outside this functional closeout. See [SECURITY_REVIEW.md](SECURITY_REVIEW.md), [RESILIENCE_REPORT.md](RESILIENCE_REPORT.md), and [PERFORMANCE_REPORT.md](PERFORMANCE_REPORT.md).

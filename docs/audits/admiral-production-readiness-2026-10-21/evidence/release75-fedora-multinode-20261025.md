@@ -1,8 +1,10 @@
 # Release 75 Fedora Rawhide Multi-Node validation
 
-**Result: PASS for the Release 75 Fedora Rawhide x86_64 Multi-Node functional cell.**
+> **Topology correction (2026-10-25):** This run used an admin/portal hub plus workers. Its observed results remain historical, but the run does not validate the required independent `--portal-node` and receives no Multi-Node release-gate credit.
 
-The coordinated Release 75 functional matrix is now **6/6 cells PASS**: Fedora Rawhide, Rocky Linux 10 and CentOS Stream 10, each Single-Node and Multi-Node. This is release-candidate functional evidence, not a full production-readiness certification.
+**Corrected gate result: NOT TESTED for the required independent-portal Multi-Node cell.** The observed checks below passed only for the historical `--admin-portal-node` + workers topology; they are not a cell PASS.
+
+This report preserves scoped historical observations for the old topology. It does not validate Harbor installed independently, its WireGuard API connection to Admirald, public routing to the portal guest, or customer workflows through that guest. No R75 Multi-Node gate credit is assigned.
 
 ## Candidate and package identity
 
@@ -50,4 +52,4 @@ Reproduction scripts are under [`scripts/r75/`](../scripts/r75/): `r75-fedora-mu
 
 ## Decision and limits
 
-This completes the Release 75 functional Multi-Node cell for Fedora Rawhide x86_64. All six active functional cells now pass on the exact unchanged Release 75 source/RPM candidate. The broader audit remains **NOT VALIDATED**: comprehensive security and cross-workload isolation, PostgreSQL outage, task interruption/replay, resource exhaustion, wider fault permutations, and stress/performance percentiles were not established by this matrix. A passing functional matrix is not a guarantee of production readiness.
+These checks do not complete the required Release 75 Multi-Node cell for Fedora Rawhide x86_64 because Harbor was co-hosted on the admin node. Independent portal installation, registration, private API connectivity, public routing and customer workflows remain **NOT TESTED**. This report has no Multi-Node release-gate credit. The broader audit remains **NOT VALIDATED**: comprehensive security and cross-workload isolation, PostgreSQL outage, task interruption/replay, resource exhaustion, wider fault permutations, and stress/performance percentiles were not established.

@@ -110,16 +110,21 @@ The supported topology for v1 is:
 
 «star topology»
 
-For the Release 75 acceptance matrix, the admin node also runs Harbor through
-`--admin-portal-node`, with two or more `--worker-node` guests. The release
-gate covers Fedora Rawhide, Rocky Linux 10 and CentOS Stream 10 on x86_64,
-with Single-Node and Multi-Node cells for each distribution; see master
-tracker [#277](https://github.com/admiral-project/admiral/issues/277) for the
+The required release-matrix topology has three distinct hosts:
+
+* `--admin-node`: `admirald`, PostgreSQL, Caddy and Flagship;
+* `--worker-node`: Fleet and rootless Podman workloads;
+* `--portal-node`: Harbor customer portal, registered as a WireGuard spoke.
+
+The Release 75 Multi-Node runs instead used `--admin-portal-node` with worker
+spokes. Those runs did not test a dedicated portal and are invalid for the
+Multi-Node release gate. The release gate covers Fedora Rawhide, Rocky Linux
+10 and CentOS Stream 10 on x86_64, with Single-Node and Multi-Node cells for
+each distribution; see master tracker
+[#277](https://github.com/admiral-project/admiral/issues/277) for the
 authoritative status. AlmaLinux 10 is Tier 2 and outside the active matrix
 because of the COPR environment limitation tracked in
-[#276](https://github.com/admiral-project/admiral/issues/276). A dedicated
-`--portal-node` remains an available deployment mode, but is outside this
-shared admin-and-portal matrix.
+[#276](https://github.com/admiral-project/admiral/issues/276).
 
 Example:
 
@@ -128,29 +133,28 @@ Internet
 cloud.domain.com
     |
 +------------------------------------+
-| control plane + portal             |
-| admirald, Harbor, Caddy, PostgreSQL|
-| cockpit, wg0 = 10.99.0.1           |
+| admin node                         |
+| admirald, PostgreSQL, Caddy,        |
+| Flagship, cockpit, wg0 = 10.99.0.1 |
 +------------------------------------+
           |
     ---------------------------
     |                         |
 +----------------+  +----------------+
-| worker node1   |  | worker node2   |
-| fleet          |  | fleet          |
-| podman         |  | podman         |
+| worker node    |  | portal node    |
+| Fleet, Podman  |  | Harbor         |
 | cockpit-bridge |  | cockpit-bridge |
 | wg0 10.99.0.2  |  | wg0 10.99.0.3  |
 +----------------+  +----------------+
 
-The `--worker-node` and dedicated `--portal-node` roles are mutually exclusive.
-A single host cannot run both admiral-fleet and admiral-harbor. The combined
-`--admin-portal-node` profile is used by the current RC matrix.
+The worker and portal are separate spokes. A worker cannot run Harbor, and a
+portal cannot run Fleet. `--admin-portal-node` is a supported combined profile
+for other deployments, but it does not satisfy this release-matrix topology.
 
 Only these communication paths are required:
 
-- control plane → worker
-- worker → control plane
+- admin/control plane → worker and portal
+- worker and portal → admin/control plane
 
 Worker-to-worker communication is out of scope.
 

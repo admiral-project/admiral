@@ -1,8 +1,10 @@
 # Release 75 Rocky Linux Multi-Node validation
 
-**Result: PASS for the Release 75 Rocky Linux 10 x86_64 Multi-Node functional cell.**
+> **Topology correction (2026-10-25):** This run used an admin/portal hub plus workers. Its observed results remain historical, but the run does not validate the required independent `--portal-node` and receives no Multi-Node release-gate credit.
 
-**R75 functional matrix after this run: 4/6 PASS.** The three Single-Node cells and Rocky Multi-Node pass; CentOS Stream and Fedora Rawhide Multi-Node are NOT TESTED. This is functional release-gate evidence, not a complete production-readiness certification.
+**Corrected gate result: NOT TESTED for the required independent-portal Multi-Node cell.** The observed checks below passed only for the historical `--admin-portal-node` + workers topology; they are not a cell PASS.
+
+This report preserves scoped historical observations for the old topology. It does not validate Harbor installed independently, its WireGuard API connection to Admirald, public routing to the portal guest, or customer workflows through that guest. No R75 Multi-Node gate credit is assigned.
 
 ## Candidate and source identity
 
@@ -63,6 +65,6 @@ Reproduction scripts, adapted to the R75 candidate and node IDs, are in [`script
 
 ## Decision and limits
 
-This satisfies the Release 75 functional Multi-Node checklist for **Rocky Linux 10 x86_64**. No new product defect was confirmed in this cell. All three Rocky guests were shut down after evidence collection; the host then had about 6.1 GiB memory available, 2.9 GiB swap free, and 42 GiB disk free.
+These checks do not complete the required Release 75 Multi-Node cell for **Rocky Linux 10 x86_64** because Harbor was co-hosted on the admin node. Independent portal installation, registration, private API connectivity, public routing and customer workflows remain **NOT TESTED**. This report has no Multi-Node release-gate credit. No new product defect was confirmed in the old topology. All three Rocky guests were shut down after evidence collection; the host then had about 6.1 GiB memory available, 2.9 GiB swap free, and 42 GiB disk free.
 
 This result does not validate CentOS Stream or Fedora Multi-Node. It also does not establish distributed consensus, automatic workload migration, full authorization/isolation guarantees, resource exhaustion behavior, broad stress/performance percentiles, or external S3 backup/restore behavior in Multi-Node mode. Those remain NOT TESTED; do not interpret this functional cell as a full production-readiness certification.

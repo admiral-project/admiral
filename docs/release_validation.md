@@ -305,10 +305,16 @@ Do not describe the result as strict idempotency unless unexpected changes are z
 
 ## 10. Multi-node validation
 
-For each x86_64 matrix OS, create three clean VMs:
+For each x86_64 matrix OS, create three clean VMs with distinct roles:
 
-* one admin+Harbor VM;
-* two worker VMs.
+* one `--admin-node` VM running `admirald` and `admiral-flagship`;
+* one `--worker-node` VM running `admiral-fleet` and rootless Podman;
+* one independent `--portal-node` VM running Harbor.
+
+Do not substitute `--admin-portal-node` plus additional workers: that places
+Harbor on the admin host and does not validate the required dedicated portal
+node. Harbor's spoke registration, WireGuard API path, customer workflows, and
+route target must be verified from the independent portal VM.
 
 Each VM must have:
 
@@ -322,8 +328,9 @@ Each VM must have:
 
 Execute the supported installation for:
 
-* `--admin-portal-node` on the admin VM;
-* `--worker-node` on each worker VM.
+* `--admin-node` on the admin VM;
+* `--worker-node` on the worker VM;
+* `--portal-node` for the portal VM, bootstrapped by the admin node.
 
 Require for every role:
 
@@ -339,16 +346,22 @@ Verify:
 * expected `/32` hub-and-spoke routes;
 * no unintended lateral spoke connectivity;
 * authenticated communication between components;
-* Harbor service and API configuration on the admin VM;
-* registration of both workers;
-* Harbor-to-admirald communication through the intended private path;
+* Flagship and API configuration on the admin VM;
+* registration and health of the worker and portal spokes;
+* Harbor service and API configuration on the portal VM;
+* Harbor-to-admirald communication over the intended WireGuard path;
+* public portal route reaches Harbor on the portal VM, not an admin loopback;
 * final `admiralctl nodes list` output.
 
-Both workers must appear as:
+The worker must appear as:
 
 * active;
 * healthy;
 * enabled or schedulable according to their role.
+
+The portal must appear as active and healthy with role `portal`; it must not
+run Fleet or host workloads. Confirm that Harbor is absent from the admin and
+worker hosts and that its customer-facing routes work through the portal node.
 
 ### 10.3 Workload verification
 

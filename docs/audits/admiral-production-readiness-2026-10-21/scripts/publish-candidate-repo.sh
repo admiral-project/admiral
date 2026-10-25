@@ -6,16 +6,19 @@ set -euo pipefail
 [[ $# -ge 1 && $# -le 2 && $1 =~ ^[0-9]+$ ]] || { echo "usage: $0 RPM_RELEASE [el10|fedora|all]" >&2; exit 2; }
 release=$1
 scope=${2:-all}
+version=${ADMIRAL_RC_VERSION:-0.0.1rc5}
+candidate_id=${ADMIRAL_RC_DIR:-${version#0.0.1}-r${release}}
+[[ $version =~ ^0\.0\.1rc[0-9]+$ ]] || { echo "invalid Admiral version: $version" >&2; exit 2; }
 [[ $scope == el10 || $scope == fedora || $scope == all ]] || { echo "invalid repository scope: $scope" >&2; exit 2; }
 project_root=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/../../../.." && pwd)
-validation_dir="$project_root/packaging/build/validation/rc5-r${release}"
+validation_dir="$project_root/packaging/build/validation/$candidate_id"
 repo_root=${ADMIRAL_VALIDATION_REPO_ROOT:-/var/lib/libvirt/images/admiral-validation/repo}
-candidate_repo="$repo_root/rc5-r${release}"
+candidate_repo="$repo_root/$candidate_id"
 
 # Build inputs must be kept separate by distro. Callers building in containers
 # should set these to the mounted Admiral RPM directories.
-el10_rpms=${ADMIRAL_EL10_RPM_DIR:-$project_root/packaging/build/validation/rc5-r${release}/el10/RPMS}
-fedora_rpms=${ADMIRAL_FEDORA_RPM_DIR:-$project_root/packaging/build/validation/rc5-r${release}/fedora/RPMS}
+el10_rpms=${ADMIRAL_EL10_RPM_DIR:-$validation_dir/el10/RPMS}
+fedora_rpms=${ADMIRAL_FEDORA_RPM_DIR:-$validation_dir/fedora/RPMS}
 fedora_tag=${ADMIRAL_FEDORA_DIST_TAG:-fc46}
 
 mkdir -p "$validation_dir"
@@ -34,10 +37,10 @@ publish_distro() {
       admiral-common|admiral-flagship|admiral-harbor) arch=noarch ;;
       *) arch=x86_64 ;;
     esac
-    rpm="$rpm_dir/$arch/${package}-0.0.1rc5-${release}.${tag}.${arch}.rpm"
+    rpm="$rpm_dir/$arch/${package}-${version}-${release}.${tag}.${arch}.rpm"
     [[ -f $rpm ]] || { echo "missing $distro Admiral RPM: $rpm" >&2; return 1; }
     nevra=$(rpm -qp --qf '%{NAME}-%{VERSION}-%{RELEASE}.%{ARCH}' "$rpm")
-    [[ $nevra == "${package}-0.0.1rc5-${release}.${tag}.${arch}" ]] || {
+    [[ $nevra == "${package}-${version}-${release}.${tag}.${arch}" ]] || {
       echo "unexpected $distro RPM identity: $nevra ($rpm)" >&2
       return 1
     }
@@ -86,8 +89,8 @@ if [[ $scope == el10 || $scope == all ]]; then
   publish_distro el10 el10 "$el10_rpms"
   cat > "$validation_dir/admiral-local-el10.repo" <<EOF
 [admiral-local]
-name=Admiral RC5 Release ${release} local validation (EL10)
-baseurl=http://192.168.122.1/rc5-r${release}/el10/\$basearch
+name=Admiral ${version} Release ${release} local validation (EL10)
+baseurl=http://192.168.122.1/${candidate_id}/el10/\$basearch
 enabled=1
 gpgcheck=0
 priority=1
@@ -100,8 +103,8 @@ if [[ $scope == fedora || $scope == all ]]; then
   publish_distro fedora "$fedora_tag" "$fedora_rpms"
   cat > "$validation_dir/admiral-local-fedora.repo" <<EOF
 [admiral-local]
-name=Admiral RC5 Release ${release} local validation (Fedora Rawhide)
-baseurl=http://192.168.122.1/rc5-r${release}/fedora/\$basearch
+name=Admiral ${version} Release ${release} local validation (Fedora Rawhide)
+baseurl=http://192.168.122.1/${candidate_id}/fedora/\$basearch
 enabled=1
 gpgcheck=0
 priority=1

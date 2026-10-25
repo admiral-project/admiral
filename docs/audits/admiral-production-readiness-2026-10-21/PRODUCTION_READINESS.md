@@ -3,7 +3,7 @@
 Audit ID: `ADM-AUDIT-2026-10-21`<br>
 Audit began: 2026-10-21 UTC<br>
 Release 75 functional closeout: [RELEASE75_VALIDATION_CLOSURE.md](RELEASE75_VALIDATION_CLOSURE.md).
-> **Active scope — Release 75, 2026-10-25:** Rocky Linux 10, CentOS Stream 10, and Fedora Rawhide x86_64, each Single-Node and Multi-Node. The functional matrix is **6/6 complete cells PASS** on the exact unchanged R75 candidate. Prior-release evidence does not transfer. The audit does not establish comprehensive security, isolation, resilience, scalability or performance.
+> **Topology correction — 2026-10-25:** The required Multi-Node shape is `--admin-node` + `--worker-node` + independent `--portal-node`. R75 used `--admin-portal-node` plus workers, so its three Multi-Node cells are invalid for this gate; independent Harbor is not validated. RC6 currently has **0/6 complete cells**. Production readiness remains NOT VALIDATED.
 
 Production readiness is **NOT VALIDATED**. The functional release gate is narrower than the full production audit and cannot establish production security, fault-tolerance, scalability or performance.
 
@@ -11,8 +11,8 @@ Production readiness is **NOT VALIDATED**. The functional release gate is narrow
 
 | Topology | Decision | Basis |
 | --- | --- | --- |
-| Single-Node | **NOT VALIDATED** | The three R75 functional cells passed together on fresh seeded guests. Broader isolation/security negatives, resource-exhaustion behavior, stress and controlled performance remain incomplete, so this is not a full production-readiness finding. See [`release75-single-node-20261024.md`](evidence/release75-single-node-20261024.md). |
-| Multi-Node | **NOT VALIDATED** | All three R75 functional cells passed on real three-VM clusters. Database outage, in-flight tasks, comprehensive isolation, resource exhaustion and performance remain incomplete. |
+| Single-Node | **NOT VALIDATED** | RC6 has not yet been run. R75's three functional cells are historical and candidate-specific; broader isolation/security negatives, resource-exhaustion behavior, stress and controlled performance also remain incomplete. |
+| Multi-Node | **NOT VALIDATED** | RC6 has not yet been run. R75's `admin-portal + workers` topology did not validate the required independent Harbor portal node. |
 
 Neither topology is READY or CONDITIONALLY READY on current evidence. Exact-commit CI and scoped scenarios do not substitute for a complete matrix cell. No production system was touched.
 
@@ -33,8 +33,8 @@ The Release 46 reference check, exact NEVRAs, hashes and targeted observations a
 
 ## What would change this decision
 
-The six Release 75 functional cells in [issue #277](https://github.com/admiral-project/admiral/issues/277) now pass. A separate production-readiness assessment still needs reproducible security/isolation negatives, broader fault injection, resource-pressure tests, concurrency and performance measurements, with scope and operating assumptions documented. Any new source/RPM fix requires a new candidate and invalidates its runtime evidence.
+R75's historical reports recorded six functional PASS results, but the three Multi-Node runs co-hosted Harbor with the admin service. They therefore do not validate the required independent portal topology and receive no Multi-Node gate credit. RC6 must rerun all cells on one exact candidate, including Harbor on a separate `--portal-node`. A separate production-readiness assessment still needs reproducible security/isolation negatives, broader fault injection, resource-pressure tests, concurrency and performance measurements, with scope and operating assumptions documented. Any new source/RPM fix requires a new candidate and invalidates its runtime evidence.
 
 ## Current answer to the audit question
 
-The broader production-readiness question remains **NOT VALIDATED**. Release 75 has **6/6 functional cells passed**. Even a complete functional matrix does not establish all security, isolation, fault-tolerance, resource-exhaustion or performance properties required for a production decision. No production-readiness claim is made. R75 evidence: [`release75-single-node-20261024.md`](evidence/release75-single-node-20261024.md), [`release75-rocky-multinode-20261024.md`](evidence/release75-rocky-multinode-20261024.md), [`release75-centos-multinode-20261024.md`](evidence/release75-centos-multinode-20261024.md), and [`release75-fedora-multinode-20261025.md`](evidence/release75-fedora-multinode-20261025.md).
+The broader production-readiness question remains **NOT VALIDATED**. R75 has three historical Single-Node passes; its three Multi-Node results used the wrong topology and receive no gate credit. RC6 has **0/6 complete cells**. Even a complete functional matrix would not establish all security, isolation, fault-tolerance, resource-exhaustion or performance properties required for a production decision. No production-readiness claim is made.

@@ -2,30 +2,48 @@
 
 Audit ID: `ADM-AUDIT-2026-10-21`<br>
 
-## Active functional gate — Release 75, three x86_64 platforms
+## Active functional gate — RC6, three x86_64 platforms
 
 The active release gate has six cells: Fedora Rawhide, Rocky Linux 10 and CentOS Stream 10, each Single-Node and Multi-Node. AlmaLinux is excluded because the configured COPR environment omitted its Go RPM builds (#276). The same exact Admiral sources and coordinated native package set must pass all six. Any source or package-set change invalidates all cell credit and requires a fresh candidate build and run.
 
-**Release 75 status: 6/6 complete cells PASS.** All three Single-Node and all three Multi-Node cells passed on fresh real VMs using the exact unchanged R75 RPM candidate. R74 and earlier evidence does not transfer to this candidate. See the [Single-Node evidence](evidence/release75-single-node-20261024.md), [Rocky Multi-Node evidence](evidence/release75-rocky-multinode-20261024.md), [CentOS Stream Multi-Node evidence](evidence/release75-centos-multinode-20261024.md), and [Fedora Rawhide Multi-Node evidence](evidence/release75-fedora-multinode-20261025.md). The active acceptance checklist is [issue #277](https://github.com/admiral-project/admiral/issues/277); AlmaLinux remains excluded because the configured COPR environment omitted its Go RPMs (#276).
+**Topology correction (2026-10-25):** R75 Single-Node cells remain historical PASS for their exact candidate. R75's three Multi-Node runs used `--admin-portal-node` plus worker spokes and did not validate the required independent portal role; reclassify them as **NOT TESTED for the target Multi-Node cells**. RC6 currently has **0/6 complete cells**. Each new Multi-Node cell requires three real guests: `--admin-node`, `--worker-node`, and `--portal-node`. The active checklist is [issue #277](https://github.com/admiral-project/admiral/issues/277); AlmaLinux remains excluded because the configured COPR environment omitted its Go RPMs (#276).
 
 | Platform | Single-Node | Multi-Node |
 |---|---|---|
-| Fedora Rawhide x86_64 | **PASS** | **PASS** |
-| Rocky Linux 10 x86_64 | **PASS** | **PASS** |
-| CentOS Stream 10 x86_64 | **PASS** | **PASS** |
+| Fedora Rawhide x86_64 | NOT TESTED | NOT TESTED — portal topology absent |
+| Rocky Linux 10 x86_64 | NOT TESTED | NOT TESTED — portal topology absent |
+| CentOS Stream 10 x86_64 | NOT TESTED | NOT TESTED — portal topology absent |
 
-The table above is the active Release 75 gate. Previous Release 74 Multi-Node results and all earlier per-scenario records remain historical evidence and earn no current cell credit.
+The statuses above describe the current RC6 target matrix; prior-candidate runs do not transfer. The prior R75 Single-Node reports are historical results and require rerun on RC6.
 
-Release 75 Multi-Node acceptance-check summary:
+### Independent portal-node acceptance
+
+| Check | Expected result | Status |
+|---|---|---|
+| Install `--portal-node` on a separate guest | Harbor service runs there; it is not serving from admin or worker | NOT TESTED |
+| Register portal spoke | Portal appears active/healthy with role `portal` | NOT TESTED |
+| Harbor to Admirald | Authenticated HTTPS succeeds over the admin WireGuard address | NOT TESTED |
+| Public portal routing | Public request reaches Harbor at the portal guest's WireGuard address through the configured route | NOT TESTED |
+| Customer portal entry | Registration/login and catalog read work through the externally routed portal | NOT TESTED |
+| Customer workload action | A portal action creates the expected Admirald operation and worker runtime/data state | NOT TESTED |
+| Backup upload/restore through independent Harbor (#182) | Authenticated upload and restore use the private portal origin; verify checksum/data and ownership | NOT TESTED |
+| Tier authorization (#181) | A disallowed backup/restore tier is rejected and does not mutate workload or backup state | NOT TESTED |
+| Cancellation/prepaid period (#190) | A cancelled subscription remains available through prepaid expiry and deprovisions only afterward | NOT TESTED |
+
+The following table preserves R75 observations from the wrong topology only;
+none of these entries validates an independent portal guest or earns a cell
+PASS.
+
+Release 75 historical Multi-Node observations:
 
 | Acceptance check | Rocky Linux 10 | CentOS Stream 10 | Fedora Rawhide |
 |---|---:|---:|---:|
-| Secure install/enrollment, worker heartbeat, WireGuard, firewall/SELinux, clean initial state | PASS | PASS | PASS |
-| Place workload on both workers; verify assignment, health, HTTP, SQL persistence and cleanup | PASS | PASS | PASS |
-| Same-key replay, concurrent duplicate provision, resize/deprovision race and cleanup | PASS | PASS | PASS |
-| Active worker reboot and controlled partition/rejoin with state recovery | PASS | PASS | PASS |
-| Refuse active-node removal; remove idle worker and verify inventory/route/resource cleanup | PASS | PASS | PASS |
-| Reboot hub with a live workload; verify peer reconnection, HTTP and SQL persistence | PASS | PASS | PASS |
+| Secure install/enrollment, worker heartbeat, WireGuard, firewall/SELinux, clean initial state | Observed; no topology credit | Observed; no topology credit | Observed; no topology credit |
+| Place workload on both workers; verify assignment, health, HTTP, SQL persistence and cleanup | Observed; no gate credit | Observed; no gate credit | Observed; no gate credit |
+| Same-key replay, concurrent duplicate provision, resize/deprovision race and cleanup | Observed; no topology credit | Observed; no topology credit | Observed; no topology credit |
+| Active worker reboot and controlled partition/rejoin with state recovery | Observed; no topology credit | Observed; no topology credit | Observed; no topology credit |
+| Refuse active-node removal; remove idle worker and verify inventory/route/resource cleanup | Observed; no topology credit | Observed; no topology credit | Observed; no topology credit |
+| Reboot hub with a live workload; verify peer reconnection, HTTP and SQL persistence | Observed; no topology credit | Observed; no topology credit | Observed; no topology credit |
 
 CentOS Stream evidence includes the exact R75 package set on three real guests, the raw log manifest, and reproduction scripts: [`release75-centos-multinode-20261024.md`](evidence/release75-centos-multinode-20261024.md). Its first postrun checker attempt failed due to a test-harness package-name regex; the failed attempt is retained, the checker was corrected, and the rerun passed. No product failure was confirmed.
 

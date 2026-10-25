@@ -17,12 +17,15 @@ set -euo pipefail
 }
 
 release=$1
+version=${ADMIRAL_RC_VERSION:-0.0.1rc5}
+candidate_id=${ADMIRAL_RC_DIR:-${version#0.0.1}-r${release}}
+[[ $version =~ ^0\.0\.1rc[0-9]+$ ]] || { echo "invalid Admiral version: $version" >&2; exit 2; }
 project_root=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/../../../.." && pwd)
 repo_root=${ADMIRAL_VALIDATION_REPO_ROOT:-/var/lib/libvirt/images/admiral-validation/repo}
-candidate_repo="$repo_root/rc5-r${release}"
-validation_dir="$project_root/packaging/build/validation/rc5-r${release}"
+candidate_repo="$repo_root/$candidate_id"
+validation_dir="$project_root/packaging/build/validation/$candidate_id"
 public_key="$candidate_repo/RPM-GPG-KEY-admiral-r${release}"
-key_url="http://192.168.122.1/rc5-r${release}/RPM-GPG-KEY-admiral-r${release}"
+key_url="http://192.168.122.1/${candidate_id}/RPM-GPG-KEY-admiral-r${release}"
 
 for command in rpm rpmsign rpmkeys gpg createrepo_c chcon; do
   command -v "$command" >/dev/null || { echo "required command not found: $command" >&2; exit 1; }
@@ -120,8 +123,8 @@ sign_distro fedora fc46
 
 cat > "$validation_dir/admiral-local-el10.repo" <<EOF
 [admiral-local]
-name=Admiral RC5 Release ${release} signed local validation (EL10)
-baseurl=http://192.168.122.1/rc5-r${release}/el10/\$basearch
+name=Admiral ${version} Release ${release} signed local validation (EL10)
+baseurl=http://192.168.122.1/${candidate_id}/el10/\$basearch
 enabled=1
 gpgcheck=1
 repo_gpgcheck=1
@@ -132,8 +135,8 @@ EOF
 
 cat > "$validation_dir/admiral-local-fedora.repo" <<EOF
 [admiral-local]
-name=Admiral RC5 Release ${release} signed local validation (Fedora Rawhide)
-baseurl=http://192.168.122.1/rc5-r${release}/fedora/\$basearch
+name=Admiral ${version} Release ${release} signed local validation (Fedora Rawhide)
+baseurl=http://192.168.122.1/${candidate_id}/fedora/\$basearch
 enabled=1
 gpgcheck=1
 repo_gpgcheck=1
