@@ -1,0 +1,6 @@
+undefined_domain=rc6-270-tampered
+removed_overlay=/var/lib/libvirt/images/admiral-validation/overlays/rc6-270-tampered.qcow2
+removed_cloud_init_iso=/var/lib/libvirt/images/admiral-validation/cloud-init/rc6-270-tampered.iso
+removed_cloud_init_dir=/var/lib/libvirt/images/admiral-validation/cloud-init/rc6-270-tampered
+removed_dhcp_reservation=name:rc6-270-tampered,mac:52:54:00:27:00:13,ip:192.168.122.157
+shared_seed_images=preserved

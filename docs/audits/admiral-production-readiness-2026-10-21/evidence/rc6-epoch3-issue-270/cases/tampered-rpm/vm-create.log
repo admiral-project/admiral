@@ -1,0 +1,27 @@
+known_hosts_file=/var/lib/libvirt/images/admiral-validation/cloud-init/rc6-270-tampered/known_hosts
+host_key_fingerprint=SHA256:iLDjxbKxsd92fBnub+NK68BCUhPzHy5uFUbod/98Ves
+host_key_private_material=protected-cloud-init-only
+Updated network default persistent config and live state
+xorriso 1.5.6 : RockRidge filesystem manipulator, libburnia project.
+
+Drive current: -outdev 'stdio:/var/lib/libvirt/images/admiral-validation/cloud-init/rc6-270-tampered.iso'
+Media current: stdio file, overwriteable
+Media status : is blank
+Media summary: 0 sessions, 0 data blocks, 0 data, 58.4g free
+Added to ISO image: file '/user-data'='/var/lib/libvirt/images/admiral-validation/cloud-init/rc6-270-tampered/user-data'
+xorriso : UPDATE :       1 files added in 1 seconds
+Added to ISO image: file '/meta-data'='/var/lib/libvirt/images/admiral-validation/cloud-init/rc6-270-tampered/meta-data'
+xorriso : UPDATE :       2 files added in 1 seconds
+ISO image produced: 185 sectors
+Written to medium : 185 sectors at LBA 0
+Writing to 'stdio:/var/lib/libvirt/images/admiral-validation/cloud-init/rc6-270-tampered.iso' completed successfully.
+
+Formatting '/var/lib/libvirt/images/admiral-validation/overlays/rc6-270-tampered.qcow2', fmt=qcow2 cluster_size=65536 extended_l2=off compression_type=zlib size=5368709120 backing_file=/var/lib/libvirt/images/admiral-validation/seeds/Fedora-Rawhide-seed-20261025-rc6-updated.x86_64.qcow2 backing_fmt=qcow2 lazy_refcounts=off refcount_bits=16
+
+Starting install...
+Creating domain...                                          |         00:00     
+Domain creation completed.
+DHCP lease verified: 52:54:00:27:00:13 -> 192.168.122.157
+Created rc6-270-tampered from Fedora-Rawhide-seed-20261025-rc6-updated.x86_64.qcow2 at NAT 192.168.122.157.
+known_hosts_file=/var/lib/libvirt/images/admiral-validation/cloud-init/rc6-270-tampered/known_hosts
+256 SHA256:iLDjxbKxsd92fBnub+NK68BCUhPzHy5uFUbod/98Ves admiral-audit-rc6-270-tampered (ED25519)

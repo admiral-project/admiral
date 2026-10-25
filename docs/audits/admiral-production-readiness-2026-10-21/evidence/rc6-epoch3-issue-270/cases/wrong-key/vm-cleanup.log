@@ -1,0 +1,6 @@
+undefined_domain=rc6-270-wrong-key
+removed_overlay=/var/lib/libvirt/images/admiral-validation/overlays/rc6-270-wrong-key.qcow2
+removed_cloud_init_iso=/var/lib/libvirt/images/admiral-validation/cloud-init/rc6-270-wrong-key.iso
+removed_cloud_init_dir=/var/lib/libvirt/images/admiral-validation/cloud-init/rc6-270-wrong-key
+removed_dhcp_reservation=name:rc6-270-wrong-key,mac:52:54:00:27:00:12,ip:192.168.122.156
+shared_seed_images=preserved

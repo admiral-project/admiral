@@ -1,0 +1,3 @@
+root_commit=ee65cdb3613cd02b8cb41431c2d06e0cc3caf656
+command=python3 -m pytest -q scripts/test_*.py
+result=159 passed in 7.20s

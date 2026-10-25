@@ -1,0 +1,8 @@
+create_helper_exit=0
+requested_ip=192.168.122.156
+actual_ip=192.168.122.156
+expected_failure_exit=nonzero
+observed_exit=1
+wrong_key_rejected=PASS
+no_staged_rpm_installed=PASS
+cleanup=PASS

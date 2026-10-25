@@ -1,0 +1,9 @@
+create_helper_exit=0
+requested_ip=192.168.122.157
+actual_ip=192.168.122.157
+setup_attempt1=FAIL (SSH connection refused during initial boot; no test invoked)
+expected_failure_exit=nonzero
+observed_exit=1
+tampered_signature_rejected=PASS
+no_staged_rpm_installed=PASS
+cleanup=PASS

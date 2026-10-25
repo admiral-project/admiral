@@ -1,0 +1,5 @@
+expected_failure_exit=nonzero
+observed_exit=1
+expected_failure_marker=PASS
+no_staged_rpm_installed=PASS
+cleanup=PASS

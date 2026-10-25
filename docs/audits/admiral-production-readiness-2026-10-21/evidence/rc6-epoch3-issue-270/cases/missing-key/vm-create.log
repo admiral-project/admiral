@@ -1,0 +1,25 @@
+known_hosts_file=/var/lib/libvirt/images/admiral-validation/cloud-init/rc6-270-missing-key/known_hosts
+host_key_fingerprint=SHA256:S650TY60NfH6ByznSyXtY1HIIV1u/wGHz+EXA7H24wo
+host_key_private_material=protected-cloud-init-only
+Updated network default persistent config and live state
+xorriso 1.5.6 : RockRidge filesystem manipulator, libburnia project.
+
+Drive current: -outdev 'stdio:/var/lib/libvirt/images/admiral-validation/cloud-init/rc6-270-missing-key.iso'
+Media current: stdio file, overwriteable
+Media status : is blank
+Media summary: 0 sessions, 0 data blocks, 0 data, 58.4g free
+Added to ISO image: file '/user-data'='/var/lib/libvirt/images/admiral-validation/cloud-init/rc6-270-missing-key/user-data'
+xorriso : UPDATE :       1 files added in 1 seconds
+Added to ISO image: file '/meta-data'='/var/lib/libvirt/images/admiral-validation/cloud-init/rc6-270-missing-key/meta-data'
+xorriso : UPDATE :       2 files added in 1 seconds
+ISO image produced: 185 sectors
+Written to medium : 185 sectors at LBA 0
+Writing to 'stdio:/var/lib/libvirt/images/admiral-validation/cloud-init/rc6-270-missing-key.iso' completed successfully.
+
+Formatting '/var/lib/libvirt/images/admiral-validation/overlays/rc6-270-missing-key.qcow2', fmt=qcow2 cluster_size=65536 extended_l2=off compression_type=zlib size=5368709120 backing_file=/var/lib/libvirt/images/admiral-validation/seeds/Fedora-Rawhide-seed-20261025-rc6-updated.x86_64.qcow2 backing_fmt=qcow2 lazy_refcounts=off refcount_bits=16
+
+Starting install...
+Creating domain...                                          |         00:00     
+Domain creation completed.
+Guest artifacts are retained for inspection. The guest was not contacted; stop it, remove the stale DHCP lease/reservation, and retry with a free address. Do not disable SSH host-key checking.
+DHCP address mismatch for MAC 52:54:00:27:00:11: requested 192.168.122.155, actual 192.168.122.227
