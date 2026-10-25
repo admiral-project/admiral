@@ -8,6 +8,8 @@ case "$os" in rocky|alma|centos|fedora) ;; *) echo "unsupported OS: $os" >&2; ex
 [[ $guest_name =~ ^[A-Za-z0-9][A-Za-z0-9-]{0,62}$ ]] || { echo 'invalid guest name' >&2; exit 2; }
 expected_epoch=${RC6_EXPECTED_EPOCH:-0}
 [[ $expected_epoch =~ ^[0-9]{1,4}$ ]] || { echo 'RC6_EXPECTED_EPOCH must be an RPM Epoch integer' >&2; exit 2; }
+package_release=${RC6_PACKAGE_RELEASE:-1}
+[[ $package_release =~ ^[0-9]+$ ]] || { echo 'RC6_PACKAGE_RELEASE must be an RPM Release integer' >&2; exit 2; }
 repo_root=$(git rev-parse --show-toplevel)
 scripts=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
 runtime=${RC6_RUNTIME_ROOT:-/var/lib/libvirt/images/admiral-validation/evidence/rc6-r1}
@@ -60,13 +62,13 @@ do_control_plane() {
     run_guest_script "$scripts/single-control-plane-lifecycle.sh" "$os" "rc6-control-${os}" "rc6-control-${os}"
 }
 do_host_reboot() {
-  ADMIRAL_RC_RELEASE=6 bash "$scripts/host-reboot.sh" "$os" "$guest_name" "$guest" "$key" "$known_hosts" "rc6-reboot-${os}"
+  ADMIRAL_RC_RELEASE=$package_release bash "$scripts/host-reboot.sh" "$os" "$guest_name" "$guest" "$key" "$known_hosts" "rc6-reboot-${os}"
 }
 do_final_check() {
   expected_dist=$(case "$os" in rocky|centos|alma) echo el10 ;; fedora) echo fc46 ;; esac)
-  remote sudo bash -s -- "$expected_epoch" "$expected_dist" <<'REMOTE'
+remote sudo bash -s -- "$expected_epoch" "$package_release" "$expected_dist" <<'REMOTE'
 set -euo pipefail
-expected_epoch=$1 expected_dist=$2
+expected_epoch=$1 expected_release=$2 expected_dist=$3
 cd /
 failed=$(systemctl --failed --no-legend --no-pager)
 printf 'failed_units=%s\n' "${failed:-none}"
@@ -77,7 +79,7 @@ done
 for package in admiral-common admirald admiral-fleet admiralctl admiral-harbor admiral-flagship; do
   rpm -q --qf '%{EPOCHNUM}:%{NAME}-%{VERSION}-%{RELEASE}.%{ARCH}\n' "$package"
   actual=$(rpm -q --qf '%{EPOCHNUM}:%{VERSION}-%{RELEASE}' "$package")
-  [[ $actual == "$expected_epoch:0.0.1rc6-1.$expected_dist" ]]
+  [[ $actual == "$expected_epoch:0.0.1rc6-$expected_release.$expected_dist" ]]
 done
 uid=$(id -u admiral-apps)
 home=$(getent passwd admiral-apps | cut -d: -f6)
@@ -92,8 +94,8 @@ REMOTE
 }
 
 root_commit=$(git -C "$repo_root" rev-parse HEAD)
-printf 'candidate=0.0.1rc6-1 epoch=%s os=%s guest=%s node=%s root_commit=%s start_utc=%s\n' \
-  "$expected_epoch" "$os" "$guest_ip" "$node_id" "$root_commit" "$(date -u +%FT%TZ)"
+printf 'candidate=0.0.1rc6-%s epoch=%s os=%s guest=%s node=%s root_commit=%s start_utc=%s\n' \
+  "$package_release" "$expected_epoch" "$os" "$guest_ip" "$node_id" "$root_commit" "$(date -u +%FT%TZ)"
 for ref in ADMIRALD_COMMIT FLEET_COMMIT ADMIRALCTL_COMMIT FLAGSHIP_COMMIT HARBOR_COMMIT; do
   printf '%s=%s\n' "$ref" "$(sed -n "s/^$ref := //p" "$repo_root/Makefile")"
 done
