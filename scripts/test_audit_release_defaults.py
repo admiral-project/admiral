@@ -90,6 +90,27 @@ def test_single_node_installer_selects_native_candidate_dist_tag():
     assert '[[ $actual == "${expected_epoch}:${expected_version}-${expected_release}.${rpm_suffix}" ]]' in helper
 
 
+def test_rc6_single_node_runner_defaults_to_the_candidate_evr():
+    runner = (
+        ROOT
+        / "docs/audits/admiral-production-readiness-2026-10-21/scripts/rc6/run-single-lane.sh"
+    ).read_text()
+    epochs = set()
+    releases = set()
+    for package in RPM_SPECS:
+        spec = (ROOT / f"packaging/rpm/{package}.spec").read_text()
+        epoch = re.search(r"^Epoch:\s*(\d+)$", spec, re.MULTILINE)
+        release = re.search(r"^Release:\s*(\d+)%\{\?dist\}", spec, re.MULTILINE)
+        assert epoch and release, f"missing candidate EVR in {package}.spec"
+        epochs.add(epoch.group(1))
+        releases.add(release.group(1))
+    assert len(epochs) == len(releases) == 1
+    expected_epoch = next(iter(epochs))
+    expected_release = next(iter(releases))
+    assert f"RC6_EXPECTED_EPOCH:-{expected_epoch}" in runner
+    assert f"RC6_PACKAGE_RELEASE:-{expected_release}" in runner
+
+
 def test_candidate_install_helpers_do_not_bypass_dnf_vendor_resolution():
     for helper in AUDIT_HELPERS:
         text = helper.read_text()
@@ -172,7 +193,7 @@ def test_r75_audit_matches_lifecycle_customer_and_precreates_logs():
 
 def test_rc6_single_lane_uses_the_selected_epoch_and_release():
     lane = RC6_SINGLE_LANE.read_text(encoding="utf-8")
-    assert "package_release=${RC6_PACKAGE_RELEASE:-2}" in lane
-    assert "expected_epoch=${RC6_EXPECTED_EPOCH:-0}" in lane
+    assert "package_release=${RC6_PACKAGE_RELEASE:-1}" in lane
+    assert "expected_epoch=${RC6_EXPECTED_EPOCH:-5}" in lane
     assert "ADMIRAL_RC_RELEASE=$package_release" in lane
     assert 'expected_epoch:0.0.1rc6-$expected_release.$expected_dist' in lane
