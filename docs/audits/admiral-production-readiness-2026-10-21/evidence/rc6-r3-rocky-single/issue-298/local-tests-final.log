@@ -1,0 +1,9 @@
+base_commit=05bafe246f3782b50c80a601d49a9a160a2712bf
+$ python3 -m pytest -q scripts/test_*.py
+........................................................................ [ 45%]
+........................................................................ [ 90%]
+................                                                         [100%]
+160 passed in 12.33s
+$ ansible-playbook --syntax-check ansible/site.yml -i ansible/inventory/localhost.yml
+
+playbook: ansible/site.yml

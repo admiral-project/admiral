@@ -1,0 +1,45 @@
+guest=rc6e99rocky-devnode
+os=Rocky Linux 10.2 (Red Quartz)
+
+service_environment=
+[admiral-harbor.service]
+Environment=ENV=development
+EnvironmentFiles=/etc/admiral/harbor.env (ignore_errors=no)
+EnvironmentFiles=/etc/admiral/harbor.smtp.env (ignore_errors=yes)
+[admiral-harbor-worker.service]
+Environment=ENV=production
+EnvironmentFiles=/etc/admiral/harbor.env (ignore_errors=no)
+EnvironmentFiles=/etc/admiral/harbor.smtp.env (ignore_errors=yes)
+[admiral-harbor-catalog-sync.service]
+Environment=ENV=production
+EnvironmentFiles=/etc/admiral/harbor.env (ignore_errors=no)
+
+nonsecret_dev_flags=
+26:ADMIRAL_CA_FILE=
+27:ADMIRAL_INSECURE_SKIP_VERIFY=1
+
+background_service_failure=
+ValueError: Production security validation failed:
+- ADMIRAL_INSECURE_SKIP_VERIFY must be false in production
+admiral-harbor-catalog-sync.service: Main process exited, code=exited, status=1/FAILURE
+admiral-harbor-catalog-sync.service: Failed with result 'exit-code'.
+Failed to start admiral-harbor-catalog-sync.service - Admiral Harbor Catalog Synchronization Service.
+admiral-harbor-catalog-sync.service: Consumed 1.854s CPU time, 57.3M memory peak.
+Starting admiral-harbor-catalog-sync.service - Admiral Harbor Catalog Synchronization Service...
+Traceback (most recent call last):
+  File "/usr/lib/admiral/harbor/cli.py", line 93, in <module>
+    sys.exit(cmd_sync())
+             ^^^^^^^^^^
+  File "/usr/lib/admiral/harbor/cli.py", line 27, in cmd_sync
+    app = create_app()
+          ^^^^^^^^^^^^
+  File "/usr/lib/admiral/harbor/app/__init__.py", line 73, in create_app
+    validate_production_config(app.config)
+  File "/usr/lib/admiral/harbor/app/security.py", line 99, in validate_production_config
+    raise ValueError("Production security validation failed:\n- " + "\n- ".join(errors))
+ValueError: Production security validation failed:
+- ADMIRAL_INSECURE_SKIP_VERIFY must be false in production
+admiral-harbor-catalog-sync.service: Main process exited, code=exited, status=1/FAILURE
+admiral-harbor-catalog-sync.service: Failed with result 'exit-code'.
+Failed to start admiral-harbor-catalog-sync.service - Admiral Harbor Catalog Synchronization Service.
+admiral-harbor-catalog-sync.service: Consumed 2.417s CPU time, 57.3M memory peak.
