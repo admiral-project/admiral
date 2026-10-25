@@ -1,0 +1,15 @@
+admin_login=PASS
+synthetic_pending_signup=rc6-issue289-20261025151244-7880ec@example.test
+approval_status=303
+approval_location=/admin/review-user
+approval_content_length=0
+approval_body_bytes=0
+approval_redirect_followup=HTTP 200
+approved_customer_login=PASS
+catalog_sync_status=303
+catalog_sync_location=/admin/
+catalog_sync_content_length=0
+catalog_sync_body_bytes=0
+catalog_redirect_followup=HTTP 200
+issue_289_direct_portal=PASS
+exit_code=0

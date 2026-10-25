@@ -1,0 +1,11 @@
+candidate=Admiral 0.0.1rc6 Release 1
+rpm_epoch=(none)
+target=Rocky Linux 10 x86_64
+root_commit=267da7ebd739a0703c276ec8d4770ffa31a45f25
+admiral-flagship=b7325bbc71fc474a521496e593b2967e4d555ac1
+admiral-fleet=fc6909f6c41507d04aa204ebeafbbaaa4ef2c686
+admiral-harbor=dd4818b6e2bc53eea4495fc5e374a4893cfcb107
+admiralctl=fa2a65e866310bd82bea78859804b6c3aea7989a
+admirald=421c6007f9cf51a7e3bf23a6e2173bb0a39e27d3
+root_ci=https://github.com/admiral-project/admiral/actions/runs/40194076634 (success)
+EL10 RPMs are the signed x86_64/noarch artifacts listed in candidate-rpm-manifest-el10.tsv; their SHA-256 values are copied from the signed local validation repository.

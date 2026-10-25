@@ -1,0 +1,2 @@
+restore_operations_before_negative=3
+statuses=succeeded,failed,failed

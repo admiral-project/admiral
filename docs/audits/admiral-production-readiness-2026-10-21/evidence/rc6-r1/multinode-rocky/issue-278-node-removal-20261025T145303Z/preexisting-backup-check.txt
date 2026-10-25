@@ -1,0 +1,1 @@
+docs/audits/admiral-production-readiness-2026-10-21/evidence/rc6-r1/multinode-rocky/issue-278-node-removal-20261025T145303Z/preexisting-issue182-backup.tar.gz: OK

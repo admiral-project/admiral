@@ -1,0 +1,12 @@
+admin_gpg-pubkey-a24bc9a8-6add6d8d Admiral RC6 local validation (2026-10) <admiral-validation@localhost> public key
+admin_gpgcheck=1
+admin_repo_gpgcheck=1
+admin_gpgkey=http://192.168.122.1/rc6-r1/RPM-GPG-KEY-admiral-r1
+worker_gpg-pubkey-a24bc9a8-6add6d8d Admiral RC6 local validation (2026-10) <admiral-validation@localhost> public key
+worker_gpgcheck=1
+worker_repo_gpgcheck=1
+worker_gpgkey=http://192.168.122.1/rc6-r1/RPM-GPG-KEY-admiral-r1
+portal_gpg-pubkey-a24bc9a8-6add6d8d Admiral RC6 local validation (2026-10) <admiral-validation@localhost> public key
+portal_gpgcheck=1
+portal_repo_gpgcheck=1
+portal_gpgkey=http://192.168.122.1/rc6-r1/RPM-GPG-KEY-admiral-r1

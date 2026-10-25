@@ -1,0 +1,4 @@
+hzxMfjTdNKDYDcYgeUHgaHEZlc9tgY5bAu9I54a3iCo=	10.99.0.1/32
+QXJ+oA4sTB13BIWffZZlpKdxu2x+P/4+MUu1sBDC5DA=	10.99.0.2/32
+rule family="ipv4" source address="10.99.0.1" port port="5001" protocol="tcp" accept
+rule family="ipv4" source address="10.99.0.2/32" port port="5001" protocol="tcp" accept

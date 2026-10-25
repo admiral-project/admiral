@@ -1,0 +1,12 @@
+{
+  "action": "resume_app",
+  "admin_user": "system",
+  "created_at": "2026-10-25T14:34:27.414391Z",
+  "error_message": null,
+  "id": "op_e029714c9099813a",
+  "instance_id": "inst_24654c580b2a348c",
+  "node_id": "rc6r1-worker",
+  "status": "succeeded",
+  "task_id": "task_4f58850636f3979a",
+  "updated_at": "2026-10-25T14:34:30.593644Z"
+}

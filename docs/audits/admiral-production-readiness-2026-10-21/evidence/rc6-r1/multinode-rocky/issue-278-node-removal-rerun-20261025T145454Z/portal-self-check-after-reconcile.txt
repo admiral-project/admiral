@@ -1,0 +1,2 @@
+LOCAL_READY_HTTP=200 TLS_VERIFY=0
+✓ admirald reachable at https://10.99.0.1:8080/api/v1/harbor_ping (0.025s)

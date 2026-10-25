@@ -1,0 +1,1499 @@
+[INFO] Retrieving SSH host key for 10.77.0.3...
+[INFO] Expected fingerprint: SHA256:Txi0BixAR0Z5o7di5A9Ml94xL49+bhQG1LzR+wkiy3g
+[INFO] Received fingerprints: SHA256:Txi0BixAR0Z5o7di5A9Ml94xL49+bhQG1LzR+wkiy3g
+
+[INFO] SSH host key fingerprint verified.
+[INFO] Spoke mode: leaving local repositories and packages unchanged.
+[INFO] Running Admiral configuration playbook for mode: worker-node
+
+PLAY [Configure Admiral platform] **********************************************
+
+TASK [Gathering Facts] *********************************************************
+ok: [target]
+
+TASK [Set the default WireGuard subnet when no custom subnet is configured] ****
+skipping: [target]
+
+TASK [Derive the WireGuard hub address when no explicit address is configured] ***
+skipping: [target]
+
+TASK [Map installer mode to persistent node role] ******************************
+ok: [target]
+
+TASK [Check persistent Admiral node role] **************************************
+ok: [target]
+
+TASK [Read persistent Admiral node role] ***************************************
+ok: [target]
+
+TASK [Decode persistent Admiral node role] *************************************
+ok: [target]
+
+TASK [Detect fresh admiral-common RPM baseline] ********************************
+skipping: [target]
+
+TASK [Detect placeholder Admirald configuration baseline] **********************
+ok: [target]
+
+TASK [Detect missing Fleet callback key in Admirald configuration] *************
+ok: [target]
+
+TASK [Check for legacy Admiral installation state] *****************************
+skipping: [target] => (item=/etc/admiral/secrets) 
+skipping: [target] => (item=/etc/admiral/harbor.env) 
+skipping: [target] => (item=/etc/admiral/fleet.env) 
+skipping: [target] => (item=/etc/admirald.ini) 
+skipping: [target]
+
+TASK [Reject unprofiled legacy Admiral installations] **************************
+skipping: [target]
+
+TASK [Reject incompatible persistent node role] ********************************
+ok: [target] => {
+    "changed": false,
+    "msg": "All assertions passed"
+}
+
+TASK [Determine WireGuard role] ************************************************
+ok: [target]
+
+TASK [Determine effective host security profile] *******************************
+ok: [target]
+
+TASK [Determine control-plane runtime address] *********************************
+ok: [target]
+
+TASK [Stop standalone WireGuard service] ***************************************
+skipping: [target]
+
+TASK [Remove standalone WireGuard configuration] *******************************
+skipping: [target]
+
+TASK [admiral_common : Install DNF plugins for Admiral COPR] *******************
+ok: [target]
+
+TASK [admiral_common : Enable EPEL repository] *********************************
+ok: [target]
+
+TASK [admiral_common : Enable EL10 CRB repository] *****************************
+ok: [target]
+
+TASK [admiral_common : Remove obsolete Caddy COPR repository] ******************
+ok: [target]
+
+TASK [admiral_common : Enable Admiral COPR repository] *************************
+ok: [target]
+
+TASK [admiral_common : Verify COPR repositories enforce GPG signature checks] ***
+ok: [target] => (item=/etc/yum.repos.d/_copr:copr.fedorainfracloud.org:admiral-project:admiral.repo)
+
+TASK [admiral_common : Refresh package metadata after enabling repositories] ***
+ok: [target]
+
+TASK [admiral_common : Apply available security updates] ***********************
+ok: [target]
+
+TASK [admiral_common : Install automatic security update support] **************
+ok: [target]
+
+TASK [admiral_common : Configure automatic security updates] *******************
+ok: [target] => (item={'option': 'upgrade_type', 'value': 'security'})
+ok: [target] => (item={'option': 'download_updates', 'value': 'yes'})
+ok: [target] => (item={'option': 'apply_updates', 'value': 'yes'})
+ok: [target] => (item={'option': 'emit_via', 'value': 'stdio'})
+
+TASK [admiral_common : Enable automatic security updates] **********************
+ok: [target]
+
+TASK [admiral_common : Install production time synchronization] ****************
+ok: [target]
+
+TASK [admiral_common : Enable production time synchronization] *****************
+ok: [target]
+
+TASK [admiral_common : Install admiral-common baseline package] ****************
+ok: [target]
+
+TASK [admiral_common : Detect Fedora systemd-resolved service for secure LLMNR policy] ***
+skipping: [target]
+
+TASK [admiral_common : Disable LLMNR on Fedora secure installs] ****************
+skipping: [target]
+
+TASK [admiral_common : Restart systemd-resolved after changing the Fedora LLMNR policy] ***
+skipping: [target]
+
+TASK [admiral_common : Read effective Fedora resolver protocols] ***************
+skipping: [target]
+
+TASK [admiral_common : Verify LLMNR is disabled on Fedora secure installs] *****
+skipping: [target]
+
+TASK [admiral_common : Install admin-plane packages] ***************************
+skipping: [target]
+
+TASK [admiral_common : Read Caddy SELinux executable context on Fedora 45 and later] ***
+skipping: [target]
+
+TASK [admiral_common : Read SELinux port mappings when Fedora confines Caddy] ***
+skipping: [target]
+
+TASK [admiral_common : Resolve the explicit SELinux type for Caddy admin TCP/2019] ***
+skipping: [target]
+
+TASK [admiral_common : Allow Caddy's loopback admin API port under Fedora SELinux policy] ***
+skipping: [target]
+
+TASK [admiral_common : Stop obsolete Caddy Unix socket permission watcher] *****
+skipping: [target]
+
+TASK [admiral_common : Remove obsolete Caddy Unix socket configuration] ********
+skipping: [target] => (item=/etc/systemd/system/caddy.service.d/admiral-runtime.conf) 
+skipping: [target] => (item=/etc/systemd/system/admiral-caddy-socket-permissions.service) 
+skipping: [target] => (item=/etc/systemd/system/admiral-caddy-socket-permissions.path) 
+skipping: [target]
+
+TASK [admiral_common : Reload systemd after removing Caddy Unix socket configuration] ***
+skipping: [target]
+
+TASK [admiral_common : Install managed Caddyfile for Admiral] ******************
+skipping: [target]
+
+TASK [admiral_common : Apply Caddy admin endpoint before dependent services] ***
+skipping: [target]
+
+TASK [admiral_common : Deploy Admiral SSH hardening baseline] ******************
+ok: [target]
+
+TASK [admiral_common : Reload sshd after hardening update] *********************
+skipping: [target]
+
+TASK [admiral_common : Install PostgreSQL server utilities] ********************
+skipping: [target]
+
+TASK [admiral_common : Inspect Admiral configuration directories installed by admiral-common] ***
+ok: [target] => (item=/etc/admiral)
+ok: [target] => (item=/etc/admiral/tls)
+ok: [target] => (item=/etc/admiral/ssh)
+
+TASK [admiral_common : Require the admiral-common RPM directory attributes] ****
+ok: [target] => (item={'changed': False, 'stat': {'exists': True, 'path': '/etc/admiral', 'mode': '0750', 'isdir': True, 'ischr': False, 'isblk': False, 'isreg': False, 'isfifo': False, 'islnk': False, 'issock': False, 'uid': 0, 'gid': 992, 'size': 57, 'inode': 18970, 'dev': 64516, 'nlink': 4, 'atime': 1792935520.1850178, 'mtime': 1792936331.3064349, 'ctime': 1792936331.3064349, 'wusr': True, 'rusr': True, 'xusr': True, 'wgrp': False, 'rgrp': True, 'xgrp': True, 'woth': False, 'roth': False, 'xoth': False, 'isuid': False, 'isgid': False, 'blocks': 0, 'block_size': 4096, 'device_type': 0, 'readable': True, 'writeable': True, 'executable': True, 'pw_name': 'root', 'gr_name': 'admiral', 'mimetype': 'inode/directory', 'charset': 'binary', 'version': '3942722431', 'attributes': [], 'attr_flags': ''}, 'invocation': {'module_args': {'path': '/etc/admiral', 'follow': False, 'get_checksum': True, 'get_mime': True, 'get_attributes': True, 'checksum_algorithm': 'sha1'}}, 'failed': False, 'item': '/etc/admiral', 'ansible_loop_var': 'item'}) => {
+    "ansible_loop_var": "item",
+    "changed": false,
+    "item": {
+        "ansible_loop_var": "item",
+        "changed": false,
+        "failed": false,
+        "invocation": {
+            "module_args": {
+                "checksum_algorithm": "sha1",
+                "follow": false,
+                "get_attributes": true,
+                "get_checksum": true,
+                "get_mime": true,
+                "path": "/etc/admiral"
+            }
+        },
+        "item": "/etc/admiral",
+        "stat": {
+            "atime": 1792935520.1850178,
+            "attr_flags": "",
+            "attributes": [],
+            "block_size": 4096,
+            "blocks": 0,
+            "charset": "binary",
+            "ctime": 1792936331.3064349,
+            "dev": 64516,
+            "device_type": 0,
+            "executable": true,
+            "exists": true,
+            "gid": 992,
+            "gr_name": "admiral",
+            "inode": 18970,
+            "isblk": false,
+            "ischr": false,
+            "isdir": true,
+            "isfifo": false,
+            "isgid": false,
+            "islnk": false,
+            "isreg": false,
+            "issock": false,
+            "isuid": false,
+            "mimetype": "inode/directory",
+            "mode": "0750",
+            "mtime": 1792936331.3064349,
+            "nlink": 4,
+            "path": "/etc/admiral",
+            "pw_name": "root",
+            "readable": true,
+            "rgrp": true,
+            "roth": false,
+            "rusr": true,
+            "size": 57,
+            "uid": 0,
+            "version": "3942722431",
+            "wgrp": false,
+            "woth": false,
+            "writeable": true,
+            "wusr": true,
+            "xgrp": true,
+            "xoth": false,
+            "xusr": true
+        }
+    },
+    "msg": "All assertions passed"
+}
+ok: [target] => (item={'changed': False, 'stat': {'exists': True, 'path': '/etc/admiral/tls', 'mode': '0750', 'isdir': True, 'ischr': False, 'isblk': False, 'isreg': False, 'isfifo': False, 'islnk': False, 'issock': False, 'uid': 0, 'gid': 992, 'size': 20, 'inode': 17716694, 'dev': 64516, 'nlink': 2, 'atime': 1792935520.186018, 'mtime': 1792935536.256237, 'ctime': 1792935536.256237, 'wusr': True, 'rusr': True, 'xusr': True, 'wgrp': False, 'rgrp': True, 'xgrp': True, 'woth': False, 'roth': False, 'xoth': False, 'isuid': False, 'isgid': False, 'blocks': 0, 'block_size': 4096, 'device_type': 0, 'readable': True, 'writeable': True, 'executable': True, 'pw_name': 'root', 'gr_name': 'admiral', 'mimetype': 'inode/directory', 'charset': 'binary', 'version': '1730840098', 'attributes': [], 'attr_flags': ''}, 'invocation': {'module_args': {'path': '/etc/admiral/tls', 'follow': False, 'get_checksum': True, 'get_mime': True, 'get_attributes': True, 'checksum_algorithm': 'sha1'}}, 'failed': False, 'item': '/etc/admiral/tls', 'ansible_loop_var': 'item'}) => {
+    "ansible_loop_var": "item",
+    "changed": false,
+    "item": {
+        "ansible_loop_var": "item",
+        "changed": false,
+        "failed": false,
+        "invocation": {
+            "module_args": {
+                "checksum_algorithm": "sha1",
+                "follow": false,
+                "get_attributes": true,
+                "get_checksum": true,
+                "get_mime": true,
+                "path": "/etc/admiral/tls"
+            }
+        },
+        "item": "/etc/admiral/tls",
+        "stat": {
+            "atime": 1792935520.186018,
+            "attr_flags": "",
+            "attributes": [],
+            "block_size": 4096,
+            "blocks": 0,
+            "charset": "binary",
+            "ctime": 1792935536.256237,
+            "dev": 64516,
+            "device_type": 0,
+            "executable": true,
+            "exists": true,
+            "gid": 992,
+            "gr_name": "admiral",
+            "inode": 17716694,
+            "isblk": false,
+            "ischr": false,
+            "isdir": true,
+            "isfifo": false,
+            "isgid": false,
+            "islnk": false,
+            "isreg": false,
+            "issock": false,
+            "isuid": false,
+            "mimetype": "inode/directory",
+            "mode": "0750",
+            "mtime": 1792935536.256237,
+            "nlink": 2,
+            "path": "/etc/admiral/tls",
+            "pw_name": "root",
+            "readable": true,
+            "rgrp": true,
+            "roth": false,
+            "rusr": true,
+            "size": 20,
+            "uid": 0,
+            "version": "1730840098",
+            "wgrp": false,
+            "woth": false,
+            "writeable": true,
+            "wusr": true,
+            "xgrp": true,
+            "xoth": false,
+            "xusr": true
+        }
+    },
+    "msg": "All assertions passed"
+}
+ok: [target] => (item={'changed': False, 'stat': {'exists': True, 'path': '/etc/admiral/ssh', 'mode': '0750', 'isdir': True, 'ischr': False, 'isblk': False, 'isreg': False, 'isfifo': False, 'islnk': False, 'issock': False, 'uid': 0, 'gid': 992, 'size': 6, 'inode': 8391009, 'dev': 64516, 'nlink': 2, 'atime': 1792935520.186018, 'mtime': 1792886400.0, 'ctime': 1792935519.8776844, 'wusr': True, 'rusr': True, 'xusr': True, 'wgrp': False, 'rgrp': True, 'xgrp': True, 'woth': False, 'roth': False, 'xoth': False, 'isuid': False, 'isgid': False, 'blocks': 0, 'block_size': 4096, 'device_type': 0, 'readable': True, 'writeable': True, 'executable': True, 'pw_name': 'root', 'gr_name': 'admiral', 'mimetype': 'inode/directory', 'charset': 'binary', 'version': '2743626222', 'attributes': [], 'attr_flags': ''}, 'invocation': {'module_args': {'path': '/etc/admiral/ssh', 'follow': False, 'get_checksum': True, 'get_mime': True, 'get_attributes': True, 'checksum_algorithm': 'sha1'}}, 'failed': False, 'item': '/etc/admiral/ssh', 'ansible_loop_var': 'item'}) => {
+    "ansible_loop_var": "item",
+    "changed": false,
+    "item": {
+        "ansible_loop_var": "item",
+        "changed": false,
+        "failed": false,
+        "invocation": {
+            "module_args": {
+                "checksum_algorithm": "sha1",
+                "follow": false,
+                "get_attributes": true,
+                "get_checksum": true,
+                "get_mime": true,
+                "path": "/etc/admiral/ssh"
+            }
+        },
+        "item": "/etc/admiral/ssh",
+        "stat": {
+            "atime": 1792935520.186018,
+            "attr_flags": "",
+            "attributes": [],
+            "block_size": 4096,
+            "blocks": 0,
+            "charset": "binary",
+            "ctime": 1792935519.8776844,
+            "dev": 64516,
+            "device_type": 0,
+            "executable": true,
+            "exists": true,
+            "gid": 992,
+            "gr_name": "admiral",
+            "inode": 8391009,
+            "isblk": false,
+            "ischr": false,
+            "isdir": true,
+            "isfifo": false,
+            "isgid": false,
+            "islnk": false,
+            "isreg": false,
+            "issock": false,
+            "isuid": false,
+            "mimetype": "inode/directory",
+            "mode": "0750",
+            "mtime": 1792886400.0,
+            "nlink": 2,
+            "path": "/etc/admiral/ssh",
+            "pw_name": "root",
+            "readable": true,
+            "rgrp": true,
+            "roth": false,
+            "rusr": true,
+            "size": 6,
+            "uid": 0,
+            "version": "2743626222",
+            "wgrp": false,
+            "woth": false,
+            "writeable": true,
+            "wusr": true,
+            "xgrp": true,
+            "xoth": false,
+            "xusr": true
+        }
+    },
+    "msg": "All assertions passed"
+}
+
+TASK [admiral_common : Copy admin bootstrap materials to remote spokes] ********
+ok: [target] => (item={'src': '/etc/admiral/tls/ca.pem', 'dest': '/etc/admiral/tls/ca.pem', 'mode': '0644'})
+ok: [target] => (item={'src': '/etc/wireguard/admiral.pub', 'dest': '/etc/wireguard/hub.pub', 'mode': '0644'})
+
+TASK [admiral_common : Check whether Admiral secret inventory already exists] ***
+skipping: [target]
+
+TASK [admiral_common : Read existing Admiral secret inventory] *****************
+skipping: [target]
+
+TASK [admiral_common : Decode existing Admiral secret inventory] ***************
+skipping: [target]
+
+TASK [admiral_common : Initialize empty Admiral secret inventory text] *********
+skipping: [target]
+
+TASK [admiral_common : Migrate legacy admin service token name before inventory validation] ***
+skipping: [target]
+
+TASK [admiral_common : Require a complete existing Admiral secret inventory] ***
+skipping: [target] => (item=None) 
+skipping: [target] => (item=None) 
+skipping: [target] => (item=None) 
+skipping: [target] => (item=None) 
+skipping: [target] => (item=None) 
+skipping: [target] => (item=None) 
+skipping: [target] => (item=None) 
+skipping: [target] => (item=None) 
+skipping: [target] => (item=None) 
+skipping: [target] => (item=None) 
+skipping: [target] => (item=None) 
+skipping: [target] => (item=None) 
+skipping: [target] => (item=None) 
+skipping: [target] => (item=None) 
+skipping: [target] => (item=None) 
+skipping: [target] => (item=None) 
+skipping: [target] => (item=None) 
+skipping: [target] => (item=None) 
+skipping: [target] => (item=None) 
+skipping: [target] => (item=None) 
+skipping: [target] => (item=None) 
+skipping: [target] => (item=None) 
+skipping: [target] => (item=None) 
+skipping: [target]
+
+TASK [admiral_common : Extract existing Admiral secrets] ***********************
+skipping: [target]
+
+TASK [admiral_common : Generate Admiral PostgreSQL password] *******************
+skipping: [target]
+
+TASK [admiral_common : Generate Admiral internal service token] ****************
+skipping: [target]
+
+TASK [admiral_common : Generate Admiral token pepper] **************************
+skipping: [target]
+
+TASK [admiral_common : Generate Admiral secrets key] ***************************
+skipping: [target]
+
+TASK [admiral_common : Generate Flagship secret key] ***************************
+skipping: [target]
+
+TASK [admiral_common : Generate Flagship bootstrap username suffix] ************
+skipping: [target]
+
+TASK [admiral_common : Generate Flagship bootstrap password] *******************
+skipping: [target]
+
+TASK [admiral_common : Generate Harbor secret key] *****************************
+skipping: [target]
+
+TASK [admiral_common : Generate Harbor encryption key] *************************
+skipping: [target]
+
+TASK [admiral_common : Generate Harbor bootstrap username suffix] **************
+skipping: [target]
+
+TASK [admiral_common : Generate Harbor bootstrap password] *********************
+skipping: [target]
+
+TASK [admiral_common : Generate Harbor legacy admin rotation password] *********
+skipping: [target]
+
+TASK [admiral_common : Generate Harbor API token (scoped, not admin-level)] ****
+skipping: [target]
+
+TASK [admiral_common : Generate Cockpit admin username suffix] *****************
+skipping: [target]
+
+TASK [admiral_common : Generate Cockpit admin password] ************************
+skipping: [target]
+
+TASK [admiral_common : Generate Admiral fleet token] ***************************
+skipping: [target]
+
+TASK [admiral_common : Generate Ed25519 signing key pair (admin only)] *********
+skipping: [target]
+
+TASK [admiral_common : Extract Ed25519 private key file path from CLI output] ***
+skipping: [target]
+
+TASK [admiral_common : Read Ed25519 private key seed from generated file] ******
+skipping: [target]
+
+TASK [admiral_common : Set Ed25519 private key from file content] **************
+skipping: [target]
+
+TASK [admiral_common : Generate control-plane queue encryption key (AES-256-GCM)] ***
+skipping: [target]
+
+TASK [admiral_common : Generate Fleet callback HMAC key] ***********************
+skipping: [target]
+
+TASK [admiral_common : Determine stable SSH delivery identifier] ***************
+skipping: [target]
+
+TASK [admiral_common : Inspect package-owned SSH delivery directory on the Admin controller] ***
+skipping: [target]
+
+TASK [admiral_common : Require the package-owned SSH delivery directory] *******
+skipping: [target]
+
+TASK [admiral_common : Generate per-node administrative SSH identity on the Admin controller] ***
+skipping: [target]
+
+TASK [admiral_common : Read per-node administrative public key from the Admin controller] ***
+skipping: [target]
+
+TASK [admiral_common : Select generated per-node public key for SSH administration] ***
+skipping: [target]
+
+TASK [admiral_common : Calculate administrative SSH key fingerprint] ***********
+skipping: [target]
+
+TASK [admiral_common : Report administrative SSH delivery artifact] ************
+skipping: [target]
+
+TASK [admiral_common : Generate persistent session HMAC key] *******************
+skipping: [target]
+
+TASK [admiral_common : Consolidate Admiral installation secrets] ***************
+skipping: [target]
+
+TASK [admiral_common : Persist bootstrap secret inventory] *********************
+skipping: [target]
+
+TASK [admiral_common : Verify bootstrap secret inventory permissions] **********
+skipping: [target]
+
+TASK [admiral_common : Enforce bootstrap secret inventory permissions] *********
+skipping: [target]
+
+TASK [admiral_common : Remove secrets file from non-admin nodes (safety cleanup)] ***
+ok: [target]
+
+TASK [admiral_common : Determine spoke SSH delivery identifier] ****************
+ok: [target]
+
+TASK [admiral_common : Generate spoke administrative SSH identity on the Admin controller] ***
+changed: [target -> localhost]
+
+TASK [admiral_common : Read spoke administrative SSH public key] ***************
+ok: [target -> localhost]
+
+TASK [admiral_common : Select spoke administrative SSH identity] ***************
+ok: [target]
+
+TASK [admiral_common : Calculate spoke administrative SSH fingerprint] *********
+ok: [target -> localhost]
+
+TASK [admiral_common : Report spoke administrative SSH delivery artifact] ******
+ok: [target] => {
+    "msg": {
+        "node_id": "rc6r1-worker",
+        "private_key": "/var/lib/admiral/ssh-delivery/rc6r1-worker.ed25519",
+        "public_key_fingerprint": "256 SHA256:Id9nkEv5t7/zz9IuKJNe7mJ8aFmaWUYStYi+f8HJnVk admiral-ssh@rc6r1-worker (ED25519)",
+        "user": "admiral-ssh"
+    }
+}
+
+TASK [admiral_common : Read existing Harbor environment for database credential] ***
+skipping: [target]
+
+TASK [admiral_common : Extract existing portal PostgreSQL credential] **********
+skipping: [target]
+
+TASK [admiral_common : Generate portal-local PostgreSQL credential] ************
+skipping: [target]
+
+TASK [admiral_common : Set dedicated portal PostgreSQL identity] ***************
+skipping: [target]
+
+TASK [admiral_common : Create Admiral SSH admin user] **************************
+ok: [target]
+
+TASK [admiral_common : Configure NOPASSWD sudo for SSH admin user] *************
+ok: [target]
+
+TASK [admiral_common : Disable inherited Cockpit socket on worker and portal profiles] ***
+ok: [target]
+
+TASK [admiral_common : Deploy SSH public key to admin user] ********************
+ok: [target]
+
+TASK [admiral_common : Validate legacy SSH admin identity before retirement] ***
+skipping: [target]
+
+TASK [admiral_common : Remove legacy SSH admin sudo privilege] *****************
+skipping: [target]
+
+TASK [admiral_common : Disable legacy SSH admin account] ***********************
+skipping: [target]
+
+TASK [admiral_common : Remove legacy SSH admin authorized keys] ****************
+skipping: [target]
+
+TASK [admiral_common : Determine TLS SAN string including public IP and WireGuard IP] ***
+skipping: [target]
+
+TASK [admiral_common : Generate self-signed CA certificate on hub nodes] *******
+skipping: [target]
+
+TASK [admiral_common : Check whether the admirald leaf certificate already exists] ***
+skipping: [target]
+
+TASK [admiral_common : Verify an existing admirald leaf against the configured CA] ***
+skipping: [target]
+
+TASK [admiral_common : Determine whether the existing leaf must be replaced with a CA-signed certificate] ***
+skipping: [target]
+
+TASK [admiral_common : Generate admirald server key] ***************************
+skipping: [target]
+
+TASK [admiral_common : Generate admirald CSR with dynamic SAN] *****************
+skipping: [target]
+
+TASK [admiral_common : Write openssl extensions file for SAN] ******************
+skipping: [target]
+
+TASK [admiral_common : Sign admirald certificate with CA on hub nodes] *********
+skipping: [target]
+
+TASK [admiral_common : Deploy CA-signed admirald server certificate atomically] ***
+skipping: [target]
+
+TASK [admiral_common : Remove pending admirald server certificate] *************
+skipping: [target]
+
+TASK [admiral_common : Read portal-node CSR for controller-side signing] *******
+skipping: [target]
+
+TASK [admiral_common : Create temporary CSR file on controller for portal-node] ***
+skipping: [target]
+
+TASK [admiral_common : Create temporary extensions file on controller for portal-node] ***
+skipping: [target]
+
+TASK [admiral_common : Create temporary certificate file on controller for portal-node] ***
+skipping: [target]
+
+TASK [admiral_common : Write portal-node CSR to controller temporary file] *****
+skipping: [target]
+
+TASK [admiral_common : Write portal-node SAN extensions to controller temporary file] ***
+skipping: [target]
+
+TASK [admiral_common : Sign portal-node certificate on controller] *************
+skipping: [target]
+
+TASK [admiral_common : Read signed portal-node certificate from controller] ****
+skipping: [target]
+
+TASK [admiral_common : Deploy signed portal-node certificate] ******************
+skipping: [target]
+
+TASK [admiral_common : Remove temporary openssl extensions file] ***************
+skipping: [target]
+
+TASK [admiral_common : Remove CSR after signing] *******************************
+skipping: [target]
+
+TASK [admiral_common : Remove CA private key from spoke nodes after cert generation] ***
+ok: [target]
+
+TASK [admiral_common : Remove temporary portal-node signing files from controller] ***
+skipping: [target] => (item=) 
+skipping: [target] => (item=) 
+skipping: [target] => (item=) 
+skipping: [target]
+
+TASK [admiral_common : Set TLS cert permissions] *******************************
+skipping: [target] => (item=/etc/admiral/tls/admirald.pem) 
+skipping: [target] => (item=/etc/admiral/tls/admirald-key.pem) 
+skipping: [target]
+
+TASK [admiral_common : Set CA certificate permissions] *************************
+skipping: [target]
+
+TASK [admiral_common : Set CA private key permissions] *************************
+skipping: [target]
+
+TASK [admiral_common : Ensure admirald.pem exists for dev mode] ****************
+skipping: [target]
+
+TASK [admiral_common : Set permissions on dev mode certificates] ***************
+skipping: [target] => (item=/etc/admiral/tls/admirald.pem) 
+skipping: [target] => (item=/etc/admiral/tls/admirald-key.pem) 
+skipping: [target]
+
+TASK [admiral_common : Initialize PostgreSQL database cluster] *****************
+skipping: [target]
+
+TASK [admiral_common : Include WireGuard subnet in PostgreSQL listen_addresses for multi-node] ***
+skipping: [target]
+
+TASK [admiral_common : Update PostgreSQL listen_addresses] *********************
+skipping: [target]
+
+TASK [admiral_common : Require password authentication for localhost PostgreSQL] ***
+skipping: [target]
+
+TASK [admiral_common : Require password authentication for localhost PostgreSQL over IPv6] ***
+skipping: [target]
+
+TASK [admiral_common : Copy TLS certificates for PostgreSQL SSL] ***************
+skipping: [target] => (item={'src': '/etc/admiral/tls/ca.pem', 'dest': '/var/lib/pgsql/data/ca.crt', 'mode': '0600'}) 
+skipping: [target] => (item={'src': '/etc/admiral/tls/admirald.pem', 'dest': '/var/lib/pgsql/data/server.crt', 'mode': '0600'}) 
+skipping: [target] => (item={'src': '/etc/admiral/tls/admirald-key.pem', 'dest': '/var/lib/pgsql/data/server.key', 'mode': '0600'}) 
+skipping: [target]
+
+TASK [admiral_common : Enable SSL in PostgreSQL configuration] *****************
+skipping: [target] => (item={'param': 'ssl', 'value': 'on'}) 
+skipping: [target] => (item={'param': 'ssl_ca_file', 'value': 'ca.crt'}) 
+skipping: [target] => (item={'param': 'ssl_cert_file', 'value': 'server.crt'}) 
+skipping: [target] => (item={'param': 'ssl_key_file', 'value': 'server.key'}) 
+skipping: [target]
+
+TASK [admiral_common : Ensure PostgreSQL is enabled and running] ***************
+skipping: [target]
+
+TASK [admiral_common : Restart PostgreSQL when TLS files or SSL configuration change] ***
+skipping: [target]
+
+TASK [admiral_common : Verify PostgreSQL accepts local connections after restart] ***
+skipping: [target]
+
+TASK [admiral_common : Validate Admiral PostgreSQL role name] ******************
+skipping: [target]
+
+TASK [admiral_common : Check whether Admiral PostgreSQL role exists] ***********
+skipping: [target]
+
+TASK [admiral_common : Ensure Admiral PostgreSQL role exists with generated password] ***
+skipping: [target]
+
+TASK [admiral_common : Ensure Admiral PostgreSQL databases exist (admin/single only)] ***
+skipping: [target] => (item=admiral) 
+skipping: [target] => (item=admiral_queue) 
+skipping: [target]
+
+TASK [admiral_common : Ensure Harbor PostgreSQL database exists when Harbor is enabled] ***
+skipping: [target]
+
+TASK [admiral_selinux : Check if SELinux is enabled] ***************************
+ok: [target]
+
+TASK [admiral_selinux : Ensure SELinux is enforcing] ***************************
+skipping: [target]
+
+TASK [admiral_selinux : Persist SELinux enforcing mode across reboots] *********
+ok: [target]
+
+TASK [admiral_selinux : Read SELinux enforcing runtime state] ******************
+ok: [target]
+
+TASK [admiral_selinux : Verify SELinux enforcing boot policy] ******************
+ok: [target]
+
+TASK [admiral_selinux : Assert SELinux remains enforcing at runtime and after reboot] ***
+ok: [target] => {
+    "changed": false,
+    "msg": "All assertions passed"
+}
+
+TASK [admiral_selinux : Read SELinux permission for reverse proxy connections] ***
+ok: [target]
+
+TASK [admiral_selinux : Allow the reverse proxy to reach loopback services] ****
+skipping: [target]
+
+TASK [admiral_firewall : Ensure firewalld is installed] ************************
+ok: [target]
+
+TASK [admiral_firewall : Unmask firewalld service] *****************************
+ok: [target]
+
+TASK [admiral_firewall : Ensure firewalld is enabled and running] **************
+ok: [target]
+
+TASK [admiral_firewall : Load nftables modules for iptables direct rules (AlmaLinux workaround)] ***
+ok: [target] => (item=nf_conntrack)
+ok: [target] => (item=nft_ct)
+ok: [target] => (item=nft_reject_ipv4)
+
+TASK [admiral_firewall : Check if firewalld is in failed state] ****************
+ok: [target]
+
+TASK [admiral_firewall : Remove stuck permanent direct rules] ******************
+skipping: [target]
+
+TASK [admiral_firewall : Restart firewalld to clear failed state] **************
+skipping: [target]
+
+TASK [admiral_firewall : Use one dual-stack nftables egress policy on every supported distribution] ***
+ok: [target]
+
+TASK [admiral_firewall : Set default firewalld zone to public] *****************
+changed: [target]
+
+TASK [admiral_firewall : Ensure public zone target is default deny] ************
+changed: [target]
+
+TASK [admiral_firewall : Define allowed public firewall rules for the host profile] ***
+ok: [target]
+
+TASK [admiral_firewall : Read configured public services and ports] ************
+ok: [target] => (item=services)
+ok: [target] => (item=ports)
+
+TASK [admiral_firewall : Remove public services outside the declared host profile] ***
+skipping: [target]
+
+TASK [admiral_firewall : Remove public ports outside the declared host profile] ***
+skipping: [target]
+
+TASK [admiral_firewall : Allow public services for all modes] ******************
+changed: [target]
+
+TASK [admiral_firewall : Allow HTTP/HTTPS on admin and single nodes] ***********
+skipping: [target] => (item=http) 
+skipping: [target] => (item=https) 
+skipping: [target]
+
+TASK [admiral_firewall : Allow WireGuard UDP port on multinode profiles] *******
+changed: [target]
+
+TASK [admiral_firewall : Remove managed egress direct rules (admin profile)] ***
+skipping: [target] => (item={'priority': 10, 'rule': '-o lo -j ACCEPT'}) 
+skipping: [target] => (item={'priority': 20, 'rule': '-m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT'}) 
+skipping: [target] => (item={'priority': 30, 'rule': '-d 10.99.0.0/24 -j ACCEPT'}) 
+skipping: [target] => (item={'priority': 35, 'rule': '-p tcp --dport 22 -j ACCEPT'}) 
+skipping: [target] => (item={'priority': 40, 'rule': '-p tcp --dport 80 -j ACCEPT'}) 
+skipping: [target] => (item={'priority': 41, 'rule': '-p tcp --dport 443 -j ACCEPT'}) 
+skipping: [target] => (item={'priority': 44, 'rule': '-p tcp --dport 9000 -j ACCEPT'}) 
+skipping: [target] => (item={'priority': 42, 'rule': '-p udp --dport 53 -j ACCEPT'}) 
+skipping: [target] => (item={'priority': 43, 'rule': '-p tcp --dport 53 -j ACCEPT'}) 
+skipping: [target] => (item={'priority': 200, 'rule': '-j REJECT'}) 
+skipping: [target]
+
+TASK [admiral_firewall : Remove managed egress direct rules (spoke profile)] ***
+skipping: [target] => (item={'priority': 10, 'rule': '-o lo -j ACCEPT'}) 
+skipping: [target] => (item={'priority': 20, 'rule': '-m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT'}) 
+skipping: [target] => (item={'priority': 30, 'rule': '-d 10.99.0.0/24 -j ACCEPT'}) 
+skipping: [target] => (item={'priority': 35, 'rule': '-p tcp --dport 22 -j ACCEPT'}) 
+skipping: [target] => (item={'priority': 37, 'rule': '-p tcp --dport 9000 -j ACCEPT'}) 
+skipping: [target] => (item={'priority': 36, 'rule': '-p udp --dport 51820 -j ACCEPT'}) 
+skipping: [target] => (item={'priority': 200, 'rule': '-j REJECT'}) 
+skipping: [target]
+
+TASK [admiral_firewall : Apply egress controls for admin and single nodes] *****
+skipping: [target] => (item={'priority': 10, 'rule': '-o lo -j ACCEPT'}) 
+skipping: [target] => (item={'priority': 20, 'rule': '-m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT'}) 
+skipping: [target] => (item={'priority': 30, 'rule': '-d 10.99.0.0/24 -j ACCEPT'}) 
+skipping: [target] => (item={'priority': 35, 'rule': '-p tcp --dport 22 -j ACCEPT'}) 
+skipping: [target] => (item={'priority': 40, 'rule': '-p tcp --dport 80 -j ACCEPT'}) 
+skipping: [target] => (item={'priority': 41, 'rule': '-p tcp --dport 443 -j ACCEPT'}) 
+skipping: [target] => (item={'priority': 44, 'rule': '-p tcp --dport 9000 -j ACCEPT'}) 
+skipping: [target] => (item={'priority': 42, 'rule': '-p udp --dport 53 -j ACCEPT'}) 
+skipping: [target] => (item={'priority': 43, 'rule': '-p tcp --dport 53 -j ACCEPT'}) 
+skipping: [target] => (item={'priority': 200, 'rule': '-j REJECT'}) 
+skipping: [target]
+
+TASK [admiral_firewall : Apply egress controls for worker and portal spokes] ***
+skipping: [target] => (item={'priority': 10, 'rule': '-o lo -j ACCEPT'}) 
+skipping: [target] => (item={'priority': 20, 'rule': '-m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT'}) 
+skipping: [target] => (item={'priority': 30, 'rule': '-d 10.99.0.0/24 -j ACCEPT'}) 
+skipping: [target] => (item={'priority': 35, 'rule': '-p tcp --dport 22 -j ACCEPT'}) 
+skipping: [target] => (item={'priority': 37, 'rule': '-p tcp --dport 9000 -j ACCEPT'}) 
+skipping: [target] => (item={'priority': 36, 'rule': '-p udp --dport 51820 -j ACCEPT'}) 
+skipping: [target] => (item={'priority': 200, 'rule': '-j REJECT'}) 
+skipping: [target]
+
+TASK [admiral_firewall : Allow dev mode services] ******************************
+skipping: [target] => (item=cockpit) 
+skipping: [target]
+
+TASK [admiral_firewall : Allow dev mode ports] *********************************
+skipping: [target] => (item=5000/tcp) 
+skipping: [target] => (item=5001/tcp) 
+skipping: [target] => (item=40000-49999/tcp) 
+skipping: [target]
+
+TASK [admiral_firewall : Reload firewall to apply policy] **********************
+ok: [target]
+
+TASK [admiral_firewall : Remove previous egress nftables table if present] *****
+changed: [target]
+
+TASK [admiral_firewall : Write egress nftables ruleset] ************************
+ok: [target]
+
+TASK [admiral_firewall : Load egress nftables ruleset] *************************
+changed: [target]
+
+TASK [admiral_firewall : Write egress systemd oneshot service for boot persistence] ***
+ok: [target]
+
+TASK [admiral_firewall : Enable egress boot service] ***************************
+ok: [target]
+
+TASK [admiral_firewall : Delete active Admiral egress table in dev mode] *******
+skipping: [target]
+
+TASK [admiral_firewall : Disable persistent Admiral egress policy in dev mode] ***
+skipping: [target]
+
+TASK [admiral_firewall : Verify effective public services] *********************
+ok: [target]
+
+TASK [admiral_firewall : Verify effective public ports] ************************
+ok: [target]
+
+TASK [admiral_firewall : Assert only expected public services remain exposed (admin/single)] ***
+skipping: [target]
+
+TASK [admiral_firewall : Assert only ssh remains exposed (worker)] *************
+ok: [target] => {
+    "changed": false,
+    "msg": "All assertions passed"
+}
+
+TASK [admiral_firewall : Assert only ssh remains exposed on dedicated portal spokes] ***
+skipping: [target]
+
+TASK [admiral_firewall : Assert only expected public ports remain exposed] *****
+ok: [target] => {
+    "changed": false,
+    "msg": "All assertions passed"
+}
+
+TASK [admiral_firewall : Query egress direct rules (non-AlmaLinux)] ************
+skipping: [target]
+
+TASK [admiral_firewall : Query dual-stack egress nftables rules] ***************
+ok: [target]
+
+TASK [admiral_firewall : Assert managed egress reject rule is active (non-AlmaLinux)] ***
+skipping: [target]
+
+TASK [admiral_firewall : Assert managed dual-stack egress reject rule is active] ***
+ok: [target] => {
+    "changed": false,
+    "msg": "All assertions passed"
+}
+
+TASK [admiral_firewall : Wait for production time synchronization through the egress policy] ***
+ok: [target]
+
+TASK [admiral_auditd : Install auditd] *****************************************
+ok: [target]
+
+TASK [admiral_auditd : Configure explicit auditd rotation and disk-space policy] ***
+ok: [target] => (item={'key': 'space_left', 'value': '100'})
+ok: [target] => (item={'key': 'admin_space_left', 'value': '50'})
+ok: [target] => (item={'key': 'space_left_action', 'value': 'SYSLOG'})
+ok: [target] => (item={'key': 'admin_space_left_action', 'value': 'SUSPEND'})
+ok: [target] => (item={'key': 'disk_full_action', 'value': 'SUSPEND'})
+ok: [target] => (item={'key': 'disk_error_action', 'value': 'SUSPEND'})
+ok: [target] => (item={'key': 'max_log_file', 'value': '50'})
+ok: [target] => (item={'key': 'num_logs', 'value': '10'})
+ok: [target] => (item={'key': 'max_log_file_action', 'value': 'ROTATE'})
+
+TASK [admiral_auditd : Deploy Admiral audit rules baseline] ********************
+ok: [target]
+
+TASK [admiral_auditd : Enable and start auditd] ********************************
+ok: [target]
+
+TASK [admiral_auditd : Detect audit rule loader availability] ******************
+ok: [target]
+
+TASK [admiral_auditd : Detect auditctl availability] ***************************
+ok: [target]
+
+TASK [admiral_auditd : Read current audit immutability state] ******************
+ok: [target]
+
+TASK [admiral_auditd : Load audit rules with augenrules] ***********************
+ok: [target]
+
+TASK [admiral_auditd : Load audit rules via auditctl when augenrules is unavailable] ***
+skipping: [target]
+
+TASK [admiral_auditd : Verify Admiral audit rules are loaded] ******************
+ok: [target]
+
+TASK [admiral_auditd : Confirm audit rules file when audit rule loader utilities are unavailable] ***
+skipping: [target]
+
+TASK [admiral_auditd : Assert audit rules file is present when audit rule loader utilities are unavailable] ***
+skipping: [target]
+
+TASK [admiral_auditd : Warn when audit rule loader utilities are unavailable] ***
+skipping: [target]
+
+TASK [admiral_auditd : Verify optional immutable audit policy] *****************
+skipping: [target]
+
+TASK [admiral_fail2ban : Install fail2ban and firewalld backend] ***************
+ok: [target]
+
+TASK [admiral_fail2ban : Deploy admiral-flagship fail2ban filter] **************
+ok: [target]
+
+TASK [admiral_fail2ban : Deploy admiral-harbor fail2ban filter] ****************
+ok: [target]
+
+TASK [admiral_fail2ban : Configure admiral fail2ban baseline] ******************
+ok: [target]
+
+TASK [admiral_fail2ban : Enable and start fail2ban] ****************************
+ok: [target]
+
+TASK [admiral_fail2ban : Enable and start fail2ban service] ********************
+changed: [target]
+
+TASK [admiral_fail2ban : Wait for the Fail2ban SSH jail to become ready] *******
+ok: [target]
+
+TASK [admiral_fail2ban : Add a temporary documentation-range ban] **************
+ok: [target]
+
+TASK [admiral_fail2ban : Read active Fail2ban nftables rules] ******************
+ok: [target]
+
+TASK [admiral_fail2ban : Verify the temporary ban is enforced by nftables] *****
+ok: [target] => {
+    "changed": false,
+    "msg": "All assertions passed"
+}
+
+TASK [admiral_fail2ban : Remove the temporary documentation-range ban] *********
+ok: [target]
+
+TASK [admiral_wireguard : Install wireguard-tools] *****************************
+ok: [target]
+
+TASK [admiral_wireguard : Generate WireGuard private key] **********************
+ok: [target]
+
+TASK [admiral_wireguard : Read WireGuard private key] **************************
+ok: [target]
+
+TASK [admiral_wireguard : Set WireGuard private key fact] **********************
+ok: [target]
+
+TASK [admiral_wireguard : Derive WireGuard public key] *************************
+ok: [target]
+
+TASK [admiral_wireguard : Store this node's WireGuard public key for peer exchange] ***
+ok: [target]
+
+TASK [admiral_wireguard : Set WireGuard listen port] ***************************
+ok: [target]
+
+TASK [admiral_wireguard : Check for Admirald-managed known host inventory] *****
+ok: [target]
+
+TASK [admiral_wireguard : Read Admirald-managed known host inventory] **********
+skipping: [target]
+
+TASK [admiral_wireguard : Decode Admirald-managed known host inventory] ********
+skipping: [target]
+
+TASK [admiral_wireguard : Determine known host inventory lookup key] ***********
+skipping: [target]
+
+TASK [admiral_wireguard : Resolve current node entry from Admirald-managed inventory] ***
+skipping: [target]
+
+TASK [admiral_wireguard : Resolve next bootstrap assignment from known host inventory] ***
+skipping: [target]
+
+TASK [admiral_wireguard : Require explicit or inventory-derived WireGuard IP for spoke nodes] ***
+skipping: [target]
+
+TASK [admiral_wireguard : Determine WireGuard IP address for this node] ********
+ok: [target]
+
+TASK [admiral_wireguard : Check for an existing hub WireGuard configuration] ***
+skipping: [target]
+
+TASK [admiral_wireguard : Read existing hub WireGuard configuration] ***********
+skipping: [target]
+
+TASK [admiral_wireguard : Extract existing hub WireGuard peers] ****************
+skipping: [target]
+
+TASK [admiral_wireguard : Find durable WireGuard peer fragments on hub] ********
+skipping: [target]
+
+TASK [admiral_wireguard : Read durable WireGuard peer fragments on hub] ********
+skipping: [target]
+
+TASK [admiral_wireguard : Collect durable WireGuard peer fragments] ************
+skipping: [target]
+
+TASK [admiral_wireguard : Disable inter-node IP forwarding] ********************
+ok: [target] => (item=net.ipv4.ip_forward)
+ok: [target] => (item=net.ipv6.conf.all.forwarding)
+
+TASK [admiral_wireguard : Read hub WireGuard public key from file for spoke nodes] ***
+ok: [target]
+
+TASK [admiral_wireguard : Set hub public key fact for spoke] *******************
+ok: [target]
+
+TASK [admiral_wireguard : Deploy WireGuard configuration] **********************
+changed: [target]
+
+TASK [admiral_wireguard : Enable and start WireGuard] **************************
+ok: [target]
+
+TASK [admiral_wireguard : Enable WireGuard peer revocation socket on hub nodes] ***
+skipping: [target]
+
+TASK [admiral_wireguard : Disable WireGuard peer revocation socket on spoke nodes] ***
+ok: [target]
+
+TASK [admiral_wireguard : Re-assert disabled IP forwarding after WireGuard starts] ***
+ok: [target] => (item=net.ipv4.ip_forward)
+ok: [target] => (item=net.ipv6.conf.all.forwarding)
+
+TASK [admiral_wireguard : Read runtime IP forwarding state after WireGuard start] ***
+ok: [target] => (item=net.ipv4.ip_forward)
+ok: [target] => (item=net.ipv6.conf.all.forwarding)
+
+TASK [admiral_wireguard : Assert inter-node IP forwarding remains disabled] ****
+ok: [target] => {
+    "changed": false,
+    "msg": "All assertions passed"
+}
+
+TASK [admiral_wireguard : Query permanent firewalld zones] *********************
+ok: [target]
+
+TASK [admiral_wireguard : Create restricted Admiral WireGuard firewalld zone] ***
+skipping: [target]
+
+TASK [admiral_wireguard : Set restricted Admiral zone target] ******************
+ok: [target]
+
+TASK [admiral_wireguard : Remove WireGuard interface from trusted zone] ********
+changed: [target]
+
+TASK [admiral_wireguard : Assign WireGuard interface to restricted Admiral zone] ***
+changed: [target]
+
+TASK [admiral_wireguard : Permit admin API from WireGuard peers on admin hosts] ***
+skipping: [target]
+
+TASK [admiral_wireguard : Permit WireGuard peers to reach Harbor on co-located admin-portal hosts] ***
+skipping: [target]
+
+TASK [admiral_wireguard : Permit admin-to-worker Fleet and workload traffic] ***
+ok: [target] => (item=9099)
+ok: [target] => (item=40000-49999)
+
+TASK [admiral_wireguard : Permit admin-to-portal traffic] **********************
+skipping: [target]
+
+TASK [admiral_wireguard : Reload firewall to apply zone changes] ***************
+changed: [target]
+
+TASK [admiral_wireguard : Verify the admin-portal Harbor WireGuard firewall rule] ***
+skipping: [target]
+
+TASK [admiral_wireguard : Assert the admin-portal Harbor WireGuard firewall rule is active] ***
+skipping: [target]
+
+TASK [admirald : Install admirald package] *************************************
+skipping: [target]
+
+TASK [admirald : Ensure Caddy is enabled and running] **************************
+skipping: [target]
+
+TASK [admirald : Deploy admirald INI configuration] ****************************
+skipping: [target]
+
+TASK [admirald : Deploy optional Admirald S3 credentials] **********************
+skipping: [target]
+
+TASK [admirald : Configure Admirald S3 credential environment] *****************
+skipping: [target]
+
+TASK [admirald : Set ADMIRAL_ENV=development in dev mode] **********************
+skipping: [target]
+
+TASK [admirald : Remove development mode override on secure reconciliation] ****
+skipping: [target]
+
+TASK [admirald : Set ADMIRAL_SINGLE_NODE for single-node installations] ********
+skipping: [target]
+
+TASK [admirald : Remove single-node override from non-single-node profiles] ****
+skipping: [target]
+
+TASK [admirald : Enable and start admirald] ************************************
+skipping: [target]
+
+TASK [admirald : Resolve admiralctl token for control-plane tasks] *************
+skipping: [target]
+
+TASK [admirald : Require non-empty token for admiralctl configuration] *********
+skipping: [target]
+
+TASK [admirald : Deploy admiralctl configuration] ******************************
+skipping: [target]
+
+TASK [admiral_harbor : Check for Admirald-managed known host inventory] ********
+skipping: [target]
+
+TASK [admiral_harbor : Read Admirald-managed known host inventory] *************
+skipping: [target]
+
+TASK [admiral_harbor : Decode Admirald-managed known host inventory] ***********
+skipping: [target]
+
+TASK [admiral_harbor : Resolve effective harbor node id] ***********************
+skipping: [target]
+
+TASK [admiral_harbor : Set harbor API URL for portal-node] *********************
+skipping: [target]
+
+TASK [admiral_harbor : Determine admiral-harbor bind address] ******************
+skipping: [target]
+
+TASK [admiral_harbor : Verify Harbor uses the local address only in single-node mode] ***
+skipping: [target]
+
+TASK [admiral_harbor : Determine admiral-harbor route target] ******************
+skipping: [target]
+
+TASK [admiral_harbor : Require WireGuard bind address for dedicated portal nodes] ***
+skipping: [target]
+
+TASK [admiral_harbor : Check for existing Harbor node token] *******************
+skipping: [target]
+
+TASK [admiral_harbor : Extract existing Harbor node token] *********************
+skipping: [target]
+
+TASK [admiral_harbor : Preserve operator-managed Harbor commercial settings] ***
+skipping: [target]
+
+TASK [admiral_harbor : Generate random Harbor node token] **********************
+skipping: [target]
+
+TASK [admiral_harbor : Install admiral-harbor] *********************************
+skipping: [target]
+
+TASK [admiral_harbor : Deploy admiral-harbor environment] **********************
+skipping: [target]
+
+TASK [admiral_harbor : Check if admiral-harbor SMTP environment exists] ********
+skipping: [target]
+
+TASK [admiral_harbor : Deploy admiral-harbor SMTP environment] *****************
+skipping: [target]
+
+TASK [admiral_harbor : Deploy admiral-harbor systemd binding override] *********
+skipping: [target]
+
+TASK [admiral_harbor : Enable and start admiral-harbor] ************************
+skipping: [target]
+
+TASK [admiral_harbor : Enable and start admiral-harbor worker timer] ***********
+skipping: [target]
+
+TASK [admiral_harbor : Enable and start admiral-harbor catalog sync timer] *****
+skipping: [target]
+
+TASK [admiral_harbor : Read persisted Harbor node token for registration] ******
+skipping: [target]
+
+TASK [admiral_harbor : Resolve persisted Harbor node token for registration] ***
+skipping: [target]
+
+TASK [admiral_harbor : Read admin token from controller environment for portal registration] ***
+skipping: [target]
+
+TASK [admiral_harbor : Resolve admin token from controller environment for portal registration] ***
+skipping: [target]
+
+TASK [admiral_harbor : Require non-empty admin token for portal registration] ***
+skipping: [target]
+
+TASK [admiral_harbor : Register portal node with admirald] *********************
+skipping: [target]
+
+TASK [admiral_harbor : Configure admin portal route target for this portal node] ***
+skipping: [target]
+
+TASK [admiral_harbor : Restart admirald after portal route target change] ******
+skipping: [target]
+
+TASK [admiral_harbor : Wait for admirald after portal route target change] *****
+skipping: [target]
+
+TASK [admiral_harbor : Synchronize public routes after portal registration] ****
+skipping: [target]
+
+TASK [admiral_harbor : Apply admiral-harbor configuration changes before bootstrap commands] ***
+skipping: [target]
+
+TASK [admiral_harbor : Remind operator to configure SMTP] **********************
+skipping: [target]
+
+TASK [admiral_harbor : Read Harbor user inventory] *****************************
+skipping: [target]
+
+TASK [admiral_harbor : Parse Harbor admin inventory] ***************************
+skipping: [target]
+
+TASK [admiral_harbor : Create generated Harbor bootstrap admin user] ***********
+skipping: [target]
+
+TASK [admiral_harbor : Rotate legacy Harbor default admin password] ************
+skipping: [target]
+
+TASK [admiral_harbor : Refresh Harbor user inventory after bootstrap changes] ***
+skipping: [target]
+
+TASK [admiral_harbor : Parse refreshed Harbor admin inventory] *****************
+skipping: [target]
+
+TASK [admiral_harbor : Deactivate legacy Harbor default admin user] ************
+skipping: [target]
+
+TASK [admiral_flagship : Install admiral-flagship] *****************************
+skipping: [target]
+
+TASK [admiral_flagship : Deploy admiral-flagship environment] ******************
+skipping: [target]
+
+TASK [admiral_flagship : Relax admiral-flagship binding in dev mode] ***********
+skipping: [target]
+
+TASK [admiral_flagship : Remove legacy admiral-flagship systemd override] ******
+skipping: [target]
+
+TASK [admiral_flagship : Enable and start admiral-flagship] ********************
+skipping: [target]
+
+TASK [admiral_flagship : Apply admiral-flagship configuration changes before validation] ***
+skipping: [target]
+
+TASK [admiral_fleet : Install admiral-fleet] ***********************************
+ok: [target]
+
+TASK [admiral_fleet : Read SELinux permission for rootless cgroup management] ***
+ok: [target]
+
+TASK [admiral_fleet : Allow rootless containers to manage delegated cgroups] ***
+skipping: [target]
+
+TASK [admiral_fleet : Allocate non-overlapping subordinate IDs for rootless workloads] ***
+ok: [target]
+
+TASK [admiral_fleet : Enable linger for admiral-apps (rootless workload persistence)] ***
+ok: [target]
+
+TASK [admiral_fleet : Resolve rootless workload UID] ***************************
+ok: [target]
+
+TASK [admiral_fleet : Enable and start systemd-machined] ***********************
+ok: [target]
+
+TASK [admiral_fleet : Start persistent rootless user manager] ******************
+ok: [target]
+
+TASK [admiral_fleet : Wait for rootless user D-Bus] ****************************
+ok: [target]
+
+TASK [admiral_fleet : Verify rootless Podman storage ownership] ****************
+ok: [target]
+
+TASK [admiral_fleet : Check for Admirald-managed known host inventory] *********
+ok: [target]
+
+TASK [admiral_fleet : Read Admirald-managed known host inventory] **************
+skipping: [target]
+
+TASK [admiral_fleet : Decode Admirald-managed known host inventory] ************
+skipping: [target]
+
+TASK [admiral_fleet : Resolve effective fleet node id] *************************
+ok: [target]
+
+TASK [admiral_fleet : Require remote control-plane settings for worker-node installs] ***
+ok: [target] => {
+    "changed": false,
+    "msg": "All assertions passed"
+}
+
+TASK [admiral_fleet : Require VPN addresses for secure worker installs] ********
+ok: [target] => {
+    "changed": false,
+    "msg": "All assertions passed"
+}
+
+TASK [admiral_fleet : Derive remote control-plane URLs for worker-node installs] ***
+ok: [target]
+
+TASK [admiral_fleet : Check for existing Fleet node token] *********************
+ok: [target]
+
+TASK [admiral_fleet : Extract existing Fleet node token] ***********************
+ok: [target]
+
+TASK [admiral_fleet : Preserve existing Fleet storage credentials] *************
+ok: [target]
+
+TASK [admiral_fleet : Generate random Fleet node token] ************************
+ok: [target]
+
+TASK [admiral_fleet : Deploy admiral-fleet configuration] **********************
+ok: [target]
+
+TASK [admiral_fleet : Read admin token from controller environment for worker registration] ***
+ok: [target -> localhost]
+
+TASK [admiral_fleet : Resolve admin token from controller environment for worker registration] ***
+ok: [target]
+
+TASK [admiral_fleet : Require non-empty admin token for worker registration] ***
+ok: [target]
+
+TASK [admiral_fleet : Register node with admirald before starting Fleet] *******
+changed: [target -> localhost]
+
+TASK [admiral_fleet : Read active hub WireGuard peers before registering the worker] ***
+ok: [target -> localhost]
+
+TASK [admiral_fleet : Require the hub WireGuard interface before registering the worker] ***
+ok: [target] => {
+    "changed": false,
+    "msg": "All assertions passed"
+}
+
+TASK [admiral_fleet : Add and persist the registered worker peer under the shared WireGuard lock] ***
+changed: [target -> localhost]
+
+TASK [admiral_fleet : Enable and start admiral-fleet after worker registration] ***
+ok: [target]
+
+TASK [admiral_fleet : Apply admiral-fleet configuration changes after worker registration] ***
+
+RUNNING HANDLER [admiral_wireguard : restart wireguard] ************************
+changed: [target]
+
+TASK [admiral_fleet : Poll the worker record until Fleet heartbeat and metrics are current] ***
+FAILED - RETRYING: [target -> localhost]: Poll the worker record until Fleet heartbeat and metrics are current (24 retries left).
+ok: [target -> localhost]
+
+TASK [admiral_cockpit : Install Cockpit bridge without the web service] ********
+ok: [target]
+
+TASK [admiral_cockpit : Remove Cockpit web service from production profiles] ***
+ok: [target]
+
+TASK [admiral_cockpit : Disable Cockpit web socket from production profiles] ***
+ok: [target]
+
+TASK [admiral_ssh_tunnel : Generate SSH service key (if not present)] **********
+skipping: [target]
+
+TASK [admiral_ssh_tunnel : Make SSH tunnel key readable by the service account only] ***
+skipping: [target]
+
+TASK [admiral_ssh_tunnel : Install SSH tunnel systemd service] *****************
+skipping: [target]
+
+TASK [admiral_ssh_tunnel : Reload systemd after tunnel unit change] ************
+skipping: [target]
+
+TASK [admiral_ssh_tunnel : Configure SSH client for Admiral tunnel] ************
+skipping: [target]
+
+TASK [Persist Admiral node role after package-managed setup succeeds] **********
+skipping: [target]
+
+TASK [Read single-node registered nodes] ***************************************
+skipping: [target]
+
+TASK [Verify single-node worker and portal registrations] **********************
+skipping: [target]
+
+PLAY RECAP *********************************************************************
+target                     : ok=148  changed=15   unreachable=0    failed=0    skipped=227  rescued=0    ignored=0   
+
+[INFO] Exchanging WireGuard peers between hub and spoke...
+[INFO] WireGuard peer added for spoke node (10.99.0.2) on hub.
+[INFO] Waiting for WireGuard handshake with 10.99.0.2 (attempt 1/30).
+[INFO] Podman version: 5.8.2
+[INFO] worker-node control-plane handshake verified on attempt 1.
+admiral-ssh@10.77.0.3: Permission denied (publickey,gssapi-keyex,gssapi-with-mic).
+[FATAL] Could not validate and apply PermitRootLogin no after bootstrap revocation.
+exit_code=1

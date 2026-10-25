@@ -1,0 +1,6 @@
+./admiral-common-0.0.1rc6-1.el10.noarch.rpm: OK
+./admiral-flagship-0.0.1rc6-1.el10.noarch.rpm: OK
+./admiral-fleet-0.0.1rc6-1.el10.x86_64.rpm: OK
+./admiral-harbor-0.0.1rc6-1.el10.noarch.rpm: OK
+./admiralctl-0.0.1rc6-1.el10.x86_64.rpm: OK
+./admirald-0.0.1rc6-1.el10.x86_64.rpm: OK

@@ -1,0 +1,3 @@
+rc6r1-admin | SUCCESS => {"changed": false,"ping": "pong"}
+rc6r1-portal | SUCCESS => {"changed": false,"ping": "pong"}
+rc6r1-worker | SUCCESS => {"changed": false,"ping": "pong"}

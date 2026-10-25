@@ -1,0 +1,18 @@
+independent_portal_signup=pending
+independent_portal_pending_login=rejected
+independent_portal_customer_approved=id:10
+independent_portal_catalog=published
+independent_portal_free_deploy=PASS instance_id=inst_3a30af3669ba8757
+independent_portal_customer_flow=PASS
+issue_181_disallowed_controls=hidden
+issue_181_forged_database_backup=denied
+issue_181_api_backup_http=403 body={"error":"Manual database backups are disabled for this tier"}
+issue_181_forged_restore=denied
+issue_181_api_restore_http=403 body={"error":"Restore is disabled for this tier"}
+issue_181_cross_customer_instance_access=404
+issue_181_customer_policy_probe=PASS
+issue_181_candidate=0.0.1rc6-1-no-explicit-epoch
+issue_181_harbor_user_id=10
+issue_181_admiral_customer_id=hcus_7b171dc8d8c340ff
+issue_181_instance_id=inst_3a30af3669ba8757
+issue_181_generated_accounts=rc6-r1-issue181-20261025152414-40744ffd@example.test,rc6-r1-issue181-other-20261025152414-40744ffd@example.test

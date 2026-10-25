@@ -1,0 +1,19 @@
+interface: wg-admiral
+  public key: QXJ+oA4sTB13BIWffZZlpKdxu2x+P/4+MUu1sBDC5DA=
+  private key: (hidden)
+  listening port: 51820
+
+peer: UedbFRsWKuHqNhq7LLhMumJZSJHXSXrj5mHutu7pwDw=
+  endpoint: 10.77.0.4:51820
+  allowed ips: 10.99.0.3/32
+  latest handshake: 41 seconds ago
+  transfer: 212 B received, 272 B sent
+  persistent keepalive: every 25 seconds
+
+peer: hzxMfjTdNKDYDcYgeUHgaHEZlc9tgY5bAu9I54a3iCo=
+  preshared key: (hidden)
+  endpoint: 10.77.0.2:51820
+  allowed ips: 10.99.0.1/32
+  latest handshake: 41 seconds ago
+  transfer: 16.31 KiB received, 18.50 KiB sent
+  persistent keepalive: every 25 seconds

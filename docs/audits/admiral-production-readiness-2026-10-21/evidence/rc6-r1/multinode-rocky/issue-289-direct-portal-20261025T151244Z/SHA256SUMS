@@ -1,0 +1,11 @@
+9c39eb45db5edd454ab0e553bccdf8c1ce8635a038dad303eb6ec2e9a48b051b  ./DATABASE_QUERY_ATTEMPT.md
+b1bf536e47eb2753f9c65b8762699b71e837edd99a3fa72176e94bb4f82a4ac1  ./HARNESS_ATTEMPTS.md
+6ccc182e7e5d10152dadfb6e9f904bfb6a5dcc96b13cd31c54d9a79aaeb69626  ./REPORT.md
+afd4f4031378a844a953287d58267f264ef29e418e6739f1ae5674977dd0a530  ./candidate-identity.txt
+d19154f0205f5d421aaf9461e593faa0f001ec60bc3a4ed67bdbf91e2d7798b8  ./candidate-rpm-hash-verification.log
+2f6f3f1f3064c58df37cb770df307f204fe4b97fc9f4f5ef5dd64270b2d021b1  ./candidate-rpm-manifest-el10.tsv
+755e5c9f1c8b92fc13ffa0112f9f15efcc7fda01c31eca62bfaa416a45a07e4f  ./candidate-rpm-sha256-el10.txt
+8fa2b211095ae441a17b7bcb4305d032f14cdb2d2b40d931f115924781399b06  ./issue-289-direct-portal-run.log
+287b2f270074425a8ca7ab468ea8f2cbd95a2b29891d889e67203c593cdbfb16  ./issue-289-direct-portal-script.sha256
+0e9f7b048be83ab21f6b93c2c78db0c558e6a087be98064cec4f2846277c94ad  ./issue-289-portal-candidate.txt
+bd9f31adfd1ab5239320fafbf57175a0ed9dd2aaf5c590cb95d774191aca9b64  ./synthetic-customer-state.txt

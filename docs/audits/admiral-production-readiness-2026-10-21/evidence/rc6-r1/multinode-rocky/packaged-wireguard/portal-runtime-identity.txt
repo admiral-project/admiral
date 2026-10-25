@@ -1,0 +1,8 @@
+os=Rocky Linux 10.2 (Red Quartz)
+arch=x86_64
+admiral-common 0:0.0.1rc6-1.el10.noarch
+admiral-harbor 0:0.0.1rc6-1.el10.noarch
+service_admirald=inactive
+service_admiral-fleet=inactive
+service_admiral-flagship=inactive
+service_admiral-harbor=active

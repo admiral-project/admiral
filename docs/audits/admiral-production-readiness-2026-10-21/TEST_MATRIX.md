@@ -8,33 +8,35 @@ The active release gate has **six cells**: Fedora Rawhide, Rocky Linux 10, and C
 
 **Topology and candidate correction (2026-10-25):** R75 Single-Node results are historical for their exact candidate. R75's three Multi-Node runs used `--admin-portal-node` plus worker spokes and did not validate an independent Portal role; they are **NOT TESTED for the required Multi-Node cells**. Earlier RC6-1 Single-Node runs predate the current component pins and receive no current-candidate credit. Each Multi-Node cell requires three real guests running the same OS and exact candidate: `--admin-node`, `--worker-node`, and `--portal-node`. The active checklist is [issue #283](https://github.com/admiral-project/admiral/issues/283).
 
-The latest completed local diagnostic package set is Epoch 3 / Release 5, built from root source commit `20e5e5febd4a2d3d64d9ba69412236d9f14fb324`. On 2026-10-25, fresh Rocky Linux 10.2 and Fedora Rawhide guests passed the targeted clean DNF dependency gates for #201 (Flask 3.1.3+) and #257 (Mistune 3.4.0+); all six signed Admiral RPMs installed, Harbor started, and `/health` and `/ready` returned HTTP 200. Evidence: [`#201/#257`](evidence/rc6-epoch3-issues-201-257/RESULTS.md). Other targeted issue evidence on diagnostic Epoch candidates includes #259, #270, #271, #285 and #292, plus prior focused Multi-Node gates; see the issue-specific reports and #283 for candidate identities and scope. These partial issue checks do not earn cell credit. The exact no-Epoch release candidate has not yet been built and no complete formal cell has passed. The formal matrix remains **0/6 complete cells**.
+The active exact candidate is RC6 Release 1, `0.0.1rc6-1` with no explicit Epoch, root source commit `267da7ebd739a0703c276ec8d4770ffa31a45f25`; native EL10 RPMs and hashes are recorded in [`RC6 R1 evidence`](evidence/rc6-r1/multinode-rocky/packaged-wireguard/REPORT.md). Diagnostic Epoch builds remain useful for local fix iteration but do not replace this release candidate. On this exact candidate, issue-specific Rocky Multi-Node checks passed for #181 (tier-denied Harbor backup/restore), #182 and #291 (independent Portal upload/restore and Worker-to-Portal WireGuard access), #278 (terminal customer/operation history survives idle Worker removal), and #289 (complete 303/empty-body approval and catalog-sync redirects directly over the Portal WireGuard origin). Reports and SHA-256 manifests are under [`issue #181`](evidence/rc6-r1/multinode-rocky/issue-181-policy-20261025T153000Z/REPORT.md), [`issue #278`](evidence/rc6-r1/multinode-rocky/issue-278-node-removal-rerun-20261025T145454Z/REPORT.md), and [`issue #289`](evidence/rc6-r1/multinode-rocky/issue-289-direct-portal-20261025T151244Z/REPORT.md). Harbor #190's three cancellation/prepaid-period unit regressions also pass at the exact RC6-1 component SHA; its packaged-worker runtime gate remains open. These targeted checks do not earn cell credit; the formal matrix remains **0/6 complete cells**.
 
 | Platform | Single-Node | Multi-Node (Admin + Worker + independent Portal) |
 |---|---|---|
-| Fedora Rawhide x86_64 | NOT TESTED | NOT TESTED |
-| Rocky Linux 10 x86_64 | NOT TESTED on final candidate | Targeted #278 passed on diagnostic Epoch 2/R4; no cell credit |
+| Fedora Rawhide x86_64 | PARTIAL — five functional stages passed on exact RC6 Release 1; aggregate lane failed at final check because rootless Podman invocation inherited inaccessible `/home/validator`; independent final-state recheck passed; no cell credit | NOT TESTED |
+| Rocky Linux 10 x86_64 | PARTIAL — five functional stages passed on exact RC6 Release 1; aggregate lane failed at final check because rootless Podman invocation inherited inaccessible `/home/validator`; independent final-state recheck passed; no cell credit | Targeted #182, #278, #289 and #291 passed on exact RC6 Release 1; no cell credit |
 | CentOS Stream 10 x86_64 | NOT TESTED | NOT TESTED |
 
-Prior-candidate runs do not transfer to Release 3. A complete cell requires all applicable checks on a single unchanged candidate; a partial scenario PASS does not make its cell pass.
+Prior-candidate runs do not transfer to RC6 Release 1. A complete cell requires all applicable checks on a single unchanged candidate; a partial scenario PASS does not make its cell pass.
 
 ### Independent portal-node acceptance
 
 | Check | Expected result | Status |
 |---|---|---|
-| Install `--portal-node` on a separate guest | Harbor service runs there; it is not serving from admin or worker | PASS — Release 3 Rocky install subset |
-| Register portal spoke | Portal appears active/healthy with role `portal` | PASS — Rocky Release 3; WireGuard `10.99.0.3` |
+| Install `--portal-node` on a separate guest | Harbor service runs there; it is not serving from admin or worker | PASS — exact RC6 Release 1 Rocky three-guest lab |
+| Register portal spoke | Portal appears active/healthy with role `portal` | PASS — Rocky Release 1; WireGuard `10.99.0.3` |
 | Harbor to Admirald | Authenticated HTTPS succeeds over the admin WireGuard address | PASS — `GET /api/v1/apps` returned HTTP 200 |
 | Public portal routing | Public request reaches Harbor at the portal guest's WireGuard address through the configured route | PASS — local lab CA verified; Portal route HTTP 200 |
-| Customer portal entry | Registration/login and catalog read work through the externally routed portal | FAIL — registration/pending-login checks passed, but admin POST redirects reset or arrive incomplete; #289 |
-| Customer workload action | A portal action creates the expected Admirald operation and worker runtime/data state | NOT TESTED — a direct CLI-to-Worker provision passed, but Harbor customer deployment did not run |
-| Backup upload/restore through independent Harbor (#182) | Authenticated upload and restore use the private portal origin; verify checksum/data and ownership | NOT TESTED |
-| Tier authorization (#181) | A disallowed backup/restore tier is rejected and does not mutate workload or backup state | NOT TESTED |
-| Cancellation/prepaid period (#190) | A cancelled subscription remains available through prepaid expiry and deprovisions only afterward | NOT TESTED |
+| Customer portal entry | Registration, pending-login rejection, approval, and catalog read work through Harbor | PASS — exact Release 1 customer flow; #289 direct-origin mutation redirects also returned complete 303 responses |
+| Customer workload action | A portal action creates the expected Admirald operation and worker runtime/data state | PASS — exact Release 1 Harbor deploy, SQL marker and healthy HTTP route |
+| Backup upload/restore through independent Harbor (#182) | Authenticated upload and restore use the private portal origin; verify checksum/data and ownership | PASS — exact Release 1 uploaded artifact checksum, owner-only download, restore operation and SQL marker |
+| Tier authorization (#181) | A disallowed backup/restore tier is rejected and does not mutate workload or backup state | PASS — exact RC6 Release 1 Rocky Multi-Node targeted E2E: controls hidden, forged actions rejected, API 403 policy responses, other customer 404, no backup/restore records or operations; cleanup verified ([report](evidence/rc6-r1/multinode-rocky/issue-181-policy-20261025T153000Z/REPORT.md)) |
+| Cancellation/prepaid period (#190) | A cancelled subscription remains available through prepaid expiry and deprovisions only afterward | PARTIAL — three Harbor unit regressions pass at the exact RC6 Release 1 submodule SHA; packaged-worker runtime check and DB/runtime evidence remain NOT TESTED ([report](evidence/rc6-r1/issues/issue-190-harbor-unit-20261025/REPORT.md)) |
 
 The following table preserves R75 observations from the wrong topology only;
 none of these entries validates an independent portal guest or earns a cell
-PASS.
+PASS. RC6 Release 1 independent-Portal observations are recorded above and in
+the issue-specific evidence reports; they do not convert partial issue checks
+into a full cell pass.
 
 Release 75 historical Multi-Node observations:
 

@@ -1,0 +1,23 @@
+[
+  {
+    "app_id": "e2e-upload-restore",
+    "backup_type": "database",
+    "checksum_sha256": "d7d081ef33f0f5fe04df9f7df8e8329a1969c707a1564659c337fb11d807c193",
+    "completed_at": "2026-10-25T14:25:53Z",
+    "created_at": "2026-10-25T14:25:50Z",
+    "database_type": "postgresql",
+    "expires_at": "2026-11-24T14:25:53Z",
+    "id": "bk_951fe18bf39b4d3e",
+    "instance_id": "inst_24654c580b2a348c",
+    "node_id": "rc6r1-worker",
+    "retention_policy_snapshot_json": "{\"count\":7,\"days\":30}",
+    "service": "db",
+    "size_bytes": 743,
+    "status": "succeeded",
+    "storage_backend": "local",
+    "storage_key": "inst_24654c580b2a348c/postgresql-database-op_d9187f7ffc54aee9.tar.gz",
+    "tier_id": "free",
+    "tier_snapshot_json": "{\"app_name\":\"e2e-upload-restore\",\"name\":\"free\",\"cpu\":1,\"memory\":\"512M\",\"storage\":\"1G\",\"price_monthly\":0,\"free\":true,\"backup_policy_json\":\"{\\\"enabled\\\":true,\\\"schedule\\\":\\\"disabled\\\",\\\"time\\\":\\\"\\\",\\\"timezone\\\":\\\"\\\",\\\"retention\\\":{\\\"count\\\":2,\\\"days\\\":1},\\\"manual_backups\\\":true,\\\"backup_database\\\":true,\\\"backup_volumes\\\":false,\\\"restore_allowed\\\":true}\"}",
+    "triggered_by": "manual"
+  }
+]

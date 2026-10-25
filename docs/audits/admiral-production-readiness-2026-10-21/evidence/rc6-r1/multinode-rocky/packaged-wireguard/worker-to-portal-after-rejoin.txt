@@ -1,0 +1,3 @@
+{"admirald":"ok","database":"ok","status":"ok","timestamp":"2026-10-25T14:44:04.637164+00:00"}
+
+http_status=200 tls_verify=0

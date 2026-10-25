@@ -1,0 +1,8 @@
+[INFO] Retrieving SSH host key for 10.77.0.3...
+[INFO] Expected fingerprint: SHA256:Txi0BixAR0Z5o7di5A9Ml94xL49+bhQG1LzR+wkiy3g
+[INFO] Received fingerprints: SHA256:Txi0BixAR0Z5o7di5A9Ml94xL49+bhQG1LzR+wkiy3g
+
+[INFO] SSH host key fingerprint verified.
+root@10.77.0.3: Permission denied (publickey,gssapi-keyex,gssapi-with-mic).
+[FATAL] Could not inspect the existing Admiral role on 10.77.0.3. Refusing remote changes.
+exit_code=1

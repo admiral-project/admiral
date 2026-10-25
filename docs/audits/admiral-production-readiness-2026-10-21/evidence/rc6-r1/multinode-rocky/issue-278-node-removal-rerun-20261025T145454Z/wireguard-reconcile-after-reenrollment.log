@@ -1,0 +1,153 @@
+
+PLAY [Collect WireGuard public keys from all nodes] ****************************
+
+TASK [Gathering Facts] *********************************************************
+ok: [rc6r1-admin]
+ok: [rc6r1-worker]
+ok: [rc6r1-portal]
+
+TASK [Read WireGuard public key] ***********************************************
+ok: [rc6r1-admin]
+ok: [rc6r1-portal]
+ok: [rc6r1-worker]
+
+TASK [Store public key as fact] ************************************************
+ok: [rc6r1-admin]
+ok: [rc6r1-worker]
+ok: [rc6r1-portal]
+
+TASK [Read WireGuard private key from node] ************************************
+ok: [rc6r1-admin]
+ok: [rc6r1-portal]
+ok: [rc6r1-worker]
+
+TASK [Store private key as fact for this node] *********************************
+ok: [rc6r1-admin]
+ok: [rc6r1-worker]
+ok: [rc6r1-portal]
+
+PLAY [Read Admirald-managed know_host inventory on hub] ************************
+
+TASK [Set the default WireGuard subnet when no custom subnet is configured] ****
+skipping: [rc6r1-admin]
+
+TASK [Derive the WireGuard hub address when no explicit address is configured] ***
+skipping: [rc6r1-admin]
+
+TASK [Stat know_host inventory before reading] *********************************
+ok: [rc6r1-admin]
+
+TASK [Fail if know_host inventory is missing] **********************************
+skipping: [rc6r1-admin]
+
+TASK [Read know_host inventory] ************************************************
+ok: [rc6r1-admin]
+
+TASK [Decode know_host inventory] **********************************************
+ok: [rc6r1-admin]
+
+PLAY [Register each spoke's public key on the hub] *****************************
+
+TASK [Check for an existing per-peer preshared key] ****************************
+ok: [rc6r1-portal -> rc6r1-admin(10.77.0.2)]
+ok: [rc6r1-worker -> rc6r1-admin(10.77.0.2)]
+
+TASK [Read existing per-peer preshared key] ************************************
+ok: [rc6r1-worker -> rc6r1-admin(10.77.0.2)]
+ok: [rc6r1-portal -> rc6r1-admin(10.77.0.2)]
+
+TASK [Preserve existing per-peer preshared key] ********************************
+ok: [rc6r1-worker]
+ok: [rc6r1-portal]
+
+TASK [Generate per-peer preshared key on hub when absent] **********************
+skipping: [rc6r1-portal]
+changed: [rc6r1-worker -> rc6r1-admin(10.77.0.2)]
+
+TASK [Set generated per-peer preshared key] ************************************
+ok: [rc6r1-worker]
+skipping: [rc6r1-portal]
+
+TASK [Write spoke peer config to hub] ******************************************
+ok: [rc6r1-portal -> rc6r1-admin(10.77.0.2)]
+changed: [rc6r1-worker -> rc6r1-admin(10.77.0.2)]
+
+PLAY [Build and deploy hub WireGuard configuration] ****************************
+
+TASK [Find peer config files on hub] *******************************************
+ok: [rc6r1-admin]
+
+TASK [Read all peer config files from hub] *************************************
+ok: [rc6r1-admin] => (item=None)
+ok: [rc6r1-admin] => (item=None)
+ok: [rc6r1-admin]
+
+TASK [Initialize peer list for template] ***************************************
+ok: [rc6r1-admin]
+
+TASK [Build peer list for template] ********************************************
+ok: [rc6r1-admin] => (item=None)
+ok: [rc6r1-admin] => (item=None)
+ok: [rc6r1-admin]
+
+TASK [Debug peer list] *********************************************************
+ok: [rc6r1-admin]
+
+TASK [Deploy hub WireGuard configuration] **************************************
+changed: [rc6r1-admin]
+
+RUNNING HANDLER [restart wireguard] ********************************************
+changed: [rc6r1-admin]
+
+PLAY [Update spoke WireGuard configurations with hub public key] ***************
+
+TASK [Select dedicated Portal and Worker peers for uploaded restores] **********
+ok: [rc6r1-worker]
+ok: [rc6r1-portal]
+
+TASK [Initialize direct spoke peer list] ***************************************
+ok: [rc6r1-worker]
+ok: [rc6r1-portal]
+
+TASK [Add exact Worker-to-Portal WireGuard peers] ******************************
+ok: [rc6r1-worker] => (item=rc6r1-portal)
+ok: [rc6r1-portal] => (item=rc6r1-worker)
+
+TASK [Deploy spoke WireGuard configuration] ************************************
+ok: [rc6r1-portal]
+changed: [rc6r1-worker]
+
+RUNNING HANDLER [restart wireguard] ********************************************
+changed: [rc6r1-worker]
+
+PLAY [Reconcile exact Worker access to the dedicated Portal restore endpoint] ***
+
+TASK [Initialize registered Worker WireGuard addresses] ************************
+ok: [rc6r1-portal]
+
+TASK [Collect exact registered Worker WireGuard addresses] *********************
+ok: [rc6r1-portal] => (item=rc6r1-worker)
+
+TASK [Read existing Portal WireGuard-zone rich rules] **************************
+ok: [rc6r1-portal]
+
+TASK [Identify stale Worker Harbor rules] **************************************
+ok: [rc6r1-portal]
+
+TASK [Remove stale Worker-to-Portal Harbor rules] ******************************
+skipping: [rc6r1-portal]
+
+TASK [Permit each registered Worker to reach Harbor over WireGuard] ************
+ok: [rc6r1-portal] => (item=10.99.0.2)
+
+TASK [Reload firewalld after direct Worker rule reconciliation] ****************
+skipping: [rc6r1-portal]
+
+TASK [Verify each registered Worker Harbor rule is active] *********************
+ok: [rc6r1-portal] => (item=10.99.0.2)
+
+PLAY RECAP *********************************************************************
+rc6r1-admin                : ok=15   changed=2    unreachable=0    failed=0    skipped=3    rescued=0    ignored=0   
+rc6r1-portal               : ok=19   changed=0    unreachable=0    failed=0    skipped=4    rescued=0    ignored=0   
+rc6r1-worker               : ok=16   changed=4    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+

@@ -1,0 +1,9 @@
+test_id=RC6-R1-MN-291-UNREGISTERED-SOURCE-01
+candidate=0:0.0.1rc6-1.el10
+probe_wireguard_ip=10.99.0.66/32
+started_utc=2026-10-25T14:45:15Z
+worker_probe_output=UedbFRsWKuHqNhq7LLhMumJZSJHXSXrj5mHutu7pwDw=	0 | http_status=000 connect=0.000000 | curl_exit=28
+temporary_peer_handshake=yes
+unregistered_firewall_rule_query=no
+temporary_interface_and_key_removed=yes
+finished_utc=2026-10-25T14:45:27Z

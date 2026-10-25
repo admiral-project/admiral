@@ -1,0 +1,2 @@
+Harness attempt: recursive SCP of /usr/share/admiral/ansible failed because the packaged filter_plugins/__pycache__ directory is not readable by validator. No playbook tasks ran. Retrying by streaming the packaged tree with sudo tar while excluding Python bytecode caches.
+Observed: scp: remote readdir("/usr/share/admiral/ansible/filter_plugins/__pycache__"): Permission denied

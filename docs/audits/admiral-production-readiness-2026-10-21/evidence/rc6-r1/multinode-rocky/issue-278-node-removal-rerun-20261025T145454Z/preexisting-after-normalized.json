@@ -1,0 +1,21 @@
+{
+  "app_definition_name": "e2e-upload-restore",
+  "commercial_status": "cancelled",
+  "created_at": "2026-10-25T14:24:57.073457Z",
+  "customer_id": "hcus_b71555cc81fb41e1",
+  "emergency_limit_bytes": 0,
+  "hostname": "",
+  "id": "inst_24654c580b2a348c",
+  "logical_instance_id": "inst_24654c580b2a348c",
+  "need_restarting": false,
+  "setup_completed": false,
+  "storage_exceeded": false,
+  "storage_limit_bytes": 1073741824,
+  "storage_state": "ok",
+  "storage_used_bytes": 47890023,
+  "storage_used_percent": 4.460000038146973,
+  "technical_status": "deprovisioned",
+  "tier_name": "free",
+  "tier_snapshot_json": "{\"app_name\":\"e2e-upload-restore\",\"name\":\"free\",\"cpu\":1,\"memory\":\"512M\",\"storage\":\"1G\",\"price_monthly\":0,\"free\":true,\"backup_policy_json\":\"{\\\"enabled\\\":true,\\\"schedule\\\":\\\"disabled\\\",\\\"time\\\":\\\"\\\",\\\"timezone\\\":\\\"\\\",\\\"retention\\\":{\\\"count\\\":2,\\\"days\\\":1},\\\"manual_backups\\\":true,\\\"backup_database\\\":true,\\\"backup_volumes\\\":false,\\\"restore_allowed\\\":true}\"}",
+  "update_type": ""
+}

@@ -1,0 +1,5 @@
+utc=2026-10-25T15:19:25Z
+root_commit=267da7ebd739a0703c276ec8d4770ffa31a45f25
+harbor_commit=dd4818b6e2bc53eea4495fc5e374a4893cfcb107
+candidate=0.0.1rc6-1, no explicit RPM Epoch
+command=python3 -m pytest tests/test_worker.py::test_remote_instance_sync_preserves_cancelled_commercial_state tests/test_worker.py::test_cancelled_paypal_subscription_does_not_deprovision_before_prepaid_end tests/test_worker.py::test_cancelled_subscription_deprovisions_after_prepaid_end -q

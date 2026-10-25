@@ -1,0 +1,2 @@
+The first read-only SQL check targeted a database named `admiral`, which does not exist on the dedicated Portal guest. The error was `FATAL: database "admiral" does not exist`; no SQL was executed. The Portal's local database list showed `admiral_harbor`; the corrected read-only query against that database is captured in `synthetic-customer-state.txt`.
+The follow-up query used the plural table name `customers`; the Portal schema uses the singular `customer` table. No mutation occurred. The corrected read-only result follows.

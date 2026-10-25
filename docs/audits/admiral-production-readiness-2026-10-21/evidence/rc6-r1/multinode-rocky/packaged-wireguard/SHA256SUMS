@@ -1,0 +1,4 @@
+11e5f3167de6f97e7824fa80451197784d9ff5230b0c544b7a8b96861223bfdc  docs/audits/admiral-production-readiness-2026-10-21/evidence/rc6-r1/multinode-rocky/packaged-wireguard/packaged-copy-excluded-cache-failure.log
+9662cafb59ecfcff08321e2829b4ba55d37760f5776769eb437cb4441a343d82  docs/audits/admiral-production-readiness-2026-10-21/evidence/rc6-r1/multinode-rocky/packaged-wireguard/playbook-run.log
+f8d2e660dfbc5365c95e36e5d65c8cbc0921a80803ccb1f90ffde7eb3000dfbb  docs/audits/admiral-production-readiness-2026-10-21/evidence/rc6-r1/multinode-rocky/packaged-wireguard/preflight-ping.log
+70d68726affc94ec6d03172560c767ac62be7a0fed23fcf70bdd47f215da64fe  docs/audits/admiral-production-readiness-2026-10-21/evidence/rc6-r1/multinode-rocky/packaged-wireguard/metadata.txt

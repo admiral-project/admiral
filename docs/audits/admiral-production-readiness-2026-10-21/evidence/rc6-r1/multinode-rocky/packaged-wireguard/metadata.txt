@@ -1,0 +1,4 @@
+test_id=RC6-R1-MN-WG-RESTORE-01
+candidate=0.0.1rc6-1 epoch=0
+started_utc=2026-10-25T14:29:38Z
+finished_utc=2026-10-25T14:30:32Z

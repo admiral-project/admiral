@@ -1,0 +1,16 @@
+Hostname: admiral-inst_24654c580b2a348c
+IP: 127.0.0.1
+IP: ::1
+IP: 192.168.122.225
+IP: fe80::3449:e5ff:fee6:8257
+RemoteAddr: 10.99.0.1:59084
+GET / HTTP/1.1
+Host: e2e-upload-restore563626.apps.rc6.test
+User-Agent: curl/8.12.1
+Accept: */*
+Accept-Encoding: gzip
+Via: 2.0 Caddy
+X-Forwarded-For: 10.77.0.1
+X-Forwarded-Host: e2e-upload-restore563626.apps.rc6.test
+X-Forwarded-Proto: https
+

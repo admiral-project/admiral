@@ -1,0 +1,12 @@
+{
+  "action": "deprovision_app",
+  "admin_user": "system",
+  "created_at": "2026-10-25T15:22:31.394241Z",
+  "error_message": null,
+  "id": "op_d748404e41506bdf",
+  "instance_id": "inst_94a2050d786a01c2",
+  "node_id": "rc6r1-worker",
+  "status": "succeeded",
+  "task_id": "task_5678f010abee8516",
+  "updated_at": "2026-10-25T15:22:37.600627Z"
+}

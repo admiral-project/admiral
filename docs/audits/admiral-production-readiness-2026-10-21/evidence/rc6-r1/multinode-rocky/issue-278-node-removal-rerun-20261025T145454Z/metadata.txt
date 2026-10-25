@@ -1,0 +1,11 @@
+test_id=RC6-MN-NODE-REMOVE-HISTORY-01
+candidate=0.0.1rc6-1.el10
+epoch=0
+node_id=rc6r1-worker
+started_utc=2026-10-25T14:54:55Z
+instance_id=inst_c1415ca7c9a5405b
+endpoint=10.99.0.2:40004
+http_before_remove=200
+http_after_rejected_remove=200
+finished_utc=2026-10-25T14:55:25Z
+result=PASS

@@ -1,0 +1,31 @@
+[
+  {
+    "available_for_provisioning": true,
+    "committed_disk_bytes": 0,
+    "committed_ram_bytes": 0,
+    "disk_commit_limit_bytes": 0,
+    "disk_total_bytes": 0,
+    "disk_used_bytes": 0,
+    "fleet_version": "",
+    "health_status": "healthy",
+    "hostname": "rc6r1rocky-portal-r2",
+    "id": "rc6r1-portal",
+    "ip": "10.99.0.3",
+    "last_heartbeat": "2026-10-25T14:55:11.433003Z",
+    "last_metrics_at": "2026-10-25T14:55:11.433003Z",
+    "manual_disabled": false,
+    "node_role": "portal",
+    "os": "Rocky 10.2",
+    "podman_version": "4.9.0",
+    "pods_active": 0,
+    "pods_failed": 0,
+    "pods_paused": 0,
+    "public_ip": "10.77.0.4",
+    "ram_commit_limit_bytes": 0,
+    "ram_total_bytes": 0,
+    "ram_used_bytes": 0,
+    "status": "active",
+    "storage_state": "",
+    "wireguard_ip": "10.99.0.3"
+  }
+]
