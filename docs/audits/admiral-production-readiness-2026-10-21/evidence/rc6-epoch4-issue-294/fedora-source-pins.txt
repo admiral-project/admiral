@@ -1,0 +1,12 @@
+purpose=local-only-epoch-test; not publishable
+epoch=4
+version=0.0.1rc6
+release=2
+host=Fedora Linux 46 (Container Image Prerelease)
+dist_tag=fc46
+root_commit=e4a43dd8b64b999186f2906ce153bce26f31e8f2
+admirald=0fd76b6c902cfae179cfe6fb3e685c935a350cf7
+admiral-fleet=fc6909f6c41507d04aa204ebeafbbaaa4ef2c686
+admiralctl=fa2a65e866310bd82bea78859804b6c3aea7989a
+admiral-flagship=b7325bbc71fc474a521496e593b2967e4d555ac1
+admiral-harbor=dd4818b6e2bc53eea4495fc5e374a4893cfcb107
