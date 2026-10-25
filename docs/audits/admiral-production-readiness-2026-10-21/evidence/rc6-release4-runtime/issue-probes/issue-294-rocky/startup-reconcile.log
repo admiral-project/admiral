@@ -1,0 +1,4 @@
+issue=294 candidate=rc6-r4-epoch0-0.0.1rc6-4 os=rocky start_utc=2026-10-25T21:04:59Z
+after_admirald_start_worker rc6r4-rocky-single offline degraded False heartbeat_timeout 2026-10-25T21:04:46.835784Z 2026-10-25T21:04:46.835784Z
+after_fleet_recovery_worker rc6r4-rocky-single active healthy True 2026-10-25T21:07:17.220965Z 2026-10-25T21:07:17.220965Z
+issue_294_startup_reconciliation=PASS

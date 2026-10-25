@@ -1,0 +1,6 @@
+candidate=rc6-r4-epoch0-0.0.1rc6-4 os=fedora start_utc=2026-10-25T20:59:27Z
+before_worker rc6r4-fedora-single active healthy True 2026-10-25T20:59:09.32102Z 2026-10-25T20:59:09.32102Z
+issue=294 candidate=rc6-r4-epoch0-0.0.1rc6-4 os=fedora rerun_start_utc=2026-10-25T21:02:17Z
+after_admirald_start_worker rc6r4-fedora-single offline degraded False heartbeat_timeout 2026-10-25T21:01:51.824479Z 2026-10-25T21:01:51.824479Z
+after_fleet_recovery_worker rc6r4-fedora-single active healthy True 2026-10-25T21:04:35.088243Z 2026-10-25T21:04:35.088243Z
+issue_294_startup_reconciliation=PASS

@@ -1,0 +1,8 @@
+issue=294 candidate=rc6-r4-epoch0-0.0.1rc6-4 os=fedora
+result=NOT COUNTED
+observed harness error from remote post-start JSON parser:
+Traceback (most recent call last):
+  File "<stdin>", line 6, in <module>
+KeyError: 'unavailable_reason_codes'
+
+The parser directly indexed an optional JSON field. The command exited before Fleet was restarted by that attempt. Fleet was started manually immediately afterward; the next node query showed active/healthy/available with a fresh heartbeat. The corrected rerun used optional-field-safe access and passed.
