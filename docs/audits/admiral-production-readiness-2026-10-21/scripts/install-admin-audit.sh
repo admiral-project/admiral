@@ -42,7 +42,11 @@ ssh_args=(-i "$ssh_key" -o IdentitiesOnly=yes -o BatchMode=yes -o StrictHostKeyC
   ssh "${ssh_args[@]}" "$target" sudo bash -s -- "$version" "$release" "$distro" "$rpm_suffix" <<'REMOTE'
 set -euo pipefail
 version=$1 release=$2 distro=$3 rpm_suffix=$4
-dnf install -y dnf-plugins-core
+if [[ $distro == fedora ]]; then
+  dnf install -y dnf5-plugins
+else
+  dnf install -y dnf-plugins-core
+fi
 if [[ $distro == el10 ]]; then
   dnf install -y epel-release
   dnf config-manager --set-enabled crb

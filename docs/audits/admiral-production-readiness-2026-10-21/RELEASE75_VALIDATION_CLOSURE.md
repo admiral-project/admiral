@@ -11,7 +11,7 @@ The release gate requires `--admin-node` + `--worker-node` + independent
 runs did not validate Harbor on a separate host, the portal's WireGuard API
 path, or customer workflows through that portal. Keep the raw R75 evidence as
 historical observations, but remove all Multi-Node release-gate credit. The
-current RC6 matrix is 0/6 complete; all six cells must run on the exact RC6
+current RC6 matrix is 0/8 complete; all eight cells must run on the exact RC6
 candidate with the corrected topology.
 
 The three Single-Node cells remain historical PASS for the exact R75 candidate.

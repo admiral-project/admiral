@@ -12,7 +12,7 @@ The agent must:
 1. identify the exact release candidate source commits;
 2. build the release RPMs;
 3. create isolated KVM virtual machines;
-4. execute the required six-cell x86_64 Single-Node and Multi-Node matrix;
+4. execute the required eight-cell x86_64 Single-Node and Multi-Node matrix;
 5. collect objective evidence;
 6. create GitHub issues for reproducible product defects;
 7. produce a release validation report.
@@ -48,7 +48,7 @@ issue (or create one if none exists), implement an authorized fix on
 `origin/main`, add or update focused regression coverage, and commit with a
 `Signed-off-by` trailer. Never weaken assertions or disable security controls to
 make a scenario pass. A fix creates a new candidate: rebuild all six Admiral
-RPMs, increment the `Release` of each, and restart all six matrix cells on
+RPMs, increment the `Release` of each, and restart all eight matrix cells on
 clean VMs. Record any harness adjustment and its evidence in the report.
 
 ### 3.2 Preserve the candidate
@@ -89,32 +89,32 @@ Examples:
 ### 4.1 Validation platform
 
 * Release-blocking architecture: `x86_64`
-* Release-matrix operating systems: Fedora Rawhide, Rocky Linux 10, and CentOS Stream 10
+* Release-matrix operating systems: Fedora Rawhide, Rocky Linux 10, AlmaLinux 10, and CentOS Stream 10
 * Virtualization: KVM/QEMU; use hardware virtualization where the host supports it
 * Security mode: SELinux `Enforcing`
 
 ### 4.2 Required x86_64 release matrix
 
-The release gate is the cross product of these three operating systems and two
-topologies, for six required cells:
+The release gate is the cross product of these four operating systems and two
+topologies, for eight required cells:
 
 | Operating system | Architecture | Single-node | Multi-node |
 | ---------------- | ------------ | ----------: | ---------: |
 | Fedora Rawhide   | x86_64       |    Required |   Required |
 | Rocky Linux 10   | x86_64       |    Required |   Required |
+| AlmaLinux 10     | x86_64       |    Required |   Required |
 | CentOS Stream 10 | x86_64       |    Required |   Required |
 
 Every operating system must use an official GenericCloud image.
 
 The image checksum must be verified before use.
 
-The EL10 release-gate targets are Rocky Linux 10 and CentOS Stream 10.
-AlmaLinux 10 remains a Tier 2 EL10-compatible target but is outside the active
-matrix: the project COPR `alma+epel-10-x86_64_v2` chroot does not build the Go
-RPMs ([#276](https://github.com/admiral-project/admiral/issues/276)), so its two
-cells cannot be executed on the exact candidate. Never report AlmaLinux as
-validated while that limitation stands; re-include it only after the limitation
-is fixed and both cells pass on the exact candidate.
+All three Enterprise Linux 10 distributions are required targets. The project
+COPR `alma+epel-10-x86_64_v2` chroot has skipped Go RPM builds
+([#276](https://github.com/admiral-project/admiral/issues/276)); this build
+environment limitation does not remove AlmaLinux from the release matrix. Build
+and install the exact candidate through the isolated native EL10 lab repository
+and record any dependency-resolution block explicitly.
 The installer must reject other EL major versions until their dependency,
 repository and security-update behavior has been explicitly implemented and
 validated. Fedora Rawhide is a Tier 2 production target and compatibility signal
@@ -124,7 +124,7 @@ included in this release gate.
 ### 4.3 ARM64 Tier 2 non-blocking track
 
 RPM build or runtime validation on `aarch64`/ARM64 may be performed and reported
-as a separate Tier 2 track. ARM64 is not part of the six-cell x86_64 release
+as a separate Tier 2 track. ARM64 is not part of the eight-cell x86_64 release
 gate: an absent or failing ARM64 result does not block an otherwise valid
 x86_64 release. Do not use ARM64 evidence to satisfy an x86_64 cell, or the
 reverse.
@@ -137,9 +137,9 @@ and SELinux state before installing Admiral. Exercise the secure production
 modes; `--dev-node` is not an acceptance substitute.
 
 For the blocking x86_64 gate, the golden candidate is the same six x86_64/noarch
-Admiral RPMs, with identical SHA-256 values across all six cells. If a fix
+Admiral RPMs, with identical SHA-256 values across all eight cells. If a fix
 changes any Admiral RPM payload, rebuild the coordinated six-package candidate
-and restart validation on fresh VMs for all six cells. An optional ARM64
+and restart validation on fresh VMs for all eight cells. An optional ARM64
 build has its own package hashes and separate report; it does not add release
 gate cells. EL10-only dependency RPMs may differ from Fedora repository
 contents and must be listed separately in the report.
@@ -156,9 +156,8 @@ Fedora-specific resolver policy does not alter EL10 behavior.
 
 ### 4.4 Deferred platforms
 
-Operating systems outside the three named x86_64 targets and architectures
+Operating systems outside the four named x86_64 targets and architectures
 outside the optional ARM64 Tier 2 track must be reported as `NOT TESTED`.
-AlmaLinux 10 belongs to this deferred set until #276 is resolved.
 
 ## 5. Host preflight
 
@@ -212,7 +211,7 @@ Build the blocking release candidate for x86_64 with the selected source pins:
 make rpm RPM_ARCH=x86_64
 ```
 
-All six required guest scenarios use these x86_64/noarch candidate RPMs.
+All eight required guest cells use these x86_64/noarch candidate RPMs.
 Record NEVRA and SHA-256 for every package. An optional ARM64 build may use
 `make rpm RPM_ARCH=aarch64`; record its NEVRA/SHA-256 and validation status
 separately, and do not make its absence or failure block the x86_64 gate.

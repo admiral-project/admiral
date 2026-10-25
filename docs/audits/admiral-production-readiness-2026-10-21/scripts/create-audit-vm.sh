@@ -27,7 +27,7 @@ fi
 
 root=/var/lib/libvirt/images/admiral-validation
 case "$os" in
-  fedora) base="$root/seeds/Fedora-Rawhide-seed-20261024-r73-updated.x86_64.qcow2"; osinfo=fedora-rawhide ;;
+  fedora) base="$root/seeds/Fedora-Rawhide-seed-20261025-r75-updated.x86_64.qcow2"; osinfo=fedora-rawhide ;;
   rocky)  base="$root/seeds/Rocky-10.2-seed-20261024-r73-updated.x86_64.qcow2"; osinfo=rocky10 ;;
   alma)   base="$root/seeds/AlmaLinux-10.2-seed-20261024-r73-updated.x86_64.qcow2"; osinfo=almalinux10 ;;
   centos) base="$root/seeds/CentOS-Stream-10-seed-20261024-r73-updated.x86_64.qcow2"; osinfo=centos-stream10 ;;

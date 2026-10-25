@@ -29,7 +29,11 @@ ssh "${ssh_args[@]}" "$target" rm -f -- "$remote_repo_tmp"
 ssh "${ssh_args[@]}" "$target" sudo bash -s -- "$distro" "$mistune_nevra" "$version" "$release" <<'REMOTE'
 set -euo pipefail
 distribution=$1 expected_mistune_nevra=$2 expected_version=$3 expected_release=$4
-dnf install -y dnf-plugins-core
+if [[ $distribution == fedora ]]; then
+    dnf install -y dnf5-plugins
+else
+    dnf install -y dnf-plugins-core
+fi
 if [[ $distribution == el10 ]]; then
     dnf install -y epel-release
     dnf config-manager --set-enabled crb

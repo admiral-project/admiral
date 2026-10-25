@@ -7,7 +7,7 @@ Historical audit candidate: RC5 Release 67 packages built from root commit `833d
 
 ## Scope and evidence rules
 
-The active runtime matrix is Rocky Linux 10, CentOS Stream 10, and Fedora Rawhide on x86_64, each in Single-Node and Multi-Node (six cells). AlmaLinux is excluded because the configured COPR build environment omitted the Go RPMs; see #276. The host is x86_64 with KVM, 4 vCPU, 8 GiB RAM and 4 GiB swap. Each Multi-Node cell requires one admin node, one worker node, and one independent portal node. R75's different topology receives no Multi-Node credit. Results from any earlier candidate are historical only.
+The active runtime matrix is Rocky Linux 10, AlmaLinux 10, CentOS Stream 10, and Fedora Rawhide on x86_64, each in Single-Node and Multi-Node (eight cells). The configured COPR build-environment limitation for AlmaLinux is tracked in #276, but AlmaLinux remains a required runtime target. The host is x86_64 with KVM, 4 vCPU, 8 GiB RAM and 4 GiB swap. Each Multi-Node cell requires one admin node, one worker node, and one independent portal node. R75's different topology receives no Multi-Node credit. Results from any earlier candidate are historical only.
 
 Results from a different OS, candidate, or topology do not satisfy a Release 75 target cell.
 

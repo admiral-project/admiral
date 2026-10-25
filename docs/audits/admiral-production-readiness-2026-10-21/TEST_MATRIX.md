@@ -2,17 +2,18 @@
 
 Audit ID: `ADM-AUDIT-2026-10-21`<br>
 
-## Active functional gate — RC6, three x86_64 platforms
+## Active functional gate — RC6, four x86_64 platforms
 
-The active release gate has six cells: Fedora Rawhide, Rocky Linux 10 and CentOS Stream 10, each Single-Node and Multi-Node. AlmaLinux is excluded because the configured COPR environment omitted its Go RPM builds (#276). The same exact Admiral sources and coordinated native package set must pass all six. Any source or package-set change invalidates all cell credit and requires a fresh candidate build and run.
+The active release gate has eight cells: Fedora Rawhide, Rocky Linux 10, AlmaLinux 10 and CentOS Stream 10, each Single-Node and Multi-Node. AlmaLinux remains in scope; the earlier COPR build-environment limitation (#276) does not remove a required target from this matrix. The same exact Admiral sources and coordinated native package set must pass all eight. Any source or package-set change invalidates all cell credit and requires a fresh candidate build and run.
 
-**Topology correction (2026-10-25):** R75 Single-Node cells remain historical PASS for their exact candidate. R75's three Multi-Node runs used `--admin-portal-node` plus worker spokes and did not validate the required independent portal role; reclassify them as **NOT TESTED for the target Multi-Node cells**. RC6 currently has **0/6 complete cells**. Each new Multi-Node cell requires three real guests: `--admin-node`, `--worker-node`, and `--portal-node`. The active checklist is [issue #277](https://github.com/admiral-project/admiral/issues/277); AlmaLinux remains excluded because the configured COPR environment omitted its Go RPMs (#276).
+**Topology correction (2026-10-25):** R75 Single-Node cells remain historical PASS for their exact candidate. R75's three Multi-Node runs used `--admin-portal-node` plus worker spokes and did not validate the required independent portal role; reclassify them as **NOT TESTED for the target Multi-Node cells**. RC6 currently has **0/8 complete cells**. Each new Multi-Node cell requires three real guests: `--admin-node`, `--worker-node`, and `--portal-node`. The active checklist is [issue #277](https://github.com/admiral-project/admiral/issues/277). AlmaLinux's COPR build-environment limitation (#276) is tracked separately and does not remove its required cells.
 
 | Platform | Single-Node | Multi-Node |
 |---|---|---|
-| Fedora Rawhide x86_64 | NOT TESTED | NOT TESTED — portal topology absent |
-| Rocky Linux 10 x86_64 | NOT TESTED | NOT TESTED — portal topology absent |
-| CentOS Stream 10 x86_64 | NOT TESTED | NOT TESTED — portal topology absent |
+| Fedora Rawhide x86_64 | NOT TESTED | NOT TESTED |
+| Rocky Linux 10 x86_64 | NOT TESTED | NOT TESTED |
+| AlmaLinux 10 x86_64 | NOT TESTED | NOT TESTED |
+| CentOS Stream 10 x86_64 | NOT TESTED | NOT TESTED |
 
 The statuses above describe the current RC6 target matrix; prior-candidate runs do not transfer. The prior R75 Single-Node reports are historical results and require rerun on RC6.
 

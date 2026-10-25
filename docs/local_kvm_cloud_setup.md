@@ -1,8 +1,8 @@
 # Laboratorio cloud local con KVM
 
-Este documento describe cómo validar `admiral-install --single-node` en una
-máquina EL10 nueva sin borrar el host de desarrollo ni confundir una
-reconciliación con una primera instalación.
+Este documento describe cómo validar instalaciones nuevas de Admiral en VMs
+KVM x86_64 sin borrar el host de desarrollo ni confundir una reconciliación
+con una primera instalación.
 
 La prueba usa KVM porque una máquina virtual conserva los elementos que un
 contenedor de sistema no reproduce de forma suficientemente fiel:
@@ -17,7 +17,7 @@ contenedor de sistema no reproduce de forma suficientemente fiel:
 
 ## Recursos
 
-Para la matriz Rocky Linux 10 y Fedora Rawhide:
+Para la matriz Rocky Linux 10, AlmaLinux 10, CentOS Stream 10 y Fedora Rawhide:
 
 | Recurso | Host de prueba | VM |
 |---|---:|---:|
@@ -31,11 +31,13 @@ imágenes mate el host por OOM. No convierte un host pequeño en una plataforma
 adecuada para pruebas de rendimiento. Durante la validación debe vigilarse
 `MemAvailable`, el uso de swap y el RSS de QEMU.
 
-La prueba multi-node usa `--admin-portal-node` y dos VMs `--worker-node`, para
-ejercitar más de un worker dentro del presupuesto del host. En este host se
-ejecutan simultáneamente tres VMs de 2 GiB con 4 GiB de swap; vigila
-`MemAvailable`, el uso de swap y el RSS de QEMU para detectar presión de memoria.
-Single-node usa una VM de 2 GiB.
+La matriz actual tiene ocho celdas: los cuatro sistemas en Single-Node y
+Multi-Node. Cada Multi-Node usa tres VMs independientes del mismo sistema:
+`--admin-node` (Admirald, Flagship, PostgreSQL y Caddy), `--worker-node` (Fleet
+y Podman) y `--portal-node` (Harbor). Harbor no se instala en el admin ni en el
+worker para obtener crédito en esta matriz. Con tres VMs de 2 GiB y 4 GiB de
+swap se ejecuta un clúster a la vez; vigila `MemAvailable`, swap y RSS de QEMU.
+Single-Node usa una VM de 2 GiB.
 
 ## Imagen y aislamiento
 
@@ -136,12 +138,12 @@ unidades y Quadlets. No se encontraron AVC de contenedores durante la prueba.
 
 ## Extensión a multi-node
 
-El mismo enfoque puede validar un clúster completo:
+El mismo enfoque valida la topología multi-node requerida:
 
 ```text
-admin + Harbor VM --admin-portal-node
-worker 1 VM       --worker-node
-worker 2 VM       --worker-node
+admin VM  --admin-node
+worker VM --worker-node
+portal VM --portal-node (Harbor independiente)
 ```
 
 Cada VM necesita una interfaz con NAT para instalar paquetes y una segunda LAN
@@ -166,14 +168,18 @@ La prueba multi-node debe comprobar además:
 - rutas `/32` hub-and-spoke y ausencia de comunicación lateral;
 - API y PostgreSQL no expuestos públicamente;
 - certificados y autenticación entre componentes;
-- registro separado de portal y workers;
-- Harbor comunicándose con `admirald` sólo por la VPN;
+- registro separado de portal y worker;
+- Harbor ejecutándose únicamente en la VM portal y comunicándose con
+  `admirald` por la VPN;
+- ruta pública en Caddy hacia la dirección WireGuard de la VM portal;
+- registro/login de cliente, catálogo y una acción del cliente que llegue al
+  control plane y cree el workload en la VM worker;
 - workload WordPress real en un worker rootless;
 - backup, lifecycle, callbacks y auditoría a través de la VPN.
 
-El modo `--admin-portal-node` debe instalarse y comprobarse explícitamente en la
-celda multi-node; no se infiere su validez a partir de pruebas separadas de
-`--admin-node` y `--portal-node`.
+`--admin-portal-node` es un perfil combinado y no satisface esta celda. La
+instalación, el enrutamiento y los flujos de Harbor deben ejecutarse en la VM
+portal independiente para que el resultado cuente.
 
 KVM proporciona una prueba funcional y de seguridad muy cercana a VPS reales,
 pero no sustituye una prueba de capacidad, latencia, proveedor de red o pago

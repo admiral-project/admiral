@@ -3,7 +3,7 @@
 Audit ID: `ADM-AUDIT-2026-10-21`<br>
 Audit began: 2026-10-21 UTC<br>
 Release 75 functional closeout: [RELEASE75_VALIDATION_CLOSURE.md](RELEASE75_VALIDATION_CLOSURE.md).
-> **Topology correction — 2026-10-25:** The required Multi-Node shape is `--admin-node` + `--worker-node` + independent `--portal-node`. R75 used `--admin-portal-node` plus workers, so its three Multi-Node cells are invalid for this gate; independent Harbor is not validated. RC6 currently has **0/6 complete cells**. Production readiness remains NOT VALIDATED.
+> **Topology and scope correction — 2026-10-25:** The required Multi-Node shape is `--admin-node` + `--worker-node` + independent `--portal-node`. R75 used `--admin-portal-node` plus workers, so its three Multi-Node cells are invalid for this gate; independent Harbor is not validated. The active release matrix is Fedora Rawhide, Rocky Linux 10, AlmaLinux 10 and CentOS Stream 10, each Single-Node and Multi-Node. RC6 currently has **0/8 complete cells**. Production readiness remains NOT VALIDATED.
 
 Production readiness is **NOT VALIDATED**. The functional release gate is narrower than the full production audit and cannot establish production security, fault-tolerance, scalability or performance.
 
@@ -37,4 +37,4 @@ R75's historical reports recorded six functional PASS results, but the three Mul
 
 ## Current answer to the audit question
 
-The broader production-readiness question remains **NOT VALIDATED**. R75 has three historical Single-Node passes; its three Multi-Node results used the wrong topology and receive no gate credit. RC6 has **0/6 complete cells**. Even a complete functional matrix would not establish all security, isolation, fault-tolerance, resource-exhaustion or performance properties required for a production decision. No production-readiness claim is made.
+The broader production-readiness question remains **NOT VALIDATED**. R75 has three historical Single-Node passes; its three Multi-Node results used the wrong topology and receive no gate credit. RC6 has **0/8 complete cells**. Even a complete functional matrix would not establish all security, isolation, fault-tolerance, resource-exhaustion or performance properties required for a production decision. No production-readiness claim is made.
