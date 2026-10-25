@@ -1,0 +1,112 @@
+candidate=0.0.1rc6-1 os=rocky guest=192.168.122.84 node=rc6-r1-rocky-sn root_commit=3faa349a5ba96b051104f1af5d043cb14bc8259d start_utc=2026-10-25T03:41:37Z
+
+=== stage=workload_create_idempotency_deprovision start_utc=2026-10-25T03:41:37Z ===
+expected exactly one worker node 'rc6-r1-rocky-sn'; found 0
+private-run-evidence=/var/tmp/rc6-single-lifecycle.PYLUMRdV
+stage=workload_create_idempotency_deprovision result=FAIL exit=1 end_utc=2026-10-25T03:41:38Z
+
+=== stage=resize_data_continuity start_utc=2026-10-25T03:41:38Z ===
+test=RC6-SN-RESIZE
+start_utc=2026-10-25T03:41:40Z
+instance_id=inst_3cbc4b94faf0dcee
+tier=small state=small running healthy available
+before_resize_http=200 endpoint=127.0.0.1:40000
+before_resize_sql_marker=rc6-resize-marker
+resize_target=medium requested_utc=2026-10-25T03:42:38Z
+resize_operation= op_daae144626a44c5c status= succeeded tier= None
+tier=medium state=medium running healthy available
+after_medium_http=200 endpoint=127.0.0.1:40000
+after_medium_sql_marker=rc6-resize-marker
+resize_target=small requested_utc=2026-10-25T03:42:52Z
+resize_operation= op_e7b0642984e19a1d status= succeeded tier= None
+tier=small state=small running healthy available
+after_small_http=200 endpoint=127.0.0.1:40000
+after_small_sql_marker=rc6-resize-marker
+resize_data_and_health=PASS
+end_utc=2026-10-25T03:43:02Z
+stage=resize_data_continuity result=PASS end_utc=2026-10-25T03:43:09Z
+docs/audits/admiral-production-readiness-2026-10-21/scripts/rc6/run-single-lane.sh: line 93: stage: command not found
+
+=== stage=instance_and_admirald_lifecycle start_utc=2026-10-25T03:43:09Z ===
+test=RC6-rocky-SN-CONTROL-PLANE-LIFECYCLE
+start_utc=2026-10-25T03:43:10Z
+instance_id=inst_38bf08d2fc2d2c2c
+initial_poll=1 state=running stopped unavailable
+initial_available_poll=2 http=200 endpoint=127.0.0.1:40001
+action=pause requested_utc=2026-10-25T03:43:22Z
+operation= op_1a09530ea2ed657f action_status= succeeded
+action=resume requested_utc=2026-10-25T03:43:26Z
+operation= op_b4e97eade423b8b2 action_status= succeeded
+resume_poll=1 state=running stopped unavailable
+resume_poll=2 state=running stopped unavailable
+resume_available_poll=3 http=200 endpoint=127.0.0.1:40001
+action=stop requested_utc=2026-10-25T03:43:37Z
+operation= op_597e2fcca5348889 action_status= succeeded
+action=start requested_utc=2026-10-25T03:43:39Z
+operation= op_a0003669cd4a206c action_status= succeeded
+start_poll=1 state=running stopped unavailable
+start_poll=2 state=running stopped unavailable
+start_available_poll=3 http=200 endpoint=127.0.0.1:40001
+action=restart requested_utc=2026-10-25T03:43:50Z
+operation= None action_status= succeeded
+restart_poll=1 state=running stopped unavailable
+restart_available_poll=2 http=200 endpoint=127.0.0.1:40001
+admirald_restart_available_poll=1 http=200 endpoint=127.0.0.1:40001
+admiralctl_status_while_service_stopped_exit=1
+admirald_start_available_poll=1 http=200 endpoint=127.0.0.1:40001
+instance_and_control_plane_lifecycle=PASS
+end_utc=2026-10-25T03:44:11Z
+cleanup_rc=0
+stage=instance_and_admirald_lifecycle result=PASS end_utc=2026-10-25T03:44:19Z
+
+=== stage=host_reboot_persistence start_utc=2026-10-25T03:44:19Z ===
+test=R6-rocky-SN-REBOOT guest=rc6-r1-rocky-sn-pass2 start_utc=2026-10-25T03:44:19Z
+idempotency_key=r6-rocky-reboot-20261025T034419Z-515258
+boot_id_before=5a6d023e-665c-43e2-9fd7-9a925aa6bdcc
+pre_reboot_setup_started_utc=2026-10-25T03:44:20Z
+provision_status= succeeded instance_id= inst_f8e79b14e29af572 operation_id= op_78d641f751faa54f
+provision_readiness_poll=1 utc=2026-10-25T03:44:29Z api=running stopped unavailable db_state=running db_ready=1
+database_readiness_seconds_tested=1
+CREATE TABLE
+TRUNCATE TABLE
+INSERT 0 1
+reboot_requested_utc=2026-10-25T03:44:29Z instance_id=inst_f8e79b14e29af572 operation_id=op_78d641f751faa54f
+reboot_request_issued_utc=2026-10-25T03:44:29Z
+Connection to 192.168.122.84 closed by remote host.
+reboot_ssh_exit=255 (disconnect after reboot request is expected)
+reboot_confirmed_attempt=11 boot_id_after=0cce51b4-7fca-40cf-8555-5726216e616c utc=2026-10-25T03:45:20Z
+post_reboot_start_utc=2026-10-25T03:45:22Z instance_id=inst_f8e79b14e29af572 operation_id=op_78d641f751faa54f
+post_reboot_poll=1 utc=2026-10-25T03:45:24Z status=stopped stopped unavailable running_containers=3 db_ready=1
+post_reboot_poll=2 utc=2026-10-25T03:45:31Z status=stopped stopped unavailable running_containers=3 db_ready=1
+post_reboot_poll=3 utc=2026-10-25T03:45:37Z status=running healthy available running_containers=3 db_ready=1
+post_reboot_http=200 port=40002
+r6-reboot-persisted
+{
+  "action": "deprovision_app",
+  "admin_user": "system",
+  "created_at": "2026-10-25T03:45:39.131233Z",
+  "error_message": null,
+  "id": "op_ad2723058276500e",
+  "instance_id": "inst_f8e79b14e29af572",
+  "node_id": "rc6-r1-rocky-sn-pass2",
+  "status": "succeeded",
+  "task_id": "task_52c6f592e878a640",
+  "updated_at": "2026-10-25T03:45:45.645401Z"
+}
+host_reboot_recovery_and_sql_marker=PASS
+provision_readiness_consistency=PASS
+post_reboot_end_utc=2026-10-25T03:45:47Z
+stage=host_reboot_persistence result=PASS end_utc=2026-10-25T03:45:47Z
+
+=== stage=final_services_resources_rpms start_utc=2026-10-25T03:45:47Z ===
+failed_units=none
+admiral-common-0.0.1rc6-1.el10.noarch
+admirald-0.0.1rc6-1.el10.x86_64
+admiral-fleet-0.0.1rc6-1.el10.x86_64
+admiralctl-0.0.1rc6-1.el10.x86_64
+admiral-harbor-0.0.1rc6-1.el10.noarch
+admiral-flagship-0.0.1rc6-1.el10.noarch
+final_rootless_containers=none pods=none volumes=none
+final_boot_id=0cce51b4-7fca-40cf-8555-5726216e616c
+stage=final_services_resources_rpms result=PASS end_utc=2026-10-25T03:45:49Z
+single_node_lane=os:rocky result:FAIL failed_stages:1 end_utc:2026-10-25T03:45:49Z

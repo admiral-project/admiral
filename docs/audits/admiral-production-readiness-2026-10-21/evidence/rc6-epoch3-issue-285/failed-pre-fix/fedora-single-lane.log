@@ -1,0 +1,109 @@
+candidate=0.0.1rc6-1 os=fedora guest=192.168.122.86 node=rc6-r1-fedora-sn root_commit=3faa349a5ba96b051104f1af5d043cb14bc8259d start_utc=2026-10-25T03:41:37Z
+
+=== stage=workload_create_idempotency_deprovision start_utc=2026-10-25T03:41:37Z ===
+expected exactly one worker node 'rc6-r1-fedora-sn'; found 0
+private-run-evidence=/var/tmp/rc6-single-lifecycle.bDBdi0lm
+stage=workload_create_idempotency_deprovision result=FAIL exit=1 end_utc=2026-10-25T03:41:38Z
+
+=== stage=resize_data_continuity start_utc=2026-10-25T03:41:38Z ===
+test=RC6-SN-RESIZE
+start_utc=2026-10-25T03:41:39Z
+instance_id=inst_b6322c07e2fae1e5
+tier=small state=small running healthy available
+before_resize_http=200 endpoint=127.0.0.1:40000
+before_resize_sql_marker=rc6-resize-marker
+resize_target=medium requested_utc=2026-10-25T03:42:50Z
+resize_operation= op_bc024c3cc972ce2e status= succeeded tier= None
+tier=medium state=medium running healthy available
+after_medium_http=200 endpoint=127.0.0.1:40000
+after_medium_sql_marker=rc6-resize-marker
+resize_target=small requested_utc=2026-10-25T03:43:04Z
+resize_operation= op_548de9ba66309aaf status= succeeded tier= None
+tier=small state=small running healthy available
+after_small_http=200 endpoint=127.0.0.1:40000
+after_small_sql_marker=rc6-resize-marker
+resize_data_and_health=PASS
+end_utc=2026-10-25T03:43:15Z
+stage=resize_data_continuity result=PASS end_utc=2026-10-25T03:43:24Z
+docs/audits/admiral-production-readiness-2026-10-21/scripts/rc6/run-single-lane.sh: line 93: stage: command not found
+
+=== stage=instance_and_admirald_lifecycle start_utc=2026-10-25T03:43:24Z ===
+test=RC6-fedora-SN-CONTROL-PLANE-LIFECYCLE
+start_utc=2026-10-25T03:43:25Z
+instance_id=inst_2476875be9aec66e
+initial_poll=1 state=running stopped unavailable
+initial_available_poll=2 http=200 endpoint=127.0.0.1:40001
+action=pause requested_utc=2026-10-25T03:43:35Z
+operation= op_30a8e618bf580278 action_status= succeeded
+action=resume requested_utc=2026-10-25T03:43:49Z
+operation= op_f099ba5bfd31a51a action_status= succeeded
+resume_poll=1 state=failed unhealthy unavailable
+resume_available_poll=2 http=200 endpoint=127.0.0.1:40001
+action=stop requested_utc=2026-10-25T03:43:59Z
+operation= op_9b2815ce1f3fbb92 action_status= succeeded
+action=start requested_utc=2026-10-25T03:44:03Z
+operation= op_9edf957539cec79f action_status= succeeded
+start_poll=1 state=running stopped unavailable
+start_available_poll=2 http=200 endpoint=127.0.0.1:40001
+action=restart requested_utc=2026-10-25T03:44:11Z
+operation= None action_status= succeeded
+restart_poll=1 state=running stopped unavailable
+restart_available_poll=2 http=200 endpoint=127.0.0.1:40001
+admirald_restart_available_poll=1 http=200 endpoint=127.0.0.1:40001
+admiralctl_status_while_service_stopped_exit=1
+admirald_start_available_poll=1 http=200 endpoint=127.0.0.1:40001
+instance_and_control_plane_lifecycle=PASS
+end_utc=2026-10-25T03:44:32Z
+cleanup_rc=0
+stage=instance_and_admirald_lifecycle result=PASS end_utc=2026-10-25T03:44:40Z
+
+=== stage=host_reboot_persistence start_utc=2026-10-25T03:44:40Z ===
+test=R6-fedora-SN-REBOOT guest=rc6-r1-fedora-sn-pass2 start_utc=2026-10-25T03:44:40Z
+idempotency_key=r6-fedora-reboot-20261025T034440Z-515539
+boot_id_before=a0f2ac2e-6228-413a-87fe-231ed4bb9cb8
+pre_reboot_setup_started_utc=2026-10-25T03:44:41Z
+provision_status= succeeded instance_id= inst_a0c6a2e410e6d058 operation_id= op_7cd968f6934d374a
+provision_readiness_poll=1 utc=2026-10-25T03:45:03Z api=running healthy available db_state=running db_ready=1
+database_readiness_seconds_tested=1
+CREATE TABLE
+TRUNCATE TABLE
+INSERT 0 1
+reboot_requested_utc=2026-10-25T03:45:04Z instance_id=inst_a0c6a2e410e6d058 operation_id=op_7cd968f6934d374a
+reboot_request_issued_utc=2026-10-25T03:45:04Z
+reboot_ssh_exit=0 (disconnect after reboot request is expected)
+reboot_confirmed_attempt=10 boot_id_after=058cb822-5505-433f-8d42-beef4ffc6b8a utc=2026-10-25T03:45:51Z
+post_reboot_start_utc=2026-10-25T03:45:53Z instance_id=inst_a0c6a2e410e6d058 operation_id=op_7cd968f6934d374a
+post_reboot_poll=1 utc=2026-10-25T03:45:57Z status=running healthy unavailable running_containers=0 db_ready=0
+post_reboot_poll=2 utc=2026-10-25T03:46:05Z status=stopped stopped unavailable running_containers=3 db_ready=1
+post_reboot_poll=3 utc=2026-10-25T03:46:11Z status=running healthy available running_containers=3 db_ready=1
+post_reboot_http=200 port=40002
+r6-reboot-persisted
+{
+  "action": "deprovision_app",
+  "admin_user": "system",
+  "created_at": "2026-10-25T03:46:11.767294Z",
+  "error_message": null,
+  "id": "op_362d5272b662c45c",
+  "instance_id": "inst_a0c6a2e410e6d058",
+  "node_id": "rc6-r1-fedora-sn-pass2",
+  "status": "succeeded",
+  "task_id": "task_f5e50a5a1369044f",
+  "updated_at": "2026-10-25T03:46:18.551043Z"
+}
+host_reboot_recovery_and_sql_marker=PASS
+provision_readiness_consistency=PASS
+post_reboot_end_utc=2026-10-25T03:46:20Z
+stage=host_reboot_persistence result=PASS end_utc=2026-10-25T03:46:20Z
+
+=== stage=final_services_resources_rpms start_utc=2026-10-25T03:46:20Z ===
+failed_units=none
+admiral-common-0.0.1rc6-1.fc46.noarch
+admirald-0.0.1rc6-1.fc46.x86_64
+admiral-fleet-0.0.1rc6-1.fc46.x86_64
+admiralctl-0.0.1rc6-1.fc46.x86_64
+admiral-harbor-0.0.1rc6-1.fc46.noarch
+admiral-flagship-0.0.1rc6-1.fc46.noarch
+final_rootless_containers=none pods=none volumes=none
+final_boot_id=058cb822-5505-433f-8d42-beef4ffc6b8a
+stage=final_services_resources_rpms result=PASS end_utc=2026-10-25T03:46:21Z
+single_node_lane=os:fedora result:FAIL failed_stages:1 end_utc:2026-10-25T03:46:21Z
