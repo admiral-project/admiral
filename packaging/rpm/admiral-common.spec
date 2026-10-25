@@ -5,7 +5,8 @@
 
 Name:    admiral-common
 Version: 0.0.1rc6
-Release:        4%{?dist}
+Epoch:          5
+Release:        1%{?dist}
 Summary: Common files and utilities for Admiral PaaS
 
 License: Apache-2.0
@@ -272,6 +273,9 @@ if [ "$1" -eq 0 ]; then
 fi
 
 %changelog
+* Sun Oct 25 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 5:0.0.1rc6-1
+- Prepare coordinated RC6 Release 1 validation candidate using RPM Epoch
+
 * Sun Oct 25 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc6-2
 - Rebuild coordinated RC6 Release 2 with stale worker startup reconciliation
 

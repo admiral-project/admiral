@@ -15,7 +15,8 @@
 
 Name:    admiralctl
 Version: 0.0.1rc6
-Release:        4%{?dist}
+Epoch:          5
+Release:        1%{?dist}
 Summary: Admiral Command-Line Interface
 
 License: Apache-2.0
@@ -87,6 +88,9 @@ test "$(./admiralctl version 2>&1)" = "admiralctl %{version}"
 restorecon -F %{_bindir}/admiralctl 2>/dev/null || :
 
 %changelog
+* Sun Oct 25 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 5:0.0.1rc6-1
+- Prepare coordinated RC6 Release 1 validation candidate using RPM Epoch
+
 * Sun Oct 25 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc6-2
 - Rebuild coordinated RC6 Release 2 with stale worker startup reconciliation
 
