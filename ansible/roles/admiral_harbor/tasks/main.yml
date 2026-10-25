@@ -200,6 +200,29 @@
     mode: "0644"
   register: harbor_systemd_override
 
+- name: Set Harbor background service environment to development
+  copy:
+    dest: "/etc/systemd/system/{{ item }}.d/dev-mode.conf"
+    content: |
+      [Service]
+      Environment=ENV=development
+    mode: "0644"
+    owner: root
+    group: root
+  loop:
+    - admiral-harbor-worker.service
+    - admiral-harbor-catalog-sync.service
+  when: admiral_dev_mode | default(false) | bool
+
+- name: Remove Harbor background service development environment on secure reconciliation
+  file:
+    path: "/etc/systemd/system/{{ item }}.d/dev-mode.conf"
+    state: absent
+  loop:
+    - admiral-harbor-worker.service
+    - admiral-harbor-catalog-sync.service
+  when: not (admiral_dev_mode | default(false) | bool)
+
 - name: Enable and start admiral-harbor
   systemd:
     name: admiral-harbor

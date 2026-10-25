@@ -523,14 +523,38 @@ done
 
     def test_dev_to_single_removes_insecure_overrides_and_ports(self) -> None:
         admirald = ADMIRALD_TASKS.read_text(encoding="utf-8")
+        harbor = HARBOR_TASKS.read_text(encoding="utf-8")
         flagship = FLAGSHIP_TASKS.read_text(encoding="utf-8")
         firewall = FIREWALL_TASKS.read_text(encoding="utf-8")
 
         self.assertIn("Remove development mode override on secure reconciliation", admirald)
+        self.assertIn("Set Harbor background service environment to development", harbor)
+        self.assertIn(
+            "Remove Harbor background service development environment on secure reconciliation",
+            harbor,
+        )
+        harbor_dev_task = harbor.split(
+            "- name: Set Harbor background service environment to development", 1
+        )[1].split("\n- name:", 1)[0]
+        harbor_secure_task = harbor.split(
+            "- name: Remove Harbor background service development environment on secure reconciliation",
+            1,
+        )[1].split("\n- name:", 1)[0]
+        self.assertIn("Environment=ENV=development", harbor_dev_task)
+        self.assertIn("admiral-harbor-worker.service", harbor_dev_task)
+        self.assertIn("admiral-harbor-catalog-sync.service", harbor_dev_task)
+        self.assertIn("not (admiral_dev_mode | default(false) | bool)", harbor_secure_task)
         dev_mode_task = admirald.split(
             "- name: Set ADMIRAL_ENV=development in dev mode", 1
         )[1].split("\n- name:", 1)[0]
         self.assertIn("Environment=ADMIRAL_DEV_MODE=true", dev_mode_task)
+        common_spec = COMMON_SPEC.read_text(encoding="utf-8")
+        for service in ("admiral-harbor-worker", "admiral-harbor-catalog-sync"):
+            directory = f"%{{_sysconfdir}}/systemd/system/{service}.service.d"
+            self.assertIn(f"mkdir -p %{{buildroot}}{directory}", common_spec)
+            self.assertIn(
+                f"%dir %attr(0750, root, admiral) {directory}", common_spec
+            )
         self.assertIn("Remove legacy admiral-flagship systemd override", flagship)
         self.assertIn(
             "path: /etc/systemd/system/admiral-flagship.service.d/override.conf",

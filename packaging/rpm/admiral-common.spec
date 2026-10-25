@@ -89,6 +89,8 @@ mkdir -p %{buildroot}%{_sysconfdir}/systemd/resolved.conf.d
 mkdir -p %{buildroot}%{_sysconfdir}/systemd/system/admirald.service.d
 mkdir -p %{buildroot}%{_sysconfdir}/systemd/system/admiral-flagship.service.d
 mkdir -p %{buildroot}%{_sysconfdir}/systemd/system/admiral-harbor.service.d
+mkdir -p %{buildroot}%{_sysconfdir}/systemd/system/admiral-harbor-worker.service.d
+mkdir -p %{buildroot}%{_sysconfdir}/systemd/system/admiral-harbor-catalog-sync.service.d
 mkdir -p %{buildroot}%{_sysconfdir}/systemd/system/caddy.service.d
 mkdir -p %{buildroot}%{_sysconfdir}/ssh/sshd_config.d
 mkdir -p %{buildroot}%{_sysconfdir}/nftables
@@ -157,6 +159,8 @@ python3 scripts/test_wireguard_peer_add.py
 %dir %attr(0750, root, admiral) %{_sysconfdir}/systemd/system/admirald.service.d
 %dir %attr(0750, root, admiral) %{_sysconfdir}/systemd/system/admiral-flagship.service.d
 %dir %attr(0750, root, admiral) %{_sysconfdir}/systemd/system/admiral-harbor.service.d
+%dir %attr(0750, root, admiral) %{_sysconfdir}/systemd/system/admiral-harbor-worker.service.d
+%dir %attr(0750, root, admiral) %{_sysconfdir}/systemd/system/admiral-harbor-catalog-sync.service.d
 %dir %attr(0755, root, root) %{_sysconfdir}/systemd/system/caddy.service.d
 %dir %attr(0700, root, root) %{_sysconfdir}/ssh/sshd_config.d
 %dir %attr(0700, root, root) %{_sysconfdir}/nftables
