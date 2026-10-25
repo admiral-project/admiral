@@ -1,0 +1,13 @@
+750 root:admiral /etc/systemd/system/admiral-harbor.service.d
+admiral-common-0.0.1rc6-4.el10.noarch
+751 admiral:admiral /var/lib/admiral
+admiral-common-0.0.1rc6-4.el10.noarch
+751 admiral:admiral /var/lib/admiral/instances
+admiral-common-0.0.1rc6-4.el10.noarch
+750 admiral-apps:admiral-apps /var/lib/admiral/backups
+admiral-common-0.0.1rc6-4.el10.noarch
+750 admiral-apps:admiral-apps /var/lib/admiral/restore
+admiral-common-0.0.1rc6-4.el10.noarch
+700 admiral-apps:admiral-apps /var/lib/admiral/tmp
+admiral-common-0.0.1rc6-4.el10.noarch
+issue_191_205_rocky_ownership=PASS

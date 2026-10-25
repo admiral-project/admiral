@@ -1,0 +1,20 @@
+candidate=0:0.0.1rc6-4.fc46
+flask_latest
+Updating and loading repositories:
+Repositories loaded.
+python3-flask-1:3.1.3-4.fc46.noarch copr:copr.fedorainfracloud.org:admiral-project:admiralpython3-flask-1:3.1.3-4.fc46.src copr:copr.fedorainfracloud.org:admiral-project:admiralmistune_latest
+Updating and loading repositories:
+Repositories loaded.
+python3-mistune-3.4.0-2.fc46.noarch copr:copr.fedorainfracloud.org:admiral-project:admiralpython3-mistune-3.4.0-2.fc46.src copr:copr.fedorainfracloud.org:admiral-project:admiral750 root:admiral /etc/systemd/system/admiral-harbor.service.d
+admiral-common-0.0.1rc6-4.fc46.noarch
+751 admiral:admiral /var/lib/admiral
+admiral-common-0.0.1rc6-4.fc46.noarch
+751 admiral:admiral /var/lib/admiral/instances
+admiral-common-0.0.1rc6-4.fc46.noarch
+750 admiral-apps:admiral-apps /var/lib/admiral/backups
+admiral-common-0.0.1rc6-4.fc46.noarch
+750 admiral-apps:admiral-apps /var/lib/admiral/restore
+admiral-common-0.0.1rc6-4.fc46.noarch
+700 admiral-apps:admiral-apps /var/lib/admiral/tmp
+admiral-common-0.0.1rc6-4.fc46.noarch
+issue_191_205_201_257_fedora=PASS

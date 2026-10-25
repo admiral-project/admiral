@@ -14,6 +14,8 @@ Guest address: `192.168.122.72`. No production system or external service was us
 | #297 | PASS, targeted | The same complete dev installer exited 0 with the dev-only Fail2ban service checks skipped. After secure reconvergence, `fail2ban.service` was active. |
 | #298 | PASS, targeted | In dev mode, checked `ENV=development` for both Harbor background units and started each one-shot. Both reported `Result=success`, `ExecMainStatus=0`. After secure reconvergence, both reported `ENV=production` and their dev-mode drop-in files were absent. |
 | #213 | PASS, targeted | Replaced the dev leaf with an untrusted self-signed leaf; OpenSSL rejected it (`error 18`). Re-ran the secure Single-Node installer on the same guest. It exited 0, reissued the leaf from the local Admiral CA with loopback and guest-IP SANs, and `openssl verify` succeeded for both addresses. Harbor's authenticated client succeeded, Flagship health returned HTTP 200, Fleet was active/healthy, and there were no failed units. |
+| #191 / #205 | PASS, targeted on Rocky and Fedora | On both exact Release 4 guests, the Harbor systemd drop-in directory was `0750 root:admiral`, and RPM-owned common data roots had the declared modes/owners: `/var/lib/admiral` and `instances` `0751 admiral:admiral`; `backups` and `restore` `0750 admiral-apps:admiral-apps`; `tmp` `0700 admiral-apps:admiral-apps`. `rpm -qf` identified `admiral-common` as owner of every path. |
+| #201 / #257 | PASS, targeted on Rocky and Fedora | Queried Admiral COPR with the local candidate repository excluded/explicitly selected. Latest available Flask was `3.1.3-4` and Mistune `3.4.0-2` for each OS, with the OS-native release suffix (`.el10` or `.fc46`). |
 
 ## Candidate identity and evidence
 
@@ -22,5 +24,8 @@ All six installed RPMs were confirmed on the guest as `0:0.0.1rc6-4.el10`; the e
 - Dev install transcript, covering #296 and #297: `issue-296-297-298-rocky-release4-dev-install.log`, SHA-256 `41c6c11aad240049148d09c715d2373a34ef23e2a4d0be723b07a493b738c0bc`.
 - Harbor background one-shots, #298: `issue-298-rocky-release4-background-services.log`, SHA-256 `0390b208e752a6ccb7fe6c2f6f3c4fdff479cb2992a7eb91bdbec6a42480a995`.
 - Dev-to-secure reconvergence, #213 and secure cleanup for #298: [`dev-to-single-r4devsingle.log`](../../rc6-r4-rocky-single/issue-213/dev-to-single-r4devsingle.log), SHA-256 `88ddce1af98d7bc2733e3f3c95cbdad6de15e8a70112926051d5044021228607`.
+- Fedora #191/#205 ownership and #201/#257 COPR query: `issue-191-205-201-257-fedora.log`, SHA-256 `bcc9ab9f9fd356b9eb4ff02f7cd24cc9fc53dc763fa1bf207e9f51dd0af68fd0`.
+- Rocky #191/#205 complete path ownership/mode checks: `issue-191-205-rocky-ownership.log`, SHA-256 `864c452a6f660bbf85a8ed7ed1f3b83d676d5a1d8fa48655bd9153640afe7e43`.
+- Rocky #201/#257 COPR query and Harbor drop-in ownership: `issue-201-257-191-205-rocky-rerun1.log`, SHA-256 `903d6983b62755d9715a075e73e866cb0ff52efa5494a4a5204c9fe04ae4369d`.
 
 These are issue-specific Release 4 results on Rocky only. They do not validate Fedora or CentOS, do not cover Multi-Node, and do not make a release-matrix cell pass.
