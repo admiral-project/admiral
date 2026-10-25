@@ -4,7 +4,7 @@ Admiral is a simple, billing-aware Platform as a Service (PaaS) designed for sof
 
 Admiral focuses on simplicity, predictable operations, low cost, and a secure-by-default deployment model.
 
-**Status:** Functional beta — Release 71 validation is in progress against the x86_64 gate: Fedora Rawhide, Rocky Linux 10, AlmaLinux 10 and CentOS Stream 10, each in Single-Node and Multi-Node. The active matrix starts at 0/8; Release 70's Rocky-only pass is historical and does not count for this candidate. Full production readiness remains unvalidated; real PayPal payment verification is still pending for 1.0.
+**Status:** Functional beta — Release 75 functional E2E gate passed: Fedora Rawhide, Rocky Linux 10 and CentOS Stream 10 x86_64, each in Single-Node and Multi-Node (**6/6 cells**). AlmaLinux 10 is Tier 2 and outside the active gate because the project COPR `alma+epel-10-x86_64_v2` chroot does not build the Go RPMs ([#276](https://github.com/admiral-project/admiral/issues/276)). Full production readiness remains unvalidated; real PayPal payment verification is still pending for 1.0.
 
 Current integration status in this repository:
 

@@ -86,13 +86,15 @@ When contributing to this repository, prioritize:
 
 | Tier | Platform | Role |
 |------|----------|------|
-| **Tier 1 release gate** | Rocky Linux 10, AlmaLinux 10 and CentOS Stream 10 on x86_64 | EL10 production targets. Single-Node and Multi-Node are mandatory for the active release matrix. |
-| **Tier 2 release gate** | Fedora Rawhide on x86_64 | Production support in secure modes and upstream compatibility signal for EL11. It is included in the active eight-cell release matrix. `--dev-node` does not replace secure-mode tests. |
+| **Tier 1 release gate** | Rocky Linux 10 and CentOS Stream 10 on x86_64 | EL10 production targets. Single-Node and Multi-Node are mandatory for the active release matrix. |
+| **Tier 2 release gate** | Fedora Rawhide on x86_64 | Production support in secure modes and upstream compatibility signal for EL11. It is included in the active six-cell release matrix. `--dev-node` does not replace secure-mode tests. |
+| **Tier 2, outside the active matrix** | AlmaLinux 10 on x86_64 | EL10-compatible target kept at Tier 2. Excluded from the active release gate because the project COPR `alma+epel-10-x86_64_v2` chroot does not build the Go RPMs ([#276](https://github.com/admiral-project/admiral/issues/276)). Do not report AlmaLinux as validated; re-include it only after that environment limitation is fixed and both of its cells pass on the exact candidate. |
 | **Tier 2 non-blocking architecture** | aarch64/ARM64 RPM builds and runtime | Track compatibility separately. Missing or failing ARM64 validation does not block an x86_64 release and must not be represented as x86_64 evidence. |
 | **Tier 3** | Amazon Linux 2023 | Best effort. **Not installable**: AL2023 does not include Podman. Admiral requires Podman for rootless containers. |
 
 Policy:
-- The release-blocking runtime matrix is the four named x86_64 operating systems in Single-Node and Multi-Node (eight cells).
+- The release-blocking runtime matrix is the three named x86_64 operating systems (Fedora Rawhide, Rocky Linux 10 and CentOS Stream 10) in Single-Node and Multi-Node (six cells).
+- AlmaLinux 10 is Tier 2 and outside the active matrix while the COPR environment limitation in #276 stands; an Alma result must never be counted as a gate cell.
 - Fedora Rawhide defects that block its secure x86_64 cells must be fixed before the active matrix can pass.
 - ARM64 is Tier 2 and non-blocking for x86_64 release decisions; report its build/test status separately.
 - Tier 3 remains best effort.
