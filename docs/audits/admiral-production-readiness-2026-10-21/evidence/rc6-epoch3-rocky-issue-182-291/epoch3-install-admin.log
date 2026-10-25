@@ -1,0 +1,65 @@
+Dependencies resolved.
+================================================================================
+ Package              Arch       Version                 Repository        Size
+================================================================================
+Upgrading:
+ admiral-common       noarch     3:0.0.1rc6-5.el10       @commandline     122 k
+ admiral-flagship     noarch     3:0.0.1rc6-5.el10       @commandline     1.5 M
+ admiral-fleet        x86_64     3:0.0.1rc6-5.el10       @commandline     5.4 M
+ admiral-harbor       noarch     3:0.0.1rc6-5.el10       @commandline     1.1 M
+ admiralctl           x86_64     3:0.0.1rc6-5.el10       @commandline     3.1 M
+ admirald             x86_64     3:0.0.1rc6-5.el10       @commandline     4.0 M
+
+Transaction Summary
+================================================================================
+Upgrade  6 Packages
+
+Total size: 15 M
+Downloading Packages:
+Running transaction check
+Transaction check succeeded.
+Running transaction test
+Transaction test succeeded.
+Running transaction
+  Preparing        :                                                        1/1
+  Running scriptlet: admiral-common-3:0.0.1rc6-5.el10.noarch               1/12
+  Upgrading        : admiral-common-3:0.0.1rc6-5.el10.noarch               1/12
+  Running scriptlet: admiral-common-3:0.0.1rc6-5.el10.noarch               1/12
+File context for /var/lib/admiral-apps/.local/share/containers/storage(/.*)? already defined, modifying instead
+
+  Upgrading        : admiralctl-3:0.0.1rc6-5.el10.x86_64                   2/12
+  Running scriptlet: admiralctl-3:0.0.1rc6-5.el10.x86_64                   2/12
+  Upgrading        : admirald-3:0.0.1rc6-5.el10.x86_64                     3/12
+  Running scriptlet: admirald-3:0.0.1rc6-5.el10.x86_64                     3/12
+  Upgrading        : admiral-flagship-3:0.0.1rc6-5.el10.noarch             4/12
+  Running scriptlet: admiral-flagship-3:0.0.1rc6-5.el10.noarch             4/12
+  Upgrading        : admiral-fleet-3:0.0.1rc6-5.el10.x86_64                5/12
+  Running scriptlet: admiral-fleet-3:0.0.1rc6-5.el10.x86_64                5/12
+  Upgrading        : admiral-harbor-3:0.0.1rc6-5.el10.noarch               6/12
+  Running scriptlet: admiral-harbor-3:0.0.1rc6-5.el10.noarch               6/12
+  Running scriptlet: admiral-harbor-2:0.0.1rc6-4.el10.noarch               7/12
+  Cleanup          : admiral-harbor-2:0.0.1rc6-4.el10.noarch               7/12
+  Running scriptlet: admiral-harbor-2:0.0.1rc6-4.el10.noarch               7/12
+  Running scriptlet: admiral-fleet-2:0.0.1rc6-4.el10.x86_64                8/12
+  Cleanup          : admiral-fleet-2:0.0.1rc6-4.el10.x86_64                8/12
+  Running scriptlet: admiral-fleet-2:0.0.1rc6-4.el10.x86_64                8/12
+  Running scriptlet: admiral-flagship-2:0.0.1rc6-4.el10.noarch             9/12
+  Cleanup          : admiral-flagship-2:0.0.1rc6-4.el10.noarch             9/12
+  Running scriptlet: admiral-flagship-2:0.0.1rc6-4.el10.noarch             9/12
+  Running scriptlet: admirald-2:0.0.1rc6-4.el10.x86_64                    10/12
+  Cleanup          : admirald-2:0.0.1rc6-4.el10.x86_64                    10/12
+  Running scriptlet: admirald-2:0.0.1rc6-4.el10.x86_64                    10/12
+  Cleanup          : admiralctl-2:0.0.1rc6-4.el10.x86_64                  11/12
+  Running scriptlet: admiral-common-2:0.0.1rc6-4.el10.noarch              12/12
+  Cleanup          : admiral-common-2:0.0.1rc6-4.el10.noarch              12/12
+  Running scriptlet: admiral-common-2:0.0.1rc6-4.el10.noarch              12/12
+
+Upgraded:
+  admiral-common-3:0.0.1rc6-5.el10.noarch
+  admiral-flagship-3:0.0.1rc6-5.el10.noarch
+  admiral-fleet-3:0.0.1rc6-5.el10.x86_64
+  admiral-harbor-3:0.0.1rc6-5.el10.noarch
+  admiralctl-3:0.0.1rc6-5.el10.x86_64
+  admirald-3:0.0.1rc6-5.el10.x86_64
+
+Complete!

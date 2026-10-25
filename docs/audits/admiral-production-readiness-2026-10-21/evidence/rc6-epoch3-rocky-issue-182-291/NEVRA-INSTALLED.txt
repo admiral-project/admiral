@@ -1,0 +1,15 @@
+Admin (192.168.122.208):
+admiral-common 3:0.0.1rc6-5.el10.noarch
+admirald 3:0.0.1rc6-5.el10.x86_64
+admiral-fleet 3:0.0.1rc6-5.el10.x86_64
+admiralctl 3:0.0.1rc6-5.el10.x86_64
+admiral-flagship 3:0.0.1rc6-5.el10.noarch
+admiral-harbor 3:0.0.1rc6-5.el10.noarch
+
+Worker (192.168.122.209):
+admiral-common 3:0.0.1rc6-5.el10.noarch
+admiral-fleet 3:0.0.1rc6-5.el10.x86_64
+
+Dedicated Portal (192.168.122.249):
+admiral-common 3:0.0.1rc6-5.el10.noarch
+admiral-harbor 3:0.0.1rc6-5.el10.noarch

@@ -1,0 +1,10 @@
+full-inventory-packaged-playbook: admin changed=0, portal changed=0, worker changed=0
+inventory-without-workers: Portal direct Worker peer removed; Ansible removed the exact source 10.99.0.2/32 TCP/5001 firewalld rule; Portal peer count after reconciliation=1 (hub only)
+full-inventory-rejoin: Portal direct Worker peer restored; exact Worker firewall rule restored and verified; Portal peer count=2 (hub + Worker)
+third-full-inventory-run: admin changed=0, portal changed=0, worker changed=0
+registered-worker-to-portal-https: HTTP 200; body={"status":"healthy"}; CA verification enabled
+unregistered-source-probe: temporarily assigned unused 10.99.0.3/32 to Worker wg-admiral; HTTPS probe to Portal timed out (curl exit 28); temporary address removed; registered Worker HTTPS probe then returned healthy
+Portal TCP/5001 rich rules after rejoin:
+rule family="ipv4" source address="10.99.0.1" port port="5001" protocol="tcp" accept
+rule family="ipv4" source address="10.99.0.2/32" port port="5001" protocol="tcp" accept
+No 10.99.0.3/32 allow rule was present after rejoin.

@@ -1,0 +1,40 @@
+Repository admiral-epoch2 is listed more than once in the configuration
+Dependencies resolved.
+================================================================================
+ Package             Arch        Version                Repository         Size
+================================================================================
+Upgrading:
+ admiral-common      noarch      3:0.0.1rc6-5.el10      @commandline      122 k
+ admiral-harbor      noarch      3:0.0.1rc6-5.el10      @commandline      1.1 M
+
+Transaction Summary
+================================================================================
+Upgrade  2 Packages
+
+Total size: 1.2 M
+Downloading Packages:
+Running transaction check
+Transaction check succeeded.
+Running transaction test
+Transaction test succeeded.
+Running transaction
+  Preparing        :                                                        1/1
+  Running scriptlet: admiral-common-3:0.0.1rc6-5.el10.noarch                1/4
+  Upgrading        : admiral-common-3:0.0.1rc6-5.el10.noarch                1/4
+  Running scriptlet: admiral-common-3:0.0.1rc6-5.el10.noarch                1/4
+File context for /var/lib/admiral-apps/.local/share/containers/storage(/.*)? already defined, modifying instead
+
+  Upgrading        : admiral-harbor-3:0.0.1rc6-5.el10.noarch                2/4
+  Running scriptlet: admiral-harbor-3:0.0.1rc6-5.el10.noarch                2/4
+  Running scriptlet: admiral-harbor-2:0.0.1rc6-4.el10.noarch                3/4
+  Cleanup          : admiral-harbor-2:0.0.1rc6-4.el10.noarch                3/4
+  Running scriptlet: admiral-harbor-2:0.0.1rc6-4.el10.noarch                3/4
+  Running scriptlet: admiral-common-2:0.0.1rc6-4.el10.noarch                4/4
+  Cleanup          : admiral-common-2:0.0.1rc6-4.el10.noarch                4/4
+  Running scriptlet: admiral-common-2:0.0.1rc6-4.el10.noarch                4/4
+
+Upgraded:
+  admiral-common-3:0.0.1rc6-5.el10.noarch
+  admiral-harbor-3:0.0.1rc6-5.el10.noarch
+
+Complete!

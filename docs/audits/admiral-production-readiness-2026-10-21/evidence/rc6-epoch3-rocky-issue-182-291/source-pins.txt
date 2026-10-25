@@ -1,0 +1,12 @@
+purpose=local-only-epoch-test; not publishable
+epoch=3
+version=0.0.1rc6
+release=5
+host=Rocky Linux 10.2 (Red Quartz)
+dist_tag=el10
+root_commit=285c728835f91f3bf2c7133c4109ba67070b1414
+admirald=421c6007f9cf51a7e3bf23a6e2173bb0a39e27d3
+admiral-fleet=fc6909f6c41507d04aa204ebeafbbaaa4ef2c686
+admiralctl=fa2a65e866310bd82bea78859804b6c3aea7989a
+admiral-flagship=b7325bbc71fc474a521496e593b2967e4d555ac1
+admiral-harbor=dd4818b6e2bc53eea4495fc5e374a4893cfcb107

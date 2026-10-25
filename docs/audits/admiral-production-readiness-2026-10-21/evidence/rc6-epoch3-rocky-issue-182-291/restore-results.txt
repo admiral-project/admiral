@@ -1,0 +1,12 @@
+candidate_restore_operation=op_1aa1ce3f807d45ee
+candidate_restore_status=succeeded
+candidate_resume_operation=op_c4316c7f741b7fe3
+candidate_resume_status=succeeded
+final_instance_state=running/healthy/available
+restored_postgresql_marker=original
+uploaded_backup_bytes=708
+uploaded_backup_sha256=6af500e4509b8c0f1872ab4c091783071f47c9d1dcb61527f8d28c45a51bf14f
+negative_origin_worker=https://10.99.0.2:5001; rejected: private restore source is not a registered Harbor portal
+negative_origin_metadata=https://169.254.169.254:5001; rejected: private restore source is not a registered Harbor portal
+restore_backup_operation_count_before_negative_controls=3
+restore_backup_operation_count_after_negative_controls=3

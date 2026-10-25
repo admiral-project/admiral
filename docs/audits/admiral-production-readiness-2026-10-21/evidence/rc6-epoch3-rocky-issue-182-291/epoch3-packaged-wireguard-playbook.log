@@ -1,0 +1,148 @@
+
+PLAY [Collect WireGuard public keys from all nodes] ****************************
+
+TASK [Gathering Facts] *********************************************************
+ok: [rc6r4-rocky-portal-dedicated]
+ok: [rc6r4-rocky-worker]
+ok: [rc6r4-rocky-admin]
+
+TASK [Read WireGuard public key] ***********************************************
+ok: [rc6r4-rocky-admin]
+ok: [rc6r4-rocky-worker]
+ok: [rc6r4-rocky-portal-dedicated]
+
+TASK [Store public key as fact] ************************************************
+ok: [rc6r4-rocky-admin]
+ok: [rc6r4-rocky-worker]
+ok: [rc6r4-rocky-portal-dedicated]
+
+TASK [Read WireGuard private key from node] ************************************
+ok: [rc6r4-rocky-portal-dedicated]
+ok: [rc6r4-rocky-worker]
+ok: [rc6r4-rocky-admin]
+
+TASK [Store private key as fact for this node] *********************************
+ok: [rc6r4-rocky-admin]
+ok: [rc6r4-rocky-worker]
+ok: [rc6r4-rocky-portal-dedicated]
+
+PLAY [Read Admirald-managed know_host inventory on hub] ************************
+
+TASK [Set the default WireGuard subnet when no custom subnet is configured] ****
+skipping: [rc6r4-rocky-admin]
+
+TASK [Derive the WireGuard hub address when no explicit address is configured] ***
+skipping: [rc6r4-rocky-admin]
+
+TASK [Stat know_host inventory before reading] *********************************
+ok: [rc6r4-rocky-admin]
+
+TASK [Fail if know_host inventory is missing] **********************************
+skipping: [rc6r4-rocky-admin]
+
+TASK [Read know_host inventory] ************************************************
+ok: [rc6r4-rocky-admin]
+
+TASK [Decode know_host inventory] **********************************************
+ok: [rc6r4-rocky-admin]
+
+PLAY [Register each spoke's public key on the hub] *****************************
+
+TASK [Check for an existing per-peer preshared key] ****************************
+ok: [rc6r4-rocky-portal-dedicated -> rc6r4-rocky-admin(192.168.122.208)]
+ok: [rc6r4-rocky-worker -> rc6r4-rocky-admin(192.168.122.208)]
+
+TASK [Read existing per-peer preshared key] ************************************
+ok: [rc6r4-rocky-worker -> rc6r4-rocky-admin(192.168.122.208)]
+ok: [rc6r4-rocky-portal-dedicated -> rc6r4-rocky-admin(192.168.122.208)]
+
+TASK [Preserve existing per-peer preshared key] ********************************
+ok: [rc6r4-rocky-worker]
+ok: [rc6r4-rocky-portal-dedicated]
+
+TASK [Generate per-peer preshared key on hub when absent] **********************
+skipping: [rc6r4-rocky-worker]
+skipping: [rc6r4-rocky-portal-dedicated]
+
+TASK [Set generated per-peer preshared key] ************************************
+skipping: [rc6r4-rocky-worker]
+skipping: [rc6r4-rocky-portal-dedicated]
+
+TASK [Write spoke peer config to hub] ******************************************
+ok: [rc6r4-rocky-worker -> rc6r4-rocky-admin(192.168.122.208)]
+ok: [rc6r4-rocky-portal-dedicated -> rc6r4-rocky-admin(192.168.122.208)]
+
+PLAY [Build and deploy hub WireGuard configuration] ****************************
+
+TASK [Find peer config files on hub] *******************************************
+ok: [rc6r4-rocky-admin]
+
+TASK [Read all peer config files from hub] *************************************
+ok: [rc6r4-rocky-admin] => (item=None)
+ok: [rc6r4-rocky-admin] => (item=None)
+ok: [rc6r4-rocky-admin] => (item=None)
+ok: [rc6r4-rocky-admin]
+
+TASK [Initialize peer list for template] ***************************************
+ok: [rc6r4-rocky-admin]
+
+TASK [Build peer list for template] ********************************************
+ok: [rc6r4-rocky-admin] => (item=None)
+ok: [rc6r4-rocky-admin] => (item=None)
+ok: [rc6r4-rocky-admin] => (item=None)
+ok: [rc6r4-rocky-admin]
+
+TASK [Debug peer list] *********************************************************
+ok: [rc6r4-rocky-admin]
+
+TASK [Deploy hub WireGuard configuration] **************************************
+ok: [rc6r4-rocky-admin]
+
+PLAY [Update spoke WireGuard configurations with hub public key] ***************
+
+TASK [Select dedicated Portal and Worker peers for uploaded restores] **********
+ok: [rc6r4-rocky-portal-dedicated]
+ok: [rc6r4-rocky-worker]
+
+TASK [Initialize direct spoke peer list] ***************************************
+ok: [rc6r4-rocky-worker]
+ok: [rc6r4-rocky-portal-dedicated]
+
+TASK [Add exact Worker-to-Portal WireGuard peers] ******************************
+ok: [rc6r4-rocky-worker] => (item=rc6r4-rocky-portal-dedicated)
+ok: [rc6r4-rocky-portal-dedicated] => (item=rc6r4-rocky-worker)
+
+TASK [Deploy spoke WireGuard configuration] ************************************
+ok: [rc6r4-rocky-portal-dedicated]
+ok: [rc6r4-rocky-worker]
+
+PLAY [Reconcile exact Worker access to the dedicated Portal restore endpoint] ***
+
+TASK [Initialize registered Worker WireGuard addresses] ************************
+ok: [rc6r4-rocky-portal-dedicated]
+
+TASK [Collect exact registered Worker WireGuard addresses] *********************
+ok: [rc6r4-rocky-portal-dedicated] => (item=rc6r4-rocky-worker)
+
+TASK [Read existing Portal WireGuard-zone rich rules] **************************
+ok: [rc6r4-rocky-portal-dedicated]
+
+TASK [Identify stale Worker Harbor rules] **************************************
+ok: [rc6r4-rocky-portal-dedicated]
+
+TASK [Remove stale Worker-to-Portal Harbor rules] ******************************
+skipping: [rc6r4-rocky-portal-dedicated]
+
+TASK [Permit each registered Worker to reach Harbor over WireGuard] ************
+ok: [rc6r4-rocky-portal-dedicated] => (item=10.99.0.2)
+
+TASK [Reload firewalld after direct Worker rule reconciliation] ****************
+skipping: [rc6r4-rocky-portal-dedicated]
+
+TASK [Verify each registered Worker Harbor rule is active] *********************
+ok: [rc6r4-rocky-portal-dedicated] => (item=10.99.0.2)
+
+PLAY RECAP *********************************************************************
+rc6r4-rocky-admin          : ok=14   changed=0    unreachable=0    failed=0    skipped=3    rescued=0    ignored=0
+rc6r4-rocky-portal-dedicated : ok=19   changed=0    unreachable=0    failed=0    skipped=4    rescued=0    ignored=0
+rc6r4-rocky-worker         : ok=13   changed=0    unreachable=0    failed=0    skipped=2    rescued=0    ignored=0
