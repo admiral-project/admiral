@@ -2,7 +2,13 @@
 
 Audit ID: `ADM-AUDIT-2026-10-21`<br>
 
-## Active candidate — Release 75: 3/3 Single-Node cells PASS
+## Current candidate — RC6 Release 3
+
+Rocky Linux 10.2 x86_64 completed the six-stage Single-Node functional lane on exact native RPMs `0.0.1rc6-3.el10` from a fresh overlay of the 2026-10-25 updated seed. Install, workload lifecycle/idempotency, resize/data continuity, local backup/restore, instance/control-plane lifecycle, reboot recovery/SQL persistence, and final cleanup all passed. Exact-candidate issue regressions #259 (4/4), #260, #271, and #295 also passed; see [`RC6 R3 Rocky Single-Node evidence`](evidence/rc6-r3-rocky-single/REPORT.md).
+
+This is a functional lane plus targeted issue evidence, **not a complete matrix cell**. Other linked issue gates remain. Fedora Rawhide, CentOS Stream 10 and all Multi-Node cells have no Release 3 runtime credit. Formal matrix: **0/6 complete cells**.
+
+## Historical Release 75 — 3/3 Single-Node cells PASS
 
 Rocky Linux 10.2, CentOS Stream 10 and Fedora Rawhide 46 x86_64 passed the Release 75 Single-Node functional gate together on fresh seeded VMs on 2026-10-24. Each lane installed only the matching native six-RPM set, completed secure Ansible setup, workload creation/idempotency/deprovision, resize with SQL continuity, backup/restore with checksum and invalid-state rejection, instance and control-plane lifecycle, real host reboot with HTTP and SQL persistence, and final terminal-state/resource audit. All seven recorded test groups passed on each OS; installer recaps had zero failures or unreachable hosts. Candidate refs, exact NEVRAs and RPM hashes, test IDs, raw-log manifest fingerprint and limitations are recorded in [`release75-single-node-20261024.md`](evidence/release75-single-node-20261024.md). The first R75 harness attempt is retained but excluded. Reproduction helpers: [`scripts/r75/`](scripts/r75/). See [master issue #277](https://github.com/admiral-project/admiral/issues/277).
 

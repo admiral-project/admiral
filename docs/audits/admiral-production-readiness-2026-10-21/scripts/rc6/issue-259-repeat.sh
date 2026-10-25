@@ -18,12 +18,13 @@ fixture="$repo_root/docs/audits/admiral-production-readiness-2026-10-21/fixtures
 remote_run_dir="/var/tmp/adm-r68-${os}-user-systemd-restart"
 run_tag=${RC6_ISSUE_259_RUN_TAG:-$(date -u +%Y%m%dT%H%M%SZ)-$$}
 [[ $run_tag =~ ^[A-Za-z0-9_.-]{1,24}$ ]] || { echo 'invalid RC6_ISSUE_259_RUN_TAG' >&2; exit 2; }
+candidate=${RC6_CANDIDATE_LABEL:-unspecified}
 
 for attempt in 1 2 3 4; do
   customer="rc6-259-${os}-${run_tag}-${attempt}"
   idempotency_key="$customer"
   log="$output_dir/run-${attempt}.log"
-  printf 'issue=259 os=%s attempt=%s start_utc=%s\n' "$os" "$attempt" "$(date -u +%FT%TZ)" | tee "$log"
+  printf 'issue=259 os=%s candidate=%s attempt=%s start_utc=%s\n' "$os" "$candidate" "$attempt" "$(date -u +%FT%TZ)" | tee "$log"
   remote_fixture="/tmp/rc6-259-e2e-backup-${attempt}.yaml"
   scp "${ssh_args[@]}" "$fixture" "$guest:$remote_fixture"
   ssh "${ssh_args[@]}" "$guest" sudo install -o root -g root -m 0600 \

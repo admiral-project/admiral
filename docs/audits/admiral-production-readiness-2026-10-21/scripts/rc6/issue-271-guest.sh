@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 umask 077
-[[ $# -eq 3 ]] || { echo 'usage: issue-271-guest.sh {rocky|fedora} NODE_IP RUN_TAG' >&2; exit 2; }
-os=$1 node_ip=$2 run_tag=$3
+[[ $# -eq 4 ]] || { echo 'usage: issue-271-guest.sh {rocky|fedora} NODE_IP RUN_TAG CANDIDATE' >&2; exit 2; }
+os=$1 node_ip=$2 run_tag=$3 candidate=$4
 [[ $os == rocky || $os == fedora ]] || { echo 'unsupported OS' >&2; exit 2; }
 [[ $run_tag =~ ^[A-Za-z0-9_.-]{1,24}$ ]] || { echo 'invalid run tag' >&2; exit 2; }
 work_dir="/var/tmp/rc6-271-${os}-${run_tag}"
@@ -136,7 +136,7 @@ PY
   [[ -z $resources ]] || { printf '%s\n' "$resources"; return 1; }
 }
 
-printf 'issue=271 os=%s candidate=Epoch3-Release5 node_ip=%s start_utc=%s\n' "$os" "$node_ip" "$(date -u +%FT%TZ)"
+printf 'issue=271 os=%s candidate=%s node_ip=%s start_utc=%s\n' "$os" "$candidate" "$node_ip" "$(date -u +%FT%TZ)"
 run_variant loopback "http://127.0.0.1:18081/leak"
 run_variant node-address "http://${node_ip}:18081/leak"
 [[ ! -s $target_log ]] || { cat "$target_log"; echo 'redirect target received requests' >&2; exit 1; }

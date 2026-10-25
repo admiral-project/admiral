@@ -13,10 +13,21 @@ The last no-Epoch candidate tested for matrix behavior is RC6 Release 1, `0.0.1r
 | Platform | Single-Node | Multi-Node (Admin + Worker + independent Portal) |
 |---|---|---|
 | Fedora Rawhide x86_64 | FAIL — exact RC6 Release 1 lane had one failed stage: cold-start inventory advertised stale availability while provision rejected `metrics_stale`; remaining five stages passed and cleanup was empty. Candidate invalidated; see [#294 evidence](evidence/rc6-r1/issues/issue-294-stale-node-startup-20261025/REPORT.md) | NOT TESTED |
-| Rocky Linux 10 x86_64 | Functional lane PASS — all six stages passed twice on the same exact RC6 Release 1 guest, including reboot and clean final inventory. Formal cell credit pending remaining applicable release-wide issue gates; see [`Rocky repeated lane`](evidence/rc6-r1/single-node-rocky-repeat-20261025/REPORT.md) | Targeted #182, #278, #289 and #291 passed on exact RC6 Release 1; no cell credit |
+| Rocky Linux 10 x86_64 | RC6 Release 3 functional lane PASS — all six stages passed on a fresh Rocky 10.2 seed overlay, including backup/restore, reboot persistence and clean final inventory. Formal cell credit pending the release-wide issue-specific gates; see [`RC6 R3 Rocky Single-Node`](evidence/rc6-r3-rocky-single/REPORT.md) | Targeted #182, #278, #289 and #291 passed on exact RC6 Release 1; no current-candidate cell credit |
 | CentOS Stream 10 x86_64 | NOT TESTED | NOT TESTED |
 
-Prior-candidate runs do not transfer to RC6 Release 1. A complete cell requires all applicable checks on a single unchanged candidate; a partial scenario PASS does not make its cell pass.
+Prior-candidate runs do not transfer to RC6 Release 3. A complete cell requires all applicable checks on a single unchanged candidate; a functional lane or partial scenario PASS does not make its cell pass. RC6 Release 3 Rocky Single-Node has six passing functional stages, but the release-wide issue-specific gate is still incomplete, so the formal matrix remains **0/6 complete cells**.
+
+### RC6 Release 3 Rocky exact-candidate issue probes
+
+These issue-specific tests ran on the same fresh Rocky Release 3 Single-Node guest and exact six-RPM set. They contribute evidence to the affected issues only; they do not replace the linked-issue release gate or award a matrix cell.
+
+| Issue | Result | Evidence |
+|---|---|---|
+| #259 | PASS — four `user@991.service` restarts; 4/4 recovered with SQL markers intact, no premature healthy/available observations, and cleanup. | [`R3 report`](evidence/rc6-r3-rocky-single/REPORT.md), `issue-259/run-{1..4}.log` SHA-256s recorded there. |
+| #260 | PASS — PostgreSQL absent for 60.020 s; 61 one-second samples; first unavailable at 3.020 s; zero healthy/available samples at or after 5 s; SQL marker and cleanup passed. | Same report, `issue-260/outage-recovery.log` SHA-256 recorded there. |
+| #271 | PASS — loopback and guest-address redirect targets both received zero requests across periodic health checks; cleanup passed. | Same report and guest evidence archive hash. |
+| #295 | PASS for corrected Harbor-generated customer flow — no deprovision before the local prepaid date, exactly one successful `harbor-token` deprovision after expiry, no duplicate on rerun, no PayPal ID or provider call, clean fixture/runtime. The previous synthetic-fixture denial did not reproduce; keep issue open for triage. | Same report; setup, worker, expiry, operation and cleanup logs have SHA-256 values recorded there. |
 
 ### Independent portal-node acceptance
 
