@@ -1,0 +1,7 @@
+endpoint=127.0.0.1:40000
+http_status=200
+Hostname: admiral-inst_e624b833202b711c
+IP: 127.0.0.1
+IP: ::1
+IP: 192.168.122.227
+IP: fe80::dcf2:9bff:fe6d:237

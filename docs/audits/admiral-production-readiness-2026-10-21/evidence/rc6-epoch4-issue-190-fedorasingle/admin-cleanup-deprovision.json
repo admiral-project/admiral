@@ -1,0 +1,12 @@
+{
+  "action": "deprovision_app",
+  "admin_user": "system",
+  "created_at": "2026-10-25T16:54:27.201425Z",
+  "error_message": null,
+  "id": "op_3aea9f900fffd33e",
+  "instance_id": "inst_e624b833202b711c",
+  "node_id": "rc6e4-fedora-single",
+  "status": "succeeded",
+  "task_id": "task_450e83e42a5a95e7",
+  "updated_at": "2026-10-25T16:54:33.593717Z"
+}

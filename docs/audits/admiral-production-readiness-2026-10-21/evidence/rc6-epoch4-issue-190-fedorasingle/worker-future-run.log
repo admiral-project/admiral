@@ -1,0 +1,13 @@
+worker_start_utc=2026-10-25T16:49:36Z
+ActiveState=inactive
+InactiveExitTimestamp=Sun 2026-10-25 16:49:37 UTC
+Result=success
+ExecMainStatus=0
+2026-10-25T16:49:37+00:00 rc6e4-fedora-single systemd[1]: Starting admiral-harbor-worker.service - Admiral Harbor reconciliation worker...
+2026-10-25T16:49:39+00:00 rc6e4-fedora-single python3[10704]: [worker] INFO Security headers initialized
+2026-10-25T16:49:39+00:00 rc6e4-fedora-single python3[10704]: [worker] INFO Worker started at 2026-10-25T16:49:39.628999+00:00
+2026-10-25T16:49:39+00:00 rc6e4-fedora-single python3[10704]: [worker] INFO Worker finished: Actions: 0, Errors: 0
+2026-10-25T16:49:40+00:00 rc6e4-fedora-single systemd[1]: admiral-harbor-worker.service: Deactivated successfully.
+2026-10-25T16:49:40+00:00 rc6e4-fedora-single systemd[1]: Finished admiral-harbor-worker.service - Admiral Harbor reconciliation worker.
+2026-10-25T16:49:40+00:00 rc6e4-fedora-single systemd[1]: admiral-harbor-worker.service: Consumed 2.884s CPU time over 3.137s wall clock time, 71.4M memory peak.
+worker_end_utc=2026-10-25T16:49:40Z

@@ -1,0 +1,13 @@
+worker_expired_retry_start_utc=2026-10-25T16:54:02Z
+ActiveState=inactive
+Result=success
+ExecMainStatus=0
+2026-10-25T16:54:03+00:00 rc6e4-fedora-single systemd[1]: Starting admiral-harbor-worker.service - Admiral Harbor reconciliation worker...
+2026-10-25T16:54:05+00:00 rc6e4-fedora-single python3[14771]: [worker] INFO Security headers initialized
+2026-10-25T16:54:06+00:00 rc6e4-fedora-single python3[14771]: [worker] INFO Worker started at 2026-10-25T16:54:06.146508+00:00
+2026-10-25T16:54:06+00:00 rc6e4-fedora-single python3[14771]: [worker] ERROR Deprovision failed after prepaid period for sub_9f1854d1e1e64f86980a: access denied
+2026-10-25T16:54:06+00:00 rc6e4-fedora-single python3[14771]: [worker] INFO Worker finished: Actions: 0, Errors: 1
+2026-10-25T16:54:07+00:00 rc6e4-fedora-single systemd[1]: admiral-harbor-worker.service: Deactivated successfully.
+2026-10-25T16:54:07+00:00 rc6e4-fedora-single systemd[1]: Finished admiral-harbor-worker.service - Admiral Harbor reconciliation worker.
+2026-10-25T16:54:07+00:00 rc6e4-fedora-single systemd[1]: admiral-harbor-worker.service: Consumed 3.103s CPU time over 3.507s wall clock time, 71.2M memory peak.
+worker_expired_retry_end_utc=2026-10-25T16:54:07Z

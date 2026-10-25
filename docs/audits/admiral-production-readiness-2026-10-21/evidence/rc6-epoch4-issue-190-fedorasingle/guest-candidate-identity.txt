@@ -1,0 +1,16 @@
+NAME="Fedora Linux"
+VERSION="46 (Cloud Edition Prerelease)"
+ID=fedora
+VERSION_ID=46
+4:admiral-common-0.0.1rc6-2.fc46.noarch
+4:admirald-0.0.1rc6-2.fc46.x86_64
+4:admiral-fleet-0.0.1rc6-2.fc46.x86_64
+4:admiralctl-0.0.1rc6-2.fc46.x86_64
+4:admiral-flagship-0.0.1rc6-2.fc46.noarch
+4:admiral-harbor-0.0.1rc6-2.fc46.noarch
+active
+active
+active
+active
+active
+admiral-harbor-worker.service: Consumed 3.103s CPU time over 3.507s wall clock time, 71.2M memory peak.

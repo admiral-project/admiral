@@ -32,6 +32,10 @@ Prior-candidate runs do not transfer to RC6 Release 1. A complete cell requires 
 | Tier authorization (#181) | A disallowed backup/restore tier is rejected and does not mutate workload or backup state | PASS — exact RC6 Release 1 Rocky Multi-Node targeted E2E: controls hidden, forged actions rejected, API 403 policy responses, other customer 404, no backup/restore records or operations; cleanup verified ([report](evidence/rc6-r1/multinode-rocky/issue-181-policy-20261025T153000Z/REPORT.md)) |
 | Cancellation/prepaid period (#190) | A cancelled subscription remains available through prepaid expiry and deprovisions only afterward | PARTIAL — three Harbor unit regressions pass at the exact RC6 Release 1 submodule SHA; packaged-worker runtime check and DB/runtime evidence remain NOT TESTED ([report](evidence/rc6-r1/issues/issue-190-harbor-unit-20261025/REPORT.md)) |
 
+### Diagnostic follow-up — Epoch 4 / Release 2 (2026-10-25)
+
+These are issue-targeted diagnostics only and receive no release-matrix credit. On a real Fedora Rawhide 46 x86_64 guest with native `0.0.1rc6-2.fc46` RPMs at RPM Epoch 4, the installed Harbor worker passed the pre-expiry case: the cancelled subscription and commercial state stayed cancelled, technical state stayed running, and the workload returned HTTP 200. After advancing the local prepaid date past expiry, two installed-worker invocations failed with `access denied`; each reported `Actions: 0, Errors: 1`, and the instance remained running. Administrative cleanup then deprovisioned the workload and removed the fixture. No PayPal real or sandbox flow was run; PayPal remains outside this round. Details and hashes: [`#190 Fedora Epoch 4 report`](evidence/rc6-epoch4-issue-190-fedorasingle/REPORT.md). This leaves #190's packaged-worker acceptance incomplete and the formal matrix at **0/6**.
+
 The following table preserves R75 observations from the wrong topology only;
 none of these entries validates an independent portal guest or earns a cell
 PASS. RC6 Release 1 independent-Portal observations are recorded above and in
