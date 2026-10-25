@@ -81,6 +81,7 @@
   become: true
   vars:
     hub_host: "{{ groups['admin'][0] }}"
+    admiral_wireguard_subnet: "{{ hostvars[hub_host].admiral_wireguard_subnet }}"
     node_lookup_key: "{{ hostvars[inventory_hostname].fleet_node_id | default(hostvars[inventory_hostname].admiral_node_name | default(inventory_hostname)) }}"
   tasks:
     - name: Check for an existing per-peer preshared key
@@ -197,8 +198,41 @@
   become: true
   vars:
     hub_host: "{{ groups['admin'][0] }}"
+    admiral_wireguard_subnet: "{{ hostvars[hub_host].admiral_wireguard_subnet }}"
     node_lookup_key: "{{ hostvars[inventory_hostname].fleet_node_id | default(hostvars[inventory_hostname].admiral_node_name | default(inventory_hostname)) }}"
   tasks:
+    - name: Select dedicated Portal and Worker peers for uploaded restores
+      set_fact:
+        admiral_wireguard_spoke_peer_hosts: >-
+          {{
+            (groups['portal'] | default([]))
+            if inventory_hostname in (groups['workers'] | default([]))
+            else (groups['workers'] | default([]))
+            if inventory_hostname in (groups['portal'] | default([]))
+            else []
+          }}
+
+    - name: Initialize direct spoke peer list
+      set_fact:
+        admiral_wireguard_spoke_peers: []
+
+    - name: Add exact Worker-to-Portal WireGuard peers
+      set_fact:
+        admiral_wireguard_spoke_peers: >-
+          {{ admiral_wireguard_spoke_peers + [{
+            'public_key': hostvars[item].node_wg_public_key,
+            'wireguard_ip': peer_wireguard_ip,
+            'endpoint': peer_endpoint
+          }] }}
+      loop: "{{ admiral_wireguard_spoke_peer_hosts }}"
+      vars:
+        peer_node_lookup_key: "{{ hostvars[item].fleet_node_id | default(hostvars[item].admiral_node_name | default(item)) }}"
+        peer_wireguard_ip: "{{ hostvars[hub_host].admiral_known_hosts_inventory.nodes[peer_node_lookup_key].wireguard_ip }}"
+        peer_endpoint: "{{ hostvars[item].ansible_host | default(hostvars[item].fleet_public_ip | default(hostvars[item].ansible_facts['default_ipv4']['address'])) }}"
+      when:
+        - peer_wireguard_ip != hostvars[hub_host].admiral_wireguard_hub_ip
+        - peer_wireguard_ip != hostvars[hub_host].admiral_known_hosts_inventory.nodes[node_lookup_key].wireguard_ip
+
     - name: Deploy spoke WireGuard configuration
       template:
         src: roles/admiral_wireguard/templates/wg-admiral.conf.j2
@@ -223,3 +257,89 @@
         name: wg-quick@wg-admiral
         state: restarted
         daemon_reload: true
+
+- name: Reconcile exact Worker access to the dedicated Portal restore endpoint
+  hosts: "portal:!admin"
+  gather_facts: false
+  become: true
+  vars:
+    hub_host: "{{ groups['admin'][0] }}"
+  tasks:
+    - name: Initialize registered Worker WireGuard addresses
+      set_fact:
+        admiral_wireguard_worker_ips: []
+
+    - name: Collect exact registered Worker WireGuard addresses
+      set_fact:
+        admiral_wireguard_worker_ips: "{{ admiral_wireguard_worker_ips + [worker_wireguard_ip] }}"
+      loop: "{{ groups['workers'] | default([]) }}"
+      vars:
+        worker_node_lookup_key: "{{ hostvars[item].fleet_node_id | default(hostvars[item].admiral_node_name | default(item)) }}"
+        worker_wireguard_ip: "{{ hostvars[hub_host].admiral_known_hosts_inventory.nodes[worker_node_lookup_key].wireguard_ip }}"
+      when: worker_wireguard_ip != hostvars[hub_host].admiral_wireguard_hub_ip
+
+    - name: Read existing Portal WireGuard-zone rich rules
+      command:
+        argv:
+          - firewall-cmd
+          - --permanent
+          - --zone=admiral
+          - --list-rich-rules
+      register: admiral_portal_existing_rich_rules
+      changed_when: false
+
+    - name: Identify stale Worker Harbor rules
+      set_fact:
+        admiral_portal_stale_worker_rules: >-
+          {{
+            admiral_portal_existing_rich_rules.stdout_lines
+            | stale_wireguard_harbor_rules(
+                admiral_wireguard_worker_ips,
+                hostvars[hub_host].admiral_wireguard_subnet,
+                hostvars[hub_host].admiral_wireguard_hub_ip
+              )
+          }}
+
+    - name: Remove stale Worker-to-Portal Harbor rules
+      command:
+        argv:
+          - firewall-cmd
+          - --permanent
+          - --zone=admiral
+          - "--remove-rich-rule={{ item }}"
+      loop: "{{ admiral_portal_stale_worker_rules }}"
+      register: admiral_portal_removed_worker_rules
+      changed_when: "'ALREADY_DISABLED' not in admiral_portal_removed_worker_rules.stderr"
+
+    - name: Permit each registered Worker to reach Harbor over WireGuard
+      command:
+        argv:
+          - firewall-cmd
+          - --permanent
+          - --zone=admiral
+          - >-
+            --add-rich-rule=rule family="ipv4" source address="{{ item }}/32"
+            port port="5001" protocol="tcp" accept
+      loop: "{{ admiral_wireguard_worker_ips }}"
+      register: admiral_portal_added_worker_rules
+      changed_when: "'ALREADY_ENABLED' not in admiral_portal_added_worker_rules.stderr"
+
+    - name: Reload firewalld after direct Worker rule reconciliation
+      command:
+        cmd: firewall-cmd --reload
+      when: >-
+        (admiral_portal_removed_worker_rules.changed | default(false)) or
+        (admiral_portal_added_worker_rules.changed | default(false))
+
+    - name: Verify each registered Worker Harbor rule is active
+      command:
+        argv:
+          - firewall-cmd
+          - --zone=admiral
+          - >-
+            --query-rich-rule=rule family="ipv4" source address="{{ item }}/32"
+            port port="5001" protocol="tcp" accept
+      loop: "{{ admiral_wireguard_worker_ips }}"
+      register: admiral_portal_worker_rule_checks
+      changed_when: false
+      failed_when: admiral_portal_worker_rule_checks.rc != 0

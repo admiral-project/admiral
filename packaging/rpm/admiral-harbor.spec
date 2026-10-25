@@ -3,7 +3,7 @@
 
 Name:    admiral-harbor
 Version: 0.0.1rc6
-Release:        4%{?dist}
+Release:        5%{?dist}
 Summary: Admiral Customer Portal - Web UI for end users
 
 License: Apache-2.0
@@ -126,6 +126,9 @@ restorecon -R %{_localstatedir}/lib/admiral/harbor 2>/dev/null || :
 %{python3} -m pytest tests/ -x --tb=short
 
 %changelog
+* Sun Oct 25 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc6-5
+- Rebuild coordinated RC6 Release 5 with direct Worker-to-Portal WireGuard restore path
+
 * Sun Oct 25 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc6-4
 - Rebuild coordinated RC6 Release 4 with Harbor mutation redirect fix
 

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import ipaddress
+import re
 
 
 def wireguard_hub_ip(subnet: str) -> str:
@@ -27,6 +28,42 @@ def wireguard_hub_ip(subnet: str) -> str:
     return str(network.network_address + 1)
 
 
+def stale_wireguard_harbor_rules(
+    rules: list[str], worker_ips: list[str], subnet: str, hub_ip: str
+) -> list[str]:
+    """Return stale exact-source Worker-to-Harbor rules from the WireGuard subnet."""
+    network = ipaddress.ip_network(str(subnet), strict=False)
+    if network.version != 4:
+        raise ValueError("Admiral WireGuard subnet must be IPv4")
+    hub = ipaddress.ip_address(str(hub_ip))
+    desired = {ipaddress.ip_address(str(value)) for value in worker_ips}
+    rule_pattern = re.compile(r'\bsource address="([^\"]+)"')
+    harbor_port = 'port port="5001" protocol="tcp" accept'
+    stale: list[str] = []
+    for rule in rules:
+        if harbor_port not in rule:
+            continue
+        match = rule_pattern.search(rule)
+        if match is None:
+            continue
+        try:
+            source = ipaddress.ip_network(match.group(1), strict=False)
+        except ValueError:
+            continue
+        if (
+            source.version == 4
+            and source.prefixlen == 32
+            and source.subnet_of(network)
+            and source.network_address != hub
+            and source.network_address not in desired
+        ):
+            stale.append(rule)
+    return stale
+
+
 class FilterModule:
     def filters(self) -> dict[str, object]:
-        return {"wireguard_hub_ip": wireguard_hub_ip}
+        return {
+            "wireguard_hub_ip": wireguard_hub_ip,
+            "stale_wireguard_harbor_rules": stale_wireguard_harbor_rules,
+        }

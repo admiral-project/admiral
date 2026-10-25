@@ -1,0 +1,5 @@
+customer_pause=confirmed polls=1
+untrusted_restore_origin_rejected=https://10.99.0.2:5001 error=private restore source is not a registered Harbor portal
+untrusted_restore_origin_rejected=https://169.254.169.254:5001 error=private restore source is not a registered Harbor portal
+customer_resume_operation=op_dccad57ef12c8c9f
+restore_backup_operation_count_after_negative_controls=2

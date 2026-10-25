@@ -15,7 +15,7 @@
 
 Name:    admiralctl
 Version: 0.0.1rc6
-Release:        4%{?dist}
+Release:        5%{?dist}
 Summary: Admiral Command-Line Interface
 
 License: Apache-2.0
@@ -87,6 +87,9 @@ test "$(./admiralctl version 2>&1)" = "admiralctl %{version}"
 restorecon -F %{_bindir}/admiralctl 2>/dev/null || :
 
 %changelog
+* Sun Oct 25 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc6-5
+- Rebuild coordinated RC6 Release 5 with direct Worker-to-Portal WireGuard restore path
+
 * Sun Oct 25 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 0.0.1rc6-4
 - Rebuild coordinated RC6 Release 4 with Harbor mutation redirect fix
 

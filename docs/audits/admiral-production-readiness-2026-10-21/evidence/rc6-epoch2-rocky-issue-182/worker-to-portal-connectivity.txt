@@ -1,0 +1,5 @@
+10.99.0.100 dev wg-admiral src 10.99.0.2 uid 1000 
+    cache 
+worker_to_portal_http=200 tls_verify=0
+tEawdE5d6DRBT7EFqK35902tOCzuu1GDWU0KyHF5W1I=	10.99.0.1/32
+wiBrdSoMfWvOYQvR6ebOrkFBqPkT2c4r3wEENhvlVkQ=	10.99.0.100/32

@@ -1,0 +1,12 @@
+{
+  "action": "restore_backup",
+  "admin_user": "harbor-token",
+  "created_at": "2026-10-25T09:43:15.457085Z",
+  "error_message": null,
+  "id": "op_89512c9b92c2fed3",
+  "instance_id": "inst_f02a3765590fc497",
+  "node_id": "rc6r4-rocky-worker",
+  "status": "succeeded",
+  "task_id": "task_19c8d21ceff67afa",
+  "updated_at": "2026-10-25T09:43:18.535462Z"
+}

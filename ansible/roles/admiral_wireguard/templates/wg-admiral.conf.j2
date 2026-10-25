@@ -50,4 +50,12 @@ AllowedIPs = {{ admiral_wireguard_hub_ip }}/32
 PresharedKey = {{ admiral_wireguard_preshared_key | trim }}
 {% endif %}
 PersistentKeepalive = 25
+{% for peer in admiral_wireguard_spoke_peers | default([]) %}
+
+[Peer]
+PublicKey = {{ peer.public_key }}
+Endpoint = {{ peer.endpoint }}:{{ admiral_wireguard_port | default('51820') }}
+AllowedIPs = {{ peer.wireguard_ip }}/32
+PersistentKeepalive = 25
+{% endfor %}
 {% endif %}

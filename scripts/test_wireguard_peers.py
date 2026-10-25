@@ -51,6 +51,20 @@ class WireGuardPeerExchangeTests(unittest.TestCase):
         self.assertIn("admiral_existing_wireguard_peer_fragments", template)
         self.assertIn("peer.preshared_key", template)
 
+    def test_direct_restore_peers_are_exact_and_firewall_rules_are_reconciled(self) -> None:
+        content = PLAYBOOK.read_text(encoding="utf-8")
+        template = (WIREGUARD_ROLE / "templates/wg-admiral.conf.j2").read_text(encoding="utf-8")
+
+        self.assertIn("Select dedicated Portal and Worker peers for uploaded restores", content)
+        self.assertIn("AllowedIPs = {{ peer.wireguard_ip }}/32", template)
+        self.assertIn("admiral_wireguard_spoke_peers", template)
+        self.assertIn('hosts: "portal:!admin"', content)
+        self.assertIn("stale_wireguard_harbor_rules", content)
+        self.assertIn("Remove stale Worker-to-Portal Harbor rules", content)
+        self.assertIn('source address="{{ item }}/32"', content)
+        self.assertIn('port port="5001" protocol="tcp" accept', content)
+        self.assertIn("net.ipv4.ip_forward=0", template)
+
     def test_hub_startup_loads_durable_peer_fragments(self) -> None:
         template = (WIREGUARD_ROLE / "templates" / "wg-admiral.conf.j2").read_text(encoding="utf-8")
         spec = (ROOT / "packaging/rpm/admiral-common.spec").read_text(encoding="utf-8")
@@ -199,6 +213,19 @@ class WireGuardPeerExchangeTests(unittest.TestCase):
             derive_hub_ip("203.0.113.0/24")
         with self.assertRaisesRegex(ValueError, "at least one peer"):
             derive_hub_ip("10.99.0.4/32")
+
+    def test_stale_portal_harbor_rules_remove_only_unregistered_wireguard_hosts(self) -> None:
+        stale_rules = WIREGUARD_FILTER_MODULE.stale_wireguard_harbor_rules
+        hub = 'rule family="ipv4" source address="10.99.0.1" port port="5001" protocol="tcp" accept'
+        worker = 'rule family="ipv4" source address="10.99.0.2/32" port port="5001" protocol="tcp" accept'
+        stale_worker = 'rule family="ipv4" source address="10.99.0.3/32" port port="5001" protocol="tcp" accept'
+        other_port = 'rule family="ipv4" source address="10.99.0.4/32" port port="8080" protocol="tcp" accept'
+        external = 'rule family="ipv4" source address="192.0.2.8/32" port port="5001" protocol="tcp" accept'
+
+        self.assertEqual(
+            stale_rules([hub, worker, stale_worker, other_port, external], ["10.99.0.2"], "10.99.0.0/24", "10.99.0.1"),
+            [stale_worker],
+        )
 
     def test_installer_passes_custom_wireguard_network_to_every_ansible_run(self) -> None:
         installer = (ROOT / "scripts" / "install.sh").read_text(encoding="utf-8")
