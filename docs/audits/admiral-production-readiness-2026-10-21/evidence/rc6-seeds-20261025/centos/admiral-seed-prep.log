@@ -1,0 +1,564 @@
+CentOS Stream 10 - BaseOS                       6.1 MB/s | 2.8 MB     00:00    
+CentOS Stream 10 - AppStream                     10 MB/s | 2.4 MB     00:00    
+CentOS Stream 10 - Extras packages               40 kB/s |  11 kB     00:00    
+Package dnf-plugins-core-4.7.0-12.el10.noarch is already installed.
+Dependencies resolved.
+================================================================================
+ Package             Architecture  Version           Repository            Size
+================================================================================
+Installing:
+ epel-release        noarch        10-9.el10s        extras-common         19 k
+
+Transaction Summary
+================================================================================
+Install  1 Package
+
+Total download size: 19 k
+Installed size: 25 k
+Downloading Packages:
+epel-release-10-9.el10s.noarch.rpm               27 kB/s |  19 kB     00:00    
+--------------------------------------------------------------------------------
+Total                                            22 kB/s |  19 kB     00:00     
+CentOS Stream 10 - Extras packages              2.1 MB/s | 2.1 kB     00:00    
+Importing GPG key 0x1D997668:
+ Userid     : "CentOS Extras SIG (https://wiki.centos.org/SpecialInterestGroup) <security@centos.org>"
+ Fingerprint: 363F C097 2F64 B699 AED3 968E 1FF6 A217 1D99 7668
+ From       : /etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-SIG-Extras-SHA512
+warning: Certificate 1FF6A2171D997668:
+  Policy rejects subkey 8B5C8111FCA5D0FF: Policy rejected non-revocation signature (PrimaryKeyBinding) requiring second pre-image resistance, because SHA1 is not considered secure
+Key imported successfully
+Running transaction check
+Transaction check succeeded.
+Running transaction test
+Transaction test succeeded.
+Running transaction
+  Preparing        :                                                        1/1 
+  Installing       : epel-release-10-9.el10s.noarch                         1/1 
+  Running scriptlet: epel-release-10-9.el10s.noarch                         1/1 
+Many EPEL packages require the CodeReady Builder (CRB) repository.
+It is recommended that you run /usr/bin/crb enable to enable the CRB repository.
+
+
+Installed:
+  epel-release-10-9.el10s.noarch                                                
+
+Complete!
+Enabling a Copr repository. Please note that this repository is not part
+of the main distribution, and quality may vary.
+
+The Fedora Project does not exercise any power over the contents of
+this repository beyond the rules outlined in the Copr FAQ at
+<https://docs.pagure.org/copr.copr/user_documentation.html#what-i-can-build-in-copr>,
+and packages are not held to any quality or security level.
+
+Please do not file bug reports about these packages in Fedora
+Bugzilla. In case of problems, contact the owner of this repository.
+Repository successfully enabled.
+Admiral RC5 Release 75 signed local validation   60 kB/s | 659  B     00:00    
+Admiral RC5 Release 75 signed local validation  263 kB/s | 1.3 kB     00:00    
+Importing GPG key 0x6A39E4D3:
+ Userid     : "Admiral RC5 Release 73 Local Validation <validation@localhost>"
+ Fingerprint: B36C 8266 E348 EDD8 43B1 97A5 6B26 5293 6A39 E4D3
+ From       : http://192.168.122.1/rc5-r75/RPM-GPG-KEY-admiral-r75
+Admiral RC5 Release 75 signed local validation  109 kB/s | 2.8 kB     00:00    
+Copr repo for admiral owned by admiral-project   46 kB/s |  40 kB     00:00    
+CentOS Stream 10 - BaseOS                        61 kB/s | 5.1 kB     00:00    
+CentOS Stream 10 - AppStream                     59 kB/s | 5.2 kB     00:00    
+CentOS Stream 10 - CRB                          723 kB/s | 600 kB     00:00    
+CentOS Stream 10 - Extras packages               64 kB/s | 5.5 kB     00:00    
+Extra Packages for Enterprise Linux 10 - x86_64 4.7 MB/s | 7.3 MB     00:01    
+Dependencies resolved.
+================================================================================
+ Package                         Arch     Version             Repository   Size
+================================================================================
+Installing:
+ kernel                          x86_64   6.12.0-278.el10     baseos      369 k
+ kernel-core                     x86_64   6.12.0-278.el10     baseos       18 M
+ kernel-modules                  x86_64   6.12.0-278.el10     baseos       42 M
+ kernel-modules-core             x86_64   6.12.0-278.el10     baseos       30 M
+Upgrading:
+ epel-release                    noarch   10-9.el10_3         epel         19 k
+ kdump-utils                     x86_64   1.0.61-2.el10       baseos      111 k
+ kernel-tools                    x86_64   6.12.0-278.el10     baseos      995 k
+ kernel-tools-libs               x86_64   6.12.0-278.el10     baseos      386 k
+ python3-perf                    x86_64   6.12.0-278.el10     appstream   2.0 M
+ python3-rpm                     x86_64   4.19.1.1-27.el10    baseos       64 k
+ qemu-guest-agent                x86_64   18:11.1.0-2.el10    appstream   499 k
+ rpm                             x86_64   4.19.1.1-27.el10    baseos      561 k
+ rpm-build-libs                  x86_64   4.19.1.1-27.el10    baseos       92 k
+ rpm-libs                        x86_64   4.19.1.1-27.el10    baseos      310 k
+ rpm-plugin-audit                x86_64   4.19.1.1-27.el10    baseos       16 k
+ rpm-plugin-selinux              x86_64   4.19.1.1-27.el10    baseos       17 k
+ rpm-plugin-syslog               x86_64   4.19.1.1-27.el10    baseos       18 k
+ rpm-plugin-systemd-inhibit      x86_64   4.19.1.1-27.el10    appstream    17 k
+ rpm-sign-libs                   x86_64   4.19.1.1-27.el10    baseos       22 k
+Installing dependencies:
+ selinux-policy-targeted-extra   noarch   42.1.27-2.el10      crb         775 k
+Installing weak dependencies:
+ selinux-policy-extra            noarch   42.1.27-2.el10      crb          38 k
+
+Transaction Summary
+================================================================================
+Install   6 Packages
+Upgrade  15 Packages
+
+Total download size: 96 M
+Downloading Packages:
+(1/21): kernel-6.12.0-278.el10.x86_64.rpm       892 kB/s | 369 kB     00:00    
+(2/21): kernel-core-6.12.0-278.el10.x86_64.rpm  8.7 MB/s |  18 MB     00:02    
+(3/21): selinux-policy-extra-42.1.27-2.el10.noa  23 kB/s |  38 kB     00:01    
+(4/21): kernel-modules-core-6.12.0-278.el10.x86 7.1 MB/s |  30 MB     00:04    
+(5/21): kernel-modules-6.12.0-278.el10.x86_64.r 7.9 MB/s |  42 MB     00:05    
+(6/21): selinux-policy-targeted-extra-42.1.27-2 518 kB/s | 775 kB     00:01    
+(7/21): kdump-utils-1.0.61-2.el10.x86_64.rpm    146 kB/s | 111 kB     00:00    
+(8/21): python3-rpm-4.19.1.1-27.el10.x86_64.rpm 704 kB/s |  64 kB     00:00    
+(9/21): kernel-tools-libs-6.12.0-278.el10.x86_6 2.7 MB/s | 386 kB     00:00    
+(10/21): kernel-tools-6.12.0-278.el10.x86_64.rp 5.2 MB/s | 995 kB     00:00    
+(11/21): rpm-build-libs-4.19.1.1-27.el10.x86_64 919 kB/s |  92 kB     00:00    
+(12/21): rpm-4.19.1.1-27.el10.x86_64.rpm        3.4 MB/s | 561 kB     00:00    
+(13/21): rpm-libs-4.19.1.1-27.el10.x86_64.rpm   2.1 MB/s | 310 kB     00:00    
+(14/21): rpm-plugin-audit-4.19.1.1-27.el10.x86_ 227 kB/s |  16 kB     00:00    
+(15/21): rpm-plugin-selinux-4.19.1.1-27.el10.x8 222 kB/s |  17 kB     00:00    
+(16/21): rpm-plugin-syslog-4.19.1.1-27.el10.x86 174 kB/s |  18 kB     00:00    
+(17/21): rpm-sign-libs-4.19.1.1-27.el10.x86_64. 215 kB/s |  22 kB     00:00    
+(18/21): rpm-plugin-systemd-inhibit-4.19.1.1-27 262 kB/s |  17 kB     00:00    
+(19/21): python3-perf-6.12.0-278.el10.x86_64.rp 9.5 MB/s | 2.0 MB     00:00    
+(20/21): qemu-guest-agent-11.1.0-2.el10.x86_64. 2.6 MB/s | 499 kB     00:00    
+(21/21): epel-release-10-9.el10_3.noarch.rpm     95 kB/s |  19 kB     00:00    
+--------------------------------------------------------------------------------
+Total                                            15 MB/s |  96 MB     00:06     
+CentOS Stream 10 - BaseOS                       1.6 MB/s | 1.6 kB     00:00    
+Importing GPG key 0x8483C65D:
+ Userid     : "CentOS (CentOS Official Signing Key) <security@centos.org>"
+ Fingerprint: 99DB 70FA E1D7 CE22 7FB6 4882 05B5 55B3 8483 C65D
+ From       : /etc/pki/rpm-gpg/RPM-GPG-KEY-centosofficial-SHA256
+Key imported successfully
+Extra Packages for Enterprise Linux 10 - x86_64 646 kB/s | 1.6 kB     00:00    
+Importing GPG key 0xE37ED158:
+ Userid     : "Fedora (epel10) <epel@fedoraproject.org>"
+ Fingerprint: 7D8D 15CB FC4E 6268 8591 FB26 33D9 8517 E37E D158
+ From       : /etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-10
+Key imported successfully
+Running transaction check
+Transaction check succeeded.
+Running transaction test
+Transaction test succeeded.
+Running transaction
+  Preparing        :                                                        1/1 
+  Upgrading        : rpm-libs-4.19.1.1-27.el10.x86_64                      1/36 
+  Installing       : kernel-modules-core-6.12.0-278.el10.x86_64            2/36 
+  Installing       : kernel-core-6.12.0-278.el10.x86_64                    3/36 
+  Running scriptlet: kernel-core-6.12.0-278.el10.x86_64                    3/36 
+  Installing       : kernel-modules-6.12.0-278.el10.x86_64                 4/36 
+  Running scriptlet: kernel-modules-6.12.0-278.el10.x86_64                 4/36 
+  Upgrading        : rpm-build-libs-4.19.1.1-27.el10.x86_64                5/36 
+  Upgrading        : rpm-sign-libs-4.19.1.1-27.el10.x86_64                 6/36 
+  Upgrading        : kernel-tools-libs-6.12.0-278.el10.x86_64              7/36 
+  Running scriptlet: kernel-tools-libs-6.12.0-278.el10.x86_64              7/36 
+  Running scriptlet: selinux-policy-targeted-extra-42.1.27-2.el10.noarc    8/36 
+  Installing       : selinux-policy-targeted-extra-42.1.27-2.el10.noarc    8/36 
+  Installing       : selinux-policy-extra-42.1.27-2.el10.noarch            9/36 
+  Upgrading        : epel-release-10-9.el10_3.noarch                      10/36 
+  Running scriptlet: epel-release-10-9.el10_3.noarch                      10/36 
+  Upgrading        : kernel-tools-6.12.0-278.el10.x86_64                  11/36 
+  Upgrading        : python3-rpm-4.19.1.1-27.el10.x86_64                  12/36 
+  Installing       : kernel-6.12.0-278.el10.x86_64                        13/36 
+  Running scriptlet: rpm-4.19.1.1-27.el10.x86_64                          14/36 
+  Upgrading        : rpm-4.19.1.1-27.el10.x86_64                          14/36 
+  Upgrading        : rpm-plugin-audit-4.19.1.1-27.el10.x86_64             15/36 
+  Upgrading        : rpm-plugin-selinux-4.19.1.1-27.el10.x86_64           16/36 
+  Upgrading        : rpm-plugin-syslog-4.19.1.1-27.el10.x86_64            17/36 
+  Upgrading        : rpm-plugin-systemd-inhibit-4.19.1.1-27.el10.x86_64   18/36 
+  Upgrading        : qemu-guest-agent-18:11.1.0-2.el10.x86_64             19/36 
+  Running scriptlet: qemu-guest-agent-18:11.1.0-2.el10.x86_64             19/36 
+  Upgrading        : python3-perf-6.12.0-278.el10.x86_64                  20/36 
+  Upgrading        : kdump-utils-1.0.61-2.el10.x86_64                     21/36 
+  Running scriptlet: kdump-utils-1.0.61-2.el10.x86_64                     21/36 
+  Cleanup          : epel-release-10-9.el10s.noarch                       22/36 
+  Running scriptlet: kdump-utils-1.0.61-1.el10.x86_64                     23/36 
+  Cleanup          : kdump-utils-1.0.61-1.el10.x86_64                     23/36 
+  Running scriptlet: kdump-utils-1.0.61-1.el10.x86_64                     23/36 
+  Cleanup          : python3-rpm-4.19.1.1-26.el10.x86_64                  24/36 
+  Cleanup          : rpm-build-libs-4.19.1.1-26.el10.x86_64               25/36 
+  Cleanup          : rpm-sign-libs-4.19.1.1-26.el10.x86_64                26/36 
+  Cleanup          : rpm-plugin-systemd-inhibit-4.19.1.1-26.el10.x86_64   27/36 
+  Cleanup          : rpm-plugin-syslog-4.19.1.1-26.el10.x86_64            28/36 
+  Cleanup          : rpm-plugin-selinux-4.19.1.1-26.el10.x86_64           29/36 
+  Cleanup          : rpm-plugin-audit-4.19.1.1-26.el10.x86_64             30/36 
+  Cleanup          : rpm-4.19.1.1-26.el10.x86_64                          31/36 
+  Cleanup          : kernel-tools-6.12.0-277.el10.x86_64                  32/36 
+  Cleanup          : kernel-tools-libs-6.12.0-277.el10.x86_64             33/36 
+  Running scriptlet: kernel-tools-libs-6.12.0-277.el10.x86_64             33/36 
+  Cleanup          : rpm-libs-4.19.1.1-26.el10.x86_64                     34/36 
+  Running scriptlet: qemu-guest-agent-18:11.1.0-1.el10.x86_64             35/36 
+  Cleanup          : qemu-guest-agent-18:11.1.0-1.el10.x86_64             35/36 
+  Running scriptlet: qemu-guest-agent-18:11.1.0-1.el10.x86_64             35/36 
+  Cleanup          : python3-perf-6.12.0-277.el10.x86_64                  36/36 
+  Running scriptlet: kernel-modules-core-6.12.0-278.el10.x86_64           36/36 
+  Running scriptlet: kernel-core-6.12.0-278.el10.x86_64                   36/36 
+Generating grub configuration file ...
+Adding boot menu entry for UEFI Firmware Settings ...
+done
+kdump: For kernel=/boot/vmlinuz-6.12.0-278.el10.x86_64, crashkernel=2G-64G:256M,64G-:512M now. Please reboot the system for the change to take effect. Note if you don't want kdump-utils to manage the crashkernel kernel parameter, please set auto_reset_crashkernel=no in /etc/kdump.conf.
+
+  Running scriptlet: kernel-modules-6.12.0-278.el10.x86_64                36/36 
+  Running scriptlet: selinux-policy-targeted-extra-42.1.27-2.el10.noarc   36/36 
+  Running scriptlet: rpm-4.19.1.1-27.el10.x86_64                          36/36 
+  Running scriptlet: kdump-utils-1.0.61-2.el10.x86_64                     36/36 
+  Running scriptlet: python3-perf-6.12.0-277.el10.x86_64                  36/36 
+
+Upgraded:
+  epel-release-10-9.el10_3.noarch                                               
+  kdump-utils-1.0.61-2.el10.x86_64                                              
+  kernel-tools-6.12.0-278.el10.x86_64                                           
+  kernel-tools-libs-6.12.0-278.el10.x86_64                                      
+  python3-perf-6.12.0-278.el10.x86_64                                           
+  python3-rpm-4.19.1.1-27.el10.x86_64                                           
+  qemu-guest-agent-18:11.1.0-2.el10.x86_64                                      
+  rpm-4.19.1.1-27.el10.x86_64                                                   
+  rpm-build-libs-4.19.1.1-27.el10.x86_64                                        
+  rpm-libs-4.19.1.1-27.el10.x86_64                                              
+  rpm-plugin-audit-4.19.1.1-27.el10.x86_64                                      
+  rpm-plugin-selinux-4.19.1.1-27.el10.x86_64                                    
+  rpm-plugin-syslog-4.19.1.1-27.el10.x86_64                                     
+  rpm-plugin-systemd-inhibit-4.19.1.1-27.el10.x86_64                            
+  rpm-sign-libs-4.19.1.1-27.el10.x86_64                                         
+Installed:
+  kernel-6.12.0-278.el10.x86_64                                                 
+  kernel-core-6.12.0-278.el10.x86_64                                            
+  kernel-modules-6.12.0-278.el10.x86_64                                         
+  kernel-modules-core-6.12.0-278.el10.x86_64                                    
+  selinux-policy-extra-42.1.27-2.el10.noarch                                    
+  selinux-policy-targeted-extra-42.1.27-2.el10.noarch                           
+
+Complete!
+Last metadata expiration check: 0:03:51 ago on Sun Oct 25 10:27:34 2026.
+Package curl-8.12.1-8.el10.x86_64 is already installed.
+Package gnupg2-2.4.5-5.el10.x86_64 is already installed.
+Package openssh-clients-9.9p1-33.el10.x86_64 is already installed.
+Package openssh-server-9.9p1-33.el10.x86_64 is already installed.
+Package openssl-1:3.5.9-1.el10.x86_64 is already installed.
+Package policycoreutils-python-utils-3.11-1.el10.noarch is already installed.
+Package podman-7:6.1.0-2.el10.x86_64 is already installed.
+Package python3-3.12.15-1.el10.x86_64 is already installed.
+Package python3-pyyaml-6.0.1-19.el10.x86_64 is already installed.
+Package python3-requests-2.32.4-1.el10.noarch is already installed.
+Package shadow-utils-2:4.15.0-13.el10.x86_64 is already installed.
+Package systemd-257-34.el10.x86_64 is already installed.
+Dependencies resolved.
+=============================================================================================================================
+ Package                            Arch    Version             Repository                                               Size
+=============================================================================================================================
+Installing:
+ ansible-collection-ansible-posix   noarch  2.2.1-1.el10_3      epel                                                    102 k
+ ansible-core                       noarch  1:2.16.19-3.el10    appstream                                               2.9 M
+ caddy                              x86_64  2.10.2-9.el10_3     epel                                                     14 M
+ certbot                            noarch  4.2.0-1.el10_2      epel                                                     51 k
+ postgresql                         x86_64  16.14-3.el10        appstream                                               2.0 M
+ postgresql-server                  x86_64  16.14-3.el10        appstream                                               7.0 M
+ python3-argon2-cffi                noarch  25.1.0-3.el10_1     epel                                                     33 k
+ python3-cryptography               x86_64  49.0.0-1.el10       baseos                                                  1.8 M
+ python3-flask                      noarch  1:3.1.3-4.el10      copr:copr.fedorainfracloud.org:admiral-project:admiral   82 k
+ python3-flask-alembic              noarch  3.3.0-5.el10        copr:copr.fedorainfracloud.org:admiral-project:admiral   36 k
+ python3-flask-login                noarch  0.6.3-10.el10       copr:copr.fedorainfracloud.org:admiral-project:admiral   38 k
+ python3-flask-sqlalchemy           noarch  3.1.1-11.el10       copr:copr.fedorainfracloud.org:admiral-project:admiral   54 k
+ python3-gunicorn                   noarch  23.0.0-1.el10_1     epel                                                    190 k
+ python3-mistune                    noarch  3.4.0-2.el10        copr:copr.fedorainfracloud.org:admiral-project:admiral  170 k
+ python3-psycopg2                   x86_64  2.9.9-6.el10        appstream                                               204 k
+ python3-sqlalchemy                 x86_64  2.0.55-5.el10       copr:copr.fedorainfracloud.org:admiral-project:admiral  3.3 M
+ python3-werkzeug                   noarch  3.1.3-1.el10_0      epel                                                    446 k
+ systemd-container                  x86_64  257-34.el10         baseos                                                  676 k
+ wireguard-tools                    x86_64  1.0.20250521-1.el10 appstream                                               133 k
+Installing dependencies:
+ centos-logos-httpd                 noarch  100.5-1.el10        appstream                                               854 k
+ fontawesome4-fonts                 noarch  1:4.7.0-24.el10     appstream                                               203 k
+ fonts-filesystem                   noarch  1:2.0.5-18.el10     baseos                                                  8.8 k
+ git-core                           x86_64  2.52.0-1.el10       appstream                                               5.1 M
+ libargon2                          x86_64  20190702-6.el10_0   epel                                                     29 k
+ libpq                              x86_64  16.11-3.el10        baseos                                                  254 k
+ postgresql-private-libs            x86_64  16.14-3.el10        appstream                                               143 k
+ python3-acme                       noarch  4.2.0-1.el10_2      epel                                                    210 k
+ python3-alembic                    noarch  1.20.1-5.el10       copr:copr.fedorainfracloud.org:admiral-project:admiral  498 k
+ python3-argon2-cffi-bindings       x86_64  21.2.0-1.el10_1     epel                                                     26 k
+ python3-blinker                    noarch  1.9.0-1.el10_0      epel                                                     27 k
+ python3-certbot                    noarch  4.2.0-1.el10_2      epel                                                    881 k
+ python3-cffi                       x86_64  1.16.0-7.el10       baseos                                                  308 k
+ python3-click                      noarch  8.1.7-7.el10_3      epel                                                    226 k
+ python3-configargparse             noarch  1.8.0-1.el10_3      epel                                                     67 k
+ python3-greenlet                   x86_64  3.0.3-5.el10        appstream                                               264 k
+ python3-itsdangerous               noarch  2.2.0-1.el10_0      epel                                                     41 k
+ python3-josepy                     noarch  2.0.0-2.el10_1      epel                                                     72 k
+ python3-mako                       noarch  1.2.3-9.el10        appstream                                               225 k
+ python3-parsedatetime              noarch  2.6-1.el10_0        epel                                                     95 k
+ python3-ply                        noarch  3.11-25.el10        baseos                                                  134 k
+ python3-pyOpenSSL                  noarch  26.3.0-1.el10_3     epel                                                    112 k
+ python3-pycparser                  noarch  2.20-16.el10        baseos                                                  158 k
+ python3-pyrfc3339                  noarch  1.1-20.el10_0       epel                                                     19 k
+ python3-pytz                       noarch  2025.1-1.el10_1     epel                                                     56 k
+ python3-resolvelib                 noarch  1.0.1-6.el10        appstream                                                45 k
+ python3-typing-extensions          noarch  4.16.0-2.el10       copr:copr.fedorainfracloud.org:admiral-project:admiral   97 k
+ systemd-resolved                   x86_64  257-34.el10         baseos                                                  337 k
+Installing weak dependencies:
+ python-josepy-doc                  noarch  2.0.0-2.el10_1      epel                                                     10 k
+
+Transaction Summary
+=============================================================================================================================
+Install  48 Packages
+
+Total download size: 44 M
+Installed size: 173 M
+Downloading Packages:
+(1/48): python3-flask-3.1.3-4.el10.noarch.rpm   200 kB/s |  82 kB     00:00    
+(2/48): python3-flask-alembic-3.3.0-5.el10.noar  87 kB/s |  36 kB     00:00    
+(3/48): python3-alembic-1.20.1-5.el10.noarch.rp 970 kB/s | 498 kB     00:00    
+(4/48): python3-flask-login-0.6.3-10.el10.noarc 170 kB/s |  38 kB     00:00    
+(5/48): python3-flask-sqlalchemy-3.1.1-11.el10. 221 kB/s |  54 kB     00:00    
+(6/48): python3-mistune-3.4.0-2.el10.noarch.rpm 555 kB/s | 170 kB     00:00    
+(7/48): fonts-filesystem-2.0.5-18.el10.noarch.r 423 kB/s | 8.8 kB     00:00    
+(8/48): libpq-16.11-3.el10.x86_64.rpm           5.3 MB/s | 254 kB     00:00    
+(9/48): python3-cffi-1.16.0-7.el10.x86_64.rpm    11 MB/s | 308 kB     00:00    
+(10/48): python3-sqlalchemy-2.0.55-5.el10.x86_6  10 MB/s | 3.3 MB     00:00    
+(11/48): python3-typing-extensions-4.16.0-2.el1 319 kB/s |  97 kB     00:00    
+(12/48): python3-cryptography-49.0.0-1.el10.x86  26 MB/s | 1.8 MB     00:00    
+(13/48): python3-ply-3.11-25.el10.noarch.rpm    2.8 MB/s | 134 kB     00:00    
+(14/48): systemd-container-257-34.el10.x86_64.r  19 MB/s | 676 kB     00:00    
+(15/48): python3-pycparser-2.20-16.el10.noarch. 2.4 MB/s | 158 kB     00:00    
+(16/48): systemd-resolved-257-34.el10.x86_64.rp 8.0 MB/s | 337 kB     00:00    
+(17/48): centos-logos-httpd-100.5-1.el10.noarch  21 MB/s | 854 kB     00:00    
+(18/48): fontawesome4-fonts-4.7.0-24.el10.noarc 6.3 MB/s | 203 kB     00:00    
+(19/48): ansible-core-2.16.19-3.el10.noarch.rpm  28 MB/s | 2.9 MB     00:00    
+(20/48): git-core-2.52.0-1.el10.x86_64.rpm       44 MB/s | 5.1 MB     00:00    
+(21/48): postgresql-16.14-3.el10.x86_64.rpm      14 MB/s | 2.0 MB     00:00    
+(22/48): postgresql-private-libs-16.14-3.el10.x 1.4 MB/s | 143 kB     00:00    
+(23/48): python3-mako-1.2.3-9.el10.noarch.rpm   7.6 MB/s | 225 kB     00:00    
+(24/48): python3-greenlet-3.0.3-5.el10.x86_64.r 6.4 MB/s | 264 kB     00:00    
+(25/48): python3-psycopg2-2.9.9-6.el10.x86_64.r  11 MB/s | 204 kB     00:00    
+(26/48): python3-resolvelib-1.0.1-6.el10.noarch 3.3 MB/s |  45 kB     00:00    
+(27/48): postgresql-server-16.14-3.el10.x86_64.  47 MB/s | 7.0 MB     00:00    
+(28/48): wireguard-tools-1.0.20250521-1.el10.x8 2.0 MB/s | 133 kB     00:00    
+(29/48): certbot-4.2.0-1.el10_2.noarch.rpm      277 kB/s |  51 kB     00:00    
+(30/48): ansible-collection-ansible-posix-2.2.1 360 kB/s | 102 kB     00:00    
+(31/48): libargon2-20190702-6.el10_0.x86_64.rpm 459 kB/s |  29 kB     00:00    
+(32/48): python-josepy-doc-2.0.0-2.el10_1.noarc 202 kB/s |  10 kB     00:00    
+(33/48): python3-argon2-cffi-25.1.0-3.el10_1.no 581 kB/s |  33 kB     00:00    
+(34/48): python3-acme-4.2.0-1.el10_2.noarch.rpm 1.6 MB/s | 210 kB     00:00    
+(35/48): python3-argon2-cffi-bindings-21.2.0-1. 405 kB/s |  26 kB     00:00    
+(36/48): python3-blinker-1.9.0-1.el10_0.noarch. 507 kB/s |  27 kB     00:00    
+(37/48): python3-click-8.1.7-7.el10_3.noarch.rp 2.1 MB/s | 226 kB     00:00    
+(38/48): caddy-2.10.2-9.el10_3.x86_64.rpm        20 MB/s |  14 MB     00:00    
+(39/48): python3-configargparse-1.8.0-1.el10_3. 414 kB/s |  67 kB     00:00    
+(40/48): python3-certbot-4.2.0-1.el10_2.noarch. 2.6 MB/s | 881 kB     00:00    
+(41/48): python3-gunicorn-23.0.0-1.el10_1.noarc 3.3 MB/s | 190 kB     00:00    
+(42/48): python3-itsdangerous-2.2.0-1.el10_0.no 722 kB/s |  41 kB     00:00    
+(43/48): python3-josepy-2.0.0-2.el10_1.noarch.r 1.5 MB/s |  72 kB     00:00    
+(44/48): python3-parsedatetime-2.6-1.el10_0.noa 2.2 MB/s |  95 kB     00:00    
+(45/48): python3-pyOpenSSL-26.3.0-1.el10_3.noar 2.1 MB/s | 112 kB     00:00    
+(46/48): python3-pyrfc3339-1.1-20.el10_0.noarch 277 kB/s |  19 kB     00:00    
+(47/48): python3-pytz-2025.1-1.el10_1.noarch.rp 1.1 MB/s |  56 kB     00:00    
+(48/48): python3-werkzeug-3.1.3-1.el10_0.noarch 6.7 MB/s | 446 kB     00:00    
+--------------------------------------------------------------------------------
+Total                                            19 MB/s |  44 MB     00:02     
+Copr repo for admiral owned by admiral-project   46 kB/s | 1.0 kB     00:00    
+Importing GPG key 0x37D63DCC:
+ Userid     : "admiral-project_admiral (None) <admiral-project#admiral@copr.fedorahosted.org>"
+ Fingerprint: C1FD E9BC 160A 3262 49ED 4A2C B048 78BC 37D6 3DCC
+ From       : https://download.copr.fedorainfracloud.org/results/admiral-project/admiral/pubkey.gpg
+Key imported successfully
+Running transaction check
+Transaction check succeeded.
+Running transaction test
+Transaction test succeeded.
+Running transaction
+  Preparing        :                                                        1/1 
+  Installing       : python3-typing-extensions-4.16.0-2.el10.noarch        1/48 
+  Installing       : python3-werkzeug-3.1.3-1.el10_0.noarch                2/48 
+  Installing       : postgresql-private-libs-16.14-3.el10.x86_64           3/48 
+  Installing       : postgresql-16.14-3.el10.x86_64                        4/48 
+  Installing       : python3-pytz-2025.1-1.el10_1.noarch                   5/48 
+  Installing       : python3-pyrfc3339-1.1-20.el10_0.noarch                6/48 
+  Installing       : python3-parsedatetime-2.6-1.el10_0.noarch             7/48 
+  Installing       : python3-itsdangerous-2.2.0-1.el10_0.noarch            8/48 
+  Installing       : python3-configargparse-1.8.0-1.el10_3.noarch          9/48 
+  Installing       : python3-click-8.1.7-7.el10_3.noarch                  10/48 
+  Installing       : python3-blinker-1.9.0-1.el10_0.noarch                11/48 
+  Installing       : python3-flask-1:3.1.3-4.el10.noarch                  12/48 
+  Installing       : python-josepy-doc-2.0.0-2.el10_1.noarch              13/48 
+  Installing       : libargon2-20190702-6.el10_0.x86_64                   14/48 
+  Installing       : python3-resolvelib-1.0.1-6.el10.noarch               15/48 
+  Installing       : python3-mako-1.2.3-9.el10.noarch                     16/48 
+  Installing       : python3-greenlet-3.0.3-5.el10.x86_64                 17/48 
+  Installing       : python3-sqlalchemy-2.0.55-5.el10.x86_64              18/48 
+  Installing       : python3-alembic-1.20.1-5.el10.noarch                 19/48 
+  Installing       : git-core-2.52.0-1.el10.x86_64                        20/48 
+  Installing       : centos-logos-httpd-100.5-1.el10.noarch               21/48 
+  Running scriptlet: systemd-resolved-257-34.el10.x86_64                  22/48 
+  Installing       : systemd-resolved-257-34.el10.x86_64                  22/48 
+  Running scriptlet: systemd-resolved-257-34.el10.x86_64                  22/48 
+  Installing       : python3-ply-3.11-25.el10.noarch                      23/48 
+  Installing       : python3-pycparser-2.20-16.el10.noarch                24/48 
+  Installing       : python3-cffi-1.16.0-7.el10.x86_64                    25/48 
+  Installing       : python3-cryptography-49.0.0-1.el10.x86_64            26/48 
+  Installing       : python3-josepy-2.0.0-2.el10_1.noarch                 27/48 
+  Installing       : ansible-core-1:2.16.19-3.el10.noarch                 28/48 
+  Installing       : python3-pyOpenSSL-26.3.0-1.el10_3.noarch             29/48 
+  Installing       : python3-acme-4.2.0-1.el10_2.noarch                   30/48 
+  Installing       : python3-certbot-4.2.0-1.el10_2.noarch                31/48 
+  Installing       : python3-argon2-cffi-bindings-21.2.0-1.el10_1.x86_6   32/48 
+  Installing       : libpq-16.11-3.el10.x86_64                            33/48 
+  Installing       : fonts-filesystem-1:2.0.5-18.el10.noarch              34/48 
+  Installing       : fontawesome4-fonts-1:4.7.0-24.el10.noarch            35/48 
+  Installing       : certbot-4.2.0-1.el10_2.noarch                        36/48 
+  Running scriptlet: certbot-4.2.0-1.el10_2.noarch                        36/48 
+Created symlink '/etc/systemd/system/timers.target.wants/certbot-renew.timer' → '/usr/lib/systemd/system/certbot-renew.timer'.
+
+Certbot auto renewal timer is not started by default.
+Run 'systemctl start certbot-renew.timer' to enable automatic renewals.
+
+  Installing       : python3-psycopg2-2.9.9-6.el10.x86_64                 37/48 
+  Installing       : python3-argon2-cffi-25.1.0-3.el10_1.noarch           38/48 
+  Installing       : ansible-collection-ansible-posix-2.2.1-1.el10_3.no   39/48 
+  Installing       : wireguard-tools-1.0.20250521-1.el10.x86_64           40/48 
+  Running scriptlet: caddy-2.10.2-9.el10_3.x86_64                         41/48 
+  Installing       : caddy-2.10.2-9.el10_3.x86_64                         41/48 
+  Running scriptlet: caddy-2.10.2-9.el10_3.x86_64                         41/48 
+Port udp/80 already defined, modifying instead
+Port udp/443 already defined, modifying instead
+
+  Installing       : python3-flask-alembic-3.3.0-5.el10.noarch            42/48 
+  Installing       : python3-flask-sqlalchemy-3.1.1-11.el10.noarch        43/48 
+  Installing       : python3-flask-login-0.6.3-10.el10.noarch             44/48 
+  Running scriptlet: postgresql-server-16.14-3.el10.x86_64                45/48 
+  Installing       : postgresql-server-16.14-3.el10.x86_64                45/48 
+  Running scriptlet: postgresql-server-16.14-3.el10.x86_64                45/48 
+  Installing       : python3-gunicorn-23.0.0-1.el10_1.noarch              46/48 
+  Installing       : systemd-container-257-34.el10.x86_64                 47/48 
+  Installing       : python3-mistune-3.4.0-2.el10.noarch                  48/48 
+  Running scriptlet: python3-mistune-3.4.0-2.el10.noarch                  48/48 
+
+Installed:
+  ansible-collection-ansible-posix-2.2.1-1.el10_3.noarch                        
+  ansible-core-1:2.16.19-3.el10.noarch                                          
+  caddy-2.10.2-9.el10_3.x86_64                                                  
+  centos-logos-httpd-100.5-1.el10.noarch                                        
+  certbot-4.2.0-1.el10_2.noarch                                                 
+  fontawesome4-fonts-1:4.7.0-24.el10.noarch                                     
+  fonts-filesystem-1:2.0.5-18.el10.noarch                                       
+  git-core-2.52.0-1.el10.x86_64                                                 
+  libargon2-20190702-6.el10_0.x86_64                                            
+  libpq-16.11-3.el10.x86_64                                                     
+  postgresql-16.14-3.el10.x86_64                                                
+  postgresql-private-libs-16.14-3.el10.x86_64                                   
+  postgresql-server-16.14-3.el10.x86_64                                         
+  python-josepy-doc-2.0.0-2.el10_1.noarch                                       
+  python3-acme-4.2.0-1.el10_2.noarch                                            
+  python3-alembic-1.20.1-5.el10.noarch                                          
+  python3-argon2-cffi-25.1.0-3.el10_1.noarch                                    
+  python3-argon2-cffi-bindings-21.2.0-1.el10_1.x86_64                           
+  python3-blinker-1.9.0-1.el10_0.noarch                                         
+  python3-certbot-4.2.0-1.el10_2.noarch                                         
+  python3-cffi-1.16.0-7.el10.x86_64                                             
+  python3-click-8.1.7-7.el10_3.noarch                                           
+  python3-configargparse-1.8.0-1.el10_3.noarch                                  
+  python3-cryptography-49.0.0-1.el10.x86_64                                     
+  python3-flask-1:3.1.3-4.el10.noarch                                           
+  python3-flask-alembic-3.3.0-5.el10.noarch                                     
+  python3-flask-login-0.6.3-10.el10.noarch                                      
+  python3-flask-sqlalchemy-3.1.1-11.el10.noarch                                 
+  python3-greenlet-3.0.3-5.el10.x86_64                                          
+  python3-gunicorn-23.0.0-1.el10_1.noarch                                       
+  python3-itsdangerous-2.2.0-1.el10_0.noarch                                    
+  python3-josepy-2.0.0-2.el10_1.noarch                                          
+  python3-mako-1.2.3-9.el10.noarch                                              
+  python3-mistune-3.4.0-2.el10.noarch                                           
+  python3-parsedatetime-2.6-1.el10_0.noarch                                     
+  python3-ply-3.11-25.el10.noarch                                               
+  python3-psycopg2-2.9.9-6.el10.x86_64                                          
+  python3-pyOpenSSL-26.3.0-1.el10_3.noarch                                      
+  python3-pycparser-2.20-16.el10.noarch                                         
+  python3-pyrfc3339-1.1-20.el10_0.noarch                                        
+  python3-pytz-2025.1-1.el10_1.noarch                                           
+  python3-resolvelib-1.0.1-6.el10.noarch                                        
+  python3-sqlalchemy-2.0.55-5.el10.x86_64                                       
+  python3-typing-extensions-4.16.0-2.el10.noarch                                
+  python3-werkzeug-3.1.3-1.el10_0.noarch                                        
+  systemd-container-257-34.el10.x86_64                                          
+  systemd-resolved-257-34.el10.x86_64                                           
+  wireguard-tools-1.0.20250521-1.el10.x86_64                                    
+
+Complete!
+Admiral RC5 Release 75 signed local validation   58 kB/s | 659  B     00:00    
+Copr repo for admiral owned by admiral-project  4.2 kB/s | 1.5 kB     00:00    
+CentOS Stream 10 - BaseOS                        93 kB/s | 5.1 kB     00:00    
+CentOS Stream 10 - AppStream                     32 kB/s | 5.2 kB     00:00    
+CentOS Stream 10 - CRB                           52 kB/s | 5.0 kB     00:00    
+CentOS Stream 10 - Extras packages               46 kB/s | 5.5 kB     00:00    
+Extra Packages for Enterprise Linux 10 - x86_64  44 kB/s | 4.0 kB     00:00    
+Dependencies resolved.
+Nothing to do.
+Complete!
+Cache was expired
+32 files removed
+Copr repo for admiral owned by admiral-project   67 kB/s |  40 kB     00:00    
+CentOS Stream 10 - BaseOS                       7.2 MB/s | 2.8 MB     00:00    
+CentOS Stream 10 - AppStream                     10 MB/s | 2.4 MB     00:00    
+CentOS Stream 10 - CRB                          400 kB/s | 600 kB     00:01    
+CentOS Stream 10 - Extras packages               36 kB/s |  11 kB     00:00    
+Extra Packages for Enterprise Linux 10 - x86_64  18 MB/s | 7.3 MB     00:00    
+Dependencies resolved.
+Nothing to do.
+Complete!
+Prepared audit seed for centos 10 at 2026-10-25T10:32:24Z
+ansible-collection-ansible-posix-2.2.1-1.el10_3.noarch
+ansible-core-2.16.19-3.el10.noarch
+caddy-2.10.2-9.el10_3.x86_64
+certbot-4.2.0-1.el10_2.noarch
+curl-8.12.1-8.el10.x86_64
+gnupg2-2.4.5-5.el10.x86_64
+openssh-clients-9.9p1-33.el10.x86_64
+openssh-server-9.9p1-33.el10.x86_64
+openssl-3.5.9-1.el10.x86_64
+policycoreutils-python-utils-3.11-1.el10.noarch
+podman-6.1.0-2.el10.x86_64
+postgresql-16.14-3.el10.x86_64
+postgresql-server-16.14-3.el10.x86_64
+python3-3.12.15-1.el10.x86_64
+python3-argon2-cffi-25.1.0-3.el10_1.noarch
+python3-cryptography-49.0.0-1.el10.x86_64
+python3-flask-3.1.3-4.el10.noarch
+python3-flask-alembic-3.3.0-5.el10.noarch
+python3-flask-login-0.6.3-10.el10.noarch
+python3-flask-sqlalchemy-3.1.1-11.el10.noarch
+python3-gunicorn-23.0.0-1.el10_1.noarch
+python3-mistune-3.4.0-2.el10.noarch
+python3-psycopg2-2.9.9-6.el10.x86_64
+python3-sqlalchemy-2.0.55-5.el10.x86_64
+python3-pyyaml-6.0.1-19.el10.x86_64
+python3-requests-2.32.4-1.el10.noarch
+python3-werkzeug-3.1.3-1.el10_0.noarch
+shadow-utils-4.15.0-13.el10.x86_64
+systemd-257-34.el10.x86_64
+systemd-container-257-34.el10.x86_64
+wireguard-tools-1.0.20250521-1.el10.x86_64
+kernel-core-6.12.0-277.el10.x86_64
+kernel-core-6.12.0-278.el10.x86_64
+    Install python3-argon2-cffi-bindings-21.2.0-1.el10_1.x86_64    @epel
+    Install python3-blinker-1.9.0-1.el10_0.noarch                  @epel
+    Install python3-certbot-4.2.0-1.el10_2.noarch                  @epel
+    Install python3-click-8.1.7-7.el10_3.noarch                    @epel
+    Install python3-configargparse-1.8.0-1.el10_3.noarch           @epel
+    Install python3-gunicorn-23.0.0-1.el10_1.noarch                @epel
+    Install python3-itsdangerous-2.2.0-1.el10_0.noarch             @epel
+    Install python3-josepy-2.0.0-2.el10_1.noarch                   @epel
+    Install python3-parsedatetime-2.6-1.el10_0.noarch              @epel
+    Install python3-pyOpenSSL-26.3.0-1.el10_3.noarch               @epel
+    Install python3-pyrfc3339-1.1-20.el10_0.noarch                 @epel
+    Install python3-pytz-2025.1-1.el10_1.noarch                    @epel
+    Install python3-werkzeug-3.1.3-1.el10_0.noarch                 @epel
+Scriptlet output:
+   1 Created symlink '/etc/systemd/system/timers.target.wants/certbot-renew.timer' → '/usr/lib/systemd/system/certbot-renew.timer'.
+   2 
+   3 Certbot auto renewal timer is not started by default.
+   4 Run 'systemctl start certbot-renew.timer' to enable automatic renewals.
+   5 Port udp/80 already defined, modifying instead
+   6 Port udp/443 already defined, modifying instead
+0 files removed

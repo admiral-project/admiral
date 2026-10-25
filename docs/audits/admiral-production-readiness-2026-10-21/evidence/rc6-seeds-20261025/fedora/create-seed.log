@@ -1,0 +1,242 @@
+os=fedora family=fedora release=75
+vm=seed-rc6-final-fedora nat=192.168.122.227 mac=52:54:00:ad:75:03
+base_image=/var/lib/libvirt/images/admiral-validation/Fedora-Cloud-Base-Generic-Rawhide-20261020.n.0.x86_64.qcow2
+base_image_sha256=03128e8dd5d114fc750a00c2cfaa22068cc90d3a3f200f406ea95e5b1ce65afa  /var/lib/libvirt/images/admiral-validation/Fedora-Cloud-Base-Generic-Rawhide-20261020.n.0.x86_64.qcow2
+output_seed=/var/lib/libvirt/images/admiral-validation/seeds/Fedora-Rawhide-seed-20261025-rc6-updated.x86_64.qcow2
+candidate_rpm_suffix=.fc46
+candidate_rpm_nevras:
+admiral-common-0.0.1rc5-75.fc46.noarch
+admiral-flagship-0.0.1rc5-75.fc46.noarch
+admiral-harbor-0.0.1rc5-75.fc46.noarch
+admiral-fleet-0.0.1rc5-75.fc46.x86_64
+admiralctl-0.0.1rc5-75.fc46.x86_64
+admirald-0.0.1rc5-75.fc46.x86_64
+known_hosts_file=/var/lib/libvirt/images/admiral-validation/cloud-init/seed-rc6-final-fedora/known_hosts
+host_key_fingerprint=SHA256:1eealEs4Vp7TXvzwUa4ifDIx2+8/tldmWzPz9IzRvVE
+host_key_private_material=protected-cloud-init-only
+Updated network default persistent config and live state
+xorriso 1.5.6 : RockRidge filesystem manipulator, libburnia project.
+
+Drive current: -outdev 'stdio:/var/lib/libvirt/images/admiral-validation/cloud-init/seed-rc6-final-fedora.iso'
+Media current: stdio file, overwriteable
+Media status : is blank
+Media summary: 0 sessions, 0 data blocks, 0 data, 42.2g free
+Added to ISO image: file '/user-data'='/var/lib/libvirt/images/admiral-validation/cloud-init/seed-rc6-final-fedora/user-data'
+xorriso : UPDATE :       1 files added in 1 seconds
+Added to ISO image: file '/meta-data'='/var/lib/libvirt/images/admiral-validation/cloud-init/seed-rc6-final-fedora/meta-data'
+xorriso : UPDATE :       2 files added in 1 seconds
+ISO image produced: 185 sectors
+Written to medium : 185 sectors at LBA 0
+Writing to 'stdio:/var/lib/libvirt/images/admiral-validation/cloud-init/seed-rc6-final-fedora.iso' completed successfully.
+
+Formatting '/var/lib/libvirt/images/admiral-validation/overlays/seed-rc6-final-fedora.qcow2', fmt=qcow2 cluster_size=65536 extended_l2=off compression_type=zlib size=5368709120 backing_file=/var/lib/libvirt/images/admiral-validation/Fedora-Cloud-Base-Generic-Rawhide-20261020.n.0.x86_64.qcow2 backing_fmt=qcow2 lazy_refcounts=off refcount_bits=16
+
+Starting install...
+Creating domain...                                          |         00:00     
+Domain creation completed.
+DHCP lease verified: 52:54:00:ad:75:03 -> 192.168.122.227
+Created seed-rc6-final-fedora from Fedora-Cloud-Base-Generic-Rawhide-20261020.n.0.x86_64.qcow2 at NAT 192.168.122.227.
+known_hosts_file=/var/lib/libvirt/images/admiral-validation/cloud-init/seed-rc6-final-fedora/known_hosts
+256 SHA256:1eealEs4Vp7TXvzwUa4ifDIx2+8/tldmWzPz9IzRvVE admiral-audit-seed-rc6-final-fedora (ED25519)
+[68/85] Installing python3-flask-alembi 100% |   6.1 MiB/s | 132.2 KiB |  00m00s
+[69/85] Installing python3-flask-login- 100% |   4.5 MiB/s | 109.9 KiB |  00m00s
+[70/85] Installing python3-flask-sqlalc 100% |   1.2 MiB/s | 200.7 KiB |  00m00s
+>>> Running sysusers scriptlet: caddy-0:2.11.4-4.fc45.x86_64
+>>> Finished sysusers scriptlet: caddy-0:2.11.4-4.fc45.x86_64
+>>> Scriptlet output:
+>>> Creating group 'caddy' with GID 988.
+>>> Creating user 'caddy' (Caddy web server) with UID 988 and GID 988.
+>>> 
+[71/85] Installing caddy-0:2.11.4-4.fc4 100% |  14.8 MiB/s |  52.1 MiB |  00m04s
+[72/85] Installing qemu-kvm-core-2:11.1 100% |  13.5 KiB/s | 124.0   B |  00m00s
+[73/85] Installing qemu-device-display- 100% |   1.1 MiB/s |  20.0 KiB |  00m00s
+[74/85] Installing python3-crypto-0:2.6 100% |  10.3 MiB/s |   2.3 MiB |  00m00s
+[75/85] Installing qatlib-service-0:26. 100% | 100.6 KiB/s |  73.1 KiB |  00m01s
+>>> Running sysusers scriptlet: postgresql-server-0:18.3-12.fc46.x86_64
+>>> Finished sysusers scriptlet: postgresql-server-0:18.3-12.fc46.x86_64
+>>> Scriptlet output:
+>>> Creating group 'postgres' with GID 26.
+>>> Creating user 'postgres' (PostgreSQL Server) with UID 26 and GID 26.
+>>> 
+[76/85] Installing postgresql-server-0: 100% |  27.8 MiB/s |  32.1 MiB |  00m01s
+[77/85] Installing python3-gunicorn-0:2 100% |   5.3 MiB/s | 667.7 KiB |  00m00s
+[78/85] Installing edk2-shell-x64-0:202 100% |  14.5 MiB/s |   1.2 MiB |  00m00s
+[79/85] Installing julietaula-montserra 100% |  46.0 MiB/s |   5.6 MiB |  00m00s
+[80/85] Installing systemd-import-keys- 100% |   3.0 MiB/s |  46.2 KiB |  00m00s
+[81/85] Installing python-josepy-doc-0: 100% | 172.2 KiB/s |   2.2 KiB |  00m00s
+[82/85] Installing systemd-container-0: 100% |  13.4 MiB/s |   2.8 MiB |  00m00s
+[83/85] Installing python3-mistune-0:3. 100% |   5.4 MiB/s | 753.4 KiB |  00m00s
+[84/85] Installing wireguard-tools-0:1. 100% |   3.0 MiB/s | 305.6 KiB |  00m00s
+[85/85] Installing policycoreutils-pyth 100% |  38.0 KiB/s |  98.2 KiB |  00m03s
+Complete!
+Updating and loading repositories:
+ Fedora - Rawhide - Developmental packa 100% |  66.0 KiB/s |  22.4 KiB |  00m00s
+ Fedora rawhide openh264 (From Cisco) - 100% |   2.7 KiB/s | 986.0   B |  00m00s
+ Copr repo for admiral owned by admiral 100% |   8.5 KiB/s |   1.5 KiB |  00m00s
+ Admiral RC5 Release 75 signed local va 100% |  10.8 KiB/s |   2.2 KiB |  00m00s
+Repositories loaded.
+Nothing to do.
+Removed 17 files, 8 directories (total of 51 MiB). 0 errors occurred.
+Updating and loading repositories:
+ Fedora rawhide openh264 (From Cisco) - 100% |  12.1 KiB/s |   5.3 KiB |  00m00s
+ Copr repo for admiral owned by admiral 100% | 100.9 KiB/s |  45.4 KiB |  00m00s
+ Fedora - Rawhide - Developmental packa 100% |   7.0 MiB/s |  22.0 MiB |  00m03s
+Repositories loaded.
+Nothing to do.
+Prepared audit seed for fedora 46 at 2026-10-25T10:38:55Z
+ansible-collection-ansible-posix-2.2.1-2.fc45.noarch
+ansible-core-2.22.0~b2-1.fc46.noarch
+caddy-2.11.4-4.fc45.x86_64
+certbot-5.8.0-1.fc46.noarch
+curl-8.23.0-1.fc46.x86_64
+gnupg2-2.4.9-18.fc45.x86_64
+openssh-clients-10.6p1-1.fc46.x86_64
+openssh-server-10.6p1-1.fc46.x86_64
+openssl-4.0.3-1.fc46.x86_64
+policycoreutils-python-utils-3.11-2.fc45.noarch
+podman-6.1.4-1.fc46.x86_64
+postgresql-18.3-12.fc46.x86_64
+postgresql-server-18.3-12.fc46.x86_64
+python3-3.15.1-1.fc46.x86_64
+python3-argon2-cffi-23.1.0-12.fc45.noarch
+python3-cryptography-50.0.0-1.fc46.x86_64
+python3-flask-3.1.3-6.fc45.noarch
+python3-flask-alembic-3.3.0-5.fc46.noarch
+python3-flask-login-0.6.3-13.fc45.noarch
+python3-flask-sqlalchemy-3.1.1-11.fc46.noarch
+python3-gunicorn-23.0.0-10.fc45.noarch
+python3-mistune-3.4.0-2.fc46.noarch
+python3-psycopg2-2.9.12-3.fc45.x86_64
+python3-sqlalchemy-2.0.55-5.fc46.x86_64
+python3-pyyaml-6.0.3-6.fc45.x86_64
+python3-requests-2.34.2-2.fc45.noarch
+python3-werkzeug-3.1.8-4.fc45.noarch
+shadow-utils-4.20.0-2.fc46.x86_64
+systemd-262.1-1.fc46.x86_64
+systemd-container-262.1-1.fc46.x86_64
+wireguard-tools-1.0.20260223-2.fc45.x86_64
+kernel-core-7.3.0-65.fc46.x86_64
+kernel-core-7.4.0-0.rc0.261023g734bef548a96.6.fc46.x86_64
+  Install xen-libs-0:4.21.1-11.fc46.x86_64                        Dependency      rawhide
+  Install rdma-core-common-0:65.0-5.fc46.noarch                   Dependency      rawhide
+  Install qatlib-0:26.08.0-1.fc46.x86_64                          Dependency      rawhide
+  Install ipxe-roms-qemu-1:2.0.0^20260614git13a83f4-4.fc45.noarch Dependency      rawhide
+  Install xen-licenses-0:4.21.1-11.fc46.x86_64                    Dependency      rawhide
+  Install qemu-device-display-virtio-gpu-2:11.1.2-2.fc46.x86_64   Weak Dependency rawhide
+  Install qemu-device-display-virtio-vga-2:11.1.2-2.fc46.x86_64   Weak Dependency rawhide
+  Install systemd-import-keys-0:262.1-1.fc46.noarch               Weak Dependency rawhide
+  Install julietaula-montserrat-fonts-1:9.000-5.fc45.noarch       Weak Dependency rawhide
+  Install python3-beaker-0:1.12.1-16.fc45.noarch                  Weak Dependency rawhide
+  Install python3-paste-0:3.10.1-17.fc45.noarch                   Dependency      rawhide
+  Install python3-setuptools-0:84.0.0-1.fc46.noarch               Dependency      rawhide
+  Install edk2-shell-x64-0:20260812-11.fc46.noarch                Weak Dependency rawhide
+  Install qatlib-service-0:26.08.0-1.fc46.x86_64                  Weak Dependency rawhide
+  Install python3-crypto-0:2.6.1-63.fc45.x86_64                   Weak Dependency rawhide
+  Install libtomcrypt-0:1.18.2-24.fc45.x86_64                     Dependency      rawhide
+  Install libtommath-0:1.3.1~rc1-8.fc45.x86_64                    Dependency      rawhide
+  Install pciutils-0:3.15.0-2.fc45.x86_64                         Dependency      rawhide
+  Install pciutils-libs-0:3.15.0-2.fc45.x86_64                    Dependency      rawhide
+
+Removed 0 files, 2 directories (total of 0 B). 0 errors occurred.
+checked=2026-10-25T10:38:58Z
+os=fedora version=46 arch=x86_64
+
+Enabled repos:
+repo id                                                repo name
+copr:copr.fedorainfracloud.org:admiral-project:admiral Copr repo for admiral owned by admiral-project
+fedora-cisco-openh264                                  Fedora rawhide openh264 (From Cisco) - x86_64
+rawhide                                                Fedora - Rawhide - Developmental packages for the next Fedora release
+
+Required runtime package inventory:
+ansible-collection-ansible-posix-2.2.1-2.fc45.noarch
+ansible-core-2.22.0~b2-1.fc46.noarch
+caddy-2.11.4-4.fc45.x86_64
+certbot-5.8.0-1.fc46.noarch
+curl-8.23.0-1.fc46.x86_64
+gnupg2-2.4.9-18.fc45.x86_64
+openssh-clients-10.6p1-1.fc46.x86_64
+openssh-server-10.6p1-1.fc46.x86_64
+openssl-4.0.3-1.fc46.x86_64
+policycoreutils-python-utils-3.11-2.fc45.noarch
+podman-6.1.4-1.fc46.x86_64
+postgresql-18.3-12.fc46.x86_64
+postgresql-server-18.3-12.fc46.x86_64
+python3-3.15.1-1.fc46.x86_64
+python3-argon2-cffi-23.1.0-12.fc45.noarch
+python3-cryptography-50.0.0-1.fc46.x86_64
+python3-flask-3.1.3-6.fc45.noarch
+python3-flask-alembic-3.3.0-5.fc46.noarch
+python3-flask-login-0.6.3-13.fc45.noarch
+python3-flask-sqlalchemy-3.1.1-11.fc46.noarch
+python3-gunicorn-23.0.0-10.fc45.noarch
+python3-mistune-3.4.0-2.fc46.noarch
+python3-psycopg2-2.9.12-3.fc45.x86_64
+python3-sqlalchemy-2.0.55-5.fc46.x86_64
+python3-pyyaml-6.0.3-6.fc45.x86_64
+python3-requests-2.34.2-2.fc45.noarch
+python3-werkzeug-3.1.8-4.fc45.noarch
+shadow-utils-4.20.0-2.fc46.x86_64
+systemd-262.1-1.fc46.x86_64
+systemd-container-262.1-1.fc46.x86_64
+wireguard-tools-1.0.20260223-2.fc45.x86_64
+python3-alembic-1.20.1-5.fc46.noarch
+python3-typing-extensions-4.16.0-4.fc46.noarch
+
+Admiral RPMs (must be absent):
+
+Cross-family RPMs (must be absent):
+
+Service states (this script issues no enable/start commands):
+caddy.service enabled=disabled
+caddy.service active=inactive
+postgresql.service enabled=disabled
+postgresql.service active=inactive
+podman.socket enabled=disabled
+podman.socket active=inactive
+firewalld.service enabled=not-found
+firewalld.service active=inactive
+sshd.service enabled=enabled
+sshd.service active=active
+admirald.service enabled=not-found
+admirald.service active=inactive
+admiral-fleet.service enabled=not-found
+admiral-fleet.service active=inactive
+admiral-harbor.service enabled=not-found
+admiral-harbor.service active=inactive
+admiral-flagship.service enabled=not-found
+admiral-flagship.service active=inactive
+check_update_exit=0
+guest_poweroff_ssh_exit_code=0
+No errors were found on the image.
+20032/81920 = 24.45% allocated, 34.34% fragmented, 0.00% compressed clusters
+Image end offset: 1313406976
+    (0.00/100%)    (1.00/100%)    (2.01/100%)    (3.02/100%)    (4.02/100%)    (5.02/100%)    (6.03/100%)    (7.04/100%)    (8.05/100%)    (9.05/100%)    (10.06/100%)    (11.07/100%)    (12.07/100%)    (13.08/100%)    (14.08/100%)    (15.08/100%)    (16.09/100%)    (17.09/100%)    (18.10/100%)    (19.10/100%)    (20.12/100%)    (21.12/100%)    (22.13/100%)    (23.13/100%)    (24.14/100%)    (25.14/100%)    (26.15/100%)    (27.15/100%)    (28.15/100%)    (29.18/100%)    (30.19/100%)    (31.20/100%)    (32.20/100%)    (33.21/100%)    (34.26/100%)    (35.32/100%)    (36.33/100%)    (37.37/100%)    (38.39/100%)    (39.49/100%)    (40.60/100%)    (41.60/100%)    (42.70/100%)    (43.80/100%)    (44.88/100%)    (45.88/100%)    (46.88/100%)    (47.89/100%)    (48.95/100%)    (49.96/100%)    (50.97/100%)    (51.98/100%)    (53.02/100%)    (54.07/100%)    (55.09/100%)    (56.10/100%)    (57.11/100%)    (58.15/100%)    (59.15/100%)    (60.16/100%)    (61.16/100%)    (62.17/100%)    (63.17/100%)    (64.18/100%)    (65.22/100%)    (66.22/100%)    (67.24/100%)    (68.26/100%)    (69.26/100%)    (70.27/100%)    (71.28/100%)    (72.28/100%)    (73.28/100%)    (74.29/100%)    (75.29/100%)    (76.29/100%)    (77.30/100%)    (78.30/100%)    (79.30/100%)    (80.31/100%)    (81.31/100%)    (82.31/100%)    (83.33/100%)    (84.33/100%)    (85.33/100%)    (86.34/100%)    (87.34/100%)    (88.35/100%)    (89.35/100%)    (90.36/100%)    (91.39/100%)    (92.41/100%)    (93.42/100%)    (94.49/100%)    (95.50/100%)    (96.50/100%)    (97.58/100%)    (98.59/100%)    (99.60/100%)    (100.00/100%)    (100.00/100%)
+No errors were found on the image.
+29101/81920 = 35.52% allocated, 0.00% fragmented, 0.00% compressed clusters
+Image end offset: 1907818496
+seed_sha256=01f5a6772943027a35b429e3a40d28de6ed22cb92f3d00e3858517269a992b1e  /var/lib/libvirt/images/admiral-validation/seeds/Fedora-Rawhide-seed-20261025-rc6-updated.x86_64.qcow2
+seed_qemu_info:
+image: /var/lib/libvirt/images/admiral-validation/seeds/Fedora-Rawhide-seed-20261025-rc6-updated.x86_64.qcow2
+file format: qcow2
+virtual size: 5 GiB (5368709120 bytes)
+disk size: 1.78 GiB
+cluster_size: 65536
+Format specific information:
+    compat: 1.1
+    compression type: zlib
+    lazy refcounts: false
+    refcount bits: 16
+    corrupt: false
+    extended l2: false
+Child node '/file':
+    filename: /var/lib/libvirt/images/admiral-validation/seeds/Fedora-Rawhide-seed-20261025-rc6-updated.x86_64.qcow2
+    protocol type: file
+    file length: 1.78 GiB (1907818496 bytes)
+    disk size: 1.78 GiB
+    Format specific information:
+        extent size hint: 1048576
+Domain 'seed-rc6-final-fedora' has been undefined
+
+Seed complete: /var/lib/libvirt/images/admiral-validation/seeds/Fedora-Rawhide-seed-20261025-rc6-updated.x86_64.qcow2
+Evidence: /root/admiral/packaging/build/validation/rc5-r75/runtime/seed-refresh-20261025/fedora
+evidence_manifest=SHA256SUMS

@@ -1,0 +1,1348 @@
+Rocky Linux 10 - BaseOS                          35 MB/s |  41 MB     00:01    
+Rocky Linux 10 - AppStream                      6.7 MB/s | 2.8 MB     00:00    
+Rocky Linux 10 - Extras                          36 kB/s | 6.1 kB     00:00    
+Package dnf-plugins-core-4.7.0-10.el10.noarch is already installed.
+Dependencies resolved.
+================================================================================
+ Package              Architecture   Version               Repository      Size
+================================================================================
+Installing:
+ epel-release         noarch         10-7.el10_1           extras          19 k
+
+Transaction Summary
+================================================================================
+Install  1 Package
+
+Total download size: 19 k
+Installed size: 25 k
+Downloading Packages:
+epel-release-10-7.el10_1.noarch.rpm              88 kB/s |  19 kB     00:00    
+--------------------------------------------------------------------------------
+Total                                            64 kB/s |  19 kB     00:00     
+Rocky Linux 10 - Extras                         1.6 MB/s | 1.6 kB     00:00    
+Importing GPG key 0x6FEDFC85:
+ Userid     : "Release Engineering (Rocky Linux 10) <releng@rockylinux.org>"
+ Fingerprint: FC22 6859 C086 0BF0 DDB9 5B08 5B10 6C73 6FED FC85
+ From       : /etc/pki/rpm-gpg/RPM-GPG-KEY-Rocky-10
+Key imported successfully
+Running transaction check
+Transaction check succeeded.
+Running transaction test
+Transaction test succeeded.
+Running transaction
+  Preparing        :                                                        1/1 
+  Installing       : epel-release-10-7.el10_1.noarch                        1/1 
+  Running scriptlet: epel-release-10-7.el10_1.noarch                        1/1 
+Many EPEL packages require the CodeReady Builder (CRB) repository.
+It is recommended that you run /usr/bin/crb enable to enable the CRB repository.
+
+
+Installed:
+  epel-release-10-7.el10_1.noarch                                               
+
+Complete!
+Enabling a Copr repository. Please note that this repository is not part
+of the main distribution, and quality may vary.
+
+The Fedora Project does not exercise any power over the contents of
+this repository beyond the rules outlined in the Copr FAQ at
+<https://docs.pagure.org/copr.copr/user_documentation.html#what-i-can-build-in-copr>,
+and packages are not held to any quality or security level.
+
+Please do not file bug reports about these packages in Fedora
+Bugzilla. In case of problems, contact the owner of this repository.
+Repository successfully enabled.
+Admiral RC5 Release 75 signed local validation  103 kB/s | 659  B     00:00    
+Admiral RC5 Release 75 signed local validation  337 kB/s | 1.3 kB     00:00    
+Importing GPG key 0x6A39E4D3:
+ Userid     : "Admiral RC5 Release 73 Local Validation <validation@localhost>"
+ Fingerprint: B36C 8266 E348 EDD8 43B1 97A5 6B26 5293 6A39 E4D3
+ From       : http://192.168.122.1/rc5-r75/RPM-GPG-KEY-admiral-r75
+Admiral RC5 Release 75 signed local validation  136 kB/s | 2.8 kB     00:00    
+Copr repo for admiral owned by admiral-project   49 kB/s |  40 kB     00:00    
+Extra Packages for Enterprise Linux 10 - x86_64  13 MB/s | 7.3 MB     00:00    
+Rocky Linux 10 - BaseOS                          19 kB/s | 4.3 kB     00:00    
+Rocky Linux 10 - AppStream                       58 kB/s | 4.4 kB     00:00    
+Rocky Linux 10 - AppStream                      2.6 MB/s | 2.8 MB     00:01    
+Rocky Linux 10 - CRB                            593 kB/s | 562 kB     00:00    
+Package curl-8.12.1-4.el10.x86_64 is already installed.
+Dependencies resolved.
+================================================================================
+ Package                   Arch       Version                  Repository  Size
+================================================================================
+Upgrading:
+ curl                      x86_64     8.12.1-4.el10_2.7        baseos     217 k
+ libcurl                   x86_64     8.12.1-4.el10_2.7        baseos     369 k
+ openssl                   x86_64     1:3.5.8-2.el10_2         baseos     1.2 M
+ openssl-fips-provider     x86_64     1:3.5.8-2.el10_2         baseos     811 k
+ openssl-libs              x86_64     1:3.5.8-2.el10_2         baseos     2.3 M
+
+Transaction Summary
+================================================================================
+Upgrade  5 Packages
+
+Total download size: 4.8 M
+Downloading Packages:
+(1/5): curl-8.12.1-4.el10_2.7.x86_64.rpm        1.0 MB/s | 217 kB     00:00    
+(2/5): libcurl-8.12.1-4.el10_2.7.x86_64.rpm     1.5 MB/s | 369 kB     00:00    
+(3/5): openssl-3.5.8-2.el10_2.x86_64.rpm        4.3 MB/s | 1.2 MB     00:00    
+(4/5): openssl-fips-provider-3.5.8-2.el10_2.x86 5.1 MB/s | 811 kB     00:00    
+(5/5): openssl-libs-3.5.8-2.el10_2.x86_64.rpm    12 MB/s | 2.3 MB     00:00    
+--------------------------------------------------------------------------------
+Total                                           9.2 MB/s | 4.8 MB     00:00     
+Running transaction check
+Transaction check succeeded.
+Running transaction test
+Transaction test succeeded.
+Running transaction
+  Preparing        :                                                        1/1 
+  Upgrading        : openssl-libs-1:3.5.8-2.el10_2.x86_64                  1/10 
+  Upgrading        : openssl-fips-provider-1:3.5.8-2.el10_2.x86_64         2/10 
+  Upgrading        : libcurl-8.12.1-4.el10_2.7.x86_64                      3/10 
+  Upgrading        : curl-8.12.1-4.el10_2.7.x86_64                         4/10 
+  Upgrading        : openssl-1:3.5.8-2.el10_2.x86_64                       5/10 
+  Cleanup          : openssl-1:3.5.5-2.el10_2.x86_64                       6/10 
+  Cleanup          : curl-8.12.1-4.el10.x86_64                             7/10 
+  Cleanup          : libcurl-8.12.1-4.el10.x86_64                          8/10 
+  Cleanup          : openssl-fips-provider-1:3.5.5-2.el10_2.x86_64         9/10 
+  Cleanup          : openssl-libs-1:3.5.5-2.el10_2.x86_64                 10/10 
+  Running scriptlet: openssl-libs-1:3.5.5-2.el10_2.x86_64                 10/10 
+
+Upgraded:
+  curl-8.12.1-4.el10_2.7.x86_64                                                 
+  libcurl-8.12.1-4.el10_2.7.x86_64                                              
+  openssl-1:3.5.8-2.el10_2.x86_64                                               
+  openssl-fips-provider-1:3.5.8-2.el10_2.x86_64                                 
+  openssl-libs-1:3.5.8-2.el10_2.x86_64                                          
+
+Complete!
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100  113k  100  113k    0     0   704k      0 --:--:-- --:--:-- --:--:--  712k
+/var/tmp/python3-pyOpenSSL-25.0.0-1.el10_1.noarch.rpm: OK
+/var/tmp/python3-pyOpenSSL-25.0.0-1.el10_1.noarch.rpm: digests signatures OK
+Last metadata expiration check: 0:00:09 ago on Sun 25 Oct 2026 10:11:07 AM UTC.
+Dependencies resolved.
+====================================================================================================================
+ Package                     Arch    Version           Repository                                               Size
+====================================================================================================================
+Installing:
+ python3-pyOpenSSL           noarch  25.0.0-1.el10_1   @commandline                                            113 k
+Installing dependencies:
+ python3-cffi                x86_64  1.16.0-7.el10     baseos                                                  310 k
+ python3-cryptography        x86_64  43.0.0-4.el10_2.5 baseos                                                  1.3 M
+ python3-ply                 noarch  3.11-25.el10      baseos                                                  137 k
+ python3-pycparser           noarch  2.20-16.el10      baseos                                                  160 k
+ python3-typing-extensions   noarch  4.16.0-2.el10     copr:copr.fedorainfracloud.org:admiral-project:admiral   97 k
+
+Transaction Summary
+====================================================================================================================
+Install  6 Packages
+
+Total size: 2.1 M
+Total download size: 2.0 M
+Installed size: 8.7 M
+Downloading Packages:
+(1/5): python3-cffi-1.16.0-7.el10.x86_64.rpm    3.7 MB/s | 310 kB     00:00    
+(2/5): python3-ply-3.11-25.el10.noarch.rpm      6.7 MB/s | 137 kB     00:00    
+(3/5): python3-cryptography-43.0.0-4.el10_2.5.x  11 MB/s | 1.3 MB     00:00    
+(4/5): python3-pycparser-2.20-16.el10.noarch.rp 6.1 MB/s | 160 kB     00:00    
+(5/5): python3-typing-extensions-4.16.0-2.el10. 253 kB/s |  97 kB     00:00    
+--------------------------------------------------------------------------------
+Total                                           4.5 MB/s | 2.0 MB     00:00     
+Copr repo for admiral owned by admiral-project   25 kB/s | 1.0 kB     00:00    
+Importing GPG key 0x37D63DCC:
+ Userid     : "admiral-project_admiral (None) <admiral-project#admiral@copr.fedorahosted.org>"
+ Fingerprint: C1FD E9BC 160A 3262 49ED 4A2C B048 78BC 37D6 3DCC
+ From       : https://download.copr.fedorainfracloud.org/results/admiral-project/admiral/pubkey.gpg
+Key imported successfully
+Running transaction check
+Transaction check succeeded.
+Running transaction test
+Transaction test succeeded.
+Running transaction
+  Preparing        :                                                        1/1 
+  Installing       : python3-ply-3.11-25.el10.noarch                        1/6 
+  Installing       : python3-pycparser-2.20-16.el10.noarch                  2/6 
+  Installing       : python3-cffi-1.16.0-7.el10.x86_64                      3/6 
+  Installing       : python3-cryptography-43.0.0-4.el10_2.5.x86_64          4/6 
+  Installing       : python3-typing-extensions-4.16.0-2.el10.noarch         5/6 
+  Installing       : python3-pyOpenSSL-25.0.0-1.el10_1.noarch               6/6 
+  Running scriptlet: python3-pyOpenSSL-25.0.0-1.el10_1.noarch               6/6 
+
+Installed:
+  python3-cffi-1.16.0-7.el10.x86_64                                             
+  python3-cryptography-43.0.0-4.el10_2.5.x86_64                                 
+  python3-ply-3.11-25.el10.noarch                                               
+  python3-pyOpenSSL-25.0.0-1.el10_1.noarch                                      
+  python3-pycparser-2.20-16.el10.noarch                                         
+  python3-typing-extensions-4.16.0-2.el10.noarch                                
+
+Complete!
+Admiral RC5 Release 75 signed local validation   75 kB/s | 659  B     00:00    
+Copr repo for admiral owned by admiral-project  8.2 kB/s | 1.5 kB     00:00    
+Extra Packages for Enterprise Linux 10 - x86_64  54 kB/s | 4.0 kB     00:00    
+Rocky Linux 10 - BaseOS                          22 kB/s | 4.3 kB     00:00    
+Rocky Linux 10 - AppStream                       58 kB/s | 4.4 kB     00:00    
+Rocky Linux 10 - CRB                             27 kB/s | 4.3 kB     00:00    
+Rocky Linux 10 - Extras                          11 kB/s | 3.1 kB     00:00    
+Dependencies resolved.
+=========================================================================================
+ Package                         Arch    Version                         Repo        Size
+=========================================================================================
+Installing:
+ kernel-core                     x86_64  6.12.0-211.68.1.el10_2          baseos      19 M
+Upgrading:
+ NetworkManager                  x86_64  1:1.56.0-3.el10_2               baseos     2.3 M
+ NetworkManager-libnm            x86_64  1:1.56.0-3.el10_2               baseos     1.9 M
+ NetworkManager-tui              x86_64  1:1.56.0-3.el10_2               baseos     235 k
+ attr                            x86_64  2.6.0-1.el10_2                  baseos      63 k
+ c-ares                          x86_64  1.34.6-2.el10_2                 baseos     117 k
+ ca-certificates                 noarch  2026.2.92_v9.0.319-100.3.el10_2 baseos     980 k
+ cloud-init                      noarch  24.4-7.el10_2.1.rocky.0.1       appstream  1.8 M
+ cockpit-bridge                  noarch  356.3-1.el10_2.rocky.0.1        baseos     669 k
+ cockpit-system                  noarch  356.3-1.el10_2.rocky.0.1        baseos     5.0 M
+ cockpit-ws                      x86_64  356.3-1.el10_2.rocky.0.1        baseos     1.1 M
+ cockpit-ws-selinux              x86_64  356.3-1.el10_2.rocky.0.1        baseos      43 k
+ coreutils                       x86_64  9.5-8.el10_2.1                  baseos     1.1 M
+ coreutils-common                x86_64  9.5-8.el10_2.1                  baseos     2.1 M
+ crypto-policies                 noarch  20260216-1.git0e54016.el10_2.2  baseos      63 k
+ crypto-policies-scripts         noarch  20260216-1.git0e54016.el10_2.2  baseos     115 k
+ cyrus-sasl-gssapi               x86_64  2.1.28-30.el10_2                baseos      26 k
+ cyrus-sasl-lib                  x86_64  2.1.28-30.el10_2                baseos     100 k
+ dbus-broker                     x86_64  36-5.el10_2                     baseos     173 k
+ dhcpcd                          x86_64  10.0.6-11.el10_2                baseos     230 k
+ dracut                          x86_64  107-9.el10_2                    baseos     385 k
+ dracut-config-generic           x86_64  107-9.el10_2                    baseos      11 k
+ dracut-config-rescue            x86_64  107-9.el10_2                    baseos      13 k
+ dracut-network                  x86_64  107-9.el10_2                    baseos      48 k
+ dracut-squash                   x86_64  107-9.el10_2                    baseos      15 k
+ epel-release                    noarch  10-9.el10_3                     epel        19 k
+ expat                           x86_64  2.7.3-1.el10_2.7                baseos     122 k
+ fwupd-efi                       x86_64  1.8-1.el10_2.rocky.0.1          baseos      45 k
+ gawk                            x86_64  5.3.0-6.el10_2.1                baseos     1.1 M
+ gawk-all-langpacks              x86_64  5.3.0-6.el10_2.1                appstream  273 k
+ glib2                           x86_64  2.80.4-12.el10_2.22             baseos     3.0 M
+ glibc                           x86_64  2.39-145.el10_2                 baseos     2.1 M
+ glibc-common                    x86_64  2.39-145.el10_2                 baseos     312 k
+ glibc-gconv-extra               x86_64  2.39-145.el10_2                 baseos     1.5 M
+ glibc-langpack-en               x86_64  2.39-145.el10_2                 baseos     560 k
+ glibc-minimal-langpack          x86_64  2.39-145.el10_2                 baseos      28 k
+ gnutls                          x86_64  3.8.10-5.el10_2                 baseos     1.5 M
+ gzip                            x86_64  1.13-4.el10_2                   baseos     164 k
+ iptables-libs                   x86_64  1.8.11-16.el10_2                baseos     383 k
+ kbd                             x86_64  2.6.4-8.el10_2                  baseos     396 k
+ kbd-legacy                      noarch  2.6.4-8.el10_2                  baseos     528 k
+ kbd-misc                        noarch  2.6.4-8.el10_2                  baseos     1.5 M
+ kernel-tools                    x86_64  6.12.0-211.68.1.el10_2          baseos     2.3 M
+ kernel-tools-libs               x86_64  6.12.0-211.68.1.el10_2          baseos     1.7 M
+ libacl                          x86_64  2.4.0-1.el10_2                  baseos      26 k
+ libarchive                      x86_64  3.7.7-11.el10_2                 baseos     414 k
+ libattr                         x86_64  2.6.0-1.el10_2                  baseos      18 k
+ libbrotli                       x86_64  1.1.0-8.el10_2                  baseos     344 k
+ libevent                        x86_64  2.1.13-1.el10_2                 baseos     259 k
+ libgcrypt                       x86_64  1.11.0-7.el10_2                 baseos     586 k
+ libkcapi                        x86_64  1.5.1-1.el10_2                  baseos      46 k
+ libkcapi-hasher                 x86_64  1.5.1-1.el10_2                  baseos      23 k
+ libkcapi-hmaccalc               x86_64  1.5.1-1.el10_2                  baseos     7.8 k
+ libldb                          x86_64  4.23.5-111.el10_2               baseos     182 k
+ libnghttp2                      x86_64  1.68.0-3.el10_2.2               baseos      73 k
+ libsolv                         x86_64  0.7.33-5.el10_2                 baseos     429 k
+ libssh                          x86_64  0.12.0-3.el10_2                 baseos     277 k
+ libssh-config                   noarch  0.12.0-3.el10_2                 baseos     8.5 k
+ libsss_certmap                  x86_64  2.12.0-3.el10_2.2               baseos      81 k
+ libsss_idmap                    x86_64  2.12.0-3.el10_2.2               baseos      41 k
+ libsss_nss_idmap                x86_64  2.12.0-3.el10_2.2               baseos      44 k
+ libsss_sudo                     x86_64  2.12.0-3.el10_2.2               baseos      33 k
+ libtasn1                        x86_64  4.20.0-5.el10_2                 baseos      75 k
+ libudisks2                      x86_64  2.11.0-2.el10_2.1               appstream  211 k
+ libusb1                         x86_64  1.0.30-1.el10_2                 baseos      77 k
+ libxml2                         x86_64  2.12.5-10.el10_2.4              baseos     691 k
+ mdadm                           x86_64  4.4-3.el10_2.2                  baseos     442 k
+ microcode_ctl                   noarch  4:20260812-0.el10_2             baseos      14 M
+ nspr                            x86_64  4.39.0-5.el10_2                 appstream  136 k
+ nss                             x86_64  3.124.0-5.el10_2                appstream  743 k
+ nss-softokn                     x86_64  3.124.0-5.el10_2                appstream  415 k
+ nss-softokn-freebl              x86_64  3.124.0-5.el10_2                appstream  386 k
+ nss-sysinit                     x86_64  3.124.0-5.el10_2                appstream   19 k
+ nss-util                        x86_64  3.124.0-5.el10_2                appstream   86 k
+ openssh                         x86_64  9.9p1-29.el10_2.rocky.0.1       baseos     350 k
+ openssh-clients                 x86_64  9.9p1-29.el10_2.rocky.0.1       baseos     761 k
+ openssh-server                  x86_64  9.9p1-29.el10_2.rocky.0.1       baseos     541 k
+ p11-kit                         x86_64  0.26.4-1.el10_2                 baseos     545 k
+ p11-kit-trust                   x86_64  0.26.4-1.el10_2                 baseos     141 k
+ pam                             x86_64  1.6.1-9.el10_2.1                baseos     512 k
+ pam-libs                        x86_64  1.6.1-9.el10_2.1                baseos      56 k
+ pcre2                           x86_64  10.44-1.5.el10_2                baseos     246 k
+ pcre2-syntax                    noarch  10.44-1.5.el10_2                baseos     149 k
+ policycoreutils                 x86_64  3.10-2.el10_2                   baseos     233 k
+ policycoreutils-python-utils    noarch  3.10-2.el10_2                   appstream   45 k
+ polkit                          x86_64  125-4.el10_2.1                  baseos     151 k
+ polkit-libs                     x86_64  125-4.el10_2.1                  baseos      67 k
+ python-unversioned-command      noarch  3.12.15-1.el10_2                appstream   10 k
+ python3                         x86_64  3.12.15-1.el10_2                baseos      27 k
+ python3-idna                    noarch  3.7-6.el10_2                    baseos     113 k
+ python3-libs                    x86_64  3.12.15-1.el10_2                baseos     8.9 M
+ python3-libxml2                 x86_64  2.12.5-10.el10_2.4              baseos     223 k
+ python3-policycoreutils         noarch  3.10-2.el10_2                   appstream  2.1 M
+ python3-urllib3                 noarch  1.26.19-4.el10_2.2              baseos     259 k
+ qemu-guest-agent                x86_64  18:10.1.0-16.el10_2.5           appstream  463 k
+ rocky-gpg-keys                  noarch  10.2-1.2.el10                   baseos      25 k
+ rocky-release                   noarch  10.2-1.2.el10                   baseos      26 k
+ rocky-repos                     noarch  10.2-1.2.el10                   baseos      13 k
+ rpcbind                         x86_64  1.2.7-3.el10_2.1                baseos      56 k
+ rpm-sequoia                     x86_64  1.10.2.1-1.el10_2               baseos     971 k
+ rsync                           x86_64  3.5.0-3.el10_2                  baseos     462 k
+ rsyslog                         x86_64  8.2510.0-5.el10_2.2             appstream  848 k
+ selinux-policy                  noarch  42.1.18-4.el10_2.4              baseos      53 k
+ selinux-policy-targeted         noarch  42.1.18-4.el10_2.4              baseos     5.9 M
+ sequoia-sq                      x86_64  1.4.0.1-4.el10_2                appstream  6.2 M
+ sg3_utils                       x86_64  1.48-7.el10_2.2                 baseos     1.1 M
+ sg3_utils-libs                  x86_64  1.48-7.el10_2.2                 baseos     106 k
+ sos                             noarch  4.11.2-4.el10_2                 baseos     1.1 M
+ sqlite-libs                     x86_64  3.46.1-6.el10_2                 baseos     744 k
+ sssd-client                     x86_64  2.12.0-3.el10_2.2               baseos     156 k
+ sssd-common                     x86_64  2.12.0-3.el10_2.2               baseos     1.5 M
+ sssd-kcm                        x86_64  2.12.0-3.el10_2.2               baseos     107 k
+ sssd-krb5-common                x86_64  2.12.0-3.el10_2.2               baseos      94 k
+ sssd-nfs-idmap                  x86_64  2.12.0-3.el10_2.2               baseos      37 k
+ sudo                            x86_64  1.9.17-10.p2.el10_2.7           baseos     1.3 M
+ sudo-python-plugin              x86_64  1.9.17-10.p2.el10_2.7           appstream   56 k
+ systemd                         x86_64  257-23.el10_2.2.rocky.0.1       baseos     5.6 M
+ systemd-libs                    x86_64  257-23.el10_2.2.rocky.0.1       baseos     839 k
+ systemd-pam                     x86_64  257-23.el10_2.2.rocky.0.1       baseos     322 k
+ systemd-udev                    x86_64  257-23.el10_2.2.rocky.0.1       baseos     2.2 M
+ tar                             x86_64  2:1.35-13.el10_2                baseos     858 k
+ tzdata                          noarch  2026e-1.el10_2                  baseos     500 k
+ udisks2                         x86_64  2.11.0-2.el10_2.1               appstream  546 k
+ vim-data                        noarch  2:9.1.083-9.el10_2.22           baseos      19 k
+ vim-minimal                     x86_64  2:9.1.083-9.el10_2.22           baseos     801 k
+ xz                              x86_64  1:5.6.2-4.el10_2.1              baseos     456 k
+ xz-libs                         x86_64  1:5.6.2-4.el10_2.1              baseos     111 k
+Installing dependencies:
+ kernel-modules-core             x86_64  6.12.0-211.68.1.el10_2          baseos      30 M
+Installing weak dependencies:
+ selinux-policy-extra            noarch  42.1.18-4.el10_2.4              crb         35 k
+ selinux-policy-targeted-extra   noarch  42.1.18-4.el10_2.4              crb        719 k
+
+Transaction Summary
+=========================================================================================
+Install    4 Packages
+Upgrade  126 Packages
+
+Total download size: 155 M
+Downloading Packages:
+(1/130): selinux-policy-extra-42.1.18-4.el10_2. 243 kB/s |  35 kB     00:00    
+(2/130): selinux-policy-targeted-extra-42.1.18- 4.5 MB/s | 719 kB     00:00    
+(3/130): epel-release-10-9.el10_3.noarch.rpm    180 kB/s |  19 kB     00:00    
+[MIRROR] NetworkManager-1.56.0-3.el10_2.x86_64.rpm: Curl error (28): Timeout was reached for http://mirror.cs.vt.edu/pub/rocky/10.2/BaseOS/x86_64/os/Packages/n/NetworkManager-1.56.0-3.el10_2.x86_64.rpm [Connection timed out after 30000 milliseconds]
+(4/130): NetworkManager-1.56.0-3.el10_2.x86_64.  76 kB/s | 2.3 MB     00:30    
+(5/130): NetworkManager-libnm-1.56.0-3.el10_2.x 7.2 MB/s | 1.9 MB     00:00    
+(6/130): NetworkManager-tui-1.56.0-3.el10_2.x86 1.9 MB/s | 235 kB     00:00    
+(7/130): attr-2.6.0-1.el10_2.x86_64.rpm         666 kB/s |  63 kB     00:00    
+(8/130): c-ares-1.34.6-2.el10_2.x86_64.rpm      2.4 MB/s | 117 kB     00:00    
+(9/130): ca-certificates-2026.2.92_v9.0.319-100 8.1 MB/s | 980 kB     00:00    
+(10/130): cockpit-bridge-356.3-1.el10_2.rocky.0 6.7 MB/s | 669 kB     00:00    
+(11/130): cockpit-system-356.3-1.el10_2.rocky.0  14 MB/s | 5.0 MB     00:00    
+(12/130): cockpit-ws-356.3-1.el10_2.rocky.0.1.x 7.3 MB/s | 1.1 MB     00:00    
+(13/130): cockpit-ws-selinux-356.3-1.el10_2.roc 269 kB/s |  43 kB     00:00    
+(14/130): coreutils-9.5-8.el10_2.1.x86_64.rpm    10 MB/s | 1.1 MB     00:00    
+(15/130): coreutils-common-9.5-8.el10_2.1.x86_6  14 MB/s | 2.1 MB     00:00    
+(16/130): crypto-policies-20260216-1.git0e54016 331 kB/s |  63 kB     00:00    
+(17/130): crypto-policies-scripts-20260216-1.gi 2.5 MB/s | 115 kB     00:00    
+(18/130): cyrus-sasl-gssapi-2.1.28-30.el10_2.x8 609 kB/s |  26 kB     00:00    
+(19/130): cyrus-sasl-lib-2.1.28-30.el10_2.x86_6 478 kB/s | 100 kB     00:00    
+(20/130): dbus-broker-36-5.el10_2.x86_64.rpm    773 kB/s | 173 kB     00:00    
+(21/130): dhcpcd-10.0.6-11.el10_2.x86_64.rpm    1.6 MB/s | 230 kB     00:00    
+(22/130): dracut-107-9.el10_2.x86_64.rpm        1.8 MB/s | 385 kB     00:00    
+(23/130): dracut-config-generic-107-9.el10_2.x8 176 kB/s |  11 kB     00:00    
+(24/130): dracut-config-rescue-107-9.el10_2.x86 439 kB/s |  13 kB     00:00    
+(25/130): dracut-network-107-9.el10_2.x86_64.rp 1.4 MB/s |  48 kB     00:00    
+(26/130): dracut-squash-107-9.el10_2.x86_64.rpm 553 kB/s |  15 kB     00:00    
+(27/130): expat-2.7.3-1.el10_2.7.x86_64.rpm     1.2 MB/s | 122 kB     00:00    
+(28/130): fwupd-efi-1.8-1.el10_2.rocky.0.1.x86_ 313 kB/s |  45 kB     00:00    
+(29/130): gawk-5.3.0-6.el10_2.1.x86_64.rpm      2.9 MB/s | 1.1 MB     00:00    
+(30/130): glib2-2.80.4-12.el10_2.22.x86_64.rpm  7.9 MB/s | 3.0 MB     00:00    
+(31/130): glibc-2.39-145.el10_2.x86_64.rpm      8.7 MB/s | 2.1 MB     00:00    
+(32/130): glibc-common-2.39-145.el10_2.x86_64.r 1.5 MB/s | 312 kB     00:00    
+(33/130): glibc-gconv-extra-2.39-145.el10_2.x86  13 MB/s | 1.5 MB     00:00    
+(34/130): glibc-langpack-en-2.39-145.el10_2.x86 1.7 MB/s | 560 kB     00:00    
+(35/130): glibc-minimal-langpack-2.39-145.el10_ 284 kB/s |  28 kB     00:00    
+(36/130): gnutls-3.8.10-5.el10_2.x86_64.rpm     8.2 MB/s | 1.5 MB     00:00    
+(37/130): gzip-1.13-4.el10_2.x86_64.rpm         3.0 MB/s | 164 kB     00:00    
+(38/130): iptables-libs-1.8.11-16.el10_2.x86_64 3.8 MB/s | 383 kB     00:00    
+(39/130): kbd-2.6.4-8.el10_2.x86_64.rpm         2.9 MB/s | 396 kB     00:00    
+(40/130): kbd-legacy-2.6.4-8.el10_2.noarch.rpm  2.9 MB/s | 528 kB     00:00    
+(41/130): kbd-misc-2.6.4-8.el10_2.noarch.rpm    6.4 MB/s | 1.5 MB     00:00    
+(42/130): kernel-tools-6.12.0-211.68.1.el10_2.x  12 MB/s | 2.3 MB     00:00    
+(43/130): kernel-tools-libs-6.12.0-211.68.1.el1  11 MB/s | 1.7 MB     00:00    
+(44/130): libacl-2.4.0-1.el10_2.x86_64.rpm      389 kB/s |  26 kB     00:00    
+(45/130): libarchive-3.7.7-11.el10_2.x86_64.rpm 4.8 MB/s | 414 kB     00:00    
+(46/130): libattr-2.6.0-1.el10_2.x86_64.rpm     301 kB/s |  18 kB     00:00    
+(47/130): libbrotli-1.1.0-8.el10_2.x86_64.rpm   2.5 MB/s | 344 kB     00:00    
+(48/130): libevent-2.1.13-1.el10_2.x86_64.rpm   2.7 MB/s | 259 kB     00:00    
+(49/130): libgcrypt-1.11.0-7.el10_2.x86_64.rpm  7.7 MB/s | 586 kB     00:00    
+(50/130): libkcapi-1.5.1-1.el10_2.x86_64.rpm    485 kB/s |  46 kB     00:00    
+(51/130): libkcapi-hasher-1.5.1-1.el10_2.x86_64 670 kB/s |  23 kB     00:00    
+(52/130): libkcapi-hmaccalc-1.5.1-1.el10_2.x86_ 222 kB/s | 7.8 kB     00:00    
+(53/130): libldb-4.23.5-111.el10_2.x86_64.rpm   2.2 MB/s | 182 kB     00:00    
+(54/130): libnghttp2-1.68.0-3.el10_2.2.x86_64.r 1.0 MB/s |  73 kB     00:00    
+(55/130): libsolv-0.7.33-5.el10_2.x86_64.rpm    4.8 MB/s | 429 kB     00:00    
+(56/130): libssh-0.12.0-3.el10_2.x86_64.rpm     1.7 MB/s | 277 kB     00:00    
+(57/130): libssh-config-0.12.0-3.el10_2.noarch. 121 kB/s | 8.5 kB     00:00    
+(58/130): libsss_certmap-2.12.0-3.el10_2.2.x86_ 1.2 MB/s |  81 kB     00:00    
+(59/130): libsss_idmap-2.12.0-3.el10_2.2.x86_64 575 kB/s |  41 kB     00:00    
+(60/130): libsss_nss_idmap-2.12.0-3.el10_2.2.x8 758 kB/s |  44 kB     00:00    
+(61/130): libsss_sudo-2.12.0-3.el10_2.2.x86_64. 1.2 MB/s |  33 kB     00:00    
+(62/130): libtasn1-4.20.0-5.el10_2.x86_64.rpm   974 kB/s |  75 kB     00:00    
+(63/130): libusb1-1.0.30-1.el10_2.x86_64.rpm    546 kB/s |  77 kB     00:00    
+(64/130): libxml2-2.12.5-10.el10_2.4.x86_64.rpm 6.8 MB/s | 691 kB     00:00    
+(65/130): mdadm-4.4-3.el10_2.2.x86_64.rpm       3.3 MB/s | 442 kB     00:00    
+(66/130): microcode_ctl-20260812-0.el10_2.noarc  21 MB/s |  14 MB     00:00    
+(67/130): openssh-9.9p1-29.el10_2.rocky.0.1.x86 4.4 MB/s | 350 kB     00:00    
+(68/130): openssh-clients-9.9p1-29.el10_2.rocky 7.7 MB/s | 761 kB     00:00    
+(69/130): openssh-server-9.9p1-29.el10_2.rocky. 3.3 MB/s | 541 kB     00:00    
+(70/130): p11-kit-0.26.4-1.el10_2.x86_64.rpm    5.6 MB/s | 545 kB     00:00    
+(71/130): p11-kit-trust-0.26.4-1.el10_2.x86_64. 1.0 MB/s | 141 kB     00:00    
+(72/130): pam-1.6.1-9.el10_2.1.x86_64.rpm       5.8 MB/s | 512 kB     00:00    
+(73/130): pam-libs-1.6.1-9.el10_2.1.x86_64.rpm  975 kB/s |  56 kB     00:00    
+(74/130): pcre2-10.44-1.5.el10_2.x86_64.rpm     2.7 MB/s | 246 kB     00:00    
+(75/130): pcre2-syntax-10.44-1.5.el10_2.noarch. 1.0 MB/s | 149 kB     00:00    
+(76/130): policycoreutils-3.10-2.el10_2.x86_64. 2.7 MB/s | 233 kB     00:00    
+(77/130): polkit-125-4.el10_2.1.x86_64.rpm      917 kB/s | 151 kB     00:00    
+(78/130): polkit-libs-125-4.el10_2.1.x86_64.rpm 488 kB/s |  67 kB     00:00    
+(79/130): python3-3.12.15-1.el10_2.x86_64.rpm   520 kB/s |  27 kB     00:00    
+(80/130): python3-idna-3.7-6.el10_2.noarch.rpm  2.1 MB/s | 113 kB     00:00    
+(81/130): python3-libs-3.12.15-1.el10_2.x86_64.  17 MB/s | 8.9 MB     00:00    
+(82/130): python3-libxml2-2.12.5-10.el10_2.4.x8 2.7 MB/s | 223 kB     00:00    
+(83/130): python3-urllib3-1.26.19-4.el10_2.2.no 3.5 MB/s | 259 kB     00:00    
+(84/130): rocky-gpg-keys-10.2-1.2.el10.noarch.r 484 kB/s |  25 kB     00:00    
+(85/130): rocky-release-10.2-1.2.el10.noarch.rp 776 kB/s |  26 kB     00:00    
+(86/130): rocky-repos-10.2-1.2.el10.noarch.rpm  404 kB/s |  13 kB     00:00    
+(87/130): rpcbind-1.2.7-3.el10_2.1.x86_64.rpm   781 kB/s |  56 kB     00:00    
+(88/130): rpm-sequoia-1.10.2.1-1.el10_2.x86_64. 8.6 MB/s | 971 kB     00:00    
+(89/130): rsync-3.5.0-3.el10_2.x86_64.rpm       3.6 MB/s | 462 kB     00:00    
+(90/130): selinux-policy-42.1.18-4.el10_2.4.noa 508 kB/s |  53 kB     00:00    
+(91/130): selinux-policy-targeted-42.1.18-4.el1  14 MB/s | 5.9 MB     00:00    
+(92/130): sg3_utils-1.48-7.el10_2.2.x86_64.rpm  4.0 MB/s | 1.1 MB     00:00    
+(93/130): sg3_utils-libs-1.48-7.el10_2.2.x86_64 796 kB/s | 106 kB     00:00    
+(94/130): sos-4.11.2-4.el10_2.noarch.rpm        7.1 MB/s | 1.1 MB     00:00    
+(95/130): sqlite-libs-3.46.1-6.el10_2.x86_64.rp 8.6 MB/s | 744 kB     00:00    
+(96/130): sssd-client-2.12.0-3.el10_2.2.x86_64. 1.3 MB/s | 156 kB     00:00    
+(97/130): sssd-common-2.12.0-3.el10_2.2.x86_64.  11 MB/s | 1.5 MB     00:00    
+(98/130): sssd-kcm-2.12.0-3.el10_2.2.x86_64.rpm 869 kB/s | 107 kB     00:00    
+(99/130): sssd-krb5-common-2.12.0-3.el10_2.2.x8 1.3 MB/s |  94 kB     00:00    
+(100/130): sssd-nfs-idmap-2.12.0-3.el10_2.2.x86 692 kB/s |  37 kB     00:00    
+(101/130): sudo-1.9.17-10.p2.el10_2.7.x86_64.rp  11 MB/s | 1.3 MB     00:00    
+(102/130): systemd-257-23.el10_2.2.rocky.0.1.x8  20 MB/s | 5.6 MB     00:00    
+(103/130): systemd-libs-257-23.el10_2.2.rocky.0 2.2 MB/s | 839 kB     00:00    
+(104/130): systemd-pam-257-23.el10_2.2.rocky.0. 881 kB/s | 322 kB     00:00    
+(105/130): systemd-udev-257-23.el10_2.2.rocky.0  12 MB/s | 2.2 MB     00:00    
+(106/130): tar-1.35-13.el10_2.x86_64.rpm         11 MB/s | 858 kB     00:00    
+(107/130): tzdata-2026e-1.el10_2.noarch.rpm     3.6 MB/s | 500 kB     00:00    
+(108/130): vim-data-9.1.083-9.el10_2.22.noarch. 278 kB/s |  19 kB     00:00    
+(109/130): vim-minimal-9.1.083-9.el10_2.22.x86_ 5.9 MB/s | 801 kB     00:00    
+(110/130): xz-5.6.2-4.el10_2.1.x86_64.rpm       1.1 MB/s | 456 kB     00:00    
+(111/130): xz-libs-5.6.2-4.el10_2.1.x86_64.rpm  1.8 MB/s | 111 kB     00:00    
+(112/130): cloud-init-24.4-7.el10_2.1.rocky.0.1  31 MB/s | 1.8 MB     00:00    
+(113/130): gawk-all-langpacks-5.3.0-6.el10_2.1.  26 MB/s | 273 kB     00:00    
+(114/130): libudisks2-2.11.0-2.el10_2.1.x86_64.  20 MB/s | 211 kB     00:00    
+(115/130): nspr-4.39.0-5.el10_2.x86_64.rpm       14 MB/s | 136 kB     00:00    
+(116/130): nss-3.124.0-5.el10_2.x86_64.rpm       36 MB/s | 743 kB     00:00    
+(117/130): nss-softokn-3.124.0-5.el10_2.x86_64.  28 MB/s | 415 kB     00:00    
+(118/130): nss-softokn-freebl-3.124.0-5.el10_2.  22 MB/s | 386 kB     00:00    
+(119/130): nss-sysinit-3.124.0-5.el10_2.x86_64. 2.7 MB/s |  19 kB     00:00    
+(120/130): nss-util-3.124.0-5.el10_2.x86_64.rpm 5.5 MB/s |  86 kB     00:00    
+(121/130): policycoreutils-python-utils-3.10-2. 5.2 MB/s |  45 kB     00:00    
+(122/130): python-unversioned-command-3.12.15-1 1.3 MB/s |  10 kB     00:00    
+(123/130): python3-policycoreutils-3.10-2.el10_  69 MB/s | 2.1 MB     00:00    
+(124/130): qemu-guest-agent-10.1.0-16.el10_2.5. 9.8 MB/s | 463 kB     00:00    
+(125/130): rsyslog-8.2510.0-5.el10_2.2.x86_64.r  19 MB/s | 848 kB     00:00    
+(126/130): sequoia-sq-1.4.0.1-4.el10_2.x86_64.r  57 MB/s | 6.2 MB     00:00    
+(127/130): sudo-python-plugin-1.9.17-10.p2.el10 4.1 MB/s |  56 kB     00:00    
+(128/130): udisks2-2.11.0-2.el10_2.1.x86_64.rpm  22 MB/s | 546 kB     00:00    
+(129/130): kernel-core-6.12.0-211.68.1.el10_2.x  96 kB/s |  19 MB     03:23    
+(130/130): kernel-modules-core-6.12.0-211.68.1. 100 kB/s |  30 MB     05:07    
+--------------------------------------------------------------------------------
+Total                                           515 kB/s | 155 MB     05:07     
+Running transaction check
+Transaction check succeeded.
+Running transaction test
+Transaction test succeeded.
+Running transaction
+  Running scriptlet: selinux-policy-targeted-42.1.18-4.el10_2.4.noarch      1/1 
+  Preparing        :                                                        1/1 
+  Running scriptlet: crypto-policies-20260216-1.git0e54016.el10_2.2.n     1/256 
+  Upgrading        : crypto-policies-20260216-1.git0e54016.el10_2.2.n     1/256 
+  Running scriptlet: crypto-policies-20260216-1.git0e54016.el10_2.2.n     1/256 
+  Upgrading        : tzdata-2026e-1.el10_2.noarch                         2/256 
+  Upgrading        : glibc-common-2.39-145.el10_2.x86_64                  3/256 
+  Upgrading        : glibc-gconv-extra-2.39-145.el10_2.x86_64             4/256 
+  Running scriptlet: glibc-gconv-extra-2.39-145.el10_2.x86_64             4/256 
+  Upgrading        : glibc-langpack-en-2.39-145.el10_2.x86_64             5/256 
+  Upgrading        : glibc-minimal-langpack-2.39-145.el10_2.x86_64        6/256 
+  Running scriptlet: glibc-2.39-145.el10_2.x86_64                         7/256 
+  Upgrading        : glibc-2.39-145.el10_2.x86_64                         7/256 
+  Running scriptlet: glibc-2.39-145.el10_2.x86_64                         7/256 
+  Upgrading        : systemd-libs-257-23.el10_2.2.rocky.0.1.x86_64        8/256 
+  Upgrading        : pam-libs-1.6.1-9.el10_2.1.x86_64                     9/256 
+  Upgrading        : libacl-2.4.0-1.el10_2.x86_64                        10/256 
+  Upgrading        : xz-libs-1:5.6.2-4.el10_2.1.x86_64                   11/256 
+  Upgrading        : nspr-4.39.0-5.el10_2.x86_64                         12/256 
+  Upgrading        : nss-util-3.124.0-5.el10_2.x86_64                    13/256 
+  Upgrading        : libxml2-2.12.5-10.el10_2.4.x86_64                   14/256 
+  Upgrading        : expat-2.7.3-1.el10_2.7.x86_64                       15/256 
+  Upgrading        : libtasn1-4.20.0-5.el10_2.x86_64                     16/256 
+  Upgrading        : p11-kit-0.26.4-1.el10_2.x86_64                      17/256 
+  Upgrading        : p11-kit-trust-0.26.4-1.el10_2.x86_64                18/256 
+  Running scriptlet: p11-kit-trust-0.26.4-1.el10_2.x86_64                18/256 
+  Upgrading        : gnutls-3.8.10-5.el10_2.x86_64                       19/256 
+  Upgrading        : sqlite-libs-3.46.1-6.el10_2.x86_64                  20/256 
+  Upgrading        : python-unversioned-command-3.12.15-1.el10_2.noar    21/256 
+  Upgrading        : python3-3.12.15-1.el10_2.x86_64                     22/256 
+  Upgrading        : python3-libs-3.12.15-1.el10_2.x86_64                23/256 
+  Upgrading        : openssh-9.9p1-29.el10_2.rocky.0.1.x86_64            24/256 
+  Upgrading        : pam-1.6.1-9.el10_2.1.x86_64                         25/256 
+  Running scriptlet: pam-1.6.1-9.el10_2.1.x86_64                         25/256 
+  Upgrading        : sudo-1.9.17-10.p2.el10_2.7.x86_64                   26/256 
+  Upgrading        : sudo-python-plugin-1.9.17-10.p2.el10_2.7.x86_64     27/256 
+  Upgrading        : libattr-2.6.0-1.el10_2.x86_64                       28/256 
+  Upgrading        : libldb-4.23.5-111.el10_2.x86_64                     29/256 
+  Upgrading        : libsss_idmap-2.12.0-3.el10_2.2.x86_64               30/256 
+  Upgrading        : cockpit-bridge-356.3-1.el10_2.rocky.0.1.noarch      31/256 
+  Upgrading        : python3-idna-3.7-6.el10_2.noarch                    32/256 
+  Upgrading        : sos-4.11.2-4.el10_2.noarch                          33/256 
+  Upgrading        : libarchive-3.7.7-11.el10_2.x86_64                   34/256 
+  Upgrading        : nss-softokn-freebl-3.124.0-5.el10_2.x86_64          35/256 
+  Upgrading        : nss-softokn-3.124.0-5.el10_2.x86_64                 36/256 
+  Upgrading        : xz-1:5.6.2-4.el10_2.1.x86_64                        37/256 
+  Upgrading        : c-ares-1.34.6-2.el10_2.x86_64                       38/256 
+  Upgrading        : cyrus-sasl-lib-2.1.28-30.el10_2.x86_64              39/256 
+  Upgrading        : cyrus-sasl-gssapi-2.1.28-30.el10_2.x86_64           40/256 
+  Upgrading        : kernel-tools-libs-6.12.0-211.68.1.el10_2.x86_64     41/256 
+  Running scriptlet: kernel-tools-libs-6.12.0-211.68.1.el10_2.x86_64     41/256 
+  Upgrading        : libsss_certmap-2.12.0-3.el10_2.2.x86_64             42/256 
+  Upgrading        : libsss_nss_idmap-2.12.0-3.el10_2.2.x86_64           43/256 
+  Upgrading        : sssd-client-2.12.0-3.el10_2.2.x86_64                44/256 
+  Running scriptlet: sssd-client-2.12.0-3.el10_2.2.x86_64                44/256 
+  Upgrading        : libsss_sudo-2.12.0-3.el10_2.2.x86_64                45/256 
+  Upgrading        : sg3_utils-libs-1.48-7.el10_2.2.x86_64               46/256 
+  Upgrading        : sssd-nfs-idmap-2.12.0-3.el10_2.2.x86_64             47/256 
+  Upgrading        : gawk-all-langpacks-5.3.0-6.el10_2.1.x86_64          48/256 
+  Upgrading        : gawk-5.3.0-6.el10_2.1.x86_64                        49/256 
+  Upgrading        : vim-data-2:9.1.083-9.el10_2.22.noarch               50/256 
+  Upgrading        : rocky-gpg-keys-10.2-1.2.el10.noarch                 51/256 
+  Upgrading        : rocky-release-10.2-1.2.el10.noarch                  52/256 
+  Upgrading        : rocky-repos-10.2-1.2.el10.noarch                    53/256 
+  Upgrading        : pcre2-syntax-10.44-1.5.el10_2.noarch                54/256 
+  Upgrading        : pcre2-10.44-1.5.el10_2.x86_64                       55/256 
+  Running scriptlet: pcre2-10.44-1.5.el10_2.x86_64                       55/256 
+  Upgrading        : glib2-2.80.4-12.el10_2.22.x86_64                    56/256 
+  Upgrading        : NetworkManager-libnm-1:1.56.0-3.el10_2.x86_64       57/256 
+  Upgrading        : polkit-libs-125-4.el10_2.1.x86_64                   58/256 
+  Upgrading        : libudisks2-2.11.0-2.el10_2.1.x86_64                 59/256 
+  Upgrading        : libssh-config-0.12.0-3.el10_2.noarch                60/256 
+  Upgrading        : kbd-misc-2.6.4-8.el10_2.noarch                      61/256 
+  Upgrading        : kbd-legacy-2.6.4-8.el10_2.noarch                    62/256 
+  Upgrading        : kbd-2.6.4-8.el10_2.x86_64                           63/256 
+  Upgrading        : coreutils-common-9.5-8.el10_2.1.x86_64              64/256 
+  Upgrading        : coreutils-9.5-8.el10_2.1.x86_64                     65/256 
+  Upgrading        : systemd-pam-257-23.el10_2.2.rocky.0.1.x86_64        66/256 
+  Running scriptlet: systemd-257-23.el10_2.2.rocky.0.1.x86_64            67/256 
+  Upgrading        : systemd-257-23.el10_2.2.rocky.0.1.x86_64            67/256 
+  Running scriptlet: systemd-257-23.el10_2.2.rocky.0.1.x86_64            67/256 
+  Upgrading        : systemd-udev-257-23.el10_2.2.rocky.0.1.x86_64       68/256 
+  Running scriptlet: systemd-udev-257-23.el10_2.2.rocky.0.1.x86_64       68/256 
+  Upgrading        : policycoreutils-3.10-2.el10_2.x86_64                69/256 
+  Running scriptlet: policycoreutils-3.10-2.el10_2.x86_64                69/256 
+  Running scriptlet: NetworkManager-1:1.56.0-3.el10_2.x86_64             70/256 
+  Upgrading        : NetworkManager-1:1.56.0-3.el10_2.x86_64             70/256 
+  Running scriptlet: NetworkManager-1:1.56.0-3.el10_2.x86_64             70/256 
+  Upgrading        : python3-policycoreutils-3.10-2.el10_2.noarch        71/256 
+  Running scriptlet: sssd-common-2.12.0-3.el10_2.2.x86_64                72/256 
+  Upgrading        : sssd-common-2.12.0-3.el10_2.2.x86_64                72/256 
+  Running scriptlet: sssd-common-2.12.0-3.el10_2.2.x86_64                72/256 
+  Upgrading        : sssd-krb5-common-2.12.0-3.el10_2.2.x86_64           73/256 
+  Upgrading        : selinux-policy-42.1.18-4.el10_2.4.noarch            74/256 
+  Running scriptlet: selinux-policy-42.1.18-4.el10_2.4.noarch            74/256 
+  Running scriptlet: selinux-policy-targeted-extra-42.1.18-4.el10_2.4    75/256 
+  Installing       : selinux-policy-targeted-extra-42.1.18-4.el10_2.4    75/256 
+  Running scriptlet: selinux-policy-targeted-42.1.18-4.el10_2.4.noarc    76/256 
+  Upgrading        : selinux-policy-targeted-42.1.18-4.el10_2.4.noarc    76/256 
+  Running scriptlet: selinux-policy-targeted-42.1.18-4.el10_2.4.noarc    76/256 
+  Running scriptlet: cockpit-ws-selinux-356.3-1.el10_2.rocky.0.1.x86_    77/256 
+  Upgrading        : cockpit-ws-selinux-356.3-1.el10_2.rocky.0.1.x86_    77/256 
+  Running scriptlet: cockpit-ws-selinux-356.3-1.el10_2.rocky.0.1.x86_    77/256 
+  Installing       : selinux-policy-extra-42.1.18-4.el10_2.4.noarch      78/256 
+  Running scriptlet: dhcpcd-10.0.6-11.el10_2.x86_64                      79/256 
+  Upgrading        : dhcpcd-10.0.6-11.el10_2.x86_64                      79/256 
+  Running scriptlet: dhcpcd-10.0.6-11.el10_2.x86_64                      79/256 
+  Upgrading        : libkcapi-1.5.1-1.el10_2.x86_64                      80/256 
+  Upgrading        : libkcapi-hasher-1.5.1-1.el10_2.x86_64               81/256 
+  Upgrading        : libkcapi-hmaccalc-1.5.1-1.el10_2.x86_64             82/256 
+  Running scriptlet: polkit-125-4.el10_2.1.x86_64                        83/256 
+  Upgrading        : polkit-125-4.el10_2.1.x86_64                        83/256 
+  Running scriptlet: polkit-125-4.el10_2.1.x86_64                        83/256 
+  Running scriptlet: ca-certificates-2026.2.92_v9.0.319-100.3.el10_2.    84/256 
+  Upgrading        : ca-certificates-2026.2.92_v9.0.319-100.3.el10_2.    84/256 
+  Running scriptlet: ca-certificates-2026.2.92_v9.0.319-100.3.el10_2.    84/256 
+  Upgrading        : gzip-1.13-4.el10_2.x86_64                           85/256 
+  Upgrading        : dracut-107-9.el10_2.x86_64                          86/256 
+  Installing       : kernel-modules-core-6.12.0-211.68.1.el10_2.x86_6    87/256 
+  Installing       : kernel-core-6.12.0-211.68.1.el10_2.x86_64           88/256 
+  Running scriptlet: kernel-core-6.12.0-211.68.1.el10_2.x86_64           88/256 
+  Upgrading        : nss-3.124.0-5.el10_2.x86_64                         89/256 
+  Running scriptlet: nss-3.124.0-5.el10_2.x86_64                         89/256 
+  Upgrading        : nss-sysinit-3.124.0-5.el10_2.x86_64                 90/256 
+  Upgrading        : dracut-config-generic-107-9.el10_2.x86_64           91/256 
+  Upgrading        : dracut-config-rescue-107-9.el10_2.x86_64            92/256 
+  Upgrading        : dracut-network-107-9.el10_2.x86_64                  93/256 
+  Upgrading        : dracut-squash-107-9.el10_2.x86_64                   94/256 
+  Upgrading        : python3-urllib3-1.26.19-4.el10_2.2.noarch           95/256 
+  Upgrading        : udisks2-2.11.0-2.el10_2.1.x86_64                    96/256 
+  Running scriptlet: udisks2-2.11.0-2.el10_2.1.x86_64                    96/256 
+  Upgrading        : cloud-init-24.4-7.el10_2.1.rocky.0.1.noarch         97/256 
+  Running scriptlet: cloud-init-24.4-7.el10_2.1.rocky.0.1.noarch         97/256 
+  Upgrading        : epel-release-10-9.el10_3.noarch                     98/256 
+warning: /etc/yum.repos.d/epel.repo created as /etc/yum.repos.d/epel.repo.rpmnew
+
+  Running scriptlet: epel-release-10-9.el10_3.noarch                     98/256 
+  Upgrading        : cockpit-ws-356.3-1.el10_2.rocky.0.1.x86_64          99/256 
+  Running scriptlet: cockpit-ws-356.3-1.el10_2.rocky.0.1.x86_64          99/256 
+  Upgrading        : sssd-kcm-2.12.0-3.el10_2.2.x86_64                  100/256 
+  Running scriptlet: sssd-kcm-2.12.0-3.el10_2.2.x86_64                  100/256 
+  Upgrading        : policycoreutils-python-utils-3.10-2.el10_2.noarc   101/256 
+  Upgrading        : NetworkManager-tui-1:1.56.0-3.el10_2.x86_64        102/256 
+  Upgrading        : cockpit-system-356.3-1.el10_2.rocky.0.1.noarch     103/256 
+  Upgrading        : mdadm-4.4-3.el10_2.2.x86_64                        104/256 
+  Running scriptlet: mdadm-4.4-3.el10_2.2.x86_64                        104/256 
+  Upgrading        : microcode_ctl-4:20260812-0.el10_2.noarch           105/256 
+  Running scriptlet: microcode_ctl-4:20260812-0.el10_2.noarch           105/256 
+  Running scriptlet: openssh-server-9.9p1-29.el10_2.rocky.0.1.x86_64    106/256 
+  Upgrading        : openssh-server-9.9p1-29.el10_2.rocky.0.1.x86_64    106/256 
+  Running scriptlet: openssh-server-9.9p1-29.el10_2.rocky.0.1.x86_64    106/256 
+  Running scriptlet: rpcbind-1.2.7-3.el10_2.1.x86_64                    107/256 
+  Upgrading        : rpcbind-1.2.7-3.el10_2.1.x86_64                    107/256 
+  Running scriptlet: rpcbind-1.2.7-3.el10_2.1.x86_64                    107/256 
+  Upgrading        : qemu-guest-agent-18:10.1.0-16.el10_2.5.x86_64      108/256 
+  Running scriptlet: qemu-guest-agent-18:10.1.0-16.el10_2.5.x86_64      108/256 
+  Upgrading        : rsyslog-8.2510.0-5.el10_2.2.x86_64                 109/256 
+  Running scriptlet: rsyslog-8.2510.0-5.el10_2.2.x86_64                 109/256 
+  Upgrading        : libssh-0.12.0-3.el10_2.x86_64                      110/256 
+  Upgrading        : vim-minimal-2:9.1.083-9.el10_2.22.x86_64           111/256 
+  Upgrading        : sg3_utils-1.48-7.el10_2.2.x86_64                   112/256 
+  Upgrading        : kernel-tools-6.12.0-211.68.1.el10_2.x86_64         113/256 
+  Upgrading        : attr-2.6.0-1.el10_2.x86_64                         114/256 
+  Upgrading        : openssh-clients-9.9p1-29.el10_2.rocky.0.1.x86_64   115/256 
+  Running scriptlet: openssh-clients-9.9p1-29.el10_2.rocky.0.1.x86_64   115/256 
+  Upgrading        : crypto-policies-scripts-20260216-1.git0e54016.el   116/256 
+  Upgrading        : python3-libxml2-2.12.5-10.el10_2.4.x86_64          117/256 
+  Upgrading        : sequoia-sq-1.4.0.1-4.el10_2.x86_64                 118/256 
+  Upgrading        : dbus-broker-36-5.el10_2.x86_64                     119/256 
+  Running scriptlet: dbus-broker-36-5.el10_2.x86_64                     119/256 
+  Upgrading        : libsolv-0.7.33-5.el10_2.x86_64                     120/256 
+  Upgrading        : rsync-3.5.0-3.el10_2.x86_64                        121/256 
+  Upgrading        : tar-2:1.35-13.el10_2.x86_64                        122/256 
+  Upgrading        : libusb1-1.0.30-1.el10_2.x86_64                     123/256 
+  Upgrading        : iptables-libs-1.8.11-16.el10_2.x86_64              124/256 
+  Upgrading        : libbrotli-1.1.0-8.el10_2.x86_64                    125/256 
+  Upgrading        : libevent-2.1.13-1.el10_2.x86_64                    126/256 
+  Upgrading        : libgcrypt-1.11.0-7.el10_2.x86_64                   127/256 
+  Upgrading        : libnghttp2-1.68.0-3.el10_2.2.x86_64                128/256 
+  Upgrading        : rpm-sequoia-1.10.2.1-1.el10_2.x86_64               129/256 
+  Upgrading        : fwupd-efi-1.8-1.el10_2.rocky.0.1.x86_64            130/256 
+  Running scriptlet: cloud-init-24.4-7.el10.0.1.noarch                  131/256 
+  Cleanup          : cloud-init-24.4-7.el10.0.1.noarch                  131/256 
+  Running scriptlet: cloud-init-24.4-7.el10.0.1.noarch                  131/256 
+  Running scriptlet: microcode_ctl-4:20260210-1.el10_2.noarch           132/256 
+  Cleanup          : microcode_ctl-4:20260210-1.el10_2.noarch           132/256 
+  Running scriptlet: microcode_ctl-4:20260210-1.el10_2.noarch           132/256 
+  Running scriptlet: selinux-policy-42.1.18-4.el10.noarch               133/256 
+  Cleanup          : selinux-policy-42.1.18-4.el10.noarch               133/256 
+  Running scriptlet: selinux-policy-42.1.18-4.el10.noarch               133/256 
+  Cleanup          : cockpit-system-356-1.el10.rocky.0.1.noarch         134/256 
+  Cleanup          : python3-urllib3-1.26.19-3.el10.noarch              135/256 
+  Cleanup          : ca-certificates-2025.2.80_v9.0.305-102.el10.noar   136/256 
+  Cleanup          : dracut-network-107-4.el10.x86_64                   137/256 
+  Cleanup          : cockpit-bridge-356-1.el10.rocky.0.1.noarch         138/256 
+  Cleanup          : sos-4.10.2-2.el10.noarch                           139/256 
+  Cleanup          : policycoreutils-python-utils-3.10-1.el10.noarch    140/256 
+  Cleanup          : python3-policycoreutils-3.10-1.el10.noarch         141/256 
+  Cleanup          : crypto-policies-scripts-20260216-1.git0e54016.el   142/256 
+  Cleanup          : python3-idna-3.7-4.el10.noarch                     143/256 
+  Cleanup          : dracut-squash-107-4.el10.x86_64                    144/256 
+  Cleanup          : dracut-config-rescue-107-4.el10.x86_64             145/256 
+  Cleanup          : dracut-config-generic-107-4.el10.x86_64            146/256 
+  Cleanup          : epel-release-10-7.el10_1.noarch                    147/256 
+  Cleanup          : python3-libxml2-2.12.5-10.el10.x86_64              148/256 
+  Cleanup          : NetworkManager-tui-1:1.56.0-1.el10.x86_64          149/256 
+  Running scriptlet: NetworkManager-1:1.56.0-1.el10.x86_64              150/256 
+  Cleanup          : NetworkManager-1:1.56.0-1.el10.x86_64              150/256 
+  Running scriptlet: NetworkManager-1:1.56.0-1.el10.x86_64              150/256 
+  Running scriptlet: cockpit-ws-356-1.el10.rocky.0.1.x86_64             151/256 
+  Cleanup          : cockpit-ws-356-1.el10.rocky.0.1.x86_64             151/256 
+  Running scriptlet: cockpit-ws-356-1.el10.rocky.0.1.x86_64             151/256 
+  Cleanup          : nss-3.112.0-8.el10_1.x86_64                        152/256 
+  Running scriptlet: qemu-guest-agent-18:10.1.0-16.el10_2.x86_64        153/256 
+  Cleanup          : qemu-guest-agent-18:10.1.0-16.el10_2.x86_64        153/256 
+  Running scriptlet: qemu-guest-agent-18:10.1.0-16.el10_2.x86_64        153/256 
+  Cleanup          : nss-softokn-3.112.0-8.el10_1.x86_64                154/256 
+  Cleanup          : sequoia-sq-1.3.1.1-1.el10.x86_64                   155/256 
+  Running scriptlet: rsyslog-8.2510.0-5.el10.x86_64                     156/256 
+  Cleanup          : rsyslog-8.2510.0-5.el10.x86_64                     156/256 
+  Running scriptlet: rsyslog-8.2510.0-5.el10.x86_64                     156/256 
+  Cleanup          : sudo-1.9.17-4.p2.el10_2.x86_64                     157/256 
+  Running scriptlet: udisks2-2.11.0-2.el10_2.x86_64                     158/256 
+  Cleanup          : udisks2-2.11.0-2.el10_2.x86_64                     158/256 
+  Running scriptlet: udisks2-2.11.0-2.el10_2.x86_64                     158/256 
+  Running scriptlet: polkit-125-4.el10.x86_64                           159/256 
+  Cleanup          : polkit-125-4.el10.x86_64                           159/256 
+  Running scriptlet: polkit-125-4.el10.x86_64                           159/256 
+  Running scriptlet: openssh-server-9.9p1-23.el10_2.rocky.0.1.x86_64    160/256 
+  Cleanup          : openssh-server-9.9p1-23.el10_2.rocky.0.1.x86_64    160/256 
+  Running scriptlet: openssh-server-9.9p1-23.el10_2.rocky.0.1.x86_64    160/256 
+  Cleanup          : pam-1.6.1-9.el10.x86_64                            161/256 
+  Running scriptlet: mdadm-4.4-3.el10.x86_64                            162/256 
+  Cleanup          : mdadm-4.4-3.el10.x86_64                            162/256 
+  Running scriptlet: mdadm-4.4-3.el10.x86_64                            162/256 
+  Running scriptlet: dbus-broker-36-4.el10.x86_64                       163/256 
+  Cleanup          : dbus-broker-36-4.el10.x86_64                       163/256 
+  Running scriptlet: dbus-broker-36-4.el10.x86_64                       163/256 
+  Running scriptlet: sssd-kcm-2.12.0-3.el10_2.x86_64                    164/256 
+  Cleanup          : sssd-kcm-2.12.0-3.el10_2.x86_64                    164/256 
+  Running scriptlet: sssd-kcm-2.12.0-3.el10_2.x86_64                    164/256 
+  Running scriptlet: dhcpcd-10.0.6-10.el10.x86_64                       165/256 
+  Cleanup          : dhcpcd-10.0.6-10.el10.x86_64                       165/256 
+  Running scriptlet: dhcpcd-10.0.6-10.el10.x86_64                       165/256 
+  Cleanup          : kernel-tools-6.12.0-211.16.1.el10_2.0.1.x86_64     166/256 
+  Cleanup          : NetworkManager-libnm-1:1.56.0-1.el10.x86_64        167/256 
+  Cleanup          : tar-2:1.35-11.el10.x86_64                          168/256 
+  Cleanup          : sssd-krb5-common-2.12.0-3.el10_2.x86_64            169/256 
+  Running scriptlet: sssd-common-2.12.0-3.el10_2.x86_64                 170/256 
+  Cleanup          : sssd-common-2.12.0-3.el10_2.x86_64                 170/256 
+  Running scriptlet: sssd-common-2.12.0-3.el10_2.x86_64                 170/256 
+  Running scriptlet: sssd-client-2.12.0-3.el10_2.x86_64                 171/256 
+  Cleanup          : sssd-client-2.12.0-3.el10_2.x86_64                 171/256 
+  Cleanup          : dracut-107-4.el10.x86_64                           172/256 
+  Running scriptlet: systemd-udev-257-23.el10_2.1.rocky.0.1.x86_64      173/256 
+  Cleanup          : systemd-udev-257-23.el10_2.1.rocky.0.1.x86_64      173/256 
+  Running scriptlet: systemd-udev-257-23.el10_2.1.rocky.0.1.x86_64      173/256 
+  Cleanup          : xz-1:5.6.2-4.el10_0.x86_64                         174/256 
+  Cleanup          : rsync-3.4.1-6.el10_2.x86_64                        175/256 
+  Running scriptlet: rpcbind-1.2.7-3.el10.x86_64                        176/256 
+  Cleanup          : rpcbind-1.2.7-3.el10.x86_64                        176/256 
+  Running scriptlet: rpcbind-1.2.7-3.el10.x86_64                        176/256 
+  Cleanup          : libevent-2.1.12-16.el10.x86_64                     177/256 
+  Cleanup          : vim-minimal-2:9.1.083-9.el10_2.2.x86_64            178/256 
+  Cleanup          : sg3_utils-1.48-7.el10.x86_64                       179/256 
+  Running scriptlet: openssh-clients-9.9p1-23.el10_2.rocky.0.1.x86_64   180/256 
+  Cleanup          : openssh-clients-9.9p1-23.el10_2.rocky.0.1.x86_64   180/256 
+  Cleanup          : libsolv-0.7.33-2.el10.x86_64                       181/256 
+  Cleanup          : iptables-libs-1.8.11-13.el10.x86_64                182/256 
+  Cleanup          : openssh-9.9p1-23.el10_2.rocky.0.1.x86_64           183/256 
+  Cleanup          : kbd-2.6.4-7.el10.x86_64                            184/256 
+  Cleanup          : libssh-0.12.0-2.el10.x86_64                        185/256 
+  Cleanup          : c-ares-1.34.6-1.el10.x86_64                        186/256 
+  Cleanup          : libusb1-1.0.29-3.el10.x86_64                       187/256 
+  Cleanup          : rpm-sequoia-1.10.1.1-2.el10.x86_64                 188/256 
+  Cleanup          : gzip-1.13-3.el10.x86_64                            189/256 
+  Cleanup          : nss-softokn-freebl-3.112.0-8.el10_1.x86_64         190/256 
+  Cleanup          : polkit-libs-125-4.el10.x86_64                      191/256 
+  Cleanup          : nss-sysinit-3.112.0-8.el10_1.x86_64                192/256 
+  Cleanup          : nss-util-3.112.0-8.el10_1.x86_64                   193/256 
+  Cleanup          : nspr-4.36.0-8.el10_1.x86_64                        194/256 
+  Cleanup          : attr-2.5.2-5.el10.x86_64                           195/256 
+  Cleanup          : sudo-python-plugin-1.9.17-4.p2.el10_2.x86_64       196/256 
+  Cleanup          : cockpit-ws-selinux-356-1.el10.rocky.0.1.x86_64     197/256 
+  Running scriptlet: cockpit-ws-selinux-356-1.el10.rocky.0.1.x86_64     197/256 
+  Cleanup          : selinux-policy-targeted-42.1.18-4.el10.noarch      198/256 
+  Running scriptlet: selinux-policy-targeted-42.1.18-4.el10.noarch      198/256 
+  Cleanup          : libkcapi-hmaccalc-1.5.0-3.el10.x86_64              199/256 
+  Cleanup          : rocky-release-10.2-1.1.el10.noarch                 200/256 
+  Cleanup          : rocky-repos-10.2-1.1.el10.noarch                   201/256 
+  Cleanup          : rocky-gpg-keys-10.2-1.1.el10.noarch                202/256 
+  Cleanup          : libssh-config-0.12.0-2.el10.noarch                 203/256 
+  Cleanup          : kbd-legacy-2.6.4-7.el10.noarch                     204/256 
+  Cleanup          : kbd-misc-2.6.4-7.el10.noarch                       205/256 
+  Cleanup          : vim-data-2:9.1.083-9.el10_2.2.noarch               206/256 
+  Cleanup          : fwupd-efi-1.6-7.el10_2.x86_64                      207/256 
+  Cleanup          : libkcapi-hasher-1.5.0-3.el10.x86_64                208/256 
+  Running scriptlet: policycoreutils-3.10-1.el10.x86_64                 209/256 
+  Cleanup          : policycoreutils-3.10-1.el10.x86_64                 209/256 
+  Cleanup          : gawk-5.3.0-6.el10.x86_64                           210/256 
+  Cleanup          : libkcapi-1.5.0-3.el10.x86_64                       211/256 
+  Cleanup          : systemd-257-23.el10_2.1.rocky.0.1.x86_64           212/256 
+  Running scriptlet: systemd-257-23.el10_2.1.rocky.0.1.x86_64           212/256 
+  Cleanup          : systemd-pam-257-23.el10_2.1.rocky.0.1.x86_64       213/256 
+  Cleanup          : coreutils-9.5-7.el10.x86_64                        214/256 
+  Cleanup          : systemd-libs-257-23.el10_2.1.rocky.0.1.x86_64      215/256 
+  Cleanup          : libarchive-3.7.7-8.el10_1.x86_64                   216/256 
+  Cleanup          : libxml2-2.12.5-10.el10.x86_64                      217/256 
+  Cleanup          : pam-libs-1.6.1-9.el10.x86_64                       218/256 
+  Cleanup          : libsss_nss_idmap-2.12.0-3.el10_2.x86_64            219/256 
+  Cleanup          : sssd-nfs-idmap-2.12.0-3.el10_2.x86_64              220/256 
+  Cleanup          : libgcrypt-1.11.0-5.el10.x86_64                     221/256 
+  Cleanup          : libldb-4.23.5-107.el10_2.x86_64                    222/256 
+  Cleanup          : libacl-2.3.2-4.el10.x86_64                         223/256 
+  Cleanup          : sg3_utils-libs-1.48-7.el10.x86_64                  224/256 
+  Cleanup          : cyrus-sasl-gssapi-2.1.28-29.el10.x86_64            225/256 
+  Cleanup          : cyrus-sasl-lib-2.1.28-29.el10.x86_64               226/256 
+  Cleanup          : libsss_sudo-2.12.0-3.el10_2.x86_64                 227/256 
+  Cleanup          : libudisks2-2.11.0-2.el10_2.x86_64                  228/256 
+  Cleanup          : glib2-2.80.4-12.el10_2.13.x86_64                   229/256 
+  Cleanup          : gnutls-3.8.10-3.el10_1.x86_64                      230/256 
+  Cleanup          : p11-kit-trust-0.26.2-1.el10.x86_64                 231/256 
+  Running scriptlet: p11-kit-trust-0.26.2-1.el10.x86_64                 231/256 
+  Cleanup          : p11-kit-0.26.2-1.el10.x86_64                       232/256 
+  Cleanup          : pcre2-10.44-1.el10.3.x86_64                        233/256 
+  Cleanup          : libbrotli-1.1.0-7.el10_1.x86_64                    234/256 
+  Cleanup          : libtasn1-4.20.0-1.el10.x86_64                      235/256 
+  Cleanup          : libsss_idmap-2.12.0-3.el10_2.x86_64                236/256 
+  Cleanup          : libsss_certmap-2.12.0-3.el10_2.x86_64              237/256 
+  Cleanup          : python3-3.12.13-2.el10_2.x86_64                    238/256 
+  Cleanup          : python3-libs-3.12.13-2.el10_2.x86_64               239/256 
+  Cleanup          : sqlite-libs-3.46.1-5.el10_1.x86_64                 240/256 
+  Cleanup          : expat-2.7.3-1.el10.x86_64                          241/256 
+  Cleanup          : xz-libs-1:5.6.2-4.el10_0.x86_64                    242/256 
+  Cleanup          : kernel-tools-libs-6.12.0-211.16.1.el10_2.0.1.x86   243/256 
+  Running scriptlet: kernel-tools-libs-6.12.0-211.16.1.el10_2.0.1.x86   243/256 
+  Cleanup          : libnghttp2-1.68.0-3.el10_2.1.x86_64                244/256 
+  Cleanup          : python-unversioned-command-3.12.13-2.el10_2.noar   245/256 
+  Cleanup          : pcre2-syntax-10.44-1.el10.3.noarch                 246/256 
+  Cleanup          : crypto-policies-20260216-1.git0e54016.el10.noarc   247/256 
+  Cleanup          : coreutils-common-9.5-7.el10.x86_64                 248/256 
+  Cleanup          : gawk-all-langpacks-5.3.0-6.el10.x86_64             249/256 
+  Cleanup          : libattr-2.5.2-5.el10.x86_64                        250/256 
+  Cleanup          : glibc-2.39-121.el10_2.x86_64                       251/256 
+  Cleanup          : glibc-langpack-en-2.39-121.el10_2.x86_64           252/256 
+  Cleanup          : glibc-minimal-langpack-2.39-121.el10_2.x86_64      253/256 
+  Cleanup          : glibc-gconv-extra-2.39-121.el10_2.x86_64           254/256 
+  Running scriptlet: glibc-gconv-extra-2.39-121.el10_2.x86_64           254/256 
+  Cleanup          : glibc-common-2.39-121.el10_2.x86_64                255/256 
+  Cleanup          : tzdata-2026a-1.el10.noarch                         256/256 
+  Running scriptlet: sssd-common-2.12.0-3.el10_2.2.x86_64               256/256 
+  Running scriptlet: selinux-policy-targeted-extra-42.1.18-4.el10_2.4   256/256 
+  Running scriptlet: selinux-policy-targeted-42.1.18-4.el10_2.4.noarc   256/256 
+  Running scriptlet: ca-certificates-2026.2.92_v9.0.319-100.3.el10_2.   256/256 
+  Running scriptlet: kernel-modules-core-6.12.0-211.68.1.el10_2.x86_6   256/256 
+  Running scriptlet: kernel-core-6.12.0-211.68.1.el10_2.x86_64          256/256 
+kdump: For kernel=/boot/vmlinuz-6.12.0-211.68.1.el10_2.x86_64, crashkernel=2G-64G:256M,64G-:512M now. Please reboot the system for the change to take effect. Note if you don't want kdump-utils to manage the crashkernel kernel parameter, please set auto_reset_crashkernel=no in /etc/kdump.conf.
+
+  Running scriptlet: microcode_ctl-4:20260812-0.el10_2.noarch           256/256 
+  Running scriptlet: crypto-policies-scripts-20260216-1.git0e54016.el   256/256 
+  Running scriptlet: tzdata-2026a-1.el10.noarch                         256/256 
+
+Upgraded:
+  NetworkManager-1:1.56.0-3.el10_2.x86_64                                       
+  NetworkManager-libnm-1:1.56.0-3.el10_2.x86_64                                 
+  NetworkManager-tui-1:1.56.0-3.el10_2.x86_64                                   
+  attr-2.6.0-1.el10_2.x86_64                                                    
+  c-ares-1.34.6-2.el10_2.x86_64                                                 
+  ca-certificates-2026.2.92_v9.0.319-100.3.el10_2.noarch                        
+  cloud-init-24.4-7.el10_2.1.rocky.0.1.noarch                                   
+  cockpit-bridge-356.3-1.el10_2.rocky.0.1.noarch                                
+  cockpit-system-356.3-1.el10_2.rocky.0.1.noarch                                
+  cockpit-ws-356.3-1.el10_2.rocky.0.1.x86_64                                    
+  cockpit-ws-selinux-356.3-1.el10_2.rocky.0.1.x86_64                            
+  coreutils-9.5-8.el10_2.1.x86_64                                               
+  coreutils-common-9.5-8.el10_2.1.x86_64                                        
+  crypto-policies-20260216-1.git0e54016.el10_2.2.noarch                         
+  crypto-policies-scripts-20260216-1.git0e54016.el10_2.2.noarch                 
+  cyrus-sasl-gssapi-2.1.28-30.el10_2.x86_64                                     
+  cyrus-sasl-lib-2.1.28-30.el10_2.x86_64                                        
+  dbus-broker-36-5.el10_2.x86_64                                                
+  dhcpcd-10.0.6-11.el10_2.x86_64                                                
+  dracut-107-9.el10_2.x86_64                                                    
+  dracut-config-generic-107-9.el10_2.x86_64                                     
+  dracut-config-rescue-107-9.el10_2.x86_64                                      
+  dracut-network-107-9.el10_2.x86_64                                            
+  dracut-squash-107-9.el10_2.x86_64                                             
+  epel-release-10-9.el10_3.noarch                                               
+  expat-2.7.3-1.el10_2.7.x86_64                                                 
+  fwupd-efi-1.8-1.el10_2.rocky.0.1.x86_64                                       
+  gawk-5.3.0-6.el10_2.1.x86_64                                                  
+  gawk-all-langpacks-5.3.0-6.el10_2.1.x86_64                                    
+  glib2-2.80.4-12.el10_2.22.x86_64                                              
+  glibc-2.39-145.el10_2.x86_64                                                  
+  glibc-common-2.39-145.el10_2.x86_64                                           
+  glibc-gconv-extra-2.39-145.el10_2.x86_64                                      
+  glibc-langpack-en-2.39-145.el10_2.x86_64                                      
+  glibc-minimal-langpack-2.39-145.el10_2.x86_64                                 
+  gnutls-3.8.10-5.el10_2.x86_64                                                 
+  gzip-1.13-4.el10_2.x86_64                                                     
+  iptables-libs-1.8.11-16.el10_2.x86_64                                         
+  kbd-2.6.4-8.el10_2.x86_64                                                     
+  kbd-legacy-2.6.4-8.el10_2.noarch                                              
+  kbd-misc-2.6.4-8.el10_2.noarch                                                
+  kernel-tools-6.12.0-211.68.1.el10_2.x86_64                                    
+  kernel-tools-libs-6.12.0-211.68.1.el10_2.x86_64                               
+  libacl-2.4.0-1.el10_2.x86_64                                                  
+  libarchive-3.7.7-11.el10_2.x86_64                                             
+  libattr-2.6.0-1.el10_2.x86_64                                                 
+  libbrotli-1.1.0-8.el10_2.x86_64                                               
+  libevent-2.1.13-1.el10_2.x86_64                                               
+  libgcrypt-1.11.0-7.el10_2.x86_64                                              
+  libkcapi-1.5.1-1.el10_2.x86_64                                                
+  libkcapi-hasher-1.5.1-1.el10_2.x86_64                                         
+  libkcapi-hmaccalc-1.5.1-1.el10_2.x86_64                                       
+  libldb-4.23.5-111.el10_2.x86_64                                               
+  libnghttp2-1.68.0-3.el10_2.2.x86_64                                           
+  libsolv-0.7.33-5.el10_2.x86_64                                                
+  libssh-0.12.0-3.el10_2.x86_64                                                 
+  libssh-config-0.12.0-3.el10_2.noarch                                          
+  libsss_certmap-2.12.0-3.el10_2.2.x86_64                                       
+  libsss_idmap-2.12.0-3.el10_2.2.x86_64                                         
+  libsss_nss_idmap-2.12.0-3.el10_2.2.x86_64                                     
+  libsss_sudo-2.12.0-3.el10_2.2.x86_64                                          
+  libtasn1-4.20.0-5.el10_2.x86_64                                               
+  libudisks2-2.11.0-2.el10_2.1.x86_64                                           
+  libusb1-1.0.30-1.el10_2.x86_64                                                
+  libxml2-2.12.5-10.el10_2.4.x86_64                                             
+  mdadm-4.4-3.el10_2.2.x86_64                                                   
+  microcode_ctl-4:20260812-0.el10_2.noarch                                      
+  nspr-4.39.0-5.el10_2.x86_64                                                   
+  nss-3.124.0-5.el10_2.x86_64                                                   
+  nss-softokn-3.124.0-5.el10_2.x86_64                                           
+  nss-softokn-freebl-3.124.0-5.el10_2.x86_64                                    
+  nss-sysinit-3.124.0-5.el10_2.x86_64                                           
+  nss-util-3.124.0-5.el10_2.x86_64                                              
+  openssh-9.9p1-29.el10_2.rocky.0.1.x86_64                                      
+  openssh-clients-9.9p1-29.el10_2.rocky.0.1.x86_64                              
+  openssh-server-9.9p1-29.el10_2.rocky.0.1.x86_64                               
+  p11-kit-0.26.4-1.el10_2.x86_64                                                
+  p11-kit-trust-0.26.4-1.el10_2.x86_64                                          
+  pam-1.6.1-9.el10_2.1.x86_64                                                   
+  pam-libs-1.6.1-9.el10_2.1.x86_64                                              
+  pcre2-10.44-1.5.el10_2.x86_64                                                 
+  pcre2-syntax-10.44-1.5.el10_2.noarch                                          
+  policycoreutils-3.10-2.el10_2.x86_64                                          
+  policycoreutils-python-utils-3.10-2.el10_2.noarch                             
+  polkit-125-4.el10_2.1.x86_64                                                  
+  polkit-libs-125-4.el10_2.1.x86_64                                             
+  python-unversioned-command-3.12.15-1.el10_2.noarch                            
+  python3-3.12.15-1.el10_2.x86_64                                               
+  python3-idna-3.7-6.el10_2.noarch                                              
+  python3-libs-3.12.15-1.el10_2.x86_64                                          
+  python3-libxml2-2.12.5-10.el10_2.4.x86_64                                     
+  python3-policycoreutils-3.10-2.el10_2.noarch                                  
+  python3-urllib3-1.26.19-4.el10_2.2.noarch                                     
+  qemu-guest-agent-18:10.1.0-16.el10_2.5.x86_64                                 
+  rocky-gpg-keys-10.2-1.2.el10.noarch                                           
+  rocky-release-10.2-1.2.el10.noarch                                            
+  rocky-repos-10.2-1.2.el10.noarch                                              
+  rpcbind-1.2.7-3.el10_2.1.x86_64                                               
+  rpm-sequoia-1.10.2.1-1.el10_2.x86_64                                          
+  rsync-3.5.0-3.el10_2.x86_64                                                   
+  rsyslog-8.2510.0-5.el10_2.2.x86_64                                            
+  selinux-policy-42.1.18-4.el10_2.4.noarch                                      
+  selinux-policy-targeted-42.1.18-4.el10_2.4.noarch                             
+  sequoia-sq-1.4.0.1-4.el10_2.x86_64                                            
+  sg3_utils-1.48-7.el10_2.2.x86_64                                              
+  sg3_utils-libs-1.48-7.el10_2.2.x86_64                                         
+  sos-4.11.2-4.el10_2.noarch                                                    
+  sqlite-libs-3.46.1-6.el10_2.x86_64                                            
+  sssd-client-2.12.0-3.el10_2.2.x86_64                                          
+  sssd-common-2.12.0-3.el10_2.2.x86_64                                          
+  sssd-kcm-2.12.0-3.el10_2.2.x86_64                                             
+  sssd-krb5-common-2.12.0-3.el10_2.2.x86_64                                     
+  sssd-nfs-idmap-2.12.0-3.el10_2.2.x86_64                                       
+  sudo-1.9.17-10.p2.el10_2.7.x86_64                                             
+  sudo-python-plugin-1.9.17-10.p2.el10_2.7.x86_64                               
+  systemd-257-23.el10_2.2.rocky.0.1.x86_64                                      
+  systemd-libs-257-23.el10_2.2.rocky.0.1.x86_64                                 
+  systemd-pam-257-23.el10_2.2.rocky.0.1.x86_64                                  
+  systemd-udev-257-23.el10_2.2.rocky.0.1.x86_64                                 
+  tar-2:1.35-13.el10_2.x86_64                                                   
+  tzdata-2026e-1.el10_2.noarch                                                  
+  udisks2-2.11.0-2.el10_2.1.x86_64                                              
+  vim-data-2:9.1.083-9.el10_2.22.noarch                                         
+  vim-minimal-2:9.1.083-9.el10_2.22.x86_64                                      
+  xz-1:5.6.2-4.el10_2.1.x86_64                                                  
+  xz-libs-1:5.6.2-4.el10_2.1.x86_64                                             
+Installed:
+  kernel-core-6.12.0-211.68.1.el10_2.x86_64                                     
+  kernel-modules-core-6.12.0-211.68.1.el10_2.x86_64                             
+  selinux-policy-extra-42.1.18-4.el10_2.4.noarch                                
+  selinux-policy-targeted-extra-42.1.18-4.el10_2.4.noarch                       
+
+Complete!
+Last metadata expiration check: 0:12:09 ago on Sun 25 Oct 2026 10:11:22 AM UTC.
+Package curl-8.12.1-4.el10_2.7.x86_64 is already installed.
+Package gnupg2-2.4.5-4.el10_1.x86_64 is already installed.
+Package openssh-clients-9.9p1-29.el10_2.rocky.0.1.x86_64 is already installed.
+Package openssh-server-9.9p1-29.el10_2.rocky.0.1.x86_64 is already installed.
+Package openssl-1:3.5.8-2.el10_2.x86_64 is already installed.
+Package policycoreutils-python-utils-3.10-2.el10_2.noarch is already installed.
+Package python3-3.12.15-1.el10_2.x86_64 is already installed.
+Package python3-cryptography-43.0.0-4.el10_2.5.x86_64 is already installed.
+Package python3-pyyaml-6.0.1-19.el10.x86_64 is already installed.
+Package python3-requests-2.32.4-1.el10_0.noarch is already installed.
+Package shadow-utils-2:4.15.0-11.el10.x86_64 is already installed.
+Package systemd-257-23.el10_2.2.rocky.0.1.x86_64 is already installed.
+Dependencies resolved.
+======================================================================================================================================
+ Package                            Arch    Version                      Repository                                               Size
+======================================================================================================================================
+Installing:
+ ansible-collection-ansible-posix   noarch  2.2.1-1.el10_3               epel                                                    102 k
+ ansible-core                       noarch  1:2.16.16-2.el10_2.1         appstream                                               2.5 M
+ caddy                              x86_64  2.10.2-9.el10_3              epel                                                     14 M
+ certbot                            noarch  4.2.0-1.el10_2               epel                                                     51 k
+ podman                             x86_64  7:5.8.2-11.el10_2            appstream                                                15 M
+ postgresql                         x86_64  16.15-1.el10_2               appstream                                               1.9 M
+ postgresql-server                  x86_64  16.15-1.el10_2               appstream                                               7.0 M
+ python3-argon2-cffi                noarch  25.1.0-3.el10_1              epel                                                     33 k
+ python3-flask                      noarch  1:3.1.3-4.el10               copr:copr.fedorainfracloud.org:admiral-project:admiral   82 k
+ python3-flask-alembic              noarch  3.3.0-5.el10                 copr:copr.fedorainfracloud.org:admiral-project:admiral   36 k
+ python3-flask-login                noarch  0.6.3-10.el10                copr:copr.fedorainfracloud.org:admiral-project:admiral   38 k
+ python3-flask-sqlalchemy           noarch  3.1.1-11.el10                copr:copr.fedorainfracloud.org:admiral-project:admiral   54 k
+ python3-gunicorn                   noarch  23.0.0-1.el10_1              epel                                                    190 k
+ python3-mistune                    noarch  3.4.0-2.el10                 copr:copr.fedorainfracloud.org:admiral-project:admiral  170 k
+ python3-psycopg2                   x86_64  2.9.9-6.el10                 appstream                                               206 k
+ python3-sqlalchemy                 x86_64  2.0.55-5.el10                copr:copr.fedorainfracloud.org:admiral-project:admiral  3.3 M
+ python3-werkzeug                   noarch  3.1.3-1.el10_0               epel                                                    446 k
+ systemd-container                  x86_64  257-23.el10_2.2.rocky.0.1    baseos                                                  653 k
+ wireguard-tools                    x86_64  1.0.20250521-2.el10          appstream                                               131 k
+Installing dependencies:
+ aardvark-dns                       x86_64  2:1.17.1-1.el10_2            appstream                                               906 k
+ catatonit                          x86_64  5:0.2.1-1.el10               appstream                                               290 k
+ conmon                             x86_64  3:2.2.1-2.el10               appstream                                                53 k
+ container-selinux                  noarch  4:2.246.0-1.el10             appstream                                                57 k
+ containers-common                  noarch  6:5.8-2.el10                 appstream                                               105 k
+ containers-common-extra            noarch  6:5.8-2.el10                 appstream                                               9.6 k
+ criu                               x86_64  4.2-2.el10_2                 appstream                                               574 k
+ crun                               x86_64  1.30.1-2.el10_2              appstream                                               286 k
+ fontawesome4-fonts                 noarch  1:4.7.0-24.el10_2            appstream                                               204 k
+ git-core                           x86_64  2.52.0-1.el10                appstream                                               5.1 M
+ libargon2                          x86_64  20190702-6.el10_0            epel                                                     29 k
+ libicu                             x86_64  74.2-5.el10_0                baseos                                                   10 M
+ libnet                             x86_64  1.3-7.el10                   appstream                                                62 k
+ libnftnl                           x86_64  1.3.0-3.el10                 baseos                                                   87 k
+ libpq                              x86_64  16.14-1.el10_2               baseos                                                  252 k
+ netavark                           x86_64  2:1.17.2-1.el10              appstream                                               3.1 M
+ nftables                           x86_64  1:1.1.5-6.el10_2             baseos                                                  447 k
+ passt                              x86_64  0^20251210.gd04c480-7.el10_2 appstream                                               281 k
+ passt-selinux                      noarch  0^20251210.gd04c480-7.el10_2 appstream                                                26 k
+ podman-sequoia                     x86_64  0.4.0~pqc.3-1.el10_2         appstream                                               2.5 M
+ postgresql-private-libs            x86_64  16.15-1.el10_2               appstream                                               143 k
+ python3-acme                       noarch  4.2.0-1.el10_2               epel                                                    210 k
+ python3-alembic                    noarch  1.20.1-5.el10                copr:copr.fedorainfracloud.org:admiral-project:admiral  498 k
+ python3-argon2-cffi-bindings       x86_64  21.2.0-1.el10_1              epel                                                     26 k
+ python3-blinker                    noarch  1.9.0-1.el10_0               epel                                                     27 k
+ python3-certbot                    noarch  4.2.0-1.el10_2               epel                                                    881 k
+ python3-click                      noarch  8.1.7-7.el10_3               epel                                                    226 k
+ python3-configargparse             noarch  1.8.0-1.el10_3               epel                                                     67 k
+ python3-greenlet                   x86_64  3.0.3-5.el10                 appstream                                               265 k
+ python3-itsdangerous               noarch  2.2.0-1.el10_0               epel                                                     41 k
+ python3-josepy                     noarch  2.0.0-2.el10_1               epel                                                     72 k
+ python3-mako                       noarch  1.2.3-9.el10                 appstream                                               223 k
+ python3-parsedatetime              noarch  2.6-1.el10_0                 epel                                                     95 k
+ python3-pyrfc3339                  noarch  1.1-20.el10_0                epel                                                     19 k
+ python3-pytz                       noarch  2025.1-1.el10_1              epel                                                     56 k
+ python3-resolvelib                 noarch  1.0.1-6.el10                 appstream                                                47 k
+ rocky-logos-httpd                  noarch  100.5-3.el10                 appstream                                                24 k
+ shadow-utils-subid                 x86_64  2:4.15.0-11.el10             baseos                                                   26 k
+ systemd-resolved                   x86_64  257-23.el10_2.2.rocky.0.1    baseos                                                  323 k
+Installing weak dependencies:
+ criu-libs                          x86_64  4.2-2.el10_2                 appstream                                                31 k
+ python-josepy-doc                  noarch  2.0.0-2.el10_1               epel                                                     10 k
+
+Transaction Summary
+======================================================================================================================================
+Install  60 Packages
+
+Total download size: 74 M
+Installed size: 272 M
+Downloading Packages:
+(1/60): python3-flask-alembic-3.3.0-5.el10.noar  70 kB/s |  36 kB     00:00    
+(2/60): python3-alembic-1.20.1-5.el10.noarch.rp 822 kB/s | 498 kB     00:00    
+(3/60): python3-flask-3.1.3-4.el10.noarch.rpm   134 kB/s |  82 kB     00:00    
+(4/60): python3-flask-login-0.6.3-10.el10.noarc 147 kB/s |  38 kB     00:00    
+(5/60): python3-mistune-3.4.0-2.el10.noarch.rpm 577 kB/s | 170 kB     00:00    
+(6/60): python3-flask-sqlalchemy-3.1.1-11.el10. 174 kB/s |  54 kB     00:00    
+(7/60): python3-sqlalchemy-2.0.55-5.el10.x86_64  10 MB/s | 3.3 MB     00:00    
+(8/60): ansible-collection-ansible-posix-2.2.1- 419 kB/s | 102 kB     00:00    
+(9/60): libargon2-20190702-6.el10_0.x86_64.rpm  825 kB/s |  29 kB     00:00    
+(10/60): python-josepy-doc-2.0.0-2.el10_1.noarc 293 kB/s |  10 kB     00:00    
+(11/60): certbot-4.2.0-1.el10_2.noarch.rpm      372 kB/s |  51 kB     00:00    
+(12/60): python3-argon2-cffi-25.1.0-3.el10_1.no 880 kB/s |  33 kB     00:00    
+(13/60): python3-acme-4.2.0-1.el10_2.noarch.rpm 3.3 MB/s | 210 kB     00:00    
+(14/60): python3-argon2-cffi-bindings-21.2.0-1. 780 kB/s |  26 kB     00:00    
+(15/60): python3-blinker-1.9.0-1.el10_0.noarch. 616 kB/s |  27 kB     00:00    
+(16/60): python3-certbot-4.2.0-1.el10_2.noarch. 9.9 MB/s | 881 kB     00:00    
+(17/60): python3-click-8.1.7-7.el10_3.noarch.rp 2.3 MB/s | 226 kB     00:00    
+(18/60): python3-configargparse-1.8.0-1.el10_3. 1.8 MB/s |  67 kB     00:00    
+(19/60): python3-itsdangerous-2.2.0-1.el10_0.no 1.4 MB/s |  41 kB     00:00    
+(20/60): python3-gunicorn-23.0.0-1.el10_1.noarc 3.8 MB/s | 190 kB     00:00    
+(21/60): caddy-2.10.2-9.el10_3.x86_64.rpm        17 MB/s |  14 MB     00:00    
+(22/60): python3-josepy-2.0.0-2.el10_1.noarch.r 247 kB/s |  72 kB     00:00    
+(23/60): python3-parsedatetime-2.6-1.el10_0.noa 331 kB/s |  95 kB     00:00    
+(24/60): python3-pyrfc3339-1.1-20.el10_0.noarch 564 kB/s |  19 kB     00:00    
+(25/60): python3-pytz-2025.1-1.el10_1.noarch.rp 1.6 MB/s |  56 kB     00:00    
+(26/60): python3-werkzeug-3.1.3-1.el10_0.noarch 6.2 MB/s | 446 kB     00:00    
+(27/60): libnftnl-1.3.0-3.el10.x86_64.rpm       2.2 MB/s |  87 kB     00:00    
+(28/60): libpq-16.14-1.el10_2.x86_64.rpm        8.7 MB/s | 252 kB     00:00    
+(29/60): shadow-utils-subid-4.15.0-11.el10.x86_ 1.9 MB/s |  26 kB     00:00    
+(30/60): nftables-1.1.5-6.el10_2.x86_64.rpm     7.9 MB/s | 447 kB     00:00    
+(31/60): systemd-container-257-23.el10_2.2.rock  24 MB/s | 653 kB     00:00    
+(32/60): libicu-74.2-5.el10_0.x86_64.rpm         50 MB/s |  10 MB     00:00    
+(33/60): systemd-resolved-257-23.el10_2.2.rocky 3.2 MB/s | 323 kB     00:00    
+(34/60): catatonit-0.2.1-1.el10.x86_64.rpm      2.7 MB/s | 290 kB     00:00    
+(35/60): aardvark-dns-1.17.1-1.el10_2.x86_64.rp 3.8 MB/s | 906 kB     00:00    
+(36/60): conmon-2.2.1-2.el10.x86_64.rpm         1.1 MB/s |  53 kB     00:00    
+(37/60): ansible-core-2.16.16-2.el10_2.1.noarch  13 MB/s | 2.5 MB     00:00    
+(38/60): container-selinux-2.246.0-1.el10.noarc 1.2 MB/s |  57 kB     00:00    
+(39/60): containers-common-5.8-2.el10.noarch.rp 2.3 MB/s | 105 kB     00:00    
+(40/60): containers-common-extra-5.8-2.el10.noa 233 kB/s | 9.6 kB     00:00    
+(41/60): criu-libs-4.2-2.el10_2.x86_64.rpm      867 kB/s |  31 kB     00:00    
+(42/60): criu-4.2-2.el10_2.x86_64.rpm            11 MB/s | 574 kB     00:00    
+(43/60): crun-1.30.1-2.el10_2.x86_64.rpm        6.4 MB/s | 286 kB     00:00    
+(44/60): fontawesome4-fonts-4.7.0-24.el10_2.noa 4.3 MB/s | 204 kB     00:00    
+(45/60): git-core-2.52.0-1.el10.x86_64.rpm       55 MB/s | 5.1 MB     00:00    
+(46/60): libnet-1.3-7.el10.x86_64.rpm           788 kB/s |  62 kB     00:00    
+(47/60): passt-0^20251210.gd04c480-7.el10_2.x86 5.2 MB/s | 281 kB     00:00    
+(48/60): passt-selinux-0^20251210.gd04c480-7.el 537 kB/s |  26 kB     00:00    
+(49/60): netavark-1.17.2-1.el10.x86_64.rpm       21 MB/s | 3.1 MB     00:00    
+(50/60): podman-sequoia-0.4.0~pqc.3-1.el10_2.x8  29 MB/s | 2.5 MB     00:00    
+(51/60): postgresql-16.15-1.el10_2.x86_64.rpm    22 MB/s | 1.9 MB     00:00    
+(52/60): postgresql-private-libs-16.15-1.el10_2 4.0 MB/s | 143 kB     00:00    
+(53/60): python3-greenlet-3.0.3-5.el10.x86_64.r 5.0 MB/s | 265 kB     00:00    
+(54/60): podman-5.8.2-11.el10_2.x86_64.rpm       40 MB/s |  15 MB     00:00    
+(55/60): python3-mako-1.2.3-9.el10.noarch.rpm   1.0 MB/s | 223 kB     00:00    
+(56/60): python3-resolvelib-1.0.1-6.el10.noarch 1.4 MB/s |  47 kB     00:00    
+(57/60): rocky-logos-httpd-100.5-3.el10.noarch. 809 kB/s |  24 kB     00:00    
+(58/60): python3-psycopg2-2.9.9-6.el10.x86_64.r 2.3 MB/s | 206 kB     00:00    
+(59/60): postgresql-server-16.15-1.el10_2.x86_6  16 MB/s | 7.0 MB     00:00    
+(60/60): wireguard-tools-1.0.20250521-2.el10.x8 1.3 MB/s | 131 kB     00:00    
+--------------------------------------------------------------------------------
+Total                                            24 MB/s |  74 MB     00:03     
+Running transaction check
+Transaction check succeeded.
+Running transaction test
+Transaction test succeeded.
+Running transaction
+  Preparing        :                                                        1/1 
+  Installing       : postgresql-private-libs-16.15-1.el10_2.x86_64         1/60 
+  Running scriptlet: container-selinux-4:2.246.0-1.el10.noarch             2/60 
+  Installing       : container-selinux-4:2.246.0-1.el10.noarch             2/60 
+  Running scriptlet: container-selinux-4:2.246.0-1.el10.noarch             2/60 
+  Installing       : python3-werkzeug-3.1.3-1.el10_0.noarch                3/60 
+  Running scriptlet: passt-selinux-0^20251210.gd04c480-7.el10_2.noarch     4/60 
+  Installing       : passt-selinux-0^20251210.gd04c480-7.el10_2.noarch     4/60 
+  Running scriptlet: passt-selinux-0^20251210.gd04c480-7.el10_2.noarch     4/60 
+  Installing       : passt-0^20251210.gd04c480-7.el10_2.x86_64             5/60 
+  Installing       : postgresql-16.15-1.el10_2.x86_64                      6/60 
+  Installing       : rocky-logos-httpd-100.5-3.el10.noarch                 7/60 
+  Installing       : python3-resolvelib-1.0.1-6.el10.noarch                8/60 
+  Installing       : python3-mako-1.2.3-9.el10.noarch                      9/60 
+  Installing       : python3-greenlet-3.0.3-5.el10.x86_64                 10/60 
+  Installing       : python3-sqlalchemy-2.0.55-5.el10.x86_64              11/60 
+  Installing       : python3-alembic-1.20.1-5.el10.noarch                 12/60 
+  Installing       : podman-sequoia-0.4.0~pqc.3-1.el10_2.x86_64           13/60 
+  Installing       : libnet-1.3-7.el10.x86_64                             14/60 
+  Installing       : git-core-2.52.0-1.el10.x86_64                        15/60 
+  Installing       : ansible-core-1:2.16.16-2.el10_2.1.noarch             16/60 
+  Installing       : fontawesome4-fonts-1:4.7.0-24.el10_2.noarch          17/60 
+  Installing       : conmon-3:2.2.1-2.el10.x86_64                         18/60 
+  Installing       : catatonit-5:0.2.1-1.el10.x86_64                      19/60 
+  Installing       : aardvark-dns-2:1.17.1-1.el10_2.x86_64                20/60 
+  Running scriptlet: systemd-resolved-257-23.el10_2.2.rocky.0.1.x86_64    21/60 
+  Installing       : systemd-resolved-257-23.el10_2.2.rocky.0.1.x86_64    21/60 
+  Running scriptlet: systemd-resolved-257-23.el10_2.2.rocky.0.1.x86_64    21/60 
+  Installing       : shadow-utils-subid-2:4.15.0-11.el10.x86_64           22/60 
+  Installing       : libpq-16.14-1.el10_2.x86_64                          23/60 
+  Installing       : libnftnl-1.3.0-3.el10.x86_64                         24/60 
+  Installing       : nftables-1:1.1.5-6.el10_2.x86_64                     25/60 
+  Running scriptlet: nftables-1:1.1.5-6.el10_2.x86_64                     25/60 
+  Installing       : criu-4.2-2.el10_2.x86_64                             26/60 
+  Installing       : netavark-2:1.17.2-1.el10.x86_64                      27/60 
+  Installing       : containers-common-6:5.8-2.el10.noarch                28/60 
+  Installing       : criu-libs-4.2-2.el10_2.x86_64                        29/60 
+  Installing       : crun-1.30.1-2.el10_2.x86_64                          30/60 
+  Installing       : containers-common-extra-6:5.8-2.el10.noarch          31/60 
+  Installing       : libicu-74.2-5.el10_0.x86_64                          32/60 
+  Installing       : python3-pytz-2025.1-1.el10_1.noarch                  33/60 
+  Installing       : python3-pyrfc3339-1.1-20.el10_0.noarch               34/60 
+  Installing       : python3-parsedatetime-2.6-1.el10_0.noarch            35/60 
+  Installing       : python3-itsdangerous-2.2.0-1.el10_0.noarch           36/60 
+  Installing       : python3-configargparse-1.8.0-1.el10_3.noarch         37/60 
+  Installing       : python3-click-8.1.7-7.el10_3.noarch                  38/60 
+  Installing       : python3-blinker-1.9.0-1.el10_0.noarch                39/60 
+  Installing       : python3-flask-1:3.1.3-4.el10.noarch                  40/60 
+  Installing       : python-josepy-doc-2.0.0-2.el10_1.noarch              41/60 
+  Installing       : python3-josepy-2.0.0-2.el10_1.noarch                 42/60 
+  Installing       : python3-acme-4.2.0-1.el10_2.noarch                   43/60 
+  Installing       : python3-certbot-4.2.0-1.el10_2.noarch                44/60 
+  Installing       : libargon2-20190702-6.el10_0.x86_64                   45/60 
+  Installing       : python3-argon2-cffi-bindings-21.2.0-1.el10_1.x86_6   46/60 
+  Installing       : python3-argon2-cffi-25.1.0-3.el10_1.noarch           47/60 
+  Installing       : certbot-4.2.0-1.el10_2.noarch                        48/60 
+  Running scriptlet: certbot-4.2.0-1.el10_2.noarch                        48/60 
+Created symlink '/etc/systemd/system/timers.target.wants/certbot-renew.timer' → '/usr/lib/systemd/system/certbot-renew.timer'.
+
+Certbot auto renewal timer is not started by default.
+Run 'systemctl start certbot-renew.timer' to enable automatic renewals.
+
+  Installing       : python3-flask-alembic-3.3.0-5.el10.noarch            49/60 
+  Installing       : python3-flask-login-0.6.3-10.el10.noarch             50/60 
+  Installing       : python3-flask-sqlalchemy-3.1.1-11.el10.noarch        51/60 
+  Running scriptlet: postgresql-server-16.15-1.el10_2.x86_64              52/60 
+  Installing       : postgresql-server-16.15-1.el10_2.x86_64              52/60 
+  Running scriptlet: postgresql-server-16.15-1.el10_2.x86_64              52/60 
+  Installing       : podman-7:5.8.2-11.el10_2.x86_64                      53/60 
+  Installing       : python3-psycopg2-2.9.9-6.el10.x86_64                 54/60 
+  Installing       : wireguard-tools-1.0.20250521-2.el10.x86_64           55/60 
+  Installing       : ansible-collection-ansible-posix-2.2.1-1.el10_3.no   56/60 
+  Running scriptlet: caddy-2.10.2-9.el10_3.x86_64                         57/60 
+  Installing       : caddy-2.10.2-9.el10_3.x86_64                         57/60 
+  Running scriptlet: caddy-2.10.2-9.el10_3.x86_64                         57/60 
+Port udp/80 already defined, modifying instead
+Port udp/443 already defined, modifying instead
+
+  Installing       : systemd-container-257-23.el10_2.2.rocky.0.1.x86_64   58/60 
+  Installing       : python3-gunicorn-23.0.0-1.el10_1.noarch              59/60 
+  Installing       : python3-mistune-3.4.0-2.el10.noarch                  60/60 
+  Running scriptlet: container-selinux-4:2.246.0-1.el10.noarch            60/60 
+  Running scriptlet: passt-selinux-0^20251210.gd04c480-7.el10_2.noarch    60/60 
+  Running scriptlet: python3-mistune-3.4.0-2.el10.noarch                  60/60 
+
+Installed:
+  aardvark-dns-2:1.17.1-1.el10_2.x86_64                                         
+  ansible-collection-ansible-posix-2.2.1-1.el10_3.noarch                        
+  ansible-core-1:2.16.16-2.el10_2.1.noarch                                      
+  caddy-2.10.2-9.el10_3.x86_64                                                  
+  catatonit-5:0.2.1-1.el10.x86_64                                               
+  certbot-4.2.0-1.el10_2.noarch                                                 
+  conmon-3:2.2.1-2.el10.x86_64                                                  
+  container-selinux-4:2.246.0-1.el10.noarch                                     
+  containers-common-6:5.8-2.el10.noarch                                         
+  containers-common-extra-6:5.8-2.el10.noarch                                   
+  criu-4.2-2.el10_2.x86_64                                                      
+  criu-libs-4.2-2.el10_2.x86_64                                                 
+  crun-1.30.1-2.el10_2.x86_64                                                   
+  fontawesome4-fonts-1:4.7.0-24.el10_2.noarch                                   
+  git-core-2.52.0-1.el10.x86_64                                                 
+  libargon2-20190702-6.el10_0.x86_64                                            
+  libicu-74.2-5.el10_0.x86_64                                                   
+  libnet-1.3-7.el10.x86_64                                                      
+  libnftnl-1.3.0-3.el10.x86_64                                                  
+  libpq-16.14-1.el10_2.x86_64                                                   
+  netavark-2:1.17.2-1.el10.x86_64                                               
+  nftables-1:1.1.5-6.el10_2.x86_64                                              
+  passt-0^20251210.gd04c480-7.el10_2.x86_64                                     
+  passt-selinux-0^20251210.gd04c480-7.el10_2.noarch                             
+  podman-7:5.8.2-11.el10_2.x86_64                                               
+  podman-sequoia-0.4.0~pqc.3-1.el10_2.x86_64                                    
+  postgresql-16.15-1.el10_2.x86_64                                              
+  postgresql-private-libs-16.15-1.el10_2.x86_64                                 
+  postgresql-server-16.15-1.el10_2.x86_64                                       
+  python-josepy-doc-2.0.0-2.el10_1.noarch                                       
+  python3-acme-4.2.0-1.el10_2.noarch                                            
+  python3-alembic-1.20.1-5.el10.noarch                                          
+  python3-argon2-cffi-25.1.0-3.el10_1.noarch                                    
+  python3-argon2-cffi-bindings-21.2.0-1.el10_1.x86_64                           
+  python3-blinker-1.9.0-1.el10_0.noarch                                         
+  python3-certbot-4.2.0-1.el10_2.noarch                                         
+  python3-click-8.1.7-7.el10_3.noarch                                           
+  python3-configargparse-1.8.0-1.el10_3.noarch                                  
+  python3-flask-1:3.1.3-4.el10.noarch                                           
+  python3-flask-alembic-3.3.0-5.el10.noarch                                     
+  python3-flask-login-0.6.3-10.el10.noarch                                      
+  python3-flask-sqlalchemy-3.1.1-11.el10.noarch                                 
+  python3-greenlet-3.0.3-5.el10.x86_64                                          
+  python3-gunicorn-23.0.0-1.el10_1.noarch                                       
+  python3-itsdangerous-2.2.0-1.el10_0.noarch                                    
+  python3-josepy-2.0.0-2.el10_1.noarch                                          
+  python3-mako-1.2.3-9.el10.noarch                                              
+  python3-mistune-3.4.0-2.el10.noarch                                           
+  python3-parsedatetime-2.6-1.el10_0.noarch                                     
+  python3-psycopg2-2.9.9-6.el10.x86_64                                          
+  python3-pyrfc3339-1.1-20.el10_0.noarch                                        
+  python3-pytz-2025.1-1.el10_1.noarch                                           
+  python3-resolvelib-1.0.1-6.el10.noarch                                        
+  python3-sqlalchemy-2.0.55-5.el10.x86_64                                       
+  python3-werkzeug-3.1.3-1.el10_0.noarch                                        
+  rocky-logos-httpd-100.5-3.el10.noarch                                         
+  shadow-utils-subid-2:4.15.0-11.el10.x86_64                                    
+  systemd-container-257-23.el10_2.2.rocky.0.1.x86_64                            
+  systemd-resolved-257-23.el10_2.2.rocky.0.1.x86_64                             
+  wireguard-tools-1.0.20250521-2.el10.x86_64                                    
+
+Complete!
+Admiral RC5 Release 75 signed local validation   31 kB/s | 659  B     00:00    
+Copr repo for admiral owned by admiral-project  3.6 kB/s | 1.5 kB     00:00    
+Extra Packages for Enterprise Linux 10 - x86_64  35 kB/s | 4.0 kB     00:00    
+Rocky Linux 10 - BaseOS                          55 kB/s | 4.3 kB     00:00    
+Rocky Linux 10 - AppStream                       33 kB/s | 4.4 kB     00:00    
+Rocky Linux 10 - CRB                             34 kB/s | 4.3 kB     00:00    
+Rocky Linux 10 - Extras                          23 kB/s | 3.1 kB     00:00    
+Dependencies resolved.
+Nothing to do.
+Complete!
+Cache was expired
+38 files removed
+Copr repo for admiral owned by admiral-project   55 kB/s |  40 kB     00:00    
+Extra Packages for Enterprise Linux 10 - x86_64 5.2 MB/s | 7.3 MB     00:01    
+Rocky Linux 10 - BaseOS                          19 MB/s |  41 MB     00:02    
+Rocky Linux 10 - AppStream                      9.8 MB/s | 2.8 MB     00:00    
+Rocky Linux 10 - CRB                            626 kB/s | 562 kB     00:00    
+Rocky Linux 10 - Extras                          26 kB/s | 6.1 kB     00:00    
+Dependencies resolved.
+Nothing to do.
+Complete!
+Prepared audit seed for rocky 10.2 at 2026-10-25T10:25:38Z
+ansible-collection-ansible-posix-2.2.1-1.el10_3.noarch
+ansible-core-2.16.16-2.el10_2.1.noarch
+caddy-2.10.2-9.el10_3.x86_64
+certbot-4.2.0-1.el10_2.noarch
+curl-8.12.1-4.el10_2.7.x86_64
+gnupg2-2.4.5-4.el10_1.x86_64
+openssh-clients-9.9p1-29.el10_2.rocky.0.1.x86_64
+openssh-server-9.9p1-29.el10_2.rocky.0.1.x86_64
+openssl-3.5.8-2.el10_2.x86_64
+policycoreutils-python-utils-3.10-2.el10_2.noarch
+podman-5.8.2-11.el10_2.x86_64
+postgresql-16.15-1.el10_2.x86_64
+postgresql-server-16.15-1.el10_2.x86_64
+python3-3.12.15-1.el10_2.x86_64
+python3-argon2-cffi-25.1.0-3.el10_1.noarch
+python3-cryptography-43.0.0-4.el10_2.5.x86_64
+python3-flask-3.1.3-4.el10.noarch
+python3-flask-alembic-3.3.0-5.el10.noarch
+python3-flask-login-0.6.3-10.el10.noarch
+python3-flask-sqlalchemy-3.1.1-11.el10.noarch
+python3-gunicorn-23.0.0-1.el10_1.noarch
+python3-mistune-3.4.0-2.el10.noarch
+python3-psycopg2-2.9.9-6.el10.x86_64
+python3-sqlalchemy-2.0.55-5.el10.x86_64
+python3-pyyaml-6.0.1-19.el10.x86_64
+python3-requests-2.32.4-1.el10_0.noarch
+python3-werkzeug-3.1.3-1.el10_0.noarch
+shadow-utils-4.15.0-11.el10.x86_64
+systemd-257-23.el10_2.2.rocky.0.1.x86_64
+systemd-container-257-23.el10_2.2.rocky.0.1.x86_64
+wireguard-tools-1.0.20250521-2.el10.x86_64
+python3-pyOpenSSL-25.0.0-1.el10_1.noarch
+kernel-core-6.12.0-211.16.1.el10_2.0.1.x86_64
+kernel-core-6.12.0-211.68.1.el10_2.x86_64
+    Install passt-0^20251210.gd04c480-7.el10_2.x86_64              @appstream
+    Install passt-selinux-0^20251210.gd04c480-7.el10_2.noarch      @appstream
+    Install podman-7:5.8.2-11.el10_2.x86_64                        @appstream
+    Install podman-sequoia-0.4.0~pqc.3-1.el10_2.x86_64             @appstream
+    Install postgresql-16.15-1.el10_2.x86_64                       @appstream
+    Install postgresql-private-libs-16.15-1.el10_2.x86_64          @appstream
+    Install postgresql-server-16.15-1.el10_2.x86_64                @appstream
+    Install python3-greenlet-3.0.3-5.el10.x86_64                   @appstream
+    Install python3-mako-1.2.3-9.el10.noarch                       @appstream
+    Install python3-psycopg2-2.9.9-6.el10.x86_64                   @appstream
+    Install python3-resolvelib-1.0.1-6.el10.noarch                 @appstream
+    Install rocky-logos-httpd-100.5-3.el10.noarch                  @appstream
+    Install wireguard-tools-1.0.20250521-2.el10.x86_64             @appstream
+Scriptlet output:
+   1 Created symlink '/etc/systemd/system/timers.target.wants/certbot-renew.timer' → '/usr/lib/systemd/system/certbot-renew.timer'.
+   2 
+   3 Certbot auto renewal timer is not started by default.
+   4 Run 'systemctl start certbot-renew.timer' to enable automatic renewals.
+   5 Port udp/80 already defined, modifying instead
+   6 Port udp/443 already defined, modifying instead
+0 files removed

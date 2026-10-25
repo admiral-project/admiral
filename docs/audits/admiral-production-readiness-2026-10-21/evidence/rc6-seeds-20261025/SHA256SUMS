@@ -1,0 +1,13 @@
+baa2617b9f24dd3043c92706f9da4ba334100f293f1cff4744f0fd0939fd33b5  ./RESULTS.md
+05108b5f57c8dada0ed65381f8502949592f4be2977d29e71eba2cea206bb3a9  ./centos/admiral-seed-prep.log
+3f157b61ed3deca0bb7687591acb996dd9557a2539d44f00923e10e1610dd3ac  ./centos/create-seed.log
+908d3cf0b84f40d46271f31784a26f7e484db0f977ccc2d66f4f73b75f430b89  ./centos/seed-metadata.txt
+324d410439ac31dcd00151dba5dc49396c5b03ae31034b5e97fbac849358045c  ./centos/verification.txt
+53239af3b95fa3ddc3b1a6c28e739ee21193c7b47d88badc0d3bef1f137bad49  ./fedora/admiral-seed-prep.log
+ab9e59b931b0ac41744fb24c9df850c5bda5efc2b811cc65ac3a8e81457ae3ba  ./fedora/create-seed.log
+9ac7b0158c0ce48469c2e0b7f3f3967ed319e11dd8de49e84dfcd5d12080312e  ./fedora/seed-metadata.txt
+346dbfb4b63bed02ae759e6b8261e357cd73a0eb61b1f0140d15576730687ed9  ./fedora/verification.txt
+0944cff46e367d78e72cf33250d7104e36d1858de603cbadf48df698686eba4c  ./rocky/admiral-seed-prep.log
+6acc207495b68d2af6806829d3d5e75a530b7eb36d8c60107471d539b1562bae  ./rocky/create-seed.log
+27e96524851249bb413d43a6c460f27d76213c4fc02bd36aa78c8038eaaf8a54  ./rocky/seed-metadata.txt
+e2564796317a19c7e7f794faf94fe0b855b5dcff7c387e4f2c4d9f016e946ffe  ./rocky/verification.txt

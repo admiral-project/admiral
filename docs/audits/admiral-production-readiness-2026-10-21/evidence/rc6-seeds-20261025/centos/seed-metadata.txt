@@ -1,0 +1,34 @@
+os=centos
+release=75
+family=el10
+base_image=/var/lib/libvirt/images/admiral-validation/CentOS-Stream-GenericCloud-10-20261019.0.x86_64.qcow2
+output_seed=/var/lib/libvirt/images/admiral-validation/seeds/CentOS-Stream-10-seed-20261025-rc6-updated.x86_64.qcow2
+candidate_rpm_suffix=.el10
+final_dnf_check_update=0
+runtime_requires_installed=yes
+local_repo_config_baked=no
+local_repo_setup=manual-per-validation-lab
+admiral_rpms_installed=no
+cross_family_rpms_installed=no
+service_enable_commands_issued=no
+seed_file_sha256=8c30081d6d1542ccf74223d7b5a81a55d8ab8178124a47f9919b97bfb2db43c7  /var/lib/libvirt/images/admiral-validation/seeds/CentOS-Stream-10-seed-20261025-rc6-updated.x86_64.qcow2
+seed_info:
+image: /var/lib/libvirt/images/admiral-validation/seeds/CentOS-Stream-10-seed-20261025-rc6-updated.x86_64.qcow2
+file format: qcow2
+virtual size: 10 GiB (10737418240 bytes)
+disk size: 2.32 GiB
+cluster_size: 65536
+Format specific information:
+    compat: 1.1
+    compression type: zlib
+    lazy refcounts: false
+    refcount bits: 16
+    corrupt: false
+    extended l2: false
+Child node '/file':
+    filename: /var/lib/libvirt/images/admiral-validation/seeds/CentOS-Stream-10-seed-20261025-rc6-updated.x86_64.qcow2
+    protocol type: file
+    file length: 2.31 GiB (2485583872 bytes)
+    disk size: 2.32 GiB
+    Format specific information:
+        extent size hint: 1048576

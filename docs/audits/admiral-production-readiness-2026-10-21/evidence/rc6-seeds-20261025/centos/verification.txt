@@ -1,0 +1,71 @@
+checked=2026-10-25T10:32:29Z
+os=centos version=10 arch=x86_64
+
+Enabled repos:
+repo id                                                repo name
+appstream                                              CentOS Stream 10 - AppStream
+baseos                                                 CentOS Stream 10 - BaseOS
+copr:copr.fedorainfracloud.org:admiral-project:admiral Copr repo for admiral owned by admiral-project
+crb                                                    CentOS Stream 10 - CRB
+epel                                                   Extra Packages for Enterprise Linux 10 - x86_64
+extras-common                                          CentOS Stream 10 - Extras packages
+
+Required runtime package inventory:
+ansible-collection-ansible-posix-2.2.1-1.el10_3.noarch
+ansible-core-2.16.19-3.el10.noarch
+caddy-2.10.2-9.el10_3.x86_64
+certbot-4.2.0-1.el10_2.noarch
+curl-8.12.1-8.el10.x86_64
+gnupg2-2.4.5-5.el10.x86_64
+openssh-clients-9.9p1-33.el10.x86_64
+openssh-server-9.9p1-33.el10.x86_64
+openssl-3.5.9-1.el10.x86_64
+policycoreutils-python-utils-3.11-1.el10.noarch
+podman-6.1.0-2.el10.x86_64
+postgresql-16.14-3.el10.x86_64
+postgresql-server-16.14-3.el10.x86_64
+python3-3.12.15-1.el10.x86_64
+python3-argon2-cffi-25.1.0-3.el10_1.noarch
+python3-cryptography-49.0.0-1.el10.x86_64
+python3-flask-3.1.3-4.el10.noarch
+python3-flask-alembic-3.3.0-5.el10.noarch
+python3-flask-login-0.6.3-10.el10.noarch
+python3-flask-sqlalchemy-3.1.1-11.el10.noarch
+python3-gunicorn-23.0.0-1.el10_1.noarch
+python3-mistune-3.4.0-2.el10.noarch
+python3-psycopg2-2.9.9-6.el10.x86_64
+python3-sqlalchemy-2.0.55-5.el10.x86_64
+python3-pyyaml-6.0.1-19.el10.x86_64
+python3-requests-2.32.4-1.el10.noarch
+python3-werkzeug-3.1.3-1.el10_0.noarch
+shadow-utils-4.15.0-13.el10.x86_64
+systemd-257-34.el10.x86_64
+systemd-container-257-34.el10.x86_64
+wireguard-tools-1.0.20250521-1.el10.x86_64
+python3-alembic-1.20.1-5.el10.noarch
+python3-typing-extensions-4.16.0-2.el10.noarch
+
+Admiral RPMs (must be absent):
+
+Cross-family RPMs (must be absent):
+
+Service states (this script issues no enable/start commands):
+caddy.service enabled=disabled
+caddy.service active=inactive
+postgresql.service enabled=disabled
+postgresql.service active=inactive
+podman.socket enabled=disabled
+podman.socket active=inactive
+firewalld.service enabled=not-found
+firewalld.service active=inactive
+sshd.service enabled=enabled
+sshd.service active=active
+admirald.service enabled=not-found
+admirald.service active=inactive
+admiral-fleet.service enabled=not-found
+admiral-fleet.service active=inactive
+admiral-harbor.service enabled=not-found
+admiral-harbor.service active=inactive
+admiral-flagship.service enabled=not-found
+admiral-flagship.service active=inactive
+check_update_exit=0

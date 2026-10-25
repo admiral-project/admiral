@@ -1,0 +1,245 @@
+os=centos family=el10 release=75
+vm=seed-rc6-final-centos nat=192.168.122.226 mac=52:54:00:ad:75:02
+base_image=/var/lib/libvirt/images/admiral-validation/CentOS-Stream-GenericCloud-10-20261019.0.x86_64.qcow2
+base_image_sha256=61a925943be6f1352c5841d6d79e87f9864d265bb062495034408a83ea544b30  /var/lib/libvirt/images/admiral-validation/CentOS-Stream-GenericCloud-10-20261019.0.x86_64.qcow2
+output_seed=/var/lib/libvirt/images/admiral-validation/seeds/CentOS-Stream-10-seed-20261025-rc6-updated.x86_64.qcow2
+candidate_rpm_suffix=.el10
+candidate_rpm_nevras:
+admiral-common-0.0.1rc5-75.el10.noarch
+admiral-flagship-0.0.1rc5-75.el10.noarch
+admiral-harbor-0.0.1rc5-75.el10.noarch
+admiral-fleet-0.0.1rc5-75.el10.x86_64
+admiralctl-0.0.1rc5-75.el10.x86_64
+admirald-0.0.1rc5-75.el10.x86_64
+known_hosts_file=/var/lib/libvirt/images/admiral-validation/cloud-init/seed-rc6-final-centos/known_hosts
+host_key_fingerprint=SHA256:QzaYmD+ZPknH+EWjFjSea0WKYtUj8Y+etlAMn7szCHQ
+host_key_private_material=protected-cloud-init-only
+Updated network default persistent config and live state
+xorriso 1.5.6 : RockRidge filesystem manipulator, libburnia project.
+
+Drive current: -outdev 'stdio:/var/lib/libvirt/images/admiral-validation/cloud-init/seed-rc6-final-centos.iso'
+Media current: stdio file, overwriteable
+Media status : is blank
+Media summary: 0 sessions, 0 data blocks, 0 data, 44.5g free
+Added to ISO image: file '/user-data'='/var/lib/libvirt/images/admiral-validation/cloud-init/seed-rc6-final-centos/user-data'
+xorriso : UPDATE :       1 files added in 1 seconds
+Added to ISO image: file '/meta-data'='/var/lib/libvirt/images/admiral-validation/cloud-init/seed-rc6-final-centos/meta-data'
+xorriso : UPDATE :       2 files added in 1 seconds
+ISO image produced: 185 sectors
+Written to medium : 185 sectors at LBA 0
+Writing to 'stdio:/var/lib/libvirt/images/admiral-validation/cloud-init/seed-rc6-final-centos.iso' completed successfully.
+
+Formatting '/var/lib/libvirt/images/admiral-validation/overlays/seed-rc6-final-centos.qcow2', fmt=qcow2 cluster_size=65536 extended_l2=off compression_type=zlib size=10737418240 backing_file=/var/lib/libvirt/images/admiral-validation/CentOS-Stream-GenericCloud-10-20261019.0.x86_64.qcow2 backing_fmt=qcow2 lazy_refcounts=off refcount_bits=16
+
+Starting install...
+Creating domain...                                          |         00:00     
+Domain creation completed.
+DHCP lease verified: 52:54:00:ad:75:02 -> 192.168.122.226
+Created seed-rc6-final-centos from CentOS-Stream-GenericCloud-10-20261019.0.x86_64.qcow2 at NAT 192.168.122.226.
+known_hosts_file=/var/lib/libvirt/images/admiral-validation/cloud-init/seed-rc6-final-centos/known_hosts
+256 SHA256:QzaYmD+ZPknH+EWjFjSea0WKYtUj8Y+etlAMn7szCHQ admiral-audit-seed-rc6-final-centos (ED25519)
+  python3-flask-login-0.6.3-10.el10.noarch                                      
+  python3-flask-sqlalchemy-3.1.1-11.el10.noarch                                 
+  python3-greenlet-3.0.3-5.el10.x86_64                                          
+  python3-gunicorn-23.0.0-1.el10_1.noarch                                       
+  python3-itsdangerous-2.2.0-1.el10_0.noarch                                    
+  python3-josepy-2.0.0-2.el10_1.noarch                                          
+  python3-mako-1.2.3-9.el10.noarch                                              
+  python3-mistune-3.4.0-2.el10.noarch                                           
+  python3-parsedatetime-2.6-1.el10_0.noarch                                     
+  python3-ply-3.11-25.el10.noarch                                               
+  python3-psycopg2-2.9.9-6.el10.x86_64                                          
+  python3-pyOpenSSL-26.3.0-1.el10_3.noarch                                      
+  python3-pycparser-2.20-16.el10.noarch                                         
+  python3-pyrfc3339-1.1-20.el10_0.noarch                                        
+  python3-pytz-2025.1-1.el10_1.noarch                                           
+  python3-resolvelib-1.0.1-6.el10.noarch                                        
+  python3-sqlalchemy-2.0.55-5.el10.x86_64                                       
+  python3-typing-extensions-4.16.0-2.el10.noarch                                
+  python3-werkzeug-3.1.3-1.el10_0.noarch                                        
+  systemd-container-257-34.el10.x86_64                                          
+  systemd-resolved-257-34.el10.x86_64                                           
+  wireguard-tools-1.0.20250521-1.el10.x86_64                                    
+
+Complete!
+Admiral RC5 Release 75 signed local validation   58 kB/s | 659  B     00:00    
+Copr repo for admiral owned by admiral-project  4.2 kB/s | 1.5 kB     00:00    
+CentOS Stream 10 - BaseOS                        93 kB/s | 5.1 kB     00:00    
+CentOS Stream 10 - AppStream                     32 kB/s | 5.2 kB     00:00    
+CentOS Stream 10 - CRB                           52 kB/s | 5.0 kB     00:00    
+CentOS Stream 10 - Extras packages               46 kB/s | 5.5 kB     00:00    
+Extra Packages for Enterprise Linux 10 - x86_64  44 kB/s | 4.0 kB     00:00    
+Dependencies resolved.
+Nothing to do.
+Complete!
+Cache was expired
+32 files removed
+Copr repo for admiral owned by admiral-project   67 kB/s |  40 kB     00:00    
+CentOS Stream 10 - BaseOS                       7.2 MB/s | 2.8 MB     00:00    
+CentOS Stream 10 - AppStream                     10 MB/s | 2.4 MB     00:00    
+CentOS Stream 10 - CRB                          400 kB/s | 600 kB     00:01    
+CentOS Stream 10 - Extras packages               36 kB/s |  11 kB     00:00    
+Extra Packages for Enterprise Linux 10 - x86_64  18 MB/s | 7.3 MB     00:00    
+Dependencies resolved.
+Nothing to do.
+Complete!
+Prepared audit seed for centos 10 at 2026-10-25T10:32:24Z
+ansible-collection-ansible-posix-2.2.1-1.el10_3.noarch
+ansible-core-2.16.19-3.el10.noarch
+caddy-2.10.2-9.el10_3.x86_64
+certbot-4.2.0-1.el10_2.noarch
+curl-8.12.1-8.el10.x86_64
+gnupg2-2.4.5-5.el10.x86_64
+openssh-clients-9.9p1-33.el10.x86_64
+openssh-server-9.9p1-33.el10.x86_64
+openssl-3.5.9-1.el10.x86_64
+policycoreutils-python-utils-3.11-1.el10.noarch
+podman-6.1.0-2.el10.x86_64
+postgresql-16.14-3.el10.x86_64
+postgresql-server-16.14-3.el10.x86_64
+python3-3.12.15-1.el10.x86_64
+python3-argon2-cffi-25.1.0-3.el10_1.noarch
+python3-cryptography-49.0.0-1.el10.x86_64
+python3-flask-3.1.3-4.el10.noarch
+python3-flask-alembic-3.3.0-5.el10.noarch
+python3-flask-login-0.6.3-10.el10.noarch
+python3-flask-sqlalchemy-3.1.1-11.el10.noarch
+python3-gunicorn-23.0.0-1.el10_1.noarch
+python3-mistune-3.4.0-2.el10.noarch
+python3-psycopg2-2.9.9-6.el10.x86_64
+python3-sqlalchemy-2.0.55-5.el10.x86_64
+python3-pyyaml-6.0.1-19.el10.x86_64
+python3-requests-2.32.4-1.el10.noarch
+python3-werkzeug-3.1.3-1.el10_0.noarch
+shadow-utils-4.15.0-13.el10.x86_64
+systemd-257-34.el10.x86_64
+systemd-container-257-34.el10.x86_64
+wireguard-tools-1.0.20250521-1.el10.x86_64
+kernel-core-6.12.0-277.el10.x86_64
+kernel-core-6.12.0-278.el10.x86_64
+    Install python3-argon2-cffi-bindings-21.2.0-1.el10_1.x86_64    @epel
+    Install python3-blinker-1.9.0-1.el10_0.noarch                  @epel
+    Install python3-certbot-4.2.0-1.el10_2.noarch                  @epel
+    Install python3-click-8.1.7-7.el10_3.noarch                    @epel
+    Install python3-configargparse-1.8.0-1.el10_3.noarch           @epel
+    Install python3-gunicorn-23.0.0-1.el10_1.noarch                @epel
+    Install python3-itsdangerous-2.2.0-1.el10_0.noarch             @epel
+    Install python3-josepy-2.0.0-2.el10_1.noarch                   @epel
+    Install python3-parsedatetime-2.6-1.el10_0.noarch              @epel
+    Install python3-pyOpenSSL-26.3.0-1.el10_3.noarch               @epel
+    Install python3-pyrfc3339-1.1-20.el10_0.noarch                 @epel
+    Install python3-pytz-2025.1-1.el10_1.noarch                    @epel
+    Install python3-werkzeug-3.1.3-1.el10_0.noarch                 @epel
+Scriptlet output:
+   1 Created symlink '/etc/systemd/system/timers.target.wants/certbot-renew.timer' → '/usr/lib/systemd/system/certbot-renew.timer'.
+   2 
+   3 Certbot auto renewal timer is not started by default.
+   4 Run 'systemctl start certbot-renew.timer' to enable automatic renewals.
+   5 Port udp/80 already defined, modifying instead
+   6 Port udp/443 already defined, modifying instead
+0 files removed
+checked=2026-10-25T10:32:29Z
+os=centos version=10 arch=x86_64
+
+Enabled repos:
+repo id                                                repo name
+appstream                                              CentOS Stream 10 - AppStream
+baseos                                                 CentOS Stream 10 - BaseOS
+copr:copr.fedorainfracloud.org:admiral-project:admiral Copr repo for admiral owned by admiral-project
+crb                                                    CentOS Stream 10 - CRB
+epel                                                   Extra Packages for Enterprise Linux 10 - x86_64
+extras-common                                          CentOS Stream 10 - Extras packages
+
+Required runtime package inventory:
+ansible-collection-ansible-posix-2.2.1-1.el10_3.noarch
+ansible-core-2.16.19-3.el10.noarch
+caddy-2.10.2-9.el10_3.x86_64
+certbot-4.2.0-1.el10_2.noarch
+curl-8.12.1-8.el10.x86_64
+gnupg2-2.4.5-5.el10.x86_64
+openssh-clients-9.9p1-33.el10.x86_64
+openssh-server-9.9p1-33.el10.x86_64
+openssl-3.5.9-1.el10.x86_64
+policycoreutils-python-utils-3.11-1.el10.noarch
+podman-6.1.0-2.el10.x86_64
+postgresql-16.14-3.el10.x86_64
+postgresql-server-16.14-3.el10.x86_64
+python3-3.12.15-1.el10.x86_64
+python3-argon2-cffi-25.1.0-3.el10_1.noarch
+python3-cryptography-49.0.0-1.el10.x86_64
+python3-flask-3.1.3-4.el10.noarch
+python3-flask-alembic-3.3.0-5.el10.noarch
+python3-flask-login-0.6.3-10.el10.noarch
+python3-flask-sqlalchemy-3.1.1-11.el10.noarch
+python3-gunicorn-23.0.0-1.el10_1.noarch
+python3-mistune-3.4.0-2.el10.noarch
+python3-psycopg2-2.9.9-6.el10.x86_64
+python3-sqlalchemy-2.0.55-5.el10.x86_64
+python3-pyyaml-6.0.1-19.el10.x86_64
+python3-requests-2.32.4-1.el10.noarch
+python3-werkzeug-3.1.3-1.el10_0.noarch
+shadow-utils-4.15.0-13.el10.x86_64
+systemd-257-34.el10.x86_64
+systemd-container-257-34.el10.x86_64
+wireguard-tools-1.0.20250521-1.el10.x86_64
+python3-alembic-1.20.1-5.el10.noarch
+python3-typing-extensions-4.16.0-2.el10.noarch
+
+Admiral RPMs (must be absent):
+
+Cross-family RPMs (must be absent):
+
+Service states (this script issues no enable/start commands):
+caddy.service enabled=disabled
+caddy.service active=inactive
+postgresql.service enabled=disabled
+postgresql.service active=inactive
+podman.socket enabled=disabled
+podman.socket active=inactive
+firewalld.service enabled=not-found
+firewalld.service active=inactive
+sshd.service enabled=enabled
+sshd.service active=active
+admirald.service enabled=not-found
+admirald.service active=inactive
+admiral-fleet.service enabled=not-found
+admiral-fleet.service active=inactive
+admiral-harbor.service enabled=not-found
+admiral-harbor.service active=inactive
+admiral-flagship.service enabled=not-found
+admiral-flagship.service active=inactive
+check_update_exit=0
+guest_poweroff_ssh_exit_code=0
+No errors were found on the image.
+13512/163840 = 8.25% allocated, 9.26% fragmented, 0.00% compressed clusters
+Image end offset: 886308864
+    (0.00/100%)    (1.00/100%)    (2.00/100%)    (3.01/100%)    (4.02/100%)    (5.05/100%)    (6.05/100%)    (7.05/100%)    (8.06/100%)    (9.06/100%)    (10.06/100%)    (11.06/100%)    (12.07/100%)    (13.07/100%)    (14.07/100%)    (15.07/100%)    (16.07/100%)    (17.08/100%)    (18.08/100%)    (19.10/100%)    (20.15/100%)    (21.16/100%)    (22.17/100%)    (23.18/100%)    (24.22/100%)    (25.24/100%)    (26.26/100%)    (27.29/100%)    (28.30/100%)    (29.36/100%)    (30.44/100%)    (31.45/100%)    (32.45/100%)    (33.47/100%)    (34.51/100%)    (35.51/100%)    (36.58/100%)    (37.58/100%)    (38.58/100%)    (39.58/100%)    (40.58/100%)    (41.59/100%)    (42.59/100%)    (43.59/100%)    (44.59/100%)    (45.65/100%)    (46.67/100%)    (47.71/100%)    (48.76/100%)    (49.76/100%)    (50.80/100%)    (51.82/100%)    (52.82/100%)    (53.83/100%)    (54.84/100%)    (55.84/100%)    (56.84/100%)    (57.85/100%)    (58.85/100%)    (59.85/100%)    (60.85/100%)    (61.85/100%)    (62.86/100%)    (63.86/100%)    (64.86/100%)    (65.86/100%)    (66.87/100%)    (67.87/100%)    (68.87/100%)    (69.87/100%)    (70.87/100%)    (71.88/100%)    (72.90/100%)    (73.92/100%)    (74.96/100%)    (75.97/100%)    (77.00/100%)    (78.04/100%)    (79.08/100%)    (80.08/100%)    (81.08/100%)    (82.14/100%)    (83.14/100%)    (84.17/100%)    (85.21/100%)    (86.21/100%)    (87.21/100%)    (88.21/100%)    (89.22/100%)    (90.22/100%)    (91.22/100%)    (92.22/100%)    (93.22/100%)    (94.26/100%)    (95.27/100%)    (96.30/100%)    (97.30/100%)    (98.33/100%)    (99.35/100%)    (100.00/100%)    (100.00/100%)
+No errors were found on the image.
+37913/163840 = 23.14% allocated, 0.00% fragmented, 0.00% compressed clusters
+Image end offset: 2485583872
+seed_sha256=8c30081d6d1542ccf74223d7b5a81a55d8ab8178124a47f9919b97bfb2db43c7  /var/lib/libvirt/images/admiral-validation/seeds/CentOS-Stream-10-seed-20261025-rc6-updated.x86_64.qcow2
+seed_qemu_info:
+image: /var/lib/libvirt/images/admiral-validation/seeds/CentOS-Stream-10-seed-20261025-rc6-updated.x86_64.qcow2
+file format: qcow2
+virtual size: 10 GiB (10737418240 bytes)
+disk size: 2.32 GiB
+cluster_size: 65536
+Format specific information:
+    compat: 1.1
+    compression type: zlib
+    lazy refcounts: false
+    refcount bits: 16
+    corrupt: false
+    extended l2: false
+Child node '/file':
+    filename: /var/lib/libvirt/images/admiral-validation/seeds/CentOS-Stream-10-seed-20261025-rc6-updated.x86_64.qcow2
+    protocol type: file
+    file length: 2.31 GiB (2485583872 bytes)
+    disk size: 2.32 GiB
+    Format specific information:
+        extent size hint: 1048576
+Domain 'seed-rc6-final-centos' has been undefined
+
+Seed complete: /var/lib/libvirt/images/admiral-validation/seeds/CentOS-Stream-10-seed-20261025-rc6-updated.x86_64.qcow2
+Evidence: /root/admiral/packaging/build/validation/rc5-r75/runtime/seed-refresh-20261025/centos
+evidence_manifest=SHA256SUMS

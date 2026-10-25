@@ -1,0 +1,743 @@
+Updating and loading repositories:
+ Fedora rawhide openh264 (From Cisco) - 100% |   3.1 KiB/s |   5.3 KiB |  00m02s
+ Fedora - Rawhide - Developmental packa 100% |   6.5 MiB/s |  22.0 MiB |  00m03s
+Repositories loaded.
+Package "dnf5-plugins-5.4.6.0-1.fc46.x86_64" is already installed.
+
+Nothing to do.
+ https://copr.fedorainfracloud.org/api_ 100% |   6.1 KiB/s | 564.0   B |  00m00s
+Enabling a Copr repository. Please note that this repository is not part
+of the main distribution, and quality may vary.
+
+The Fedora Project does not exercise any power over the contents of
+this repository beyond the rules outlined in the Copr FAQ at
+<https://docs.copr.fedorainfracloud.org/user_documentation.html#what-i-can-build-in-copr>,
+and packages are not held to any quality or security level.
+
+Please do not file bug reports about these packages in Fedora
+Bugzilla. In case of problems, contact the owner of this repository.
+Updating and loading repositories:
+ Fedora - Rawhide - Developmental packa 100% | 374.0 KiB/s |  22.4 KiB |  00m00s
+ Fedora rawhide openh264 (From Cisco) - 100% |  19.7 KiB/s | 986.0   B |  00m00s
+ Admiral RC5 Release 75 signed local va 100% |   3.9 KiB/s |   2.2 KiB |  00m01s
+ Copr repo for admiral owned by admiral 100% |  58.3 KiB/s |  45.4 KiB |  00m01s
+ http://192.168.122.1/rc5-r75/RPM-GPG-K 100% | 659.7 KiB/s |   1.3 KiB |  00m00s
+Importing OpenPGP key 0x6A39E4D3:
+ UserID     : "Admiral RC5 Release 73 Local Validation <validation@localhost>"
+ Fingerprint: B36C8266E348EDD843B197A56B2652936A39E4D3
+ From       : http://192.168.122.1/rc5-r75/RPM-GPG-KEY-admiral-r75
+The key was successfully imported.
+ Admiral RC5 Release 75 signed local va 100% |  55.2 KiB/s |   5.0 KiB |  00m00s
+Repositories loaded.
+Package                                 Arch   Version                                  Repository                            Size
+Upgrading:
+ ca-certificates                        noarch 0:2026.2.92_v9.0.319-2.fc46              rawhide                            2.7 MiB
+   replacing ca-certificates            noarch 0:2026.2.90_v9.0.317-1.fc46              c05c435b45fd453bac3061e6a496148f   2.6 MiB
+ containers-common                      noarch 5:0.70.0-1.fc46                          rawhide                          136.3 KiB
+   replacing containers-common          noarch 5:0.69.2-1.fc46                          c05c435b45fd453bac3061e6a496148f 136.3 KiB
+ containers-common-extra                noarch 5:0.70.0-1.fc46                          rawhide                            0.0   B
+   replacing containers-common-extra    noarch 5:0.69.2-1.fc46                          c05c435b45fd453bac3061e6a496148f   0.0   B
+ criu                                   x86_64 0:4.3-1.fc46                             rawhide                            1.8 MiB
+   replacing criu                       x86_64 0:4.2.1-2.fc45                           c05c435b45fd453bac3061e6a496148f   1.7 MiB
+ criu-libs                              x86_64 0:4.3-1.fc46                             rawhide                           97.8 KiB
+   replacing criu-libs                  x86_64 0:4.2.1-2.fc45                           c05c435b45fd453bac3061e6a496148f  89.5 KiB
+ device-mapper                          x86_64 0:1.02.217-2.fc46                        rawhide                          367.9 KiB
+   replacing device-mapper              x86_64 0:1.02.217-1.fc46                        c05c435b45fd453bac3061e6a496148f 367.9 KiB
+ device-mapper-event                    x86_64 0:1.02.217-2.fc46                        rawhide                           59.0 KiB
+   replacing device-mapper-event        x86_64 0:1.02.217-1.fc46                        c05c435b45fd453bac3061e6a496148f  59.0 KiB
+ device-mapper-event-libs               x86_64 0:1.02.217-2.fc46                        rawhide                           57.4 KiB
+   replacing device-mapper-event-libs   x86_64 0:1.02.217-1.fc46                        c05c435b45fd453bac3061e6a496148f  57.4 KiB
+ device-mapper-libs                     x86_64 0:1.02.217-2.fc46                        rawhide                          466.6 KiB
+   replacing device-mapper-libs         x86_64 0:1.02.217-1.fc46                        c05c435b45fd453bac3061e6a496148f 466.6 KiB
+ elfutils-debuginfod-client             x86_64 0:0.197-1.fc46                           rawhide                           79.9 KiB
+   replacing elfutils-debuginfod-client x86_64 0:0.196-1.fc46                           c05c435b45fd453bac3061e6a496148f  79.9 KiB
+ elfutils-libelf                        x86_64 0:0.197-1.fc46                           rawhide                            1.6 MiB
+   replacing elfutils-libelf            x86_64 0:0.196-1.fc46                           c05c435b45fd453bac3061e6a496148f   1.4 MiB
+ elfutils-libs                          x86_64 0:0.197-1.fc46                           rawhide                          719.5 KiB
+   replacing elfutils-libs              x86_64 0:0.196-1.fc46                           c05c435b45fd453bac3061e6a496148f 719.6 KiB
+ expat                                  x86_64 0:2.9.0-1.fc46                           rawhide                          349.6 KiB
+   replacing expat                      x86_64 0:2.8.3-1.fc46                           c05c435b45fd453bac3061e6a496148f 338.4 KiB
+ freetype                               x86_64 0:2.15.0-2.fc46                          rawhide                          946.8 KiB
+   replacing freetype                   x86_64 0:2.14.3-2.fc45                          c05c435b45fd453bac3061e6a496148f 918.3 KiB
+ google-noto-fonts-common               noarch 0:20261001-1.fc46                        rawhide                           17.7 KiB
+   replacing google-noto-fonts-common   noarch 0:20260901-4.fc46                        c05c435b45fd453bac3061e6a496148f  17.7 KiB
+ google-noto-sans-vf-fonts              noarch 0:20261001-1.fc46                        rawhide                            1.4 MiB
+   replacing google-noto-sans-vf-fonts  noarch 0:20260901-4.fc46                        c05c435b45fd453bac3061e6a496148f   1.4 MiB
+ gpgme                                  x86_64 0:2.2.0-1.fc46                           rawhide                          628.5 KiB
+   replacing gpgme                      x86_64 0:2.0.1-6.fc45                           c05c435b45fd453bac3061e6a496148f 621.9 KiB
+ grub2-common                           noarch 1:2.12-88.fc46                           rawhide                            6.2 MiB
+   replacing grub2-common               noarch 1:2.12-87.fc46                           c05c435b45fd453bac3061e6a496148f   6.2 MiB
+ grub2-efi-ia32                         x86_64 1:2.12-88.fc46                           rawhide                            5.2 MiB
+   replacing grub2-efi-ia32             x86_64 1:2.12-87.fc46                           c05c435b45fd453bac3061e6a496148f   5.2 MiB
+ grub2-efi-ia32-modules                 noarch 1:2.12-88.fc46                           rawhide                            3.8 MiB
+   replacing grub2-efi-ia32-modules     noarch 1:2.12-87.fc46                           c05c435b45fd453bac3061e6a496148f   3.8 MiB
+ grub2-efi-x64                          x86_64 1:2.12-88.fc46                           rawhide                            6.3 MiB
+   replacing grub2-efi-x64              x86_64 1:2.12-87.fc46                           c05c435b45fd453bac3061e6a496148f   6.3 MiB
+ grub2-efi-x64-modules                  noarch 1:2.12-88.fc46                           rawhide                            5.7 MiB
+   replacing grub2-efi-x64-modules      noarch 1:2.12-87.fc46                           c05c435b45fd453bac3061e6a496148f   5.7 MiB
+ grub2-pc                               x86_64 1:2.12-88.fc46                           rawhide                           31.0   B
+   replacing grub2-pc                   x86_64 1:2.12-87.fc46                           c05c435b45fd453bac3061e6a496148f  31.0   B
+ grub2-pc-modules                       noarch 1:2.12-88.fc46                           rawhide                            3.2 MiB
+   replacing grub2-pc-modules           noarch 1:2.12-87.fc46                           c05c435b45fd453bac3061e6a496148f   3.2 MiB
+ grub2-tools                            x86_64 1:2.12-88.fc46                           rawhide                            7.8 MiB
+   replacing grub2-tools                x86_64 1:2.12-87.fc46                           c05c435b45fd453bac3061e6a496148f   7.8 MiB
+ grub2-tools-efi                        x86_64 1:2.12-88.fc46                           rawhide                            2.6 MiB
+   replacing grub2-tools-efi            x86_64 1:2.12-87.fc46                           c05c435b45fd453bac3061e6a496148f   2.6 MiB
+ grub2-tools-extra                      x86_64 1:2.12-88.fc46                           rawhide                            5.1 MiB
+   replacing grub2-tools-extra          x86_64 1:2.12-87.fc46                           c05c435b45fd453bac3061e6a496148f   5.1 MiB
+ grub2-tools-minimal                    x86_64 1:2.12-88.fc46                           rawhide                            4.1 MiB
+   replacing grub2-tools-minimal        x86_64 1:2.12-87.fc46                           c05c435b45fd453bac3061e6a496148f   4.1 MiB
+ harfbuzz                               x86_64 0:15.0.0-2.fc46                          rawhide                            3.5 MiB
+   replacing harfbuzz                   x86_64 0:14.5.1-1.fc46                          c05c435b45fd453bac3061e6a496148f   3.0 MiB
+ kbd                                    x86_64 0:2.10.0-4.fc46                          rawhide                            1.7 MiB
+   replacing kbd                        x86_64 0:2.10.0-3.fc46                          c05c435b45fd453bac3061e6a496148f   1.7 MiB
+ kbd-legacy                             noarch 0:2.10.0-4.fc46                          rawhide                          562.1 KiB
+   replacing kbd-legacy                 noarch 0:2.10.0-3.fc46                          c05c435b45fd453bac3061e6a496148f 562.1 KiB
+ kbd-misc                               noarch 0:2.10.0-4.fc46                          rawhide                            2.4 MiB
+   replacing kbd-misc                   noarch 0:2.10.0-3.fc46                          c05c435b45fd453bac3061e6a496148f   2.4 MiB
+ libbrotli                              x86_64 0:1.2.1-1.fc46                           rawhide                          865.0 KiB
+   replacing libbrotli                  x86_64 0:1.2.0-6.fc45                           c05c435b45fd453bac3061e6a496148f 865.0 KiB
+ libfido2                               x86_64 0:1.17.0-7.fc46                          rawhide                          256.5 KiB
+   replacing libfido2                   x86_64 0:1.17.0-6.fc46                          c05c435b45fd453bac3061e6a496148f 256.5 KiB
+ libmodulemd                            x86_64 0:2.15.3-4.fc46                          rawhide                          686.4 KiB
+   replacing libmodulemd                x86_64 0:2.15.3-3.fc45                          c05c435b45fd453bac3061e6a496148f 686.4 KiB
+ lvm2                                   x86_64 0:2.03.43-2.fc46                         rawhide                            3.5 MiB
+   replacing lvm2                       x86_64 0:2.03.43-1.fc46                         c05c435b45fd453bac3061e6a496148f   3.5 MiB
+ lvm2-libs                              x86_64 0:2.03.43-2.fc46                         rawhide                            2.4 MiB
+   replacing lvm2-libs                  x86_64 0:2.03.43-1.fc46                         c05c435b45fd453bac3061e6a496148f   2.4 MiB
+ nano                                   x86_64 0:9.3-1.fc46                             rawhide                            3.0 MiB
+   replacing nano                       x86_64 0:9.2-1.fc45                             c05c435b45fd453bac3061e6a496148f   2.9 MiB
+ nano-default-editor                    noarch 0:9.3-1.fc46                             rawhide                          514.0   B
+   replacing nano-default-editor        noarch 0:9.2-1.fc45                             c05c435b45fd453bac3061e6a496148f 514.0   B
+ openssh                                x86_64 0:10.6p1-1.fc46                          rawhide                            1.6 MiB
+   replacing openssh                    x86_64 0:10.5p1-1.fc46                          c05c435b45fd453bac3061e6a496148f   1.6 MiB
+ openssh-clients                        x86_64 0:10.6p1-1.fc46                          rawhide                            2.6 MiB
+   replacing openssh-clients            x86_64 0:10.5p1-1.fc46                          c05c435b45fd453bac3061e6a496148f   2.6 MiB
+ openssh-server                         x86_64 0:10.6p1-1.fc46                          rawhide                            1.9 MiB
+   replacing openssh-server             x86_64 0:10.5p1-1.fc46                          c05c435b45fd453bac3061e6a496148f   1.9 MiB
+ parted                                 x86_64 0:3.8-2.fc46                             rawhide                            2.7 MiB
+   replacing parted                     x86_64 0:3.8-1.fc46                             c05c435b45fd453bac3061e6a496148f   2.7 MiB
+ pcre2                                  x86_64 0:10.49-1.fc46                           rawhide                          726.5 KiB
+   replacing pcre2                      x86_64 0:10.47-1.fc45.2                         c05c435b45fd453bac3061e6a496148f 718.5 KiB
+ pcre2-syntax                           noarch 0:10.49-1.fc46                           rawhide                          292.5 KiB
+   replacing pcre2-syntax               noarch 0:10.47-1.fc45.2                         c05c435b45fd453bac3061e6a496148f 281.9 KiB
+ podman                                 x86_64 5:6.1.4-1.fc46                           rawhide                           50.4 MiB
+   replacing podman                     x86_64 5:6.1.3-1.fc46                           c05c435b45fd453bac3061e6a496148f  50.3 MiB
+ python-unversioned-command             noarch 0:3.15.1-1.fc46                          rawhide                           23.0   B
+   replacing python-unversioned-command noarch 0:3.15.0-1.fc46                          c05c435b45fd453bac3061e6a496148f  23.0   B
+ python3                                x86_64 0:3.15.1-1.fc46                          rawhide                           28.7 KiB
+   replacing python3                    x86_64 0:3.15.0-1.fc46                          c05c435b45fd453bac3061e6a496148f  28.7 KiB
+ python3-dbus                           x86_64 0:1.5.0-1.fc46                           rawhide                          536.9 KiB
+   replacing python3-dbus               x86_64 0:1.4.0-14.fc45                          c05c435b45fd453bac3061e6a496148f 538.3 KiB
+ python3-libs                           x86_64 0:3.15.1-1.fc46                          rawhide                           48.2 MiB
+   replacing python3-libs               x86_64 0:3.15.0-1.fc46                          c05c435b45fd453bac3061e6a496148f  48.3 MiB
+ selinux-policy                         noarch 0:45.23-1.fc46                           rawhide                           32.1 KiB
+   replacing selinux-policy             noarch 0:45.21-1.fc46                           c05c435b45fd453bac3061e6a496148f  32.1 KiB
+ selinux-policy-targeted                noarch 0:45.23-1.fc46                           rawhide                           18.9 MiB
+   replacing selinux-policy-targeted    noarch 0:45.21-1.fc46                           c05c435b45fd453bac3061e6a496148f  19.0 MiB
+ sqlite-libs                            x86_64 0:3.54.1-1.fc46                          rawhide                            1.6 MiB
+   replacing sqlite-libs                x86_64 0:3.53.4-1.fc45                          c05c435b45fd453bac3061e6a496148f   1.6 MiB
+ xfsprogs                               x86_64 0:7.2.1-2.fc46                           rawhide                            4.3 MiB
+   replacing xfsprogs                   x86_64 0:7.2.0-1.fc46                           c05c435b45fd453bac3061e6a496148f   4.3 MiB
+ xxhash-libs                            x86_64 0:0.8.4-2.fc46                           rawhide                           94.0 KiB
+   replacing xxhash-libs                x86_64 0:0.8.4-1.fc46                           c05c435b45fd453bac3061e6a496148f  94.0 KiB
+Installing:
+ kernel-core                            x86_64 0:7.4.0-0.rc0.261023g734bef548a96.6.fc46 rawhide                          102.6 MiB
+Installing dependencies:
+ kernel-modules-core                    x86_64 0:7.4.0-0.rc0.261023g734bef548a96.6.fc46 rawhide                           55.3 MiB
+Installing weak dependencies:
+ shared-mime-info                       x86_64 0:2.5.1-3.fc46                           rawhide                            6.6 MiB
+
+Transaction Summary:
+ Installing:         3 packages
+ Upgrading:         55 packages
+ Replacing:         55 packages
+
+Total size of inbound packages is 143 MiB. Need to download 143 MiB.
+After this operation, 165 MiB extra will be used (install 379 MiB, remove 213 MiB).
+[ 1/58] shared-mime-info-0:2.5.1-3.fc46 100% | 983.0 KiB/s | 481.7 KiB |  00m00s
+[ 2/58] ca-certificates-0:2026.2.92_v9. 100% |   4.7 MiB/s | 971.9 KiB |  00m00s
+[ 3/58] containers-common-5:0.70.0-1.fc 100% |   1.2 MiB/s | 108.5 KiB |  00m00s
+[ 4/58] kernel-core-0:7.4.0-0.rc0.26102 100% |  17.5 MiB/s |  21.2 MiB |  00m01s
+[ 5/58] containers-common-extra-5:0.70. 100% |  21.6 KiB/s |   9.2 KiB |  00m00s
+[ 6/58] criu-0:4.3-1.fc46.x86_64        100% |   6.9 MiB/s | 668.9 KiB |  00m00s
+[ 7/58] criu-libs-0:4.3-1.fc46.x86_64   100% | 385.9 KiB/s |  37.0 KiB |  00m00s
+[ 8/58] device-mapper-0:1.02.217-2.fc46 100% |   1.7 MiB/s | 149.2 KiB |  00m00s
+[ 9/58] device-mapper-libs-0:1.02.217-2 100% |   2.0 MiB/s | 201.5 KiB |  00m00s
+[10/58] device-mapper-event-0:1.02.217- 100% | 457.6 KiB/s |  38.0 KiB |  00m00s
+[11/58] kernel-modules-core-0:7.4.0-0.r 100% |  26.0 MiB/s |  56.9 MiB |  00m02s
+[12/58] device-mapper-event-libs-0:1.02 100% |  43.8 KiB/s |  31.2 KiB |  00m01s
+[13/58] lvm2-libs-0:2.03.43-2.fc46.x86_ 100% |   1.2 MiB/s | 990.3 KiB |  00m01s
+[14/58] lvm2-0:2.03.43-2.fc46.x86_64    100% |  14.4 MiB/s |   1.5 MiB |  00m00s
+[15/58] elfutils-debuginfod-client-0:0. 100% | 442.6 KiB/s |  47.4 KiB |  00m00s
+[16/58] elfutils-libelf-0:0.197-1.fc46. 100% |   2.5 MiB/s | 265.9 KiB |  00m00s
+[17/58] elfutils-libs-0:0.197-1.fc46.x8 100% |   3.7 MiB/s | 285.6 KiB |  00m00s
+[18/58] expat-0:2.9.0-1.fc46.x86_64     100% |   1.5 MiB/s | 136.2 KiB |  00m00s
+[19/58] freetype-0:2.15.0-2.fc46.x86_64 100% |   4.0 MiB/s | 458.7 KiB |  00m00s
+[20/58] google-noto-fonts-common-0:2026 100% | 193.5 KiB/s |  16.8 KiB |  00m00s
+[21/58] google-noto-sans-vf-fonts-0:202 100% |   6.2 MiB/s | 614.1 KiB |  00m00s
+[22/58] gpgme-0:2.2.0-1.fc46.x86_64     100% |   2.6 MiB/s | 233.7 KiB |  00m00s
+[23/58] grub2-common-1:2.12-88.fc46.noa 100% |  10.9 MiB/s |   1.0 MiB |  00m00s
+[24/58] grub2-tools-minimal-1:2.12-88.f 100% |   7.5 MiB/s | 700.4 KiB |  00m00s
+[25/58] grub2-tools-extra-1:2.12-88.fc4 100% |   6.7 MiB/s | 859.1 KiB |  00m00s
+[26/58] grub2-tools-efi-1:2.12-88.fc46. 100% |   5.0 MiB/s | 558.4 KiB |  00m00s
+[27/58] grub2-tools-1:2.12-88.fc46.x86_ 100% |  16.9 MiB/s |   1.8 MiB |  00m00s
+[28/58] grub2-pc-1:2.12-88.fc46.x86_64  100% | 244.4 KiB/s |  19.3 KiB |  00m00s
+[29/58] grub2-pc-modules-1:2.12-88.fc46 100% |   8.1 MiB/s |   1.1 MiB |  00m00s
+[30/58] grub2-efi-x64-modules-1:2.12-88 100% |  10.0 MiB/s |   1.1 MiB |  00m00s
+[31/58] grub2-efi-x64-1:2.12-88.fc46.x8 100% |  18.8 MiB/s |   2.1 MiB |  00m00s
+[32/58] grub2-efi-ia32-modules-1:2.12-8 100% |   8.3 MiB/s |   1.1 MiB |  00m00s
+[33/58] grub2-efi-ia32-1:2.12-88.fc46.x 100% |  14.9 MiB/s |   2.1 MiB |  00m00s
+[34/58] harfbuzz-0:15.0.0-2.fc46.x86_64 100% |  10.7 MiB/s |   1.3 MiB |  00m00s
+[35/58] kbd-0:2.10.0-4.fc46.x86_64      100% |   4.4 MiB/s | 441.5 KiB |  00m00s
+[36/58] kbd-legacy-0:2.10.0-4.fc46.noar 100% |   7.0 MiB/s | 606.6 KiB |  00m00s
+[37/58] kbd-misc-0:2.10.0-4.fc46.noarch 100% |  15.5 MiB/s |   1.7 MiB |  00m00s
+[38/58] libbrotli-0:1.2.1-1.fc46.x86_64 100% |   3.6 MiB/s | 347.3 KiB |  00m00s
+[39/58] libfido2-0:1.17.0-7.fc46.x86_64 100% |   1.2 MiB/s | 107.1 KiB |  00m00s
+[40/58] libmodulemd-0:2.15.3-4.fc46.x86 100% |   2.5 MiB/s | 224.5 KiB |  00m00s
+[41/58] nano-0:9.3-1.fc46.x86_64        100% |   6.4 MiB/s | 741.6 KiB |  00m00s
+[42/58] nano-default-editor-0:9.3-1.fc4 100% |  86.3 KiB/s |   9.6 KiB |  00m00s
+[43/58] openssh-0:10.6p1-1.fc46.x86_64  100% |   3.7 MiB/s | 379.0 KiB |  00m00s
+[44/58] openssh-server-0:10.6p1-1.fc46. 100% |   6.3 MiB/s | 655.9 KiB |  00m00s
+[45/58] openssh-clients-0:10.6p1-1.fc46 100% |   6.5 MiB/s | 830.4 KiB |  00m00s
+[46/58] parted-0:3.8-2.fc46.x86_64      100% |   6.1 MiB/s | 627.5 KiB |  00m00s
+[47/58] pcre2-0:10.49-1.fc46.x86_64     100% |   3.6 MiB/s | 280.0 KiB |  00m00s
+[48/58] pcre2-syntax-0:10.49-1.fc46.noa 100% |   2.0 MiB/s | 168.2 KiB |  00m00s
+[49/58] python-unversioned-command-0:3. 100% |  35.7 KiB/s |   9.7 KiB |  00m00s
+[50/58] python3-0:3.15.1-1.fc46.x86_64  100% | 112.2 KiB/s |  27.6 KiB |  00m00s
+[51/58] podman-5:6.1.4-1.fc46.x86_64    100% |  28.2 MiB/s |  16.1 MiB |  00m01s
+[52/58] python3-dbus-0:1.5.0-1.fc46.x86 100% | 589.0 KiB/s | 163.7 KiB |  00m00s
+[53/58] selinux-policy-0:45.23-1.fc46.n 100% | 572.9 KiB/s |  43.5 KiB |  00m00s
+[54/58] python3-libs-0:3.15.1-1.fc46.x8 100% |  19.1 MiB/s |  11.2 MiB |  00m01s
+[55/58] sqlite-libs-0:3.54.1-1.fc46.x86 100% |   3.0 MiB/s | 824.0 KiB |  00m00s
+[56/58] selinux-policy-targeted-0:45.23 100% |  14.6 MiB/s |   6.8 MiB |  00m00s
+[57/58] xxhash-libs-0:0.8.4-2.fc46.x86_ 100% | 280.7 KiB/s |  41.3 KiB |  00m00s
+[58/58] xfsprogs-0:7.2.1-2.fc46.x86_64  100% |   6.7 MiB/s |   1.4 MiB |  00m00s
+--------------------------------------------------------------------------------
+[58/58] Total                           100% |  31.0 MiB/s | 142.6 MiB |  00m05s
+Running transaction
+Importing OpenPGP key 0x91211FCE:
+ UserID     : "Fedora (46) <fedora-46-primary@fedoraproject.org>"
+ Fingerprint: D924B10D3E810DABDD8B56B596E7E91491211FCE
+ From       : file:///usr/share/pki/rpm-gpg/RPM-GPG-KEY-fedora-rawhide-x86_64
+The key was successfully imported.
+Importing OpenPGP key 0x9488FB64:
+ UserID     : "Fedora (47) <fedora-47-primary@fedoraproject.org>"
+ Fingerprint: B2E766FA50CA6FA2D5ED06FC09D879E09488FB64
+ From       : file:///usr/share/pki/rpm-gpg/RPM-GPG-KEY-fedora-47-x86_64
+The key was successfully imported.
+[  1/115] Verify package files          100% |  20.0   B/s |  58.0   B |  00m03s
+[  2/115] Prepare transaction           100% | 203.0   B/s | 113.0   B |  00m01s
+[  3/115] Upgrading device-mapper-0:1.0 100% |   1.8 MiB/s | 371.7 KiB |  00m00s
+[  4/115] Upgrading device-mapper-libs- 100% |  11.7 MiB/s | 467.8 KiB |  00m00s
+[  5/115] Upgrading grub2-common-1:2.12 100% |  17.2 MiB/s |   6.3 MiB |  00m00s
+[  6/115] Upgrading grub2-tools-minimal 100% |  18.8 MiB/s |   4.1 MiB |  00m00s
+[  7/115] Upgrading grub2-tools-1:2.12- 100% |  17.3 MiB/s |   7.8 MiB |  00m00s
+[  8/115] Upgrading device-mapper-event 100% |   2.7 MiB/s |  58.4 KiB |  00m00s
+[  9/115] Upgrading sqlite-libs-0:3.54. 100% |  25.0 MiB/s |   1.6 MiB |  00m00s
+[ 10/115] Upgrading openssh-0:10.6p1-1. 100% |  12.7 MiB/s |   1.6 MiB |  00m00s
+[ 11/115] Upgrading elfutils-libelf-0:0 100% |  16.9 MiB/s |   1.6 MiB |  00m00s
+[ 12/115] Upgrading elfutils-libs-0:0.1 100% |  16.0 MiB/s | 721.4 KiB |  00m00s
+[ 13/115] Upgrading device-mapper-event 100% |  66.3 KiB/s |  60.1 KiB |  00m01s
+[ 14/115] Upgrading lvm2-libs-0:2.03.43 100% |  19.5 MiB/s |   2.4 MiB |  00m00s
+[ 15/115] Upgrading grub2-pc-modules-1: 100% |   9.7 MiB/s |   3.3 MiB |  00m00s
+[ 16/115] Upgrading selinux-policy-0:45 100% |   1.6 KiB/s |  34.5 KiB |  00m21s
+[ 17/115] Upgrading selinux-policy-targ 100% |   9.4 MiB/s |  15.1 MiB |  00m02s
+[ 18/115] Installing kernel-core-0:7.4. 100% |  28.3 MiB/s |  31.4 MiB |  00m01s
+[ 19/115] Installing kernel-modules-cor 100% |  11.4 MiB/s |  55.9 MiB |  00m05s
+[ 20/115] Upgrading pcre2-syntax-0:10.4 100% |   4.4 MiB/s | 295.0 KiB |  00m00s
+[ 21/115] Upgrading nano-0:9.3-1.fc46.x 100% |  12.0 MiB/s |   3.0 MiB |  00m00s
+[ 22/115] Upgrading libfido2-0:1.17.0-7 100% |   7.6 MiB/s | 258.1 KiB |  00m00s
+[ 23/115] Upgrading libbrotli-0:1.2.1-1 100% |  26.5 MiB/s | 867.3 KiB |  00m00s
+[ 24/115] Upgrading freetype-0:2.15.0-2 100% |  23.8 MiB/s | 948.5 KiB |  00m00s
+[ 25/115] Upgrading harfbuzz-0:15.0.0-2 100% |  40.6 MiB/s |   3.5 MiB |  00m00s
+[ 26/115] Upgrading kbd-misc-0:2.10.0-4 100% |   6.0 MiB/s |   2.5 MiB |  00m00s
+[ 27/115] Upgrading kbd-legacy-0:2.10.0 100% |   2.2 MiB/s | 612.7 KiB |  00m00s
+[ 28/115] Upgrading gpgme-0:2.2.0-1.fc4 100% |   5.7 MiB/s | 631.4 KiB |  00m00s
+[ 29/115] Upgrading google-noto-fonts-c 100% |   1.1 MiB/s |  18.5 KiB |  00m00s
+[ 30/115] Upgrading expat-0:2.9.0-1.fc4 100% |   3.1 MiB/s | 351.7 KiB |  00m00s
+[ 31/115] Upgrading python3-libs-0:3.15 100% |  22.4 MiB/s |  48.6 MiB |  00m02s
+[ 32/115] Upgrading python3-0:3.15.1-1. 100% | 417.0 KiB/s |  30.4 KiB |  00m00s
+[ 33/115] Upgrading criu-0:4.3-1.fc46.x 100% |  10.6 MiB/s |   1.8 MiB |  00m00s
+[ 34/115] Upgrading containers-common-5 100% |   2.0 MiB/s | 145.6 KiB |  00m00s
+[ 35/115] Upgrading containers-common-e 100% |   7.1 KiB/s | 124.0   B |  00m00s
+[ 36/115] Upgrading podman-5:6.1.4-1.fc 100% |  45.2 MiB/s |  50.5 MiB |  00m01s
+[ 37/115] Upgrading criu-libs-0:4.3-1.f 100% |   5.7 MiB/s |  98.6 KiB |  00m00s
+[ 38/115] Upgrading python-unversioned- 100% |   6.6 KiB/s | 424.0   B |  00m00s
+[ 39/115] Upgrading python3-dbus-0:1.5. 100% |   9.4 MiB/s | 549.9 KiB |  00m00s
+[ 40/115] Upgrading google-noto-sans-vf 100% |  30.2 MiB/s |   1.4 MiB |  00m00s
+[ 41/115] Upgrading kbd-0:2.10.0-4.fc46 100% |   8.4 MiB/s |   1.7 MiB |  00m00s
+[ 42/115] Upgrading grub2-tools-extra-1 100% |  28.4 MiB/s |   5.1 MiB |  00m00s
+[ 43/115] Upgrading openssh-clients-0:1 100% |  11.1 MiB/s |   2.6 MiB |  00m00s
+[ 44/115] Upgrading nano-default-editor 100% |  75.1 KiB/s |   1.4 KiB |  00m00s
+[ 45/115] Upgrading pcre2-0:10.49-1.fc4 100% |  21.0 KiB/s | 728.0 KiB |  00m35s
+[ 46/115] Upgrading grub2-pc-1:2.12-88. 100% |  35.5 KiB/s | 436.0   B |  00m00s
+[ 47/115] Upgrading lvm2-0:2.03.43-2.fc 100% |   4.1 MiB/s |   3.5 MiB |  00m01s
+[ 48/115] Upgrading elfutils-debuginfod 100% | 591.2 KiB/s |  82.2 KiB |  00m00s
+[ 49/115] Upgrading openssh-server-0:10 100% |  10.9 MiB/s |   1.9 MiB |  00m00s
+[ 50/115] Upgrading grub2-efi-x64-1:2.1 100% |  41.4 MiB/s |   6.3 MiB |  00m00s
+[ 51/115] Upgrading grub2-efi-ia32-1:2. 100% |  60.1 MiB/s |   5.2 MiB |  00m00s
+[ 52/115] Upgrading grub2-tools-efi-1:2 100% |   2.9 MiB/s |   2.6 MiB |  00m01s
+[ 53/115] Upgrading grub2-efi-x64-modul 100% |  19.5 MiB/s |   5.8 MiB |  00m00s
+[ 54/115] Upgrading grub2-efi-ia32-modu 100% |  15.8 MiB/s |   3.9 MiB |  00m00s
+[ 55/115] Upgrading parted-0:3.8-2.fc46 100% |  13.2 MiB/s |   2.7 MiB |  00m00s
+[ 56/115] Upgrading xxhash-libs-0:0.8.4 100% |   3.7 MiB/s |  95.4 KiB |  00m00s
+[ 57/115] Upgrading xfsprogs-0:7.2.1-2. 100% |  15.6 MiB/s |   4.4 MiB |  00m00s
+[ 58/115] Upgrading libmodulemd-0:2.15. 100% |   5.7 MiB/s | 688.8 KiB |  00m00s
+[ 59/115] Upgrading ca-certificates-0:2 100% | 469.1 KiB/s |   2.5 MiB |  00m05s
+[ 60/115] Installing shared-mime-info-0 100% |  19.6 MiB/s |   3.2 MiB |  00m00s
+[ 61/115] Removing grub2-pc-1:2.12-87.f 100% |  71.0   B/s |   3.0   B |  00m00s
+[ 62/115] Removing grub2-efi-ia32-1:2.1 100% | 236.0   B/s |  17.0   B |  00m00s
+[ 63/115] Removing grub2-efi-x64-1:2.12 100% | 223.0   B/s |  17.0   B |  00m00s
+[ 64/115] Removing grub2-pc-modules-1:2 100% |   4.4 KiB/s | 305.0   B |  00m00s
+[ 65/115] Removing selinux-policy-0:45. 100% | 187.0   B/s |  18.0   B |  00m00s
+[ 66/115] Removing python-unversioned-c 100% |  27.0   B/s |   2.0   B |  00m00s
+[ 67/115] Removing nano-default-editor- 100% | 135.0   B/s |   5.0   B |  00m00s
+[ 68/115] Removing grub2-efi-ia32-modul 100% |   4.2 KiB/s | 298.0   B |  00m00s
+[ 69/115] Removing grub2-efi-x64-module 100% |   5.6 KiB/s | 295.0   B |  00m00s
+[ 70/115] Removing google-noto-sans-vf- 100% | 333.0   B/s |   6.0   B |  00m00s
+[ 71/115] Removing google-noto-fonts-co 100% | 210.0   B/s |   4.0   B |  00m00s
+[ 72/115] Removing selinux-policy-targe 100% |  20.1 KiB/s |   1.7 KiB |  00m00s
+[ 73/115] Removing ca-certificates-0:20 100% |   6.6 KiB/s | 655.0   B |  00m00s
+[ 74/115] Removing lvm2-0:2.03.43-1.fc4 100% | 645.0   B/s | 160.0   B |  00m00s
+[ 75/115] Removing lvm2-libs-0:2.03.43- 100% | 375.0   B/s |  30.0   B |  00m00s
+[ 76/115] Removing device-mapper-event- 100% |  36.0   B/s |   7.0   B |  00m00s
+[ 77/115] Removing device-mapper-0:1.02 100% | 138.0   B/s |  26.0   B |  00m00s
+[ 78/115] Removing elfutils-debuginfod- 100% |  92.0   B/s |  15.0   B |  00m00s
+[ 79/115] Removing elfutils-libs-0:0.19 100% | 229.0   B/s |  11.0   B |  00m00s
+[ 80/115] Removing grub2-tools-extra-1: 100% | 175.0   B/s |  35.0   B |  00m00s
+[ 81/115] Removing podman-5:6.1.3-1.fc4 100% |   3.4 KiB/s | 289.0   B |  00m00s
+[ 82/115] Removing grub2-tools-minimal- 100% | 153.0   B/s |  27.0   B |  00m00s
+[ 83/115] Removing device-mapper-event- 100% |  92.0   B/s |   6.0   B |  00m00s
+[ 84/115] Removing grub2-tools-1:2.12-8 100% | 116.0   B/s |  78.0   B |  00m01s
+[ 85/115] Removing parted-0:3.8-1.fc46. 100% | 404.0   B/s |  57.0   B |  00m00s
+[ 86/115] Removing grub2-tools-efi-1:2. 100% | 265.0   B/s |  13.0   B |  00m00s
+[ 87/115] Removing freetype-0:2.14.3-2. 100% | 171.0   B/s |  11.0   B |  00m00s
+[ 88/115] Removing openssh-clients-0:10 100% | 455.0   B/s |  41.0   B |  00m00s
+[ 89/115] Removing kbd-0:2.10.0-3.fc46. 100% |   2.3 KiB/s | 144.0   B |  00m00s
+[ 90/115] Removing containers-common-ex 100% |   4.4 KiB/s | 100.0   B |  00m00s
+[ 91/115] Removing python3-dbus-0:1.4.0 100% | 593.0   B/s |  73.0   B |  00m00s
+[ 92/115] Removing python3-0:3.15.0-1.f 100% | 260.0   B/s |  12.0   B |  00m00s
+[ 93/115] Removing python3-libs-0:3.15. 100% |  34.9 KiB/s |   2.5 KiB |  00m00s
+[ 94/115] Removing pcre2-0:10.47-1.fc45 100% | 134.0   B/s |   9.0   B |  00m00s
+[ 95/115] Removing openssh-server-0:10. 100% | 350.0   B/s |  34.0   B |  00m00s
+[ 96/115] Removing criu-libs-0:4.2.1-2. 100% | 384.0   B/s |   5.0   B |  00m00s
+[ 97/115] Removing pcre2-syntax-0:10.47 100% |   1.3 KiB/s |  16.0   B |  00m00s
+[ 98/115] Removing containers-common-5: 100% |   3.8 KiB/s |  63.0   B |  00m00s
+[ 99/115] Removing kbd-legacy-0:2.10.0- 100% |  12.5 KiB/s | 307.0   B |  00m00s
+[100/115] Removing kbd-misc-0:2.10.0-3. 100% |  31.8 KiB/s | 749.0   B |  00m00s
+[101/115] Removing grub2-common-1:2.12- 100% |   1.2 KiB/s |  57.0   B |  00m00s
+[102/115] Removing criu-0:4.2.1-2.fc45. 100% | 196.0   B/s |  13.0   B |  00m00s
+[103/115] Removing openssh-0:10.5p1-1.f 100% | 382.0   B/s |  26.0   B |  00m00s
+[104/115] Removing expat-0:2.8.3-1.fc46 100% | 297.0   B/s |  14.0   B |  00m00s
+[105/115] Removing sqlite-libs-0:3.53.4 100% | 500.0   B/s |   9.0   B |  00m00s
+[106/115] Removing libfido2-0:1.17.0-6. 100% | 370.0   B/s |  10.0   B |  00m00s
+[107/115] Removing libbrotli-0:1.2.0-6. 100% | 714.0   B/s |  15.0   B |  00m00s
+[108/115] Removing harfbuzz-0:14.5.1-1. 100% | 411.0   B/s |  21.0   B |  00m00s
+[109/115] Removing device-mapper-libs-0 100% |  76.0   B/s |   7.0   B |  00m00s
+[110/115] Removing gpgme-0:2.0.1-6.fc45 100% | 408.0   B/s |  20.0   B |  00m00s
+[111/115] Removing elfutils-libelf-0:0. 100% | 347.0   B/s |  16.0   B |  00m00s
+[112/115] Removing nano-0:9.2-1.fc45.x8 100% |   2.0 KiB/s | 107.0   B |  00m00s
+[113/115] Removing xxhash-libs-0:0.8.4- 100% | 214.0   B/s |   9.0   B |  00m00s
+[114/115] Removing xfsprogs-0:7.2.0-1.f 100% |   1.4 KiB/s | 106.0   B |  00m00s
+[115/115] Removing libmodulemd-0:2.15.3 100% |   0.0   B/s |  16.0   B |  02m04s
+>>> Running %posttrans scriptlet: grub2-pc-1:2.12-88.fc46.x86_64
+>>> Finished %posttrans scriptlet: grub2-pc-1:2.12-88.fc46.x86_64
+>>> Scriptlet output:
+>>> Installing on /dev/vda
+>>> Installing for i386-pc platform.
+>>> Installation finished. No error reported.
+>>> 
+Complete!
+Updating and loading repositories:
+Repositories loaded.
+Package "curl-8.23.0-1.fc46.x86_64" is already installed.
+Package "gnupg2-2.4.9-18.fc45.x86_64" is already installed.
+Package "openssh-clients-10.6p1-1.fc46.x86_64" is already installed.
+Package "openssh-server-10.6p1-1.fc46.x86_64" is already installed.
+Package "openssl-1:4.0.3-1.fc46.x86_64" is already installed.
+Package "podman-5:6.1.4-1.fc46.x86_64" is already installed.
+Package "python3-3.15.1-1.fc46.x86_64" is already installed.
+Package "python3-pyyaml-6.0.3-6.fc45.x86_64" is already installed.
+Package "python3-requests-2.34.2-2.fc45.noarch" is already installed.
+Package "shadow-utils-2:4.20.0-2.fc46.x86_64" is already installed.
+Package "systemd-262.1-1.fc46.x86_64" is already installed.
+
+Package                           Arch   Version                           Repository                                                  Size
+Installing:
+ ansible-collection-ansible-posix noarch 0:2.2.1-2.fc45                    rawhide                                                427.2 KiB
+ ansible-core                     noarch 0:2.22.0~b2-1.fc46                rawhide                                                 16.2 MiB
+ caddy                            x86_64 0:2.11.4-4.fc45                   rawhide                                                 52.0 MiB
+ certbot                          noarch 0:5.8.0-1.fc46                    rawhide                                                155.6 KiB
+ policycoreutils-python-utils     noarch 0:3.11-2.fc45                     rawhide                                                 94.5 KiB
+ postgresql                       x86_64 0:18.3-12.fc46                    rawhide                                                  8.3 MiB
+ postgresql-server                x86_64 0:18.3-12.fc46                    rawhide                                                 32.1 MiB
+ python3-argon2-cffi              noarch 0:23.1.0-12.fc45                  rawhide                                                 73.5 KiB
+ python3-cryptography             x86_64 0:50.0.0-1.fc46                   rawhide                                                  7.0 MiB
+ python3-flask                    noarch 1:3.1.3-6.fc45                    rawhide                                                968.2 KiB
+ python3-flask-alembic            noarch 0:3.3.0-5.fc46                    copr:copr.fedorainfracloud.org:admiral-project:admiral 128.5 KiB
+ python3-flask-login              noarch 0:0.6.3-13.fc45                   rawhide                                                103.2 KiB
+ python3-flask-sqlalchemy         noarch 0:3.1.1-11.fc46                   copr:copr.fedorainfracloud.org:admiral-project:admiral 192.9 KiB
+ python3-gunicorn                 noarch 0:23.0.0-10.fc45                  rawhide                                                644.6 KiB
+ python3-mistune                  noarch 0:3.4.0-2.fc46                    copr:copr.fedorainfracloud.org:admiral-project:admiral 727.7 KiB
+ python3-psycopg2                 x86_64 0:2.9.12-3.fc45                   rawhide                                                642.1 KiB
+ python3-sqlalchemy               x86_64 0:2.0.55-5.fc46                   copr:copr.fedorainfracloud.org:admiral-project:admiral  18.1 MiB
+ python3-werkzeug                 noarch 0:3.1.8-4.fc45                    rawhide                                                  2.0 MiB
+ systemd-container                x86_64 0:262.1-1.fc46                    rawhide                                                  2.8 MiB
+ wireguard-tools                  x86_64 0:1.0.20260223-2.fc45             rawhide                                                289.7 KiB
+Installing dependencies:
+ capstone                         x86_64 0:5.0.6-6.fc45                    rawhide                                                 14.2 MiB
+ daxctl-libs                      x86_64 0:85-2.fc45                       rawhide                                                 86.9 KiB
+ edk2-ovmf                        noarch 0:20260812-11.fc46                rawhide                                                 45.4 MiB
+ fedora-logos-httpd               noarch 0:42.0.1-6.fc45                   rawhide                                                 12.1 KiB
+ fontawesome4-fonts               noarch 1:4.7.0-27.fc45                   rawhide                                                296.6 KiB
+ igvm-libs                        x86_64 0:0.4.0-12.fc46                   rawhide                                                476.1 KiB
+ ipxe-roms-qemu                   noarch 1:2.0.0^20260614git13a83f4-4.fc45 rawhide                                                  2.8 MiB
+ libargon2                        x86_64 0:20190702-11.fc45                rawhide                                                 48.9 KiB
+ libfdt                           x86_64 0:1.8.1-6.fc46                    rawhide                                                 65.9 KiB
+ libibverbs                       x86_64 0:65.0-5.fc46                     rawhide                                                  1.3 MiB
+ libjpeg-turbo                    x86_64 0:3.1.4.1-2.fc45                  rawhide                                                821.8 KiB
+ libpq                            x86_64 0:18.4-4.fc45                     rawhide                                                  1.1 MiB
+ librdmacm                        x86_64 0:65.0-5.fc46                     rawhide                                                166.1 KiB
+ libslirp                         x86_64 0:4.9.5-1.fc46                    rawhide                                                158.4 KiB
+ libtomcrypt                      x86_64 0:1.18.2-24.fc45                  rawhide                                                942.7 KiB
+ libtommath                       x86_64 0:1.3.1~rc1-8.fc45                rawhide                                                130.3 KiB
+ libxdp                           x86_64 0:1.6.3-2.fc45                    rawhide                                                168.0 KiB
+ pciutils                         x86_64 0:3.15.0-2.fc45                   rawhide                                                300.5 KiB
+ pciutils-libs                    x86_64 0:3.15.0-2.fc45                   rawhide                                                 99.3 KiB
+ pixman                           x86_64 0:0.46.2-4.fc45                   rawhide                                                718.3 KiB
+ postgresql-private-libs          x86_64 0:18.3-12.fc46                    rawhide                                                379.9 KiB
+ python3-acme                     noarch 0:5.8.0-1.fc46                    rawhide                                                877.8 KiB
+ python3-alembic                  noarch 0:1.20.1-5.fc46                   copr:copr.fedorainfracloud.org:admiral-project:admiral   3.1 MiB
+ python3-argcomplete              noarch 0:3.7.2-2.fc46                    rawhide                                                335.3 KiB
+ python3-argon2-cffi-bindings     x86_64 0:21.2.0-17.fc45                  rawhide                                                 55.2 KiB
+ python3-blinker                  noarch 0:1.9.0-10.fc45                   rawhide                                                 83.4 KiB
+ python3-certbot                  noarch 0:5.8.0-1.fc46                    rawhide                                                  7.5 MiB
+ python3-cffi                     x86_64 0:2.1.1-1.fc46                    rawhide                                                  1.4 MiB
+ python3-click                    noarch 1:8.4.2-1.fc45                    rawhide                                                  1.3 MiB
+ python3-configargparse           noarch 0:1.8.0-1.fc46                    rawhide                                                328.8 KiB
+ python3-greenlet                 x86_64 0:3.5.6-1.fc46                    rawhide                                                  1.1 MiB
+ python3-itsdangerous             noarch 0:2.2.0-9.fc45                    rawhide                                                110.7 KiB
+ python3-josepy                   noarch 0:2.2.0-1.fc45                    rawhide                                                271.4 KiB
+ python3-mako                     noarch 0:1.4.1-2.fc46                    rawhide                                                705.0 KiB
+ python3-packaging                noarch 0:26.3-1.fc46                     rawhide                                                  1.3 MiB
+ python3-parsedatetime            noarch 0:2.6-24.fc45                     rawhide                                                420.5 KiB
+ python3-paste                    noarch 0:3.10.1-17.fc45                  rawhide                                                  2.7 MiB
+ python3-pyOpenSSL                noarch 0:26.4.0-1.fc46                   rawhide                                                726.7 KiB
+ python3-pycparser                noarch 0:3.00-4.fc45                     rawhide                                                685.5 KiB
+ python3-pyrfc3339                noarch 0:2.1.0-1.fc45                    rawhide                                                 24.7 KiB
+ python3-resolvelib               noarch 0:1.0.1-15.fc45                   rawhide                                                 92.6 KiB
+ python3-setuptools               noarch 0:84.0.0-1.fc46                   rawhide                                                  7.4 MiB
+ python3-typing-extensions        noarch 0:4.16.0-4.fc46                   rawhide                                                554.7 KiB
+ qatlib                           x86_64 0:26.08.0-1.fc46                  rawhide                                                723.3 KiB
+ qatzip-libs                      x86_64 0:2.0.0-1.fc46                    rawhide                                                168.3 KiB
+ qemu-common                      x86_64 2:11.1.2-2.fc46                   rawhide                                                  2.7 MiB
+ qemu-system-x86-core             x86_64 2:11.1.2-2.fc46                   rawhide                                                 61.8 MiB
+ rdma-core-common                 noarch 0:65.0-5.fc46                     rawhide                                                 21.9 KiB
+ seabios-bin                      noarch 0:1.17.0-16.fc46                  rawhide                                                427.4 KiB
+ seavgabios-bin                   noarch 0:1.17.0-16.fc46                  rawhide                                                370.3 KiB
+ snappy                           x86_64 0:1.2.2-6.fc45                    rawhide                                                 79.9 KiB
+ xen-libs                         x86_64 0:4.21.1-11.fc46                  rawhide                                                  1.8 MiB
+ xen-licenses                     x86_64 0:4.21.1-11.fc46                  rawhide                                                290.2 KiB
+Installing weak dependencies:
+ edk2-shell-x64                   noarch 0:20260812-11.fc46                rawhide                                                  1.2 MiB
+ julietaula-montserrat-fonts      noarch 1:9.000-5.fc45                    rawhide                                                  5.6 MiB
+ python-josepy-doc                noarch 0:2.2.0-1.fc45                    rawhide                                                  1.5 KiB
+ python3-beaker                   noarch 0:1.12.1-16.fc45                  rawhide                                                490.6 KiB
+ python3-crypto                   x86_64 0:2.6.1-63.fc45                   rawhide                                                  2.2 MiB
+ qatlib-service                   x86_64 0:26.08.0-1.fc46                  rawhide                                                 71.7 KiB
+ qemu-device-display-virtio-gpu   x86_64 2:11.1.2-2.fc46                   rawhide                                                 73.8 KiB
+ qemu-device-display-virtio-vga   x86_64 2:11.1.2-2.fc46                   rawhide                                                 19.3 KiB
+ qemu-kvm-core                    x86_64 2:11.1.2-2.fc46                   rawhide                                                  0.0   B
+ systemd-import-keys              noarch 0:262.1-1.fc46                    rawhide                                                 45.9 KiB
+
+Transaction Summary:
+ Installing:        83 packages
+
+Total size of inbound packages is 82 MiB. Need to download 82 MiB.
+After this operation, 321 MiB extra will be used (install 321 MiB, remove 0 B).
+[ 1/83] ansible-collection-ansible-posi 100% | 741.7 KiB/s | 110.5 KiB |  00m00s
+[ 2/83] certbot-0:5.8.0-1.fc46.noarch   100% | 847.9 KiB/s |  53.4 KiB |  00m00s
+[ 3/83] policycoreutils-python-utils-0: 100% | 598.1 KiB/s |  52.0 KiB |  00m00s
+[ 4/83] ansible-core-0:2.22.0~b2-1.fc46 100% |  12.9 MiB/s |   4.5 MiB |  00m00s
+[ 5/83] python3-argon2-cffi-0:23.1.0-12 100% | 593.9 KiB/s |  41.0 KiB |  00m00s
+[ 6/83] python3-gunicorn-0:23.0.0-10.fc 100% |   3.5 MiB/s | 213.3 KiB |  00m00s
+[ 7/83] python3-psycopg2-0:2.9.12-3.fc4 100% |   3.6 MiB/s | 213.8 KiB |  00m00s
+[ 8/83] python3-cryptography-0:50.0.0-1 100% |   9.7 MiB/s |   1.9 MiB |  00m00s
+[ 9/83] python3-werkzeug-0:3.1.8-4.fc45 100% |   6.4 MiB/s | 514.4 KiB |  00m00s
+[10/83] wireguard-tools-0:1.0.20260223- 100% |   2.2 MiB/s | 128.8 KiB |  00m00s
+[11/83] python3-argcomplete-0:3.7.2-2.f 100% |   2.0 MiB/s |  98.1 KiB |  00m00s
+[12/83] python3-packaging-0:26.3-1.fc46 100% |   6.2 MiB/s | 293.6 KiB |  00m00s
+[13/83] python3-resolvelib-0:1.0.1-15.f 100% | 779.7 KiB/s |  46.0 KiB |  00m00s
+[14/83] fontawesome4-fonts-1:4.7.0-27.f 100% |   4.6 MiB/s | 203.8 KiB |  00m00s
+[15/83] python3-argon2-cffi-bindings-0: 100% | 549.5 KiB/s |  27.5 KiB |  00m00s
+[16/83] python3-certbot-0:5.8.0-1.fc46. 100% |  13.0 MiB/s |   1.5 MiB |  00m00s
+[17/83] python3-cffi-0:2.1.1-1.fc46.x86 100% |   5.2 MiB/s | 329.8 KiB |  00m00s
+[18/83] libpq-0:18.4-4.fc45.x86_64      100% |   4.7 MiB/s | 292.8 KiB |  00m00s
+[19/83] python3-acme-0:5.8.0-1.fc46.noa 100% |   3.1 MiB/s | 223.2 KiB |  00m00s
+[20/83] python3-configargparse-0:1.8.0- 100% |   1.0 MiB/s |  71.3 KiB |  00m00s
+[21/83] python3-josepy-0:2.2.0-1.fc45.n 100% |   1.7 MiB/s |  85.5 KiB |  00m00s
+[22/83] python3-parsedatetime-0:2.6-24. 100% |   1.7 MiB/s | 105.7 KiB |  00m00s
+[23/83] python3-pyrfc3339-0:2.1.0-1.fc4 100% | 412.1 KiB/s |  18.1 KiB |  00m00s
+[24/83] caddy-0:2.11.4-4.fc45.x86_64    100% |  13.5 MiB/s |  14.8 MiB |  00m01s
+[25/83] libargon2-0:20190702-11.fc45.x8 100% | 160.6 KiB/s |  29.4 KiB |  00m00s
+[26/83] python3-pycparser-0:3.00-4.fc45 100% | 758.2 KiB/s | 143.3 KiB |  00m00s
+[27/83] python3-pyOpenSSL-0:26.4.0-1.fc 100% |   2.1 MiB/s | 126.8 KiB |  00m00s
+[28/83] postgresql-0:18.3-12.fc46.x86_6 100% |  17.9 MiB/s |   2.0 MiB |  00m00s
+[29/83] postgresql-private-libs-0:18.3- 100% |   1.2 MiB/s | 163.1 KiB |  00m00s
+[30/83] python3-flask-1:3.1.3-6.fc45.no 100% |   4.0 MiB/s | 227.8 KiB |  00m00s
+[31/83] postgresql-server-0:18.3-12.fc4 100% |  33.0 MiB/s |   7.7 MiB |  00m00s
+[32/83] python3-blinker-0:1.9.0-10.fc45 100% | 192.4 KiB/s |  28.7 KiB |  00m00s
+[33/83] python3-click-1:8.4.2-1.fc45.no 100% |   2.3 MiB/s | 291.5 KiB |  00m00s
+[34/83] python3-itsdangerous-0:2.2.0-9. 100% |   1.0 MiB/s |  48.8 KiB |  00m00s
+[35/83] python3-flask-login-0:0.6.3-13. 100% |   1.0 MiB/s |  45.5 KiB |  00m00s
+[36/83] python3-flask-sqlalchemy-0:3.1. 100% | 167.3 KiB/s |  57.9 KiB |  00m00s
+[37/83] python3-mistune-0:3.4.0-2.fc46. 100% | 365.6 KiB/s | 183.2 KiB |  00m01s
+[38/83] python3-flask-alembic-0:3.3.0-5 100% |  73.7 KiB/s |  38.3 KiB |  00m01s
+[39/83] python3-typing-extensions-0:4.1 100% |   2.8 MiB/s | 114.1 KiB |  00m00s
+[40/83] systemd-container-0:262.1-1.fc4 100% |  13.5 MiB/s |   1.1 MiB |  00m00s
+[41/83] fedora-logos-httpd-0:42.0.1-6.f 100% | 333.9 KiB/s |  15.0 KiB |  00m00s
+[42/83] python3-greenlet-0:3.5.6-1.fc46 100% |   3.9 MiB/s | 305.8 KiB |  00m00s
+[43/83] python3-mako-0:1.4.1-2.fc46.noa 100% |   4.0 MiB/s | 208.8 KiB |  00m00s
+[44/83] python-josepy-doc-0:2.2.0-1.fc4 100% | 207.0 KiB/s |  10.3 KiB |  00m00s
+[45/83] python3-sqlalchemy-0:2.0.55-5.f 100% |   7.1 MiB/s |   3.6 MiB |  00m01s
+[46/83] qemu-kvm-core-2:11.1.2-2.fc46.x 100% | 132.3 KiB/s |  16.4 KiB |  00m00s
+[47/83] qemu-system-x86-core-2:11.1.2-2 100% |  51.5 MiB/s |   9.2 MiB |  00m00s
+[48/83] python3-alembic-0:1.20.1-5.fc46 100% |   1.2 MiB/s | 529.3 KiB |  00m00s
+[49/83] capstone-0:5.0.6-6.fc45.x86_64  100% |   4.6 MiB/s |   1.0 MiB |  00m00s
+[50/83] daxctl-libs-0:85-2.fc45.x86_64  100% | 817.5 KiB/s |  42.5 KiB |  00m00s
+[51/83] libfdt-0:1.8.1-6.fc46.x86_64    100% | 166.1 KiB/s |  36.4 KiB |  00m00s
+[52/83] edk2-ovmf-0:20260812-11.fc46.no 100% |  20.3 MiB/s |  18.3 MiB |  00m01s
+[53/83] igvm-libs-0:0.4.0-12.fc46.x86_6 100% | 260.5 KiB/s | 233.2 KiB |  00m01s
+[54/83] libjpeg-turbo-0:3.1.4.1-2.fc45. 100% |   5.5 MiB/s | 242.6 KiB |  00m00s
+[55/83] librdmacm-0:65.0-5.fc46.x86_64  100% |   1.4 MiB/s |  82.7 KiB |  00m00s
+[56/83] libslirp-0:4.9.5-1.fc46.x86_64  100% |   1.9 MiB/s |  82.2 KiB |  00m00s
+[57/83] libxdp-0:1.6.3-2.fc45.x86_64    100% | 893.3 KiB/s |  71.5 KiB |  00m00s
+[58/83] pixman-0:0.46.2-4.fc45.x86_64   100% |   3.8 MiB/s | 296.7 KiB |  00m00s
+[59/83] qatzip-libs-0:2.0.0-1.fc46.x86_ 100% |   1.4 MiB/s |  77.5 KiB |  00m00s
+[60/83] qemu-common-2:11.1.2-2.fc46.x86 100% |   9.5 MiB/s | 593.9 KiB |  00m00s
+[61/83] seabios-bin-0:1.17.0-16.fc46.no 100% |   2.2 MiB/s | 135.5 KiB |  00m00s
+[62/83] seavgabios-bin-0:1.17.0-16.fc46 100% |   1.0 MiB/s |  52.4 KiB |  00m00s
+[63/83] libibverbs-0:65.0-5.fc46.x86_64 100% | 641.7 KiB/s | 514.7 KiB |  00m01s
+[64/83] snappy-0:1.2.2-6.fc45.x86_64    100% |   1.0 MiB/s |  43.2 KiB |  00m00s
+[65/83] xen-libs-0:4.21.1-11.fc46.x86_6 100% |   7.0 MiB/s | 672.9 KiB |  00m00s
+[66/83] qatlib-0:26.08.0-1.fc46.x86_64  100% |   3.5 MiB/s | 271.8 KiB |  00m00s
+[67/83] rdma-core-common-0:65.0-5.fc46. 100% | 174.8 KiB/s |  18.4 KiB |  00m00s
+[68/83] ipxe-roms-qemu-1:2.0.0^20260614 100% |  16.6 MiB/s |   1.8 MiB |  00m00s
+[69/83] xen-licenses-0:4.21.1-11.fc46.x 100% | 412.3 KiB/s |  43.3 KiB |  00m00s
+[70/83] qemu-device-display-virtio-gpu- 100% | 424.8 KiB/s |  44.2 KiB |  00m00s
+[71/83] qemu-device-display-virtio-vga- 100% | 480.5 KiB/s |  23.1 KiB |  00m00s
+[72/83] systemd-import-keys-0:262.1-1.f 100% |   1.2 MiB/s |  59.3 KiB |  00m00s
+[73/83] python3-beaker-0:1.12.1-16.fc45 100% |   2.6 MiB/s | 147.9 KiB |  00m00s
+[74/83] python3-paste-0:3.10.1-17.fc45. 100% |   9.3 MiB/s | 674.0 KiB |  00m00s
+[75/83] python3-setuptools-0:84.0.0-1.f 100% |  26.3 MiB/s |   1.7 MiB |  00m00s
+[76/83] edk2-shell-x64-0:20260812-11.fc 100% |   4.7 MiB/s | 327.9 KiB |  00m00s
+[77/83] qatlib-service-0:26.08.0-1.fc46 100% | 947.0 KiB/s |  39.8 KiB |  00m00s
+[78/83] python3-crypto-0:2.6.1-63.fc45. 100% |   9.2 MiB/s | 571.7 KiB |  00m00s
+[79/83] julietaula-montserrat-fonts-1:9 100% |   6.1 MiB/s |   1.6 MiB |  00m00s
+[80/83] libtomcrypt-0:1.18.2-24.fc45.x8 100% |   4.8 MiB/s | 409.3 KiB |  00m00s
+[81/83] libtommath-0:1.3.1~rc1-8.fc45.x 100% |   1.5 MiB/s |  64.3 KiB |  00m00s
+[82/83] pciutils-libs-0:3.15.0-2.fc45.x 100% |   1.0 MiB/s |  52.9 KiB |  00m00s
+[83/83] pciutils-0:3.15.0-2.fc45.x86_64 100% |   1.3 MiB/s | 129.3 KiB |  00m00s
+--------------------------------------------------------------------------------
+[83/83] Total                           100% |  17.4 MiB/s |  82.2 MiB |  00m05s
+Running transaction
+[84/84] https://download.copr.fedorainf 100% | 501.0 KiB/s |   1.0 KiB |  00m00s
+--------------------------------------------------------------------------------
+[84/84] Total                           100% |  17.4 MiB/s |  82.2 MiB |  00m05s
+Importing OpenPGP key 0x37D63DCC:
+ UserID     : "admiral-project_admiral (None) <admiral-project#admiral@copr.fedorahosted.org>"
+ Fingerprint: C1FDE9BC160A326249ED4A2CB04878BC37D63DCC
+ From       : https://download.copr.fedorainfracloud.org/results/admiral-project/admiral/pubkey.gpg
+The key was successfully imported.
+[ 1/85] Verify package files            100% |  64.0   B/s |  83.0   B |  00m01s
+[ 2/85] Prepare transaction             100% | 147.0   B/s |  83.0   B |  00m01s
+>>> Running sysusers scriptlet: qatlib-0:26.08.0-1.fc46.x86_64
+>>> Finished sysusers scriptlet: qatlib-0:26.08.0-1.fc46.x86_64
+>>> Scriptlet output:
+>>> Creating group 'qat' with GID 990.
+>>> 
+[ 3/85] Installing qatlib-0:26.08.0-1.f 100% |  18.2 MiB/s | 725.5 KiB |  00m00s
+[ 4/85] Installing rdma-core-common-0:6 100% | 164.2 KiB/s |  23.2 KiB |  00m00s
+>>> Running sysusers scriptlet: libibverbs-0:65.0-5.fc46.x86_64
+>>> Finished sysusers scriptlet: libibverbs-0:65.0-5.fc46.x86_64
+>>> Scriptlet output:
+>>> Creating group 'rdma' with GID 989.
+>>> 
+[ 5/85] Installing libibverbs-0:65.0-5. 100% |  17.0 MiB/s |   1.3 MiB |  00m00s
+[ 6/85] Installing pixman-0:0.46.2-4.fc 100% |  35.1 MiB/s | 719.4 KiB |  00m00s
+[ 7/85] Installing python3-typing-exten 100% |  24.7 MiB/s | 557.0 KiB |  00m00s
+[ 8/85] Installing postgresql-private-l 100% |  13.8 MiB/s | 380.8 KiB |  00m00s
+[ 9/85] Installing python3-pyrfc3339-0: 100% | 829.6 KiB/s |  29.0 KiB |  00m00s
+[10/85] Installing python3-packaging-0: 100% |  24.6 MiB/s |   1.3 MiB |  00m00s
+[11/85] Installing python3-werkzeug-0:3 100% |  16.6 MiB/s |   2.0 MiB |  00m00s
+[12/85] Installing postgresql-0:18.3-12 100% |  28.2 MiB/s |   8.4 MiB |  00m00s
+[13/85] Installing librdmacm-0:65.0-5.f 100% |   6.3 MiB/s | 168.1 KiB |  00m00s
+[14/85] Installing qatzip-libs-0:2.0.0- 100% |   6.4 MiB/s | 170.1 KiB |  00m00s
+[15/85] Installing pciutils-libs-0:3.15 100% |   4.3 MiB/s | 100.4 KiB |  00m00s
+[16/85] Installing pciutils-0:3.15.0-2. 100% |   3.6 MiB/s | 303.3 KiB |  00m00s
+[17/85] Installing libtommath-0:1.3.1~r 100% |   8.6 MiB/s | 131.4 KiB |  00m00s
+[18/85] Installing libtomcrypt-0:1.18.2 100% |  36.9 MiB/s | 943.8 KiB |  00m00s
+[19/85] Installing python3-setuptools-0 100% |  14.1 MiB/s |   7.6 MiB |  00m01s
+[20/85] Installing xen-licenses-0:4.21. 100% |   5.6 MiB/s | 300.8 KiB |  00m00s
+[21/85] Installing xen-libs-0:4.21.1-11 100% |  22.1 MiB/s |   1.9 MiB |  00m00s
+[22/85] Installing ipxe-roms-qemu-1:2.0 100% |   9.1 MiB/s |   2.8 MiB |  00m00s
+>>> Running sysusers scriptlet: qemu-common-2:11.1.2-2.fc46.x86_64
+>>> Finished sysusers scriptlet: qemu-common-2:11.1.2-2.fc46.x86_64
+>>> Scriptlet output:
+>>> Creating group 'qemu' with GID 107.
+>>> Creating user 'qemu' (qemu user) with UID 107 and GID 107.
+>>> 
+[23/85] Installing qemu-common-2:11.1.2 100% |  17.5 MiB/s |   2.7 MiB |  00m00s
+[24/85] Installing qemu-device-display- 100% | 676.8 KiB/s |  74.5 KiB |  00m00s
+[25/85] Installing snappy-0:1.2.2-6.fc4 100% |   2.3 MiB/s |  81.6 KiB |  00m00s
+[26/85] Installing seavgabios-bin-0:1.1 100% |  11.7 MiB/s | 372.5 KiB |  00m00s
+[27/85] Installing seabios-bin-0:1.17.0 100% |  13.5 MiB/s | 428.8 KiB |  00m00s
+[28/85] Installing libxdp-0:1.6.3-2.fc4 100% |   5.5 MiB/s | 169.9 KiB |  00m00s
+[29/85] Installing libslirp-0:4.9.5-1.f 100% |   3.7 MiB/s | 160.1 KiB |  00m00s
+[30/85] Installing libjpeg-turbo-0:3.1. 100% |  19.6 MiB/s | 823.6 KiB |  00m00s
+[31/85] Installing libfdt-0:1.8.1-6.fc4 100% |   2.4 MiB/s |  67.0 KiB |  00m00s
+[32/85] Installing igvm-libs-0:0.4.0-12 100% |  17.9 MiB/s | 477.4 KiB |  00m00s
+[33/85] Installing edk2-ovmf-0:20260812 100% | 113.9 MiB/s |  45.4 MiB |  00m00s
+[34/85] Installing daxctl-libs-0:85-2.f 100% |   4.6 MiB/s |  88.6 KiB |  00m00s
+[35/85] Installing capstone-0:5.0.6-6.f 100% |  84.4 MiB/s |  14.2 MiB |  00m00s
+[36/85] Installing qemu-system-x86-core 100% | 101.3 MiB/s |  61.8 MiB |  00m01s
+[37/85] Installing python3-mako-0:1.4.1 100% |   3.9 MiB/s | 727.4 KiB |  00m00s
+[38/85] Installing fedora-logos-httpd-0 100% | 687.1 KiB/s |  13.1 KiB |  00m00s
+[39/85] Installing python3-greenlet-0:3 100% |   7.5 MiB/s |   1.1 MiB |  00m00s
+[40/85] Installing python3-sqlalchemy-0 100% |  40.9 MiB/s |  18.2 MiB |  00m00s
+[41/85] Installing python3-alembic-0:1. 100% |  14.7 MiB/s |   3.2 MiB |  00m00s
+[42/85] Installing python3-itsdangerous 100% |   3.1 MiB/s | 117.6 KiB |  00m00s
+[43/85] Installing python3-click-1:8.4. 100% |  31.0 MiB/s |   1.3 MiB |  00m00s
+[44/85] Installing python3-blinker-0:1. 100% |   4.7 MiB/s |  87.3 KiB |  00m00s
+[45/85] Installing python3-flask-1:3.1. 100% |   8.9 MiB/s | 985.0 KiB |  00m00s
+[46/85] Installing python3-pycparser-0: 100% |  24.3 MiB/s | 695.3 KiB |  00m00s
+[47/85] Installing python3-cffi-0:2.1.1 100% |  13.4 MiB/s |   1.4 MiB |  00m00s
+[48/85] Installing python3-cryptography 100% |  35.0 MiB/s |   7.1 MiB |  00m00s
+[49/85] Installing python3-josepy-0:2.2 100% |   3.7 MiB/s | 279.3 KiB |  00m00s
+[50/85] Installing python3-pyOpenSSL-0: 100% |  26.5 MiB/s | 732.9 KiB |  00m00s
+[51/85] Installing python3-acme-0:5.8.0 100% |   9.7 MiB/s | 900.3 KiB |  00m00s
+[52/85] Installing python3-paste-0:3.10 100% |  16.7 MiB/s |   2.7 MiB |  00m00s
+[53/85] Installing libargon2-0:20190702 100% |   2.9 MiB/s |  49.9 KiB |  00m00s
+[54/85] Installing python3-argon2-cffi- 100% |   2.5 MiB/s |  59.3 KiB |  00m00s
+[55/85] Installing python3-parsedatetim 100% |   7.4 MiB/s | 432.1 KiB |  00m00s
+[56/85] Installing python3-configargpar 100% |  11.1 MiB/s | 331.0 KiB |  00m00s
+[57/85] Installing python3-certbot-0:5. 100% |  14.0 MiB/s |   7.7 MiB |  00m01s
+[58/85] Installing libpq-0:18.4-4.fc45. 100% |  36.7 MiB/s |   1.1 MiB |  00m00s
+[59/85] Installing fontawesome4-fonts-1 100% |   9.1 MiB/s | 297.8 KiB |  00m00s
+[60/85] Installing python3-resolvelib-0 100% |   3.0 MiB/s | 100.4 KiB |  00m00s
+[61/85] Installing python3-argcomplete- 100% |   2.5 MiB/s | 348.2 KiB |  00m00s
+[62/85] Installing ansible-core-0:2.22. 100% |  12.6 MiB/s |  16.9 MiB |  00m01s
+[63/85] Installing ansible-collection-a 100% |  11.6 MiB/s | 439.0 KiB |  00m00s
+[64/85] Installing certbot-0:5.8.0-1.fc 100% |   1.1 MiB/s | 157.9 KiB |  00m00s
+>>> Running %post scriptlet: certbot-0:5.8.0-1.fc46.noarch
+>>> Finished %post scriptlet: certbot-0:5.8.0-1.fc46.noarch
+>>> Scriptlet output:
+>>> Created symlink '/etc/systemd/system/timers.target.wants/certbot-renew.timer' → '/usr/lib/systemd/system/certbot-renew.timer'.
+>>> 
+>>> Certbot auto renewal timer is not started by default.
+>>> Run 'systemctl start certbot-renew.timer' to enable automatic renewals.
+>>> 
+[65/85] Installing python3-psycopg2-0:2 100% |  18.7 MiB/s | 651.1 KiB |  00m00s
+[66/85] Installing python3-argon2-cffi- 100% |   3.6 MiB/s |  80.6 KiB |  00m00s
+[67/85] Installing python3-beaker-0:1.1 100% |   9.7 MiB/s | 508.2 KiB |  00m00s
+[68/85] Installing python3-flask-alembi 100% |   6.1 MiB/s | 132.2 KiB |  00m00s
+[69/85] Installing python3-flask-login- 100% |   4.5 MiB/s | 109.9 KiB |  00m00s
+[70/85] Installing python3-flask-sqlalc 100% |   1.2 MiB/s | 200.7 KiB |  00m00s
+>>> Running sysusers scriptlet: caddy-0:2.11.4-4.fc45.x86_64
+>>> Finished sysusers scriptlet: caddy-0:2.11.4-4.fc45.x86_64
+>>> Scriptlet output:
+>>> Creating group 'caddy' with GID 988.
+>>> Creating user 'caddy' (Caddy web server) with UID 988 and GID 988.
+>>> 
+[71/85] Installing caddy-0:2.11.4-4.fc4 100% |  14.8 MiB/s |  52.1 MiB |  00m04s
+[72/85] Installing qemu-kvm-core-2:11.1 100% |  13.5 KiB/s | 124.0   B |  00m00s
+[73/85] Installing qemu-device-display- 100% |   1.1 MiB/s |  20.0 KiB |  00m00s
+[74/85] Installing python3-crypto-0:2.6 100% |  10.3 MiB/s |   2.3 MiB |  00m00s
+[75/85] Installing qatlib-service-0:26. 100% | 100.6 KiB/s |  73.1 KiB |  00m01s
+>>> Running sysusers scriptlet: postgresql-server-0:18.3-12.fc46.x86_64
+>>> Finished sysusers scriptlet: postgresql-server-0:18.3-12.fc46.x86_64
+>>> Scriptlet output:
+>>> Creating group 'postgres' with GID 26.
+>>> Creating user 'postgres' (PostgreSQL Server) with UID 26 and GID 26.
+>>> 
+[76/85] Installing postgresql-server-0: 100% |  27.8 MiB/s |  32.1 MiB |  00m01s
+[77/85] Installing python3-gunicorn-0:2 100% |   5.3 MiB/s | 667.7 KiB |  00m00s
+[78/85] Installing edk2-shell-x64-0:202 100% |  14.5 MiB/s |   1.2 MiB |  00m00s
+[79/85] Installing julietaula-montserra 100% |  46.0 MiB/s |   5.6 MiB |  00m00s
+[80/85] Installing systemd-import-keys- 100% |   3.0 MiB/s |  46.2 KiB |  00m00s
+[81/85] Installing python-josepy-doc-0: 100% | 172.2 KiB/s |   2.2 KiB |  00m00s
+[82/85] Installing systemd-container-0: 100% |  13.4 MiB/s |   2.8 MiB |  00m00s
+[83/85] Installing python3-mistune-0:3. 100% |   5.4 MiB/s | 753.4 KiB |  00m00s
+[84/85] Installing wireguard-tools-0:1. 100% |   3.0 MiB/s | 305.6 KiB |  00m00s
+[85/85] Installing policycoreutils-pyth 100% |  38.0 KiB/s |  98.2 KiB |  00m03s
+Complete!
+Updating and loading repositories:
+ Fedora - Rawhide - Developmental packa 100% |  66.0 KiB/s |  22.4 KiB |  00m00s
+ Fedora rawhide openh264 (From Cisco) - 100% |   2.7 KiB/s | 986.0   B |  00m00s
+ Copr repo for admiral owned by admiral 100% |   8.5 KiB/s |   1.5 KiB |  00m00s
+ Admiral RC5 Release 75 signed local va 100% |  10.8 KiB/s |   2.2 KiB |  00m00s
+Repositories loaded.
+Nothing to do.
+Removed 17 files, 8 directories (total of 51 MiB). 0 errors occurred.
+Updating and loading repositories:
+ Fedora rawhide openh264 (From Cisco) - 100% |  12.1 KiB/s |   5.3 KiB |  00m00s
+ Copr repo for admiral owned by admiral 100% | 100.9 KiB/s |  45.4 KiB |  00m00s
+ Fedora - Rawhide - Developmental packa 100% |   7.0 MiB/s |  22.0 MiB |  00m03s
+Repositories loaded.
+Nothing to do.
+Prepared audit seed for fedora 46 at 2026-10-25T10:38:55Z
+ansible-collection-ansible-posix-2.2.1-2.fc45.noarch
+ansible-core-2.22.0~b2-1.fc46.noarch
+caddy-2.11.4-4.fc45.x86_64
+certbot-5.8.0-1.fc46.noarch
+curl-8.23.0-1.fc46.x86_64
+gnupg2-2.4.9-18.fc45.x86_64
+openssh-clients-10.6p1-1.fc46.x86_64
+openssh-server-10.6p1-1.fc46.x86_64
+openssl-4.0.3-1.fc46.x86_64
+policycoreutils-python-utils-3.11-2.fc45.noarch
+podman-6.1.4-1.fc46.x86_64
+postgresql-18.3-12.fc46.x86_64
+postgresql-server-18.3-12.fc46.x86_64
+python3-3.15.1-1.fc46.x86_64
+python3-argon2-cffi-23.1.0-12.fc45.noarch
+python3-cryptography-50.0.0-1.fc46.x86_64
+python3-flask-3.1.3-6.fc45.noarch
+python3-flask-alembic-3.3.0-5.fc46.noarch
+python3-flask-login-0.6.3-13.fc45.noarch
+python3-flask-sqlalchemy-3.1.1-11.fc46.noarch
+python3-gunicorn-23.0.0-10.fc45.noarch
+python3-mistune-3.4.0-2.fc46.noarch
+python3-psycopg2-2.9.12-3.fc45.x86_64
+python3-sqlalchemy-2.0.55-5.fc46.x86_64
+python3-pyyaml-6.0.3-6.fc45.x86_64
+python3-requests-2.34.2-2.fc45.noarch
+python3-werkzeug-3.1.8-4.fc45.noarch
+shadow-utils-4.20.0-2.fc46.x86_64
+systemd-262.1-1.fc46.x86_64
+systemd-container-262.1-1.fc46.x86_64
+wireguard-tools-1.0.20260223-2.fc45.x86_64
+kernel-core-7.3.0-65.fc46.x86_64
+kernel-core-7.4.0-0.rc0.261023g734bef548a96.6.fc46.x86_64
+  Install xen-libs-0:4.21.1-11.fc46.x86_64                        Dependency      rawhide
+  Install rdma-core-common-0:65.0-5.fc46.noarch                   Dependency      rawhide
+  Install qatlib-0:26.08.0-1.fc46.x86_64                          Dependency      rawhide
+  Install ipxe-roms-qemu-1:2.0.0^20260614git13a83f4-4.fc45.noarch Dependency      rawhide
+  Install xen-licenses-0:4.21.1-11.fc46.x86_64                    Dependency      rawhide
+  Install qemu-device-display-virtio-gpu-2:11.1.2-2.fc46.x86_64   Weak Dependency rawhide
+  Install qemu-device-display-virtio-vga-2:11.1.2-2.fc46.x86_64   Weak Dependency rawhide
+  Install systemd-import-keys-0:262.1-1.fc46.noarch               Weak Dependency rawhide
+  Install julietaula-montserrat-fonts-1:9.000-5.fc45.noarch       Weak Dependency rawhide
+  Install python3-beaker-0:1.12.1-16.fc45.noarch                  Weak Dependency rawhide
+  Install python3-paste-0:3.10.1-17.fc45.noarch                   Dependency      rawhide
+  Install python3-setuptools-0:84.0.0-1.fc46.noarch               Dependency      rawhide
+  Install edk2-shell-x64-0:20260812-11.fc46.noarch                Weak Dependency rawhide
+  Install qatlib-service-0:26.08.0-1.fc46.x86_64                  Weak Dependency rawhide
+  Install python3-crypto-0:2.6.1-63.fc45.x86_64                   Weak Dependency rawhide
+  Install libtomcrypt-0:1.18.2-24.fc45.x86_64                     Dependency      rawhide
+  Install libtommath-0:1.3.1~rc1-8.fc45.x86_64                    Dependency      rawhide
+  Install pciutils-0:3.15.0-2.fc45.x86_64                         Dependency      rawhide
+  Install pciutils-libs-0:3.15.0-2.fc45.x86_64                    Dependency      rawhide
+
+Removed 0 files, 2 directories (total of 0 B). 0 errors occurred.
