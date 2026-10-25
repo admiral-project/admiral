@@ -1,0 +1,8 @@
+Test setup failure — not an Admiral product result
+
+Initial RC6-MN-HARBOR-FLOW-CADDY attempt configured HARBOR_TEST_BASE_URL=https://192.168.122.208 while setting Host: portal.rc6.test. The TLS client therefore sent IP SNI and Caddy rejected the handshake before Harbor received the request.
+
+Observed stderr:
+independent_portal_customer_flow=FAIL: GET /auth/register failed: [SSL: TLSV1_ALERT_INTERNAL_ERROR] tlsv1 alert internal error (_ssl.c:998)
+
+Correction: map portal.rc6.test to the Admin Caddy address in the disposable Portal guest and use https://portal.rc6.test as the test base URL, preserving both Host and TLS SNI. Strict CA-verified curl then returned HTTP 200; the complete routed flow passed.
