@@ -2,15 +2,17 @@
 
 Audit ID: `ADM-AUDIT-2026-10-21`<br>
 
-## Active candidate — Release 75: 2/3 complete Multi-Node cells PASS
+## Active candidate — Release 75: 3/3 complete Multi-Node cells PASS
 
-The exact unchanged R75 RPM candidate passed Multi-Node on Rocky Linux 10 and CentOS Stream 10. Fedora Rawhide remains **NOT TESTED**. Together with the three passing Single-Node cells, the active functional matrix stands at **5/6 PASS**. Wider production audit coverage remains incomplete; prior-candidate results do not transfer. See [master issue #277](https://github.com/admiral-project/admiral/issues/277), the [R75 Rocky report](evidence/release75-rocky-multinode-20261024.md), and the [R75 CentOS Stream report](evidence/release75-centos-multinode-20261024.md).
+The exact unchanged R75 RPM candidate passed Multi-Node on Rocky Linux 10, CentOS Stream 10 and Fedora Rawhide. Together with the three passing Single-Node cells, the active functional matrix stands at **6/6 PASS**. Wider production audit coverage remains incomplete; prior-candidate results do not transfer. See [master issue #277](https://github.com/admiral-project/admiral/issues/277), the [R75 Rocky report](evidence/release75-rocky-multinode-20261024.md), the [R75 CentOS Stream report](evidence/release75-centos-multinode-20261024.md), and the [R75 Fedora Rawhide report](evidence/release75-fedora-multinode-20261025.md).
 
 | Platform | Secure install and enrollment | Placement, replay and cleanup | Concurrency | Worker reboot and partition/rejoin | Node removal | Hub reboot | Cell |
 |---|---:|---:|---:|---:|---:|---:|---:|
 | Rocky Linux 10 x86_64 | PASS | PASS | PASS | PASS | PASS | PASS | **PASS** |
 | CentOS Stream 10 x86_64 | PASS | PASS | PASS | PASS | PASS | PASS | **PASS** |
-| Fedora Rawhide x86_64 | NOT TESTED | NOT TESTED | NOT TESTED | NOT TESTED | NOT TESTED | NOT TESTED | **NOT TESTED** |
+| Fedora Rawhide x86_64 | PASS | PASS | PASS | PASS | PASS | PASS | **PASS** |
+
+The Fedora Rawhide row is supported by the exact-candidate three-VM run documented in [`release75-fedora-multinode-20261025.md`](evidence/release75-fedora-multinode-20261025.md). Its auth and lateral-network check is scoped and does not establish comprehensive isolation. Earlier harness failures remain recorded in the private hash manifest; the corrected candidate checks passed.
 
 ## Historical Release 74 Rocky Linux 10.2 x86_64 functional cell — no Release 75 credit
 
