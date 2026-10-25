@@ -1,0 +1,5 @@
+admiral-harbor-worker.service env=ENV=development
+admiral-harbor-worker.service result=success exec_main_status=0
+admiral-harbor-catalog-sync.service env=ENV=development
+admiral-harbor-catalog-sync.service result=success exec_main_status=0
+issue_298_dev_services=PASS
