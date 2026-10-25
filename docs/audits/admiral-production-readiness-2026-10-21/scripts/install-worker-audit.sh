@@ -37,7 +37,7 @@ hub_bootstrap_key=""
 worker_bootstrap_installed=0
 rc=1
 candidate_version=${ADMIRAL_RC_VERSION:-0.0.1rc6}
-candidate_release=${ADMIRAL_RC_RELEASE:-3}
+candidate_release=${ADMIRAL_RC_RELEASE:-4}
 candidate_epoch=${ADMIRAL_RC_EPOCH:-0}
 candidate_dist_tag=${ADMIRAL_RC_DIST_TAG:-el10}
 [[ $candidate_version =~ ^0\.0\.1rc[0-9]+$ ]] || { echo 'invalid Admiral RPM version' >&2; exit 2; }
@@ -95,7 +95,14 @@ capture_rpm_manifest() {
 }
 
 python_package_baseline() {
-  printf '%s\n' "$1" | awk '$1 ~ /^python3-/ { print }'
+  printf '%s\n' "$1" | awk '$1 ~ /^python3-/ { print }' | sort
+}
+
+changed_python_baseline() {
+  local before=$1 after=$2
+  comm -23 \
+    <(python_package_baseline "$before") \
+    <(python_package_baseline "$after")
 }
 
 verify_candidate_rpms() {
@@ -218,18 +225,16 @@ set -e
 if [[ $rc -eq 0 ]]; then
   verify_candidate_rpms "$hub_underlay_ip" "$hub_known_hosts" admin
   verify_candidate_rpms "$worker_ip" "$worker_known_hosts" "$role"
-  hub_python_before=$(python_package_baseline "$hub_rpm_before")
-  hub_python_after=$(python_package_baseline "$hub_rpm_after")
-  worker_python_before=$(python_package_baseline "$worker_rpm_before")
-  worker_python_after=$(python_package_baseline "$worker_rpm_after")
-  if [[ $hub_python_before != "$hub_python_after" ]]; then
-    echo 'hub Python RPM baseline changed during spoke installation' >&2
-    diff -u <(printf '%s\n' "$hub_python_before") <(printf '%s\n' "$hub_python_after") || true
+  hub_python_changed=$(changed_python_baseline "$hub_rpm_before" "$hub_rpm_after")
+  worker_python_changed=$(changed_python_baseline "$worker_rpm_before" "$worker_rpm_after")
+  if [[ -n $hub_python_changed ]]; then
+    echo 'pre-existing hub Python RPMs changed during spoke installation' >&2
+    printf '%s\n' "$hub_python_changed"
     rc=1
   fi
-  if [[ $worker_python_before != "$worker_python_after" ]]; then
-    echo 'spoke Python RPM baseline changed during installation' >&2
-    diff -u <(printf '%s\n' "$worker_python_before") <(printf '%s\n' "$worker_python_after") || true
+  if [[ -n $worker_python_changed ]]; then
+    echo 'pre-existing spoke Python RPMs changed during installation' >&2
+    printf '%s\n' "$worker_python_changed"
     rc=1
   fi
 fi
