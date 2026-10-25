@@ -277,6 +277,25 @@ def test_worker_bootstrap_uses_both_pinned_hosts_and_a_temporary_revoked_key():
     assert "/home/validator/.ssh/validator_ed25519" not in script
 
 
+def test_worker_health_poll_runs_as_the_ssh_user():
+    script = WORKER_INSTALL_SCRIPT.read_text(encoding="utf-8")
+
+    assert "'admiralctl nodes list --output json'" in script
+    assert "runuser -u validator -- env HOME=/home/validator admiralctl nodes list" not in script
+
+
+def test_single_node_audit_stages_local_repo_on_guest_before_firewall_setup():
+    script = (
+        ROOT
+        / "docs/audits/admiral-production-readiness-2026-10-21/scripts/install-single-node-audit.sh"
+    ).read_text(encoding="utf-8")
+
+    assert "ADMIRAL_AUDIT_REPO_DIR" in script
+    assert 'remote_repo_dir=/var/tmp/admiral-audit-local-repo' in script
+    assert 'tar -C "$repo_dir" -cf - .' in script
+    assert script.index('tar -C "$repo_dir" -cf - .') < script.index('admiral-install --single-node')
+
+
 def test_worker_bootstrap_rejects_old_argument_shape_without_mutation():
     result = subprocess.run(
         ["bash", str(WORKER_INSTALL_SCRIPT)],

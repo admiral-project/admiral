@@ -23,7 +23,7 @@ ExclusiveArch: x86_64 aarch64
 URL:     https://github.com/admiral-project/admiralctl
 Source0: https://github.com/admiral-project/admiralctl/archive/%{commit}.tar.gz
 Source1: admiralctl.yaml
-Source2: https://github.com/admiral-project/admirald/archive/65afd58947c56edaef041737d7f775e7b4038182.tar.gz
+Source2: https://github.com/admiral-project/admirald/archive/51e2a5b6f1da7e2cb568e94b6d1836eba058e422.tar.gz
 
 BuildRequires: golang >= 1.26.10
 BuildRequires: binutils

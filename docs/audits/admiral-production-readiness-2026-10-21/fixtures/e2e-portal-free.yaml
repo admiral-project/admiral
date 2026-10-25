@@ -1,0 +1,19 @@
+name: e2e-portal-free
+display_name: E2E Portal Free
+description: Minimal free customer-facing app for validating independent Harbor portal flows.
+
+services:
+  app:
+    image: docker.io/traefik/whoami:v1.10
+    port: 80
+    public: true
+    backup:
+      type: none
+
+tiers:
+  free:
+    cpu: 1
+    memory: 256M
+    storage: 512M
+    price_monthly: 0
+    free: true

@@ -191,7 +191,7 @@ if [[ $rc -eq 0 ]]; then
   health_deadline=$((SECONDS + health_timeout))
   while [[ $rc -eq 0 ]]; do
     nodes_json=$(ssh_to "$hub_underlay_ip" "$hub_known_hosts" \
-      'runuser -u validator -- env HOME=/home/validator admiralctl nodes list --output json')
+      'admiralctl nodes list --output json')
     if node_state=$(printf '%s\n' "$nodes_json" | python3 -c '
 import json,sys
 nodes=json.load(sys.stdin)

@@ -3,7 +3,7 @@
 Audit ID: `ADM-AUDIT-2026-10-21`<br>
 Audit began: 2026-10-21 UTC<br>
 Release 75 functional closeout: [RELEASE75_VALIDATION_CLOSURE.md](RELEASE75_VALIDATION_CLOSURE.md).
-> **Topology and scope correction — 2026-10-25:** The required Multi-Node shape is `--admin-node` + `--worker-node` + independent `--portal-node`. R75 used `--admin-portal-node` plus workers, so its three Multi-Node cells are invalid for this gate; independent Harbor is not validated. The active release matrix is Fedora Rawhide, Rocky Linux 10, AlmaLinux 10 and CentOS Stream 10, each Single-Node and Multi-Node. RC6 currently has **0/8 complete cells**. Production readiness remains NOT VALIDATED.
+> **Topology, scope and candidate correction — 2026-10-25:** The required Multi-Node shape is `--admin-node` + `--worker-node` + independent `--portal-node`. R75 used `--admin-portal-node` plus workers, so its three Multi-Node cells are invalid for this gate; independent Harbor is not validated. The active release matrix is Fedora Rawhide, Rocky Linux 10 and CentOS Stream 10, each Single-Node and Multi-Node (six cells). AlmaLinux is excluded because the COPR builder lacks the Go runtime/toolchain for its Go RPMs (#276). Earlier RC6-1 Single-Node runs are historical: the component pins have since advanced for fixes #181 and #229. Current RC6 status is **0/6 formally complete cells**. A complete six-stage Rocky Single-Node precheck passed on the local Epoch 1 RPM set, but it earns no matrix credit; the final no-Epoch candidate and remaining OS/topology cells are pending. Production readiness remains NOT VALIDATED.
 
 Production readiness is **NOT VALIDATED**. The functional release gate is narrower than the full production audit and cannot establish production security, fault-tolerance, scalability or performance.
 
@@ -11,8 +11,8 @@ Production readiness is **NOT VALIDATED**. The functional release gate is narrow
 
 | Topology | Decision | Basis |
 | --- | --- | --- |
-| Single-Node | **NOT VALIDATED** | RC6 has not yet been run. R75's three functional cells are historical and candidate-specific; broader isolation/security negatives, resource-exhaustion behavior, stress and controlled performance also remain incomplete. |
-| Multi-Node | **NOT VALIDATED** | RC6 has not yet been run. R75's `admin-portal + workers` topology did not validate the required independent Harbor portal node. |
+| Single-Node | **NOT VALIDATED** | The three previous RC6-1 functional runs predate the current component pins and receive no current-candidate credit. Fresh corrected-source runs and issue-specific evidence remain pending. Broader isolation/security negatives, resource-exhaustion behavior, stress and controlled performance also remain incomplete. |
+| Multi-Node | **NOT VALIDATED** | No current-candidate triad has passed. Each OS still requires separate admin, worker and portal guests plus issue-specific checks. R75's `admin-portal + workers` topology did not validate the required independent Harbor portal node. |
 
 Neither topology is READY or CONDITIONALLY READY on current evidence. Exact-commit CI and scoped scenarios do not substitute for a complete matrix cell. No production system was touched.
 
@@ -37,4 +37,4 @@ R75's historical reports recorded six functional PASS results, but the three Mul
 
 ## Current answer to the audit question
 
-The broader production-readiness question remains **NOT VALIDATED**. R75 has three historical Single-Node passes; its three Multi-Node results used the wrong topology and receive no gate credit. RC6 has **0/8 complete cells**. Even a complete functional matrix would not establish all security, isolation, fault-tolerance, resource-exhaustion or performance properties required for a production decision. No production-readiness claim is made.
+The broader production-readiness question remains **NOT VALIDATED**. R75 has three historical Single-Node passes; its three Multi-Node results used the wrong topology and receive no gate credit. RC6 has **0/6 formally complete cells**. Earlier RC6-1 Single-Node runs predate the current component pins and receive no current-candidate credit. Even a complete functional matrix would not establish all security, isolation, fault-tolerance, resource-exhaustion or performance properties required for a production decision. No production-readiness claim is made.

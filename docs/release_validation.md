@@ -12,7 +12,7 @@ The agent must:
 1. identify the exact release candidate source commits;
 2. build the release RPMs;
 3. create isolated KVM virtual machines;
-4. execute the required eight-cell x86_64 Single-Node and Multi-Node matrix;
+4. execute the required six-cell x86_64 Single-Node and Multi-Node matrix;
 5. collect objective evidence;
 6. create GitHub issues for reproducible product defects;
 7. produce a release validation report.
@@ -48,8 +48,21 @@ issue (or create one if none exists), implement an authorized fix on
 `origin/main`, add or update focused regression coverage, and commit with a
 `Signed-off-by` trailer. Never weaken assertions or disable security controls to
 make a scenario pass. A fix creates a new candidate: rebuild all six Admiral
-RPMs, increment the `Release` of each, and restart all eight matrix cells on
+RPMs, increment the `Release` of each, and restart all six matrix cells on
 clean VMs. Record any harness adjustment and its evidence in the report.
+
+For local fix iterations before the first validated RC6 candidate exists, use
+`scripts/build-local-epoch-rpms.sh EPOCH`. It builds the six RPMs from the
+current pinned sources using temporary spec copies with the supplied RPM
+`Epoch`, while retaining `Version: 0.0.1rc6` and `Release: 1`. Artifacts,
+metadata and SHA-256 manifests are isolated under
+`packaging/build/local-epoch*-rc6-*`; they are test-only and must not be
+published. Increase `EPOCH` when replacing a local test build so DNF can
+upgrade to it. These RPMs earn no release-matrix credit. The first final RC6-1
+candidate is rebuilt from the unmodified specs with no Admiral Epoch and is
+installed on clean seed clones. After a candidate is published or designated
+as the release artifact, any rebuild must increment `Release` for all six
+packages and restart all six matrix cells on clean VMs.
 
 ### 3.2 Preserve the candidate
 
@@ -89,32 +102,34 @@ Examples:
 ### 4.1 Validation platform
 
 * Release-blocking architecture: `x86_64`
-* Release-matrix operating systems: Fedora Rawhide, Rocky Linux 10, AlmaLinux 10, and CentOS Stream 10
+* Release-matrix operating systems: Fedora Rawhide, Rocky Linux 10, and CentOS Stream 10
 * Virtualization: KVM/QEMU; use hardware virtualization where the host supports it
 * Security mode: SELinux `Enforcing`
 
 ### 4.2 Required x86_64 release matrix
 
-The release gate is the cross product of these four operating systems and two
-topologies, for eight required cells:
+The release gate is the cross product of these three operating systems and two
+topologies, for six required cells:
 
 | Operating system | Architecture | Single-node | Multi-node |
 | ---------------- | ------------ | ----------: | ---------: |
 | Fedora Rawhide   | x86_64       |    Required |   Required |
 | Rocky Linux 10   | x86_64       |    Required |   Required |
-| AlmaLinux 10     | x86_64       |    Required |   Required |
 | CentOS Stream 10 | x86_64       |    Required |   Required |
 
 Every operating system must use an official GenericCloud image.
 
 The image checksum must be verified before use.
 
-All three Enterprise Linux 10 distributions are required targets. The project
-COPR `alma+epel-10-x86_64_v2` chroot has skipped Go RPM builds
-([#276](https://github.com/admiral-project/admiral/issues/276)); this build
-environment limitation does not remove AlmaLinux from the release matrix. Build
-and install the exact candidate through the isolated native EL10 lab repository
-and record any dependency-resolution block explicitly.
+Rocky Linux 10 and CentOS Stream 10 are the EL10 release-gate targets. AlmaLinux
+10 is excluded from the active matrix because the Admiral COPR
+`alma+epel-10-x86_64_v2` builder does not provide the Go runtime/toolchain needed
+for Admiral's Go RPMs ([#276](https://github.com/admiral-project/admiral/issues/276)).
+This is an environment exclusion, not evidence that Admiral was validated on
+AlmaLinux. Reconsider inclusion only after the COPR build environment can build
+and publish the required Go RPMs. Build and install the exact candidate through
+the isolated native EL10 lab repository and record any dependency-resolution
+block explicitly.
 The installer must reject other EL major versions until their dependency,
 repository and security-update behavior has been explicitly implemented and
 validated. Fedora Rawhide is a Tier 2 production target and compatibility signal
@@ -124,7 +139,7 @@ included in this release gate.
 ### 4.3 ARM64 Tier 2 non-blocking track
 
 RPM build or runtime validation on `aarch64`/ARM64 may be performed and reported
-as a separate Tier 2 track. ARM64 is not part of the eight-cell x86_64 release
+as a separate Tier 2 track. ARM64 is not part of the six-cell x86_64 release
 gate: an absent or failing ARM64 result does not block an otherwise valid
 x86_64 release. Do not use ARM64 evidence to satisfy an x86_64 cell, or the
 reverse.
@@ -137,9 +152,9 @@ and SELinux state before installing Admiral. Exercise the secure production
 modes; `--dev-node` is not an acceptance substitute.
 
 For the blocking x86_64 gate, the golden candidate is the same six x86_64/noarch
-Admiral RPMs, with identical SHA-256 values across all eight cells. If a fix
+Admiral RPMs, with identical SHA-256 values across all six cells. If a fix
 changes any Admiral RPM payload, rebuild the coordinated six-package candidate
-and restart validation on fresh VMs for all eight cells. An optional ARM64
+and restart validation on fresh VMs for all six cells. An optional ARM64
 build has its own package hashes and separate report; it does not add release
 gate cells. EL10-only dependency RPMs may differ from Fedora repository
 contents and must be listed separately in the report.
@@ -211,7 +226,7 @@ Build the blocking release candidate for x86_64 with the selected source pins:
 make rpm RPM_ARCH=x86_64
 ```
 
-All eight required guest cells use these x86_64/noarch candidate RPMs.
+All six required guest cells use these x86_64/noarch candidate RPMs.
 Record NEVRA and SHA-256 for every package. An optional ARM64 build may use
 `make rpm RPM_ARCH=aarch64`; record its NEVRA/SHA-256 and validation status
 separately, and do not make its absence or failure block the x86_64 gate.

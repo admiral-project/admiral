@@ -1,12 +1,12 @@
 # Admiral release validation — x86_64
 
-Audit ID: `ADM-AUDIT-2026-10-21`. The active release gate covers Rocky Linux 10, AlmaLinux 10, CentOS Stream 10 and Fedora Rawhide on x86_64, each in Single-Node and Multi-Node modes (eight cells). Every Multi-Node cell uses three real guests of the same OS: one admin node, one worker node and an independent portal node.
+Audit ID: `ADM-AUDIT-2026-10-21`. The active release gate covers Rocky Linux 10, CentOS Stream 10 and Fedora Rawhide on x86_64, each in Single-Node and Multi-Node modes (six cells). Every Multi-Node cell uses three real guests of the same OS: one admin node, one worker node and an independent portal node.
 
-## Active candidate — Release 74
+## Active candidate — RC6
 
-**Historical Release 74 status (superseded):** its reports recorded 4/6 cells PASS under the then-used topology. The active Release 75/RC6 assessment corrects the Multi-Node requirement to `--admin-node` + `--worker-node` + independent `--portal-node`; earlier Multi-Node evidence does not validate an independent Harbor portal. See [`RELEASE75_VALIDATION_CLOSURE.md`](RELEASE75_VALIDATION_CLOSURE.md), [`TEST_MATRIX.md`](TEST_MATRIX.md), and [master issue #277](https://github.com/admiral-project/admiral/issues/277) for current scope.
+**Historical Release 74 status (superseded):** its reports recorded 4/6 cells PASS under the then-used topology. The active Release 75/RC6 assessment corrects the Multi-Node requirement to `--admin-node` + `--worker-node` + independent `--portal-node`; earlier Multi-Node evidence does not validate an independent Harbor portal. See [`RELEASE75_VALIDATION_CLOSURE.md`](RELEASE75_VALIDATION_CLOSURE.md), [`TEST_MATRIX.md`](TEST_MATRIX.md), and [active master issue #283](https://github.com/admiral-project/admiral/issues/283) for current scope.
 
-**Active RC6 status: 0/8 complete cells.** R75's three Multi-Node runs used the incorrect `--admin-portal-node` + workers layout; independent Harbor installation, routing and customer workflows remain unvalidated. The required role-separated topology and checks are documented in the active matrix and master issue. AlmaLinux remains in scope despite the separate COPR build-environment issue #276.
+**Active RC6 formal status: 0/6 complete cells.** Earlier RC6-1 Single-Node functional runs are retained as historical evidence, but fixes merged afterward change the component source pins; they do not validate the current candidate. A complete six-stage Rocky Linux 10 Single-Node functional precheck passed with the corrected source pins on a local Epoch 1 build; it is explicitly non-gating, and the final no-Epoch candidate remains unbuilt. See [`evidence/rc6-epoch1-rocky-single-precheck.md`](evidence/rc6-epoch1-rocky-single-precheck.md). R75's three Multi-Node runs used the incorrect `--admin-portal-node` + workers layout; independent Harbor installation, routing and customer workflows remain unvalidated. AlmaLinux is excluded from this matrix because the COPR build environment lacks the Go toolchain/runtime for its Go RPMs (#276).
 
 Earlier R73 Single-Node and Multi-Node reports remain historical, candidate-specific evidence only. Fedora must use native Fedora packages/tooling, and EL10 guests must use EL10 RPMs. Do not bypass DNF dependency resolution or cross-install binaries.
 

@@ -65,7 +65,7 @@ def test_single_node_installer_selects_native_candidate_dist_tag():
         helper,
     )
     assert 'packages+=("${package}-${expected_version}-${expected_release}.${rpm_suffix}")' in helper
-    assert '[[ $actual == "${expected_version}-${expected_release}.${rpm_suffix}" ]]' in helper
+    assert '[[ $actual == "${expected_epoch}:${expected_version}-${expected_release}.${rpm_suffix}" ]]' in helper
 
 
 def test_candidate_install_helpers_do_not_bypass_dnf_vendor_resolution():

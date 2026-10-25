@@ -83,7 +83,7 @@ The following per-OS runners reproduce placement/replay, concurrent idempotency,
 
 Root CI passed for the R75 runtime evidence commit [3c4d6db / run 40147625018](https://github.com/admiral-project/admiral/actions/runs/40147625018), the seed-manifest tooling fix [1d87058 / run 40147974868](https://github.com/admiral-project/admiral/actions/runs/40147974868), and the latest audit-documentation commit [9ce9ecc / run 40149559666](https://github.com/admiral-project/admiral/actions/runs/40149559666). The packaged component CI runs are listed above and in the candidate report.
 
-The master tracker [#277](https://github.com/admiral-project/admiral/issues/277)
+The superseded tracker [#277](https://github.com/admiral-project/admiral/issues/277), now closed as superseded, is replaced by the active master [#283](https://github.com/admiral-project/admiral/issues/283)
 must reflect the corrected topology: R75 has three historical Single-Node
 passes, while its Multi-Node cells have no gate credit. The seed-manifest
 tooling item [#282](https://github.com/admiral-project/admiral/issues/282)
