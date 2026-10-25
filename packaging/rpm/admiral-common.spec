@@ -26,6 +26,7 @@ Requires: systemd >= 250
 Requires: wireguard-tools
 Requires: policycoreutils-python-utils
 Requires: openssl
+Requires: acl
 Requires: curl
 Requires: gnupg2
 Requires: postgresql

@@ -26,7 +26,13 @@ def test_deploy_certificate_keeps_certbot_sources_unchanged(tmp_path):
     os.chmod(key, 0o600)
 
     deployed = tmp_path / "admiral-tls"
-    with mock.patch.object(HTTPS.grp, "getgrnam", return_value=SimpleNamespace(gr_gid=os.getgid())), mock.patch.object(HTTPS.os, "chown", return_value=None):
+    with (
+        mock.patch.object(
+            HTTPS.grp, "getgrnam", return_value=SimpleNamespace(gr_gid=os.getgid())
+        ),
+        mock.patch.object(HTTPS.os, "chown", return_value=None),
+        mock.patch.object(HTTPS.subprocess, "run") as run,
+    ):
         deployed_cert, deployed_key = HTTPS._deploy_readonly_certificate(cert, key, str(deployed))
 
     assert cert.read_text() == "certificate"
@@ -37,6 +43,10 @@ def test_deploy_certificate_keeps_certbot_sources_unchanged(tmp_path):
     assert Path(deployed_key).read_text() == "private-key"
     assert os.stat(deployed_key).st_mode & 0o777 == 0o640
     assert os.stat(deployed).st_mode & 0o777 == 0o750
+    assert [call.args[0] for call in run.call_args_list] == [
+        ["setfacl", "-m", "u:caddy:x", "/etc/admiral"],
+        ["setfacl", "-m", "u:caddy:x", "/etc/admiral/tls"],
+    ]
 
 
 def test_letsencrypt_deploy_hook_replaces_the_admiral_copy_atomically():
@@ -53,6 +63,7 @@ def test_letsencrypt_deploy_hook_replaces_the_admiral_copy_atomically():
     assert "fullchain.pem.bak" in hook
     assert "mv -f -- \"$tmp_cert\" \"$deploy_dir/fullchain.pem\"" in hook
     assert "install -o root -g caddy -m 0640" in hook
+    assert "setfacl -m u:caddy:x /etc/admiral /etc/admiral/tls" in hook
     assert "systemctl restart caddy admirald" in hook
     assert "systemctl is-active --quiet caddy" in hook
     assert "systemctl is-active --quiet admirald" in hook
@@ -115,6 +126,9 @@ def test_letsencrypt_deploy_hook_updates_a_renewed_pair(tmp_path):
         "if [ -n \"$mode\" ]; then chmod \"$mode\" \"$2\"; fi\n"
     )
     install_cmd.chmod(0o755)
+    setfacl = fake_bin / "setfacl"
+    setfacl.write_text(f"#!/bin/sh\nprintf '%s\\n' \"$*\" >> {calls}\n")
+    setfacl.chmod(0o755)
     systemctl = fake_bin / "systemctl"
     systemctl.write_text(f"#!/bin/sh\nprintf '%s\\n' \"$*\" >> {calls}\n")
     systemctl.chmod(0o755)
@@ -140,6 +154,7 @@ def test_letsencrypt_deploy_hook_updates_a_renewed_pair(tmp_path):
     assert (deployed / "fullchain.pem").stat().st_mode & 0o777 == 0o644
     assert (deployed / "privkey.pem").stat().st_mode & 0o777 == 0o640
     assert calls.read_text().splitlines() == [
+        "-m u:caddy:x /etc/admiral /etc/admiral/tls",
         "daemon-reload",
         "restart caddy admirald",
         "is-active --quiet caddy",
@@ -247,6 +262,9 @@ def test_letsencrypt_deploy_hook_restores_previous_pair_on_restart_failure(tmp_p
         "if [ -n \"$mode\" ]; then chmod \"$mode\" \"$2\"; fi\n"
     )
     install_cmd.chmod(0o755)
+    setfacl = fake_bin / "setfacl"
+    setfacl.write_text("#!/bin/sh\nexit 0\n")
+    setfacl.chmod(0o755)
     systemctl = fake_bin / "systemctl"
     systemctl.write_text(
         "#!/bin/sh\n"

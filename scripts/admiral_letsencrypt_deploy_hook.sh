@@ -60,6 +60,9 @@ openssl x509 -in "$source_cert" -noout -purpose \
     || die "renewed certificate is not valid for TLS server authentication"
 
 deploy_dir=${ADMIRAL_LETSENCRYPT_DEPLOY_DIR:-/etc/admiral/tls/letsencrypt}
+command -v setfacl >/dev/null 2>&1 || die "setfacl is required (install the acl package)"
+setfacl -m u:caddy:x /etc/admiral /etc/admiral/tls \
+    || die "cannot grant Caddy traversal access to the Admiral TLS directory"
 install -d -o root -g caddy -m 0750 "$deploy_dir"
 
 tmp_cert=$(mktemp "$deploy_dir/fullchain.pem.XXXXXX")

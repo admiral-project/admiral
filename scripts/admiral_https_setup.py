@@ -57,13 +57,13 @@ def check_root():
 
 def check_requirements():
     missing = []
-    for cmd in ("certbot", "openssl"):
+    for cmd in ("certbot", "openssl", "setfacl"):
         if not _which(cmd):
             missing.append(cmd)
     if missing:
         fail(
             f"Missing: {', '.join(missing)}. Install them:\n"
-            f"  dnf install -y {' '.join(missing)}"
+            f"  dnf install -y {' '.join('acl' if cmd == 'setfacl' else cmd for cmd in missing)}"
         )
 
 
@@ -335,6 +335,16 @@ def _validate_certificate_names(cert_file, apps_domain):
 
 def _deploy_readonly_certificate(cert_file, key_file, deploy_dir="/etc/admiral/tls/letsencrypt"):
     caddy_group = grp.getgrnam("caddy")
+    for parent in ("/etc/admiral", "/etc/admiral/tls"):
+        try:
+            subprocess.run(
+                ["setfacl", "-m", "u:caddy:x", parent],
+                check=True,
+                capture_output=True,
+                text=True,
+            )
+        except (subprocess.CalledProcessError, OSError) as exc:
+            fail(f"Unable to grant Caddy traversal access to {parent}: {exc}")
     os.makedirs(deploy_dir, mode=0o750, exist_ok=True)
     os.chown(deploy_dir, 0, caddy_group.gr_gid)
     os.chmod(deploy_dir, 0o750)
