@@ -16,7 +16,7 @@
 Name:    admiral-fleet
 Version: 0.0.1rc6
 Epoch:          5
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary: Admiral Fleet Worker Agent
 
 License: Apache-2.0
@@ -25,7 +25,7 @@ URL:     https://github.com/admiral-project/admiral-fleet
 Source0: https://github.com/admiral-project/admiral-fleet/archive/%{commit}.tar.gz
 Source1: admiral-fleet.service
 Source2: fleet.env
-Source3: https://github.com/admiral-project/admirald/archive/aec9914c5909af7f66407b6c3dd0822576cc66dc.tar.gz
+Source3: https://github.com/admiral-project/admirald/archive/6e4a725d30c0fff877fe2252e843fae687810ae6.tar.gz
 
 BuildRequires: golang >= 1.26.10
 BuildRequires: binutils
@@ -113,6 +113,9 @@ loginctl enable-linger admiral-apps 2>/dev/null || :
 %systemd_postun_with_restart admiral-fleet.service
 
 %changelog
+* Mon Oct 26 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 5:0.0.1rc6-3
+- Rebuild coordinated Admiral candidate with automatic spoke peer reconciliation
+
 * Sun Oct 25 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 5:0.0.1rc6-1
 - Prepare coordinated RC6 Release 1 validation candidate using RPM Epoch
 

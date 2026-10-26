@@ -7,7 +7,7 @@
 Name:    admiral-flagship
 Version: 0.0.1rc6
 Epoch:          5
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary: Admiral Administrative Web Console
 
 License: Apache-2.0
@@ -82,6 +82,9 @@ restorecon -R %{_prefix}/lib/admiral/flagship 2>/dev/null || :
 %{python3} -m pytest tests/ -x --tb=short
 
 %changelog
+* Mon Oct 26 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 5:0.0.1rc6-3
+- Rebuild coordinated Admiral candidate with automatic spoke peer reconciliation
+
 * Sun Oct 25 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 5:0.0.1rc6-1
 - Prepare coordinated RC6 Release 1 validation candidate using RPM Epoch
 

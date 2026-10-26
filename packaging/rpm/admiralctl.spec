@@ -16,7 +16,7 @@
 Name:    admiralctl
 Version: 0.0.1rc6
 Epoch:          5
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary: Admiral Command-Line Interface
 
 License: Apache-2.0
@@ -24,7 +24,7 @@ ExclusiveArch: x86_64 aarch64
 URL:     https://github.com/admiral-project/admiralctl
 Source0: https://github.com/admiral-project/admiralctl/archive/%{commit}.tar.gz
 Source1: admiralctl.yaml
-Source2: https://github.com/admiral-project/admirald/archive/aec9914c5909af7f66407b6c3dd0822576cc66dc.tar.gz
+Source2: https://github.com/admiral-project/admirald/archive/6e4a725d30c0fff877fe2252e843fae687810ae6.tar.gz
 
 BuildRequires: golang >= 1.26.10
 BuildRequires: binutils
@@ -88,6 +88,9 @@ test "$(./admiralctl version 2>&1)" = "admiralctl %{version}"
 restorecon -F %{_bindir}/admiralctl 2>/dev/null || :
 
 %changelog
+* Mon Oct 26 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 5:0.0.1rc6-3
+- Rebuild coordinated Admiral candidate with automatic spoke peer reconciliation
+
 * Sun Oct 25 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 5:0.0.1rc6-1
 - Prepare coordinated RC6 Release 1 validation candidate using RPM Epoch
 

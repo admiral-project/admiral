@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 %global debug_package %{nil}
-%global commit aec9914c5909af7f66407b6c3dd0822576cc66dc
+%global commit 6e4a725d30c0fff877fe2252e843fae687810ae6
 
 %ifarch x86_64
 %global admiral_goarch amd64
@@ -16,7 +16,7 @@
 Name:    admirald
 Version: 0.0.1rc6
 Epoch:          5
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary: Admiral Control Plane - Core API and orchestration service
 
 License: Apache-2.0
@@ -91,6 +91,9 @@ restorecon -F %{_bindir}/admirald 2>/dev/null || :
 %systemd_postun_with_restart admirald.service
 
 %changelog
+* Mon Oct 26 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 5:0.0.1rc6-3
+- Rebuild coordinated Admiral candidate with automatic spoke peer reconciliation
+
 * Sun Oct 25 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 5:0.0.1rc6-1
 - Prepare coordinated RC6 Release 1 validation candidate using RPM Epoch
 

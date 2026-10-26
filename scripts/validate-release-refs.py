@@ -19,6 +19,7 @@ COMMON_PAYLOAD_PATHS = (
     "ansible",
     "scripts/install.sh",
     "scripts/admiral_wireguard_revoke_peer.py",
+    "scripts/admiral_wireguard_peer_inventory.py",
     "scripts/admiral_wireguard_peer_add.py",
     "scripts/admiral_https_setup.py",
     "scripts/admiral_revoke_bootstrap_key.py",
