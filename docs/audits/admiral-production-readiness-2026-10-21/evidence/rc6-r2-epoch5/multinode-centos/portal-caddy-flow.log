@@ -1,0 +1,13 @@
+Running as unit: rc6-r2-epoch5-independent-portal-flow.service
+routed_portal_test_email=rc6-e5-caddy-20261026t002058z-57b7e2@example.test
+independent_portal_signup=pending
+independent_portal_pending_login=rejected
+independent_portal_customer_approved=id:7
+independent_portal_catalog=published
+independent_portal_free_deploy=PASS instance_id=inst_cb9cc691f7fa68a6
+independent_portal_customer_flow=PASS
+Finished with result: success
+Main processes terminated with: code=exited, status=0/SUCCESS
+Service runtime: 5.502s
+CPU time consumed: 476ms
+Memory peak: 11.6M (swap: 0B)

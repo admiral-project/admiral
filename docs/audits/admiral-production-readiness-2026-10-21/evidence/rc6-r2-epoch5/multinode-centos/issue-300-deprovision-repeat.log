@@ -1,0 +1,131 @@
+Error: execute action "deprovision" failed: HTTP 409 - Instance is already deprovisioned
+Usage:
+  admiralctl instances deprovision <instance_id> [flags]
+
+Aliases:
+  deprovision, destroy
+
+Flags:
+      --force                   Skip confirmation prompt
+  -h, --help                    help for deprovision
+      --output string           Output format: table or json (default "table")
+      --wait                    Wait until the operation reaches a terminal state
+      --wait-timeout duration   Maximum time to wait for an operation (default 30m0s)
+
+Global Flags:
+      --ca-cert string    CA certificate file for admirald HTTPS validation
+      --operator string   Operator name for audit logs
+      --server string     Control plane server endpoint URL
+
+Error: execute action "deprovision" failed: HTTP 409 - Instance is already deprovisioned
+repeat_exit=1
+[
+  {
+    "action": "deprovision_app",
+    "admin_user": "system",
+    "created_at": "2026-10-26T00:21:37.662989Z",
+    "error_message": null,
+    "id": "op_bc3f1bc97b3a95b9",
+    "instance_id": "inst_cb9cc691f7fa68a6",
+    "node_id": "rc6e5cs-worker",
+    "status": "succeeded",
+    "task_id": "task_52c5c74850302ff9",
+    "updated_at": "2026-10-26T00:21:43.196178Z"
+  },
+  {
+    "action": "provision_app",
+    "admin_user": "harbor-token",
+    "created_at": "2026-10-26T00:21:03.264752Z",
+    "error_message": null,
+    "id": "op_c692df2e536c830f",
+    "instance_id": "inst_cb9cc691f7fa68a6",
+    "node_id": "rc6e5cs-worker",
+    "status": "succeeded",
+    "task_id": "task_3d1c16734b991da2",
+    "updated_at": "2026-10-26T00:21:12.960082Z"
+  },
+  {
+    "action": "deprovision_app",
+    "admin_user": "system",
+    "created_at": "2026-10-25T23:53:37.796701Z",
+    "error_message": null,
+    "id": "op_9855ef8118cabab1",
+    "instance_id": "inst_0eef6e5b468e70e2",
+    "node_id": "rc6e5cs-worker",
+    "status": "succeeded",
+    "task_id": "task_5c722e15ce0978f6",
+    "updated_at": "2026-10-25T23:53:40.231736Z"
+  },
+  {
+    "action": "deprovision_app",
+    "admin_user": "system",
+    "created_at": "2026-10-25T23:52:35.991657Z",
+    "error_message": null,
+    "id": "op_10fb9658c11e0d46",
+    "instance_id": "inst_0eef6e5b468e70e2",
+    "node_id": "rc6e5cs-worker",
+    "status": "succeeded",
+    "task_id": "task_8cc55bb7c70106af",
+    "updated_at": "2026-10-25T23:52:41.036735Z"
+  },
+  {
+    "action": "provision_app",
+    "admin_user": "harbor-token",
+    "created_at": "2026-10-25T23:50:28.766182Z",
+    "error_message": null,
+    "id": "op_fbdff6fb8b513a43",
+    "instance_id": "inst_0eef6e5b468e70e2",
+    "node_id": "rc6e5cs-worker",
+    "status": "succeeded",
+    "task_id": "task_048b7ca5261d92a5",
+    "updated_at": "2026-10-25T23:50:40.160929Z"
+  },
+  {
+    "action": "deprovision_app",
+    "admin_user": "harbor-token",
+    "created_at": "2026-10-25T23:41:28.413778Z",
+    "error_message": null,
+    "id": "op_a7682de6023067fb",
+    "instance_id": "inst_ac289b41184d8510",
+    "node_id": "rc6e5cs-worker",
+    "status": "succeeded",
+    "task_id": "task_3e0cdd1335509f58",
+    "updated_at": "2026-10-25T23:41:35.122367Z"
+  },
+  {
+    "action": "provision_app",
+    "admin_user": "harbor-token",
+    "created_at": "2026-10-25T23:40:27.793396Z",
+    "error_message": null,
+    "id": "op_03b1368f20b75665",
+    "instance_id": "inst_ac289b41184d8510",
+    "node_id": "rc6e5cs-worker",
+    "status": "succeeded",
+    "task_id": "task_96cc2ed3411f3b58",
+    "updated_at": "2026-10-25T23:40:39.523249Z"
+  },
+  {
+    "action": "backup_database",
+    "admin_user": "harbor-token",
+    "created_at": "2026-10-25T23:27:08.738437Z",
+    "error_message": null,
+    "id": "op_aabceac658bf575b",
+    "instance_id": "inst_0d5a802eaa152acb",
+    "node_id": "rc6e5cs-worker",
+    "status": "succeeded",
+    "task_id": "task_0ecda83df54fb374",
+    "updated_at": "2026-10-25T23:27:59.373804Z"
+  },
+  {
+    "action": "provision_app",
+    "admin_user": "harbor-token",
+    "created_at": "2026-10-25T23:27:07.678322Z",
+    "error_message": null,
+    "id": "op_2c20b10bc23127ab",
+    "instance_id": "inst_0d5a802eaa152acb",
+    "node_id": "rc6e5cs-worker",
+    "status": "succeeded",
+    "task_id": "task_80e3fedeb45642d0",
+    "updated_at": "2026-10-25T23:27:58.045804Z"
+  }
+]

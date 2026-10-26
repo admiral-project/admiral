@@ -1,0 +1,39 @@
+poll=1 operation=succeeded technical=running health=healthy
+{
+  "action": "provision_app",
+  "admin_user": "harbor-token",
+  "created_at": "2026-10-26T00:21:03.264752Z",
+  "error_message": null,
+  "id": "op_c692df2e536c830f",
+  "instance_id": "inst_cb9cc691f7fa68a6",
+  "node_id": "rc6e5cs-worker",
+  "status": "succeeded",
+  "task_id": "task_3d1c16734b991da2",
+  "updated_at": "2026-10-26T00:21:12.960082Z"
+}
+---INSTANCE---
+{
+  "app_definition_name": "e2e-portal-free",
+  "commercial_status": "active",
+  "created_at": "2026-10-26T00:21:03.264752Z",
+  "customer_id": "hcus_ef95c80063204ec5",
+  "effective_availability": "available",
+  "emergency_limit_bytes": 0,
+  "health_status": "healthy",
+  "hostname": "e2e-portal-free109338.apps.rc6.test",
+  "id": "inst_cb9cc691f7fa68a6",
+  "last_health_checked_at": "2026-10-26T00:21:16.104904Z",
+  "logical_instance_id": "inst_cb9cc691f7fa68a6",
+  "need_restarting": false,
+  "node_id": "rc6e5cs-worker",
+  "setup_completed": false,
+  "storage_exceeded": false,
+  "storage_limit_bytes": 0,
+  "storage_state": "unknown",
+  "storage_used_bytes": 0,
+  "storage_used_percent": 0,
+  "technical_status": "running",
+  "tier_name": "free",
+  "tier_snapshot_json": "{\"app_name\":\"e2e-portal-free\",\"name\":\"free\",\"cpu\":1,\"memory\":\"512M\",\"storage\":\"2G\",\"price_monthly\":0,\"free\":true,\"backup_policy_json\":\"{\\\"enabled\\\":true,\\\"schedule\\\":\\\"disabled\\\",\\\"time\\\":\\\"\\\",\\\"timezone\\\":\\\"\\\",\\\"retention\\\":{\\\"count\\\":7,\\\"days\\\":30},\\\"manual_backups\\\":true,\\\"backup_database\\\":true,\\\"backup_volumes\\\":false,\\\"restore_allowed\\\":true}\"}",
+  "update_type": ""
+}

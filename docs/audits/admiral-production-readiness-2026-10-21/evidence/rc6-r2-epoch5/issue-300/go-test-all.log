@@ -1,0 +1,16 @@
+?   	github.com/admiral-project/admiral/admirald/cmd/admirald	[no test files]
+ok  	github.com/admiral-project/admiral/admirald/internal/api	(cached)
+ok  	github.com/admiral-project/admiral/admirald/internal/bootstrap	(cached)
+ok  	github.com/admiral-project/admiral/admirald/internal/config	(cached)
+ok  	github.com/admiral-project/admiral/admirald/internal/database	(cached)
+ok  	github.com/admiral-project/admiral/admirald/internal/logging	(cached)
+ok  	github.com/admiral-project/admiral/admirald/internal/networking	(cached)
+ok  	github.com/admiral-project/admiral/admirald/internal/queue	(cached)
+?   	github.com/admiral-project/admiral/admirald/internal/queuedb	[no test files]
+ok  	github.com/admiral-project/admiral/admirald/internal/secrets	(cached)
+ok  	github.com/admiral-project/admiral/admirald/internal/security	(cached)
+ok  	github.com/admiral-project/admiral/admirald/internal/version	(cached)
+ok  	github.com/admiral-project/admiral/admirald/pkg/admiral	(cached)
+ok  	github.com/admiral-project/admiral/admirald/pkg/admiral/storage	(cached)
+ok  	github.com/admiral-project/admiral/admirald/pkg/admiral/tlsconfig	(cached)
+exit=0
