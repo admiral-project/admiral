@@ -1,8 +1,10 @@
 # Issue acceptance status for `rc6-e5-r4`
 
-Updated 2026-10-26. Candidate identity remains `5:0.0.1rc6-4`; no product artifact changed during this validation work. The six-cell x86_64 matrix and the six-repository CI record remain the evidence in `../CANDIDATE.md`. This report does not declare the candidate Gold.
+Updated 2026-10-26 after closing #296, #297, and #298. Candidate identity remains `5:0.0.1rc6-4`; no product artifact changed during this validation work. The six-cell x86_64 matrix and the six-repository CI record remain the evidence in `../CANDIDATE.md`. This report does not declare the candidate Gold.
 
 ## Closed after exact-candidate runtime evidence
+
+| #296/#297/#298 | CentOS Stream 10 Single-Node, all six native `0.0.1rc6-4.el10` RPMs: dev install completed; Fleet localhost reached healthy/available; Fail2ban was absent in dev and secure reconvergence passed; both Harbor background one-shots succeeded with `ENV=development`, then secure reconvergence restored `ENV=production` and removed dev drop-ins. | `centos-single/dev-node-install-retry.log`; `centos-single/dev-node-runtime.log`; `centos-single/issue-213/dev-to-single-rc6e5r4a.log`; see hashes in `SHA256SUMS`. Git commit `9a59c434043b4f4c94e3577af87ce28bb1e4064c`. |
 
 | Issue | Result | Evidence |
 |---|---|---|
@@ -26,7 +28,7 @@ Candidate component/root CI is green on the exact recorded source SHAs: root run
 
 These issues remain open and must retain their issue-specific acceptance criteria:
 
-`#298 #297 #296 #295 #294 #291 #289 #288 #287 #286 #278 #271 #260 #259 #257 #255 #240 #229 #228 #216 #213 #201 #191 #190 #182 #181 #106`.
+`#295 #294 #291 #289 #288 #287 #286 #278 #271 #260 #259 #257 #255 #240 #229 #228 #216 #213 #201 #191 #190 #182 #181 #106`.
 
 #191 has final-candidate Single-Node evidence on Rocky and Fedora, including clean `rpm -V admiral-common`, Harbor directory ownership/mode, and no directory discrepancy in `rpm -V admiral-harbor`. Its requested hub Multi-Node check remains outstanding.
 
@@ -34,4 +36,4 @@ These issues remain open and must retain their issue-specific acceptance criteri
 
 ## Resource and platform record
 
-Two disposable issue-validation VMs use updated Rocky/Fedora seeds and native RPMs (`.el10` on Rocky; `.fc46` on Fedora). Host status at last check: 57 GiB disk available and 2.5 GiB memory available. Shut down and clean these guests through `scripts/cleanup-audit-vm.sh` when their evidence is complete. No AlmaLinux result is counted in the active matrix.
+Four issue-validation VMs remain: Rocky and Fedora are shut down; CentOS secure single-node and dev-to-secure guests are running. Host status: 55 GiB disk available, 2.9 GiB memory available, 1.0 GiB swap used. Preserve updated seeds and clean disposable guests only through `scripts/cleanup-audit-vm.sh` when their evidence is complete. No AlmaLinux result is counted in the active matrix.
