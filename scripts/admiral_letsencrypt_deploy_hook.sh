@@ -50,7 +50,7 @@ if [[ -n "${ADMIRAL_NETWORKING_APPS_DOMAIN:-}" ]]; then
     grep -Eq "DNS:${apps_domain_pattern}([,[:space:]]|$)" <<<"$san_output" \
         || die "renewed certificate does not cover the configured apps domain"
     if ! grep -Eq "DNS:${probe_domain_pattern}([,[:space:]]|$)" <<<"$san_output" \
-        && ! grep -Eq "DNS:\\\*.${apps_domain_pattern}([,[:space:]]|$)" <<<"$san_output"; then
+        && ! grep -Eq "DNS:\\*\\.${apps_domain_pattern}([,[:space:]]|$)" <<<"$san_output"; then
         die "renewed certificate does not cover the configured apps probe hostname"
     fi
 fi

@@ -69,7 +69,15 @@ def test_letsencrypt_deploy_hook_replaces_the_admiral_copy_atomically():
     assert "systemctl is-active --quiet admirald" in hook
 
 
-def test_letsencrypt_deploy_hook_updates_a_renewed_pair(tmp_path):
+@pytest.mark.parametrize(
+    "san",
+    [
+        "DNS:apps.example.com,DNS:probe.apps.example.com",
+        "DNS:apps.example.com,DNS:*.apps.example.com",
+    ],
+    ids=["explicit-probe", "single-label-wildcard"],
+)
+def test_letsencrypt_deploy_hook_updates_a_renewed_pair(tmp_path, san):
     lineage = tmp_path / "letsencrypt" / "live" / "apps.example.com"
     lineage.mkdir(parents=True)
     subprocess.run(
@@ -85,7 +93,7 @@ def test_letsencrypt_deploy_hook_updates_a_renewed_pair(tmp_path):
             "-subj",
             "/CN=apps.example.com",
             "-addext",
-            "subjectAltName=DNS:apps.example.com,DNS:probe.apps.example.com",
+            f"subjectAltName={san}",
             "-keyout",
             str(lineage / "privkey.pem"),
             "-out",
