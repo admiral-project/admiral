@@ -1,0 +1,27 @@
+issue=259 os=centos candidate=rc6-e5-r4/5:0.0.1rc6-4.el10 attempt=2 start_utc=2026-10-26T12:07:13Z
+os=centos start_utc=2026-10-26T12:07:15Z
+instance_id=inst_ff6bbe28e232ec03 manager_unit=user@990.service manager_pid_before=11192 linger=yes
+active
+CREATE TABLE
+TRUNCATE TABLE
+INSERT 0 1
+user_manager_restart_requested_utc=2026-10-26T12:07:26Z
+recovery_poll=1 utc=2026-10-26T12:07:29Z manager=active manager_pid=12919 pod=activating db=Error: no container with name or ID "admiral-inst_ff6bbe28e232ec03-db" found: no such container api=stopped stopped unavailable http=000
+recovery_poll=2 utc=2026-10-26T12:07:35Z manager=active manager_pid=12919 pod=active db=127.0.0.1:5432 - accepting connections api=running healthy available http=200
+marker_after=r68-user-systemd-persisted
+{
+  "action": "deprovision_app",
+  "admin_user": "system",
+  "created_at": "2026-10-26T12:07:36.513333Z",
+  "error_message": null,
+  "id": "op_56ff0778f7b3312d",
+  "instance_id": "inst_ff6bbe28e232ec03",
+  "node_id": "rc6-e5-r4-issue-centos-sn",
+  "status": "succeeded",
+  "task_id": "task_f92eec2be334fceb",
+  "updated_at": "2026-10-26T12:07:42.90447Z"
+}
+false_healthy_available_polls=0
+user_systemd_manager_restart_and_recovery=PASS
+end_utc=2026-10-26T12:07:44Z
+attempt=2 result=PASS end_utc=2026-10-26T12:07:45Z

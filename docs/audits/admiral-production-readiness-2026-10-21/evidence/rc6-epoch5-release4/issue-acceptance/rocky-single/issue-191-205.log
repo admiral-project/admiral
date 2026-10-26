@@ -1,0 +1,8 @@
+rpm_verify_common=PASS
+/var/lib/admiral 751 admiral:admiral
+/var/lib/admiral/instances 751 admiral:admiral
+/var/lib/admiral/backups 750 admiral-apps:admiral-apps
+/var/lib/admiral/restore 750 admiral-apps:admiral-apps
+/var/lib/admiral/tmp 700 admiral-apps:admiral-apps
+/etc/systemd/system/admiral-harbor.service.d 750 root:admiral
+candidate_nevra=5:0.0.1rc6-4.el10

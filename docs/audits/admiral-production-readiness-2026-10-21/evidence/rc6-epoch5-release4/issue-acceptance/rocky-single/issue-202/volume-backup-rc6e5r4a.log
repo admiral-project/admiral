@@ -1,0 +1,95 @@
+test=ISSUE-202 candidate=5:0.0.1rc6-4.el10 guest=192.168.122.116 run_id=rc6e5r4a start_utc=2026-10-26T11:27:00Z
+Application definition "e2e-backup-policy" applied successfully!
+{
+  "action": "provision_app",
+  "admin_user": "system",
+  "created_at": "2026-10-26T11:27:01.52068Z",
+  "error_message": null,
+  "id": "op_cfaa8cdb3621c7d0",
+  "instance_id": "inst_172ee815ef007f2a",
+  "node_id": "rc6-e5-r4-issue-rocky-sn",
+  "status": "succeeded",
+  "task_id": "task_5f76d1bd5782c988",
+  "updated_at": "2026-10-26T11:27:35.510193Z"
+}
+instance_id=inst_172ee815ef007f2a app_container=admiral-inst_172ee815ef007f2a-app volume=admiral-inst_172ee815ef007f2a-app mountpoint=/var/lib/admiral-apps/.local/share/containers/storage/volumes/admiral-inst_172ee815ef007f2a-app/_data marker_before=original-issue-202-marker
+{
+  "action": "backup_volumes",
+  "admin_user": "system",
+  "created_at": "2026-10-26T11:27:36.717492Z",
+  "error_message": null,
+  "id": "op_995f91333832277f",
+  "instance_id": "inst_172ee815ef007f2a",
+  "node_id": "rc6-e5-r4-issue-rocky-sn",
+  "status": "succeeded",
+  "task_id": "task_3a8e691fd9bfc676",
+  "updated_at": "2026-10-26T11:27:38.277726Z"
+}
+{
+  "app_id": "e2e-backup-policy",
+  "backup_type": "volume",
+  "checksum_sha256": "aca7d93186308a6e5088746133fba1c64cd0fa25ec6506e6f8a302d44e198913",
+  "completed_at": "2026-10-26T11:27:38Z",
+  "created_at": "2026-10-26T11:27:36Z",
+  "database_type": "none",
+  "expires_at": "2026-11-25T11:27:38Z",
+  "id": "bk_96f9adbe95e92807",
+  "instance_id": "inst_172ee815ef007f2a",
+  "node_id": "rc6-e5-r4-issue-rocky-sn",
+  "retention_policy_snapshot_json": "{\"count\":7,\"days\":30}",
+  "service": "app",
+  "size_bytes": 154,
+  "status": "succeeded",
+  "storage_backend": "local",
+  "storage_key": "inst_172ee815ef007f2a/volumes-op_995f91333832277f.tar.gz",
+  "tier_id": "free",
+  "tier_snapshot_json": "{\"app_name\":\"e2e-backup-policy\",\"name\":\"free\",\"cpu\":1,\"memory\":\"512M\",\"storage\":\"1G\",\"price_monthly\":0,\"free\":true,\"backup_policy_json\":\"{\\\"enabled\\\":true,\\\"schedule\\\":\\\"disabled\\\",\\\"time\\\":\\\"\\\",\\\"timezone\\\":\\\"\\\",\\\"retention\\\":{\\\"count\\\":7,\\\"days\\\":30},\\\"manual_backups\\\":true,\\\"backup_database\\\":false,\\\"backup_volumes\\\":true,\\\"restore_allowed\\\":true}\"}",
+  "triggered_by": "manual"
+}
+volume_artifact=/var/lib/admiral/backups/inst_172ee815ef007f2a/volumes-op_995f91333832277f.tar.gz mode=600 owner=admiral-apps:admiral-apps size=154
+volume_backup_directory=/var/lib/admiral/backups/inst_172ee815ef007f2a mode=700 owner=admiral-apps:admiral-apps
+volume_backup_id=bk_96f9adbe95e92807 storage_key=inst_172ee815ef007f2a/volumes-op_995f91333832277f.tar.gz expected_sha256=aca7d93186308a6e5088746133fba1c64cd0fa25ec6506e6f8a302d44e198913 actual_sha256=aca7d93186308a6e5088746133fba1c64cd0fa25ec6506e6f8a302d44e198913 expected_size=154 actual_size=154
+Restore queued successfully!
+Operation ID: op_617c8dc2daa24ce1
+restore_poll=1 status=queued
+restore_poll=2 status=queued
+restore_poll=3 status=succeeded
+marker_after_restore=original-issue-202-marker
+{
+  "action": "backup",
+  "operation_id": "op_973dfcde32ddc7ae",
+  "status": "queued"
+}
+symlink_attack_path=/var/lib/admiral/backups/inst_172ee815ef007f2a/volumes-op_973dfcde32ddc7ae.tar.gz target=/var/tmp/admiral-issue-202-symlink-target-rc6e5r4a target_sha_before=650f0bd20683ed7fd64273569e70d4a3e392e9042a4cdf3fcd0c042c02ad3d8c
+symlink_backup_poll=1 status=queued
+symlink_backup_poll=2 status=queued
+symlink_backup_poll=3 status=failed
+{
+  "action": "backup_volumes",
+  "admin_user": "system",
+  "created_at": "2026-10-26T11:27:54.281196Z",
+  "error_message": "create backup file: open /var/lib/admiral/backups/inst_172ee815ef007f2a/volumes-op_973dfcde32ddc7ae.tar.gz: too many levels of symbolic links",
+  "id": "op_973dfcde32ddc7ae",
+  "instance_id": "inst_172ee815ef007f2a",
+  "node_id": "rc6-e5-r4-issue-rocky-sn",
+  "status": "failed",
+  "task_id": "task_876b0515562f58ab",
+  "updated_at": "2026-10-26T11:27:56.898508Z"
+}
+symlink_write_through=PREVENTED target_contents=UNCHANGED
+issue_202_volume_backup_restore_permissions_checksum_symlink=PASS end_utc=2026-10-26T11:27:58Z
+{
+  "action": "deprovision_app",
+  "admin_user": "system",
+  "created_at": "2026-10-26T11:27:59.150901Z",
+  "error_message": null,
+  "id": "op_7aca2434400eed40",
+  "instance_id": "inst_172ee815ef007f2a",
+  "node_id": "rc6-e5-r4-issue-rocky-sn",
+  "status": "succeeded",
+  "task_id": "task_673bc4e3d3e22569",
+  "updated_at": "2026-10-26T11:28:07.923058Z"
+}
+cleanup_exit=0
+test=ISSUE-202 result=PASS end_utc=2026-10-26T11:28:09Z
+aa79c826781409d476f066c1795d91a19b89e690fc2bc267c8c94eede68f7659  /root/admiral/docs/audits/admiral-production-readiness-2026-10-21/evidence/rc6-epoch5-release4/issue-acceptance/rocky-single/issue-202/volume-backup-rc6e5r4a.log

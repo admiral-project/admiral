@@ -1,0 +1,48 @@
+{
+  "action": "provision_app",
+  "admin_user": "system",
+  "created_at": "2026-10-26T11:42:24.277524Z",
+  "error_message": null,
+  "id": "op_4747e93fec088161",
+  "instance_id": "inst_0afc98b5f0bd2025",
+  "node_id": "rc6-e5-r4-issue-fedora-sn",
+  "status": "succeeded",
+  "task_id": "task_b17ff1e75cb61305",
+  "updated_at": "2026-10-26T11:43:11.583323Z"
+}
+{
+  "action": "deprovision_app",
+  "admin_user": "system",
+  "created_at": "2026-10-26T11:43:13.532431Z",
+  "error_message": null,
+  "id": "op_281d40811065439c",
+  "instance_id": "inst_0afc98b5f0bd2025",
+  "node_id": "rc6-e5-r4-issue-fedora-sn",
+  "status": "succeeded",
+  "task_id": "task_4a8e975d33a948be",
+  "updated_at": "2026-10-26T11:43:21.228611Z"
+}
+before_deprovision_operations=1 task_id=task_4a8e975d33a948be
+Error: execute action "deprovision" failed: HTTP 409 - Instance is already deprovisioned
+Usage:
+  admiralctl instances deprovision <instance_id> [flags]
+
+Aliases:
+  deprovision, destroy
+
+Flags:
+      --force                   Skip confirmation prompt
+  -h, --help                    help for deprovision
+      --output string           Output format: table or json (default "table")
+      --wait                    Wait until the operation reaches a terminal state
+      --wait-timeout duration   Maximum time to wait for an operation (default 30m0s)
+
+Global Flags:
+      --ca-cert string    CA certificate file for admirald HTTPS validation
+      --operator string   Operator name for audit logs
+      --server string     Control plane server endpoint URL
+
+Error: execute action "deprovision" failed: HTTP 409 - Instance is already deprovisioned
+repeat_exit=1
+after_deprovision_operations=1 task_id=task_4a8e975d33a948be
+issue_300_repeat_deprovision=PASS instance_id=inst_0afc98b5f0bd2025

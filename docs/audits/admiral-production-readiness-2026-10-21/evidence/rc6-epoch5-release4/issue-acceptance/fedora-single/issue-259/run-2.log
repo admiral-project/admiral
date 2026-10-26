@@ -1,0 +1,28 @@
+issue=259 os=fedora candidate=rc6-e5-r4/5:0.0.1rc6-4.fc46 attempt=2 start_utc=2026-10-26T11:52:40Z
+os=fedora start_utc=2026-10-26T11:52:41Z
+instance_id=inst_77515f9fb11fb53b manager_unit=user@986.service manager_pid_before=21092 linger=yes
+active
+CREATE TABLE
+TRUNCATE TABLE
+INSERT 0 1
+user_manager_restart_requested_utc=2026-10-26T11:52:56Z
+recovery_poll=1 utc=2026-10-26T11:53:00Z manager=active manager_pid=22932 pod=activating db=Error: no container with name or ID "admiral-inst_77515f9fb11fb53b-db" found: no such container api=stopped stopped unavailable http=000
+recovery_poll=2 utc=2026-10-26T11:53:06Z manager=active manager_pid=22932 pod=active db=127.0.0.1:5432 - accepting connections api=stopped stopped unavailable http=200
+recovery_poll=3 utc=2026-10-26T11:53:12Z manager=active manager_pid=22932 pod=active db=127.0.0.1:5432 - accepting connections api=running healthy available http=200
+marker_after=r68-user-systemd-persisted
+{
+  "action": "deprovision_app",
+  "admin_user": "system",
+  "created_at": "2026-10-26T11:53:13.364354Z",
+  "error_message": null,
+  "id": "op_62adea3ef929a55f",
+  "instance_id": "inst_77515f9fb11fb53b",
+  "node_id": "rc6-e5-r4-issue-fedora-sn",
+  "status": "succeeded",
+  "task_id": "task_8f551f91a992fa44",
+  "updated_at": "2026-10-26T11:53:20.808933Z"
+}
+false_healthy_available_polls=0
+user_systemd_manager_restart_and_recovery=PASS
+end_utc=2026-10-26T11:53:21Z
+attempt=2 result=PASS end_utc=2026-10-26T11:53:21Z

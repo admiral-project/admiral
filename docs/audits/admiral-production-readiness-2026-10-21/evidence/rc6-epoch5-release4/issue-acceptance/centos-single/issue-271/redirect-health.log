@@ -1,0 +1,36 @@
+issue=271 os=centos candidate=rc6-e5-r4/5:0.0.1rc6-4.el10 run_tag=rc6e5r4b start_utc=2026-10-26T12:10:44Z
+Getting image source signatures
+Copying blob sha256:9da9b91c9fb6bcc07f7eb711167086be63b4dd41db87170fa82d543266ff7da8
+Copying config sha256:74adb015b40d1fc3fd1732569675ef97f1f765350d5bbfcf0412ff010c44c022
+Writing manifest to image destination
+issue=271 os=centos candidate=rc6-e5-r4/5:0.0.1rc6-4.el10 node_ip=192.168.122.118 start_utc=2026-10-26T12:10:45Z
+variant=loopback baseline_poll=2026-10-26T12:10:49Z health=stopped availability=unavailable checked_at=2026-10-26T12:10:47.89219Z
+variant=loopback baseline_poll=2026-10-26T12:10:51Z health=stopped availability=unavailable checked_at=2026-10-26T12:10:47.89219Z
+variant=loopback baseline_poll=2026-10-26T12:10:52Z health=stopped availability=unavailable checked_at=2026-10-26T12:10:47.89219Z
+variant=loopback baseline_poll=2026-10-26T12:10:53Z health=stopped availability=unavailable checked_at=2026-10-26T12:10:47.89219Z
+variant=loopback baseline_poll=2026-10-26T12:10:54Z health=healthy availability=available checked_at=2026-10-26T12:10:53.54114Z
+variant=loopback instance=inst_6ed6714568580e30 redirect=http://127.0.0.1:18081/leak baseline=2026-10-26T12:10:53.54114Z
+variant=loopback utc=2026-10-26T12:10:55Z health=healthy availability=available checked_at=2026-10-26T12:10:53.54114Z target_hits=0
+variant=loopback utc=2026-10-26T12:10:57Z health=healthy availability=available checked_at=2026-10-26T12:10:53.54114Z target_hits=0
+variant=loopback utc=2026-10-26T12:10:58Z health=healthy availability=available checked_at=2026-10-26T12:10:53.54114Z target_hits=0
+variant=loopback utc=2026-10-26T12:10:59Z health=healthy availability=available checked_at=2026-10-26T12:10:58.538961Z target_hits=0
+variant=loopback utc=2026-10-26T12:11:00Z health=healthy availability=available checked_at=2026-10-26T12:10:58.538961Z target_hits=0
+variant=loopback utc=2026-10-26T12:11:01Z health=healthy availability=available checked_at=2026-10-26T12:10:58.538961Z target_hits=0
+variant=loopback utc=2026-10-26T12:11:03Z health=healthy availability=available checked_at=2026-10-26T12:10:58.538961Z target_hits=0
+variant=loopback utc=2026-10-26T12:11:04Z health=healthy availability=available checked_at=2026-10-26T12:11:03.868894Z target_hits=0
+variant=loopback target_requests=0 periodic_reports=2 result=PASS
+variant=node-address baseline_poll=2026-10-26T12:11:17Z health=healthy availability=available checked_at=2026-10-26T12:11:17.227544Z
+variant=node-address instance=inst_8a7746fd774c54fe redirect=http://192.168.122.118:18081/leak baseline=2026-10-26T12:11:17.227544Z
+variant=node-address utc=2026-10-26T12:11:18Z health=healthy availability=available checked_at=2026-10-26T12:11:17.227544Z target_hits=0
+variant=node-address utc=2026-10-26T12:11:19Z health=healthy availability=available checked_at=2026-10-26T12:11:17.227544Z target_hits=0
+variant=node-address utc=2026-10-26T12:11:21Z health=healthy availability=available checked_at=2026-10-26T12:11:17.227544Z target_hits=0
+variant=node-address utc=2026-10-26T12:11:22Z health=healthy availability=available checked_at=2026-10-26T12:11:22.240786Z target_hits=0
+variant=node-address utc=2026-10-26T12:11:23Z health=healthy availability=available checked_at=2026-10-26T12:11:22.240786Z target_hits=0
+variant=node-address utc=2026-10-26T12:11:24Z health=healthy availability=available checked_at=2026-10-26T12:11:22.240786Z target_hits=0
+variant=node-address utc=2026-10-26T12:11:25Z health=healthy availability=available checked_at=2026-10-26T12:11:22.240786Z target_hits=0
+variant=node-address utc=2026-10-26T12:11:27Z health=healthy availability=available checked_at=2026-10-26T12:11:22.240786Z target_hits=0
+variant=node-address utc=2026-10-26T12:11:28Z health=healthy availability=available checked_at=2026-10-26T12:11:27.367407Z target_hits=0
+variant=node-address target_requests=0 periodic_reports=2 result=PASS
+target_listener_requests=0
+issue_271_redirect_health_checks=PASS
+evidence_dir=/var/tmp/rc6-271-centos-rc6e5r4b

@@ -1,0 +1,27 @@
+issue=259 os=rocky candidate=rc6-e5-r4/5:0.0.1rc6-4.el10 attempt=2 start_utc=2026-10-26T11:50:33Z
+os=rocky start_utc=2026-10-26T11:50:34Z
+instance_id=inst_c8d9d57bdb74d273 manager_unit=user@991.service manager_pid_before=41409 linger=yes
+active
+CREATE TABLE
+TRUNCATE TABLE
+INSERT 0 1
+user_manager_restart_requested_utc=2026-10-26T11:50:45Z
+recovery_poll=1 utc=2026-10-26T11:50:48Z manager=active manager_pid=43113 pod=activating db=Error: no container with name or ID "admiral-inst_c8d9d57bdb74d273-db" found: no such container api=stopped stopped unavailable http=000
+recovery_poll=2 utc=2026-10-26T11:50:54Z manager=active manager_pid=43113 pod=active db=127.0.0.1:5432 - accepting connections api=running healthy available http=200
+marker_after=r68-user-systemd-persisted
+{
+  "action": "deprovision_app",
+  "admin_user": "system",
+  "created_at": "2026-10-26T11:50:55.254736Z",
+  "error_message": null,
+  "id": "op_5fec4130543c6308",
+  "instance_id": "inst_c8d9d57bdb74d273",
+  "node_id": "rc6-e5-r4-issue-rocky-sn",
+  "status": "succeeded",
+  "task_id": "task_76acbc608ca5f992",
+  "updated_at": "2026-10-26T11:51:01.245454Z"
+}
+false_healthy_available_polls=0
+user_systemd_manager_restart_and_recovery=PASS
+end_utc=2026-10-26T11:51:01Z
+attempt=2 result=PASS end_utc=2026-10-26T11:51:02Z

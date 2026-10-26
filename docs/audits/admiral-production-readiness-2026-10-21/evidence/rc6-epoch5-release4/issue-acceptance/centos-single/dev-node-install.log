@@ -1,0 +1,155 @@
+audit_start_utc=2026-10-26T12:14:12Z
+candidate=0.0.1rc6-4 epoch=5
+local_repo_staged=/var/tmp/admiral-audit-local-repo
+Admiral 0.0.1rc6 Release 4 signed local validat  23 kB/s | 228  B     00:00    
+Admiral 0.0.1rc6 Release 4 signed local validat 195 kB/s | 441  B     00:00    
+Importing GPG key 0xA739252E:
+ Userid     : "Admiral RC6 Release 4 Validation <admiral-validation@localhost>"
+ Fingerprint: 8BDE 296D 7C66 68C1 4484 0D8D FD3E 9C0D A739 252E
+ From       : http://192.168.122.1/rc6-e5-r4/RPM-GPG-KEY-admiral-r4
+Admiral 0.0.1rc6 Release 4 signed local validat  66 kB/s | 2.9 kB     00:00    
+CentOS Stream 10 - BaseOS                        39 kB/s | 5.1 kB     00:00    
+CentOS Stream 10 - AppStream                     35 kB/s | 5.2 kB     00:00    
+CentOS Stream 10 - CRB                           40 kB/s | 5.0 kB     00:00    
+CentOS Stream 10 - Extras packages              109 kB/s | 5.5 kB     00:00    
+Extra Packages for Enterprise Linux 10 - x86_64  30 kB/s | 4.0 kB     00:00    
+Extra Packages for Enterprise Linux 10 - x86_64  16 MB/s | 7.3 MB     00:00    
+Package dnf-plugins-core-4.7.0-12.el10.noarch is already installed.
+Dependencies resolved.
+Nothing to do.
+Complete!
+Last metadata expiration check: 0:00:08 ago on Mon Oct 26 12:14:17 2026.
+Package epel-release-10-9.el10_3.noarch is already installed.
+Dependencies resolved.
+Nothing to do.
+Complete!
+Enabling a Copr repository. Please note that this repository is not part
+of the main distribution, and quality may vary.
+
+The Fedora Project does not exercise any power over the contents of
+this repository beyond the rules outlined in the Copr FAQ at
+<https://docs.pagure.org/copr.copr/user_documentation.html#what-i-can-build-in-copr>,
+and packages are not held to any quality or security level.
+
+Please do not file bug reports about these packages in Fedora
+Bugzilla. In case of problems, contact the owner of this repository.
+Repository successfully enabled.
+CentOS Stream 10 - BaseOS                        57 kB/s | 5.1 kB     00:00    
+CentOS Stream 10 - AppStream                    114 kB/s | 5.2 kB     00:00    
+CentOS Stream 10 - CRB                           51 kB/s | 5.0 kB     00:00    
+Dependencies resolved.
+================================================================================
+ Package              Arch       Version                Repository         Size
+================================================================================
+Installing:
+ admiral-common       noarch     5:0.0.1rc6-4.el10      admiral-local     129 k
+ admiral-flagship     noarch     5:0.0.1rc6-4.el10      admiral-local     1.5 M
+ admiral-fleet        x86_64     5:0.0.1rc6-4.el10      admiral-local     5.4 M
+ admiral-harbor       noarch     5:0.0.1rc6-4.el10      admiral-local     1.1 M
+ admiralctl           x86_64     5:0.0.1rc6-4.el10      admiral-local     3.1 M
+ admirald             x86_64     5:0.0.1rc6-4.el10      admiral-local     4.0 M
+Installing dependencies:
+ acl                  x86_64     2.4.0-2.el10           baseos             77 k
+
+Transaction Summary
+================================================================================
+Install  7 Packages
+
+Total download size: 15 M
+Installed size: 52 M
+Downloading Packages:
+(1/7): admiral-common-0.0.1rc6-4.el10.noarch.rp 5.0 MB/s | 129 kB     00:00    
+(2/7): admiral-flagship-0.0.1rc6-4.el10.noarch.  25 MB/s | 1.5 MB     00:00    
+(3/7): admiral-harbor-0.0.1rc6-4.el10.noarch.rp  19 MB/s | 1.1 MB     00:00    
+(4/7): admiralctl-0.0.1rc6-4.el10.x86_64.rpm     39 MB/s | 3.1 MB     00:00    
+(5/7): admiral-fleet-0.0.1rc6-4.el10.x86_64.rpm  26 MB/s | 5.4 MB     00:00    
+(6/7): admirald-0.0.1rc6-4.el10.x86_64.rpm       26 MB/s | 4.0 MB     00:00    
+(7/7): acl-2.4.0-2.el10.x86_64.rpm              678 kB/s |  77 kB     00:00    
+--------------------------------------------------------------------------------
+Total                                            44 MB/s |  15 MB     00:00     
+retrieving repo key for admiral-local unencrypted from http://192.168.122.1/rc6-e5-r4/RPM-GPG-KEY-admiral-r4
+Admiral 0.0.1rc6 Release 4 signed local validat 134 kB/s | 441  B     00:00    
+Importing GPG key 0xA739252E:
+ Userid     : "Admiral RC6 Release 4 Validation <admiral-validation@localhost>"
+ Fingerprint: 8BDE 296D 7C66 68C1 4484 0D8D FD3E 9C0D A739 252E
+ From       : http://192.168.122.1/rc6-e5-r4/RPM-GPG-KEY-admiral-r4
+Key imported successfully
+Running transaction check
+Transaction check succeeded.
+Running transaction test
+Transaction test succeeded.
+Running transaction
+  Preparing        :                                                        1/1 
+  Installing       : acl-2.4.0-2.el10.x86_64                                1/7 
+  Running scriptlet: admiral-common-5:0.0.1rc6-4.el10.noarch                2/7 
+Creating group 'admiral' with GID 991.
+Creating user 'admiral' (Admiral service account) with UID 991 and GID 991.
+Creating group 'admiral-apps' with GID 990.
+Creating user 'admiral-apps' (Admiral rootless apps) with UID 990 and GID 990.
+
+  Installing       : admiral-common-5:0.0.1rc6-4.el10.noarch                2/7 
+  Running scriptlet: admiral-common-5:0.0.1rc6-4.el10.noarch                2/7 
+  Installing       : admiral-flagship-5:0.0.1rc6-4.el10.noarch              3/7 
+  Running scriptlet: admiral-flagship-5:0.0.1rc6-4.el10.noarch              3/7 
+  Installing       : admiral-fleet-5:0.0.1rc6-4.el10.x86_64                 4/7 
+  Running scriptlet: admiral-fleet-5:0.0.1rc6-4.el10.x86_64                 4/7 
+  Installing       : admiral-harbor-5:0.0.1rc6-4.el10.noarch                5/7 
+  Running scriptlet: admiral-harbor-5:0.0.1rc6-4.el10.noarch                5/7 
+  Installing       : admiralctl-5:0.0.1rc6-4.el10.x86_64                    6/7 
+  Running scriptlet: admiralctl-5:0.0.1rc6-4.el10.x86_64                    6/7 
+  Installing       : admirald-5:0.0.1rc6-4.el10.x86_64                      7/7 
+  Running scriptlet: admirald-5:0.0.1rc6-4.el10.x86_64                      7/7 
+
+Installed:
+  acl-2.4.0-2.el10.x86_64                                                       
+  admiral-common-5:0.0.1rc6-4.el10.noarch                                       
+  admiral-flagship-5:0.0.1rc6-4.el10.noarch                                     
+  admiral-fleet-5:0.0.1rc6-4.el10.x86_64                                        
+  admiral-harbor-5:0.0.1rc6-4.el10.noarch                                       
+  admiralctl-5:0.0.1rc6-4.el10.x86_64                                           
+  admirald-5:0.0.1rc6-4.el10.x86_64                                             
+
+Complete!
+python_helper_baseline_unchanged
+python3-alembic-0:1.20.1-5.el10.noarch
+python3-flask-1:3.1.3-4.el10.noarch
+python3-flask-alembic-0:3.3.0-5.el10.noarch
+python3-flask-login-0:0.6.3-10.el10.noarch
+python3-flask-sqlalchemy-0:3.1.1-11.el10.noarch
+python3-mistune-0:3.4.0-2.el10.noarch
+python3-sqlalchemy-0:2.0.55-5.el10.x86_64
+python3-typing-extensions-0:4.16.0-2.el10.noarch
+[WARN] ----------------------------------------------------------------
+[WARN] WARNING: --dev-node is INSECURE.
+[WARN] It exposes WSGI servers (Harbor and Flagship) directly to the internet.
+[WARN] ONLY use for development/evaluation.
+[WARN] ----------------------------------------------------------------
+[WARN] Validation seed mode skips base OS and security update transactions; use only with a verified, recently updated disposable image.
+[FATAL] --dev-node requires --yes when stdin is not interactive.
+installer_start_utc=2026-10-26T12:14:39Z installer_end_utc=2026-10-26T12:14:39Z installer_elapsed_seconds=0 installer_exit_code=1
+package_nevra_delta_begin (minus=before, plus=after)
+package_nevra_delta_end
+Transaction ID : 4
+Begin time     : Mon Oct 26 12:14:30 2026
+Begin rpmdb    : baa6d22df8859fa83186abc87c4e38ead15ba3fd957738bd37ecf822b1da2649
+End time       : Mon Oct 26 12:14:38 2026 (8 seconds)
+End rpmdb      : f5c12da3d5c3aec689a0157558778626833619908fd79ac3219fd3ef394fdfdc
+User           : Admiral production audit <validator>
+Return-Code    : Success
+Releasever     : 10
+Command Line   : install -y --disablerepo=copr:* admiral-common-0.0.1rc6-4.el10 admirald-0.0.1rc6-4.el10 admiralctl-0.0.1rc6-4.el10 admiral-fleet-0.0.1rc6-4.el10 admiral-harbor-0.0.1rc6-4.el10 admiral-flagship-0.0.1rc6-4.el10
+Persistence    : Persist
+Comment        : 
+Packages Altered:
+    Install admiral-common-5:0.0.1rc6-4.el10.noarch   @admiral-local
+    Install admiral-flagship-5:0.0.1rc6-4.el10.noarch @admiral-local
+    Install admiral-fleet-5:0.0.1rc6-4.el10.x86_64    @admiral-local
+    Install admiral-harbor-5:0.0.1rc6-4.el10.noarch   @admiral-local
+    Install admiralctl-5:0.0.1rc6-4.el10.x86_64       @admiral-local
+    Install admirald-5:0.0.1rc6-4.el10.x86_64         @admiral-local
+    Install acl-2.4.0-2.el10.x86_64                   @baseos
+Scriptlet output:
+   1 Creating group 'admiral' with GID 991.
+   2 Creating user 'admiral' (Admiral service account) with UID 991 and GID 991.
+   3 Creating group 'admiral-apps' with GID 990.
+   4 Creating user 'admiral-apps' (Admiral rootless apps) with UID 990 and GID 990.
