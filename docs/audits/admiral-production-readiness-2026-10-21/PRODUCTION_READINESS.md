@@ -3,7 +3,7 @@
 Audit ID: `ADM-AUDIT-2026-10-21`<br>
 Audit began: 2026-10-21 UTC<br>
 Release 75 functional closeout: [RELEASE75_VALIDATION_CLOSURE.md](RELEASE75_VALIDATION_CLOSURE.md).
-> **Current local RC6 candidate — 2026-10-26:** Release 2, Epoch 5, native EL10 and Fedora Rawhide RPMs. Candidate RPM source root is e710237fd908feabf17b12fb61d08429deb21e52; current origin/main evidence head is b5d9a5a0148f3cba3becdc0ff837a8130d0957e5 and CI run [40254207999](https://github.com/admiral-project/admiral/actions/runs/40254207999) passed. All three Single-Node six-stage functional lanes passed. Exact-candidate issue probes #259/#260 passed on Rocky and Fedora Single-Node, #271 passed on Rocky and Fedora, #295 passed its corrected Harbor-generated flow on Fedora, and #278/#299/#300 passed scoped tests in the independent-Portal CentOS three-guest environment. The full release-wide issue gate and Multi-Node checklists remain incomplete. Formal matrix: **0/6 complete cells**. Release 2 is a local validation candidate, not a published/validated release.
+> **Current local RC6 candidate — 2026-10-26:** Release 2, Epoch 5, native EL10 and Fedora Rawhide RPMs. Candidate RPM source root is e710237fd908feabf17b12fb61d08429deb21e52; current origin/main evidence head is e62e57f7c5a245fa0677f93581e059a2048a879b and CI run [40254843247](https://github.com/admiral-project/admiral/actions/runs/40254843247) passed. All three Single-Node six-stage functional lanes passed. Exact-candidate issue probes #259/#260 passed on Rocky and Fedora Single-Node, #271 passed on Rocky and Fedora, #295 passed its corrected Harbor-generated flow on Fedora, and #181/#278/#299/#300 passed scoped tests in the independent-Portal CentOS three-guest environment. The full release-wide issue gate and Multi-Node checklists remain incomplete. Formal matrix: **0/6 complete cells**. Release 2 is a local validation candidate, not a published/validated release.
 
 Production readiness is **NOT VALIDATED**. Passing functional lanes and issue-specific probes do not establish the broader security, fault-tolerance, scalability, or performance properties in this audit.
 
@@ -12,7 +12,7 @@ Production readiness is **NOT VALIDATED**. Passing functional lanes and issue-sp
 | Topology | Decision | Basis |
 | --- | --- | --- |
 | Single-Node | **NOT VALIDATED** | Three exact-candidate six-stage functional lanes passed, but release-wide issue acceptance and broader isolation/security, resource-pressure, concurrency, and performance coverage remain incomplete; no formal cell is complete. |
-| Multi-Node | **NOT VALIDATED** | CentOS Stream has partial three-guest evidence on the exact candidate, including independent Portal, scoped #278/#299/#300, recovery, and strict-CA routes. Rocky and Fedora have no current-candidate Multi-Node run; the full checklist is incomplete on CentOS as well. |
+| Multi-Node | **NOT VALIDATED** | CentOS Stream has partial three-guest evidence on the exact candidate, including independent Portal, scoped #181/#278/#299/#300, Worker re-registration after deliberate removal, and strict-CA routes. Rocky and Fedora have no current-candidate Multi-Node run; #182/#190 and the full checklist are incomplete on CentOS as well. |
 
 Neither topology is READY or CONDITIONALLY READY on current evidence. Exact-commit CI and scoped scenarios do not substitute for a complete matrix cell. No production system was touched.
 

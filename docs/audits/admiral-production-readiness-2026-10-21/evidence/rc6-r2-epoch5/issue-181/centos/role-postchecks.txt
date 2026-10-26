@@ -1,0 +1,20 @@
+### Admin (rc6e5cs-admin, 192.168.122.113)
+5:admiral-common-0.0.1rc6-2.el10.noarch
+5:admirald-0.0.1rc6-2.el10.x86_64
+5:admiralctl-0.0.1rc6-2.el10.x86_64
+5:admiral-flagship-0.0.1rc6-2.el10.noarch
+failed_units=none
+admirald.service=active
+admiral-flagship.service=active
+
+### Worker (rc6e5cs-worker, 192.168.122.114)
+5:admiral-common-0.0.1rc6-2.el10.noarch
+5:admiral-fleet-0.0.1rc6-2.el10.x86_64
+failed_units=none
+admiral-fleet.service=active
+
+### Portal (rc6e5cs-portal, 192.168.122.115)
+5:admiral-common-0.0.1rc6-2.el10.noarch
+5:admiral-harbor-0.0.1rc6-2.el10.noarch
+failed_units=none
+admiral-harbor.service=active
