@@ -1,0 +1,14 @@
+[
+  {
+    "action": "deprovision_app",
+    "admin_user": "harbor-token",
+    "created_at": "2026-10-26T20:03:55.463374Z",
+    "error_message": null,
+    "id": "op_ae84c0421f57ac80",
+    "instance_id": "inst_3200d05739f8ca8e",
+    "node_id": "rc6r8-fedora-single",
+    "status": "succeeded",
+    "task_id": "task_0addc66a2a3859f2",
+    "updated_at": "2026-10-26T20:04:02.111832Z"
+  }
+]

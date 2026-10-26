@@ -1,0 +1,11 @@
+Oct 26 20:01:30 rc6r8-fedora-single systemd[1]: admiral-harbor-worker.service: Deactivated successfully.
+Oct 26 20:01:30 rc6r8-fedora-single systemd[1]: Finished admiral-harbor-worker.service - Admiral Harbor reconciliation worker.
+Oct 26 20:01:30 rc6r8-fedora-single systemd[1]: admiral-harbor-worker.service: Consumed 2.892s CPU time over 3.262s wall clock time, 71.2M memory peak.
+Oct 26 20:01:45 rc6r8-fedora-single systemd[1]: Starting admiral-harbor-worker.service - Admiral Harbor reconciliation worker...
+Oct 26 20:01:47 rc6r8-fedora-single python3[4076]: [worker] INFO Security headers initialized
+Oct 26 20:01:47 rc6r8-fedora-single python3[4076]: [worker] INFO Worker started at 2026-10-26T20:01:47.539696+00:00
+Oct 26 20:01:47 rc6r8-fedora-single python3[4076]: [worker] INFO Queued deprovision op_399c93e60dea7138 after prepaid period for sub_a83e965dea794fbb8054
+Oct 26 20:01:47 rc6r8-fedora-single python3[4076]: [worker] INFO Worker finished: Actions: 2, Errors: 0
+Oct 26 20:01:48 rc6r8-fedora-single systemd[1]: admiral-harbor-worker.service: Deactivated successfully.
+Oct 26 20:01:48 rc6r8-fedora-single systemd[1]: Finished admiral-harbor-worker.service - Admiral Harbor reconciliation worker.
+Oct 26 20:01:48 rc6r8-fedora-single systemd[1]: admiral-harbor-worker.service: Consumed 2.418s CPU time over 2.765s wall clock time, 71.3M memory peak.
