@@ -299,7 +299,7 @@ def _certificate_dns_names(cert_file):
 
 def _validate_certificate_usage(cert_file):
     try:
-        usage_output = subprocess.check_output(
+        extended_key_usage_output = subprocess.check_output(
             [
                 "openssl",
                 "x509",
@@ -308,18 +308,25 @@ def _validate_certificate_usage(cert_file):
                 "-noout",
                 "-ext",
                 "extendedKeyUsage",
-                "-ext",
-                "keyUsage",
             ],
+            text=True,
+            stderr=subprocess.DEVNULL,
+        )
+        key_usage_output = subprocess.check_output(
+            ["openssl", "x509", "-in", cert_file, "-noout", "-ext", "keyUsage"],
             text=True,
             stderr=subprocess.DEVNULL,
         )
     except (subprocess.CalledProcessError, OSError) as exc:
         fail(f"Unable to read certificate usage extensions from {cert_file}: {exc}")
 
-    if not re.search(r"(TLS\s+Web\s+Server\s+Authentication|Server\s+Authentication)", usage_output, re.IGNORECASE):
+    if not re.search(
+        r"(TLS\s+Web\s+Server\s+Authentication|Server\s+Authentication)",
+        extended_key_usage_output,
+        re.IGNORECASE,
+    ):
         fail("Certificate is not valid for TLS server authentication (missing serverAuth EKU).")
-    if not re.search(r"Digital\s+Signature", usage_output, re.IGNORECASE):
+    if not re.search(r"Digital\s+Signature", key_usage_output, re.IGNORECASE):
         fail("Certificate keyUsage must allow digitalSignature for TLS server authentication.")
 
 

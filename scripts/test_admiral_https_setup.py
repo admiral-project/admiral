@@ -15,6 +15,37 @@ HTTPS = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(HTTPS)
 
 
+def test_validate_certificate_usage_accepts_server_eku_and_key_usage(tmp_path):
+    cert = tmp_path / "tls-server.pem"
+    key = tmp_path / "tls-server-key.pem"
+    subprocess.run(
+        [
+            "openssl",
+            "req",
+            "-x509",
+            "-newkey",
+            "rsa:2048",
+            "-nodes",
+            "-days",
+            "1",
+            "-subj",
+            "/CN=portal.example.test",
+            "-addext",
+            "keyUsage=critical,digitalSignature,keyEncipherment",
+            "-addext",
+            "extendedKeyUsage=serverAuth",
+            "-keyout",
+            str(key),
+            "-out",
+            str(cert),
+        ],
+        check=True,
+        capture_output=True,
+    )
+
+    HTTPS._validate_certificate_usage(str(cert))
+
+
 def test_deploy_certificate_keeps_certbot_sources_unchanged(tmp_path):
     source_dir = tmp_path / "letsencrypt" / "live" / "apps.example.com"
     source_dir.mkdir(parents=True)
