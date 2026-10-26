@@ -1,0 +1,22 @@
+NAME="CentOS Stream"
+VERSION="10 (Coughlan)"
+VERSION_ID="10"
+PRETTY_NAME="CentOS Stream 10 (Coughlan)"
+arch=x86_64
+kernel=6.12.0-278.el10.x86_64
+selinux=Enforcing
+boot_id=ba343c77-45ed-4169-9b27-6397dbedcb0b
+selinux_config=enforcing
+postgresql.service=active
+admirald.service=active
+admiral-fleet.service=active
+caddy.service=active
+admiral-harbor.service=active
+admiral-flagship.service=active
+failed_units:
+5:admiral-common-0.0.1rc6-6.el10.noarch
+5:admirald-0.0.1rc6-6.el10.x86_64
+5:admiral-fleet-0.0.1rc6-6.el10.x86_64
+5:admiralctl-0.0.1rc6-6.el10.x86_64
+5:admiral-harbor-0.0.1rc6-6.el10.noarch
+5:admiral-flagship-0.0.1rc6-6.el10.noarch

@@ -1,0 +1,6 @@
+undefined_domain=rc6-e5-r6-centos-single
+removed_overlay=/var/lib/libvirt/images/admiral-validation/overlays/rc6-e5-r6-centos-single.qcow2
+removed_cloud_init_iso=/var/lib/libvirt/images/admiral-validation/cloud-init/rc6-e5-r6-centos-single.iso
+removed_cloud_init_dir=/var/lib/libvirt/images/admiral-validation/cloud-init/rc6-e5-r6-centos-single
+removed_dhcp_reservation=name:rc6-e5-r6-centos-single,mac:52:54:00:86:06:03,ip:192.168.122.169
+shared_seed_images=preserved

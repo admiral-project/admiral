@@ -49,7 +49,7 @@ Evidence hashes:
 | Operating system | Single-Node | Multi-Node |
 |---|---:|---:|
 | Rocky Linux 10 x86_64 | **PASS** | Pending |
-| CentOS Stream 10 x86_64 | Pending | Pending |
+| CentOS Stream 10 x86_64 | **PASS** | Pending |
 | Fedora Rawhide x86_64 | **PASS** | Pending |
 
-Current matrix result: **2/6**.
+Current matrix result: **3/6**. CentOS Stream 10 Single-Node evidence is in `centos-single-node-report.md`.

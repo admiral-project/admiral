@@ -1,0 +1,147 @@
+candidate=0.0.1rc6-6.el10 epoch=5 os=CentOS Stream 10 x86_64
+5:admiral-common-0.0.1rc6-6.el10.noarch
+5:admirald-0.0.1rc6-6.el10.x86_64
+5:admiral-fleet-0.0.1rc6-6.el10.x86_64
+5:admiralctl-0.0.1rc6-6.el10.x86_64
+5:admiral-harbor-0.0.1rc6-6.el10.noarch
+5:admiral-flagship-0.0.1rc6-6.el10.noarch
+Application definition "e2e-backup" applied successfully!
+instance_id=inst_67032363b875d207
+operation_id=op_a8b3d851451051b1
+4b08fd95b6a5399146eabaa4b63ed9676d82197de9f13215ebefcf9c0f82cd2d  /usr/bin/podman
+Injected failures only for Podman deletion commands naming inst_67032363b875d207.
+Restore manually with scripts/restore-podman-after-injection.sh inst_67032363b875d207.
+A five-minute systemd timer is armed as a fallback. Preserve /var/lib/admiral/audit-podman-fail-inst_67032363b875d207.log before cleanup.
+4b08fd95b6a5399146eabaa4b63ed9676d82197de9f13215ebefcf9c0f82cd2d  /usr/bin/podman.admiral-audit-original
+5afdf59fa146d178bac826ba72d2222dd6e176987585dce26114b8bec834db69  /usr/bin/podman
+fault_injected_utc=2026-10-26T15:30:37Z
+first_deprovision_exit=1
+{
+  "action": "deprovision_app",
+  "admin_user": "system",
+  "created_at": "2026-10-26T15:30:37.696828Z",
+  "error_message": "deprovision instance \"inst_67032363b875d207\" cleanup failed: remove pod for \"inst_67032363b875d207\": rootless Podman helper \"admiral-fleet-lifecycle\": podman [pod rm --force --ignore admiral-inst_67032363b875d207]: exit status 125: Running as unit: run-p[REDACTED]injected audit Podman deletion failure for inst_67032363b875d207\nFinished with result: exit-code\nMain processes terminated with: code=exited, status=125/n/a\nService runtime: 38ms\nCPU time consumed: 23ms\nMemory peak: 1.2M (swap: 0B)\n\nremove container \"admiral-inst_67032363b875d207-app\": rootless Podman helper \"admiral-fleet-lifecycle\": podman [rm --force --ignore admiral-inst_67032363b875d207-app]: exit status 125: Running as unit: run-p[REDACTED] invocation ID: 1f3adf79dea64ed8a26017d528bcbd75\ninjected audit Podman deletion failure for inst_67032363b875d207\nFinished with result: exit-code\nMain processes terminated with: code=exited, status=125/n/a\nService runtime: 45ms\nCPU time consumed: 21ms\nMemory peak: 1.2M (swap: 0B)\n\nremove container \"admiral-inst_67032363b875d207-db\": rootless Podman helper \"admiral-fleet-lifecycle\": podman [rm --force --ignore admiral-inst_67032363b875d207-db]: exit status 125: Running as unit: run-p[REDACTED]injected audit Podman deletion failure for inst_67032363b875d207\nFinished with result: exit-code\nMain processes terminated with: code=exited, status=125/n/a\nService runtime: 30ms\nCPU time consumed: 21ms\nMemory peak: 1.2M (swap: 0B)\n\nremove volume \"admiral-inst_67032363b875d207-db\": rootless Podman helper \"admiral-fleet-lifecycle\": podman [volume rm --force admiral-inst_67032363b875d207-db]: exit status 125: Running as unit: run-p[REDACTED]injected audit Podman deletion failure for inst_67032363b875d207\nFinished with result: exit-code\nMain processes terminated with: code=exited, status=125/n/a\nService runtime: 50ms\nCPU time consumed: 21ms\nMemory peak: 1.2M (swap: 0B)\n",
+  "id": "op_3c03d2077f23cda6",
+  "instance_id": "inst_67032363b875d207",
+  "node_id": "rc6-e5-r6-centos-single",
+  "status": "failed",
+  "task_id": "task_8517f15f805bf078",
+  "updated_at": "2026-10-26T15:30:44.785012Z"
+}
+Error: operation op_3c03d2077f23cda6 finished with status failed
+Usage:
+  admiralctl instances deprovision <instance_id> [flags]
+
+Aliases:
+  deprovision, destroy
+
+Flags:
+      --force                   Skip confirmation prompt
+  -h, --help                    help for deprovision
+      --output string           Output format: table or json (default "table")
+      --wait                    Wait until the operation reaches a terminal state
+      --wait-timeout duration   Maximum time to wait for an operation (default 30m0s)
+
+Global Flags:
+      --ca-cert string    CA certificate file for admirald HTTPS validation
+      --operator string   Operator name for audit logs
+      --server string     Control plane server endpoint URL
+
+Error: operation op_3c03d2077f23cda6 finished with status failed
+instance_state_after_injected_failure:
+{
+  "app_definition_name": "e2e-backup",
+  "availability_reason": "instance_stopped",
+  "commercial_status": "active",
+  "created_at": "2026-10-26T15:30:16.681049Z",
+  "customer_id": "issue228-centos-e5-r6",
+  "effective_availability": "unavailable",
+  "emergency_limit_bytes": 0,
+  "health_message": "rootless systemd manager active; awaiting fresh workload health",
+  "health_status": "stopped",
+  "hostname": "",
+  "id": "inst_67032363b875d207",
+  "last_health_checked_at": "2026-10-26T15:30:44.277919Z",
+  "logical_instance_id": "inst_67032363b875d207",
+  "need_restarting": false,
+  "node_id": "rc6-e5-r6-centos-single",
+  "setup_completed": false,
+  "storage_exceeded": false,
+  "storage_limit_bytes": 0,
+  "storage_state": "unknown",
+  "storage_used_bytes": 0,
+  "storage_used_percent": 0,
+  "technical_status": "stopped",
+  "tier_name": "small",
+  "tier_snapshot_json": "{\"app_name\":\"e2e-backup\",\"name\":\"small\",\"cpu\":1,\"memory\":\"512M\",\"storage\":\"1G\",\"price_monthly\":5,\"free\":false,\"backup_policy_json\":\"{\\\"enabled\\\":true,\\\"schedule\\\":\\\"disabled\\\",\\\"time\\\":\\\"\\\",\\\"timezone\\\":\\\"\\\",\\\"retention\\\":{\\\"count\\\":7,\\\"days\\\":30},\\\"manual_backups\\\":true,\\\"backup_database\\\":true,\\\"backup_volumes\\\":false,\\\"restore_allowed\\\":true}\"}",
+  "update_type": ""
+}
+containers_after_injected_failure:
+admiral-inst_67032363b875d207-infra|Exited (0) 5 seconds ago
+pods_after_injected_failure:
+admiral-inst_67032363b875d207|Exited
+volumes_after_injected_failure:
+admiral-inst_67032363b875d207-db
+quadlets_after_injected_failure:
+injected_commands:
+2026-10-26T15:30:40Z injected Podman deletion failure: rm -v -f -i admiral-inst_67032363b875d207-app
+2026-10-26T15:30:40Z injected Podman deletion failure: rm -v -f -i admiral-inst_67032363b875d207-db
+2026-10-26T15:30:42Z injected Podman deletion failure: rm -v -f -i admiral-inst_67032363b875d207-db
+2026-10-26T15:30:42Z injected Podman deletion failure: rm -v -f -i admiral-inst_67032363b875d207-app
+2026-10-26T15:30:42Z injected Podman deletion failure: pod rm --ignore --force admiral-inst_67032363b875d207
+2026-10-26T15:30:43Z injected Podman deletion failure: pod rm --force --ignore admiral-inst_67032363b875d207
+2026-10-26T15:30:43Z injected Podman deletion failure: rm --force --ignore admiral-inst_67032363b875d207-app
+2026-10-26T15:30:44Z injected Podman deletion failure: rm --force --ignore admiral-inst_67032363b875d207-db
+2026-10-26T15:30:44Z injected Podman deletion failure: volume rm --force admiral-inst_67032363b875d207-db
+Restored Podman; keep the audit log until it has been captured, then remove it.
+4b08fd95b6a5399146eabaa4b63ed9676d82197de9f13215ebefcf9c0f82cd2d  /usr/bin/podman
+podman version 6.1.0
+restored_podman_sha256:
+4b08fd95b6a5399146eabaa4b63ed9676d82197de9f13215ebefcf9c0f82cd2d  /usr/bin/podman
+remaining_injection_marker=no
+{
+  "action": "deprovision_app",
+  "admin_user": "system",
+  "created_at": "2026-10-26T15:30:59.488415Z",
+  "error_message": null,
+  "id": "op_dc265b155ab48e2c",
+  "instance_id": "inst_67032363b875d207",
+  "node_id": "rc6-e5-r6-centos-single",
+  "status": "succeeded",
+  "task_id": "task_16f36ec1fca2bfb6",
+  "updated_at": "2026-10-26T15:31:03.833933Z"
+}
+retry_status=succeeded operation_id=op_dc265b155ab48e2c
+final_containers=none
+final_pods=none
+final_volumes=none
+final_instance_state:
+{
+  "app_definition_name": "e2e-backup",
+  "availability_reason": "instance_deprovisioned",
+  "commercial_status": "cancelled",
+  "created_at": "2026-10-26T15:30:16.681049Z",
+  "customer_id": "issue228-centos-e5-r6",
+  "effective_availability": "unavailable",
+  "emergency_limit_bytes": 0,
+  "health_message": "rootless systemd manager active; awaiting fresh workload health",
+  "health_status": "stopped",
+  "hostname": "",
+  "id": "inst_67032363b875d207",
+  "last_health_checked_at": "2026-10-26T15:31:01.752706Z",
+  "logical_instance_id": "inst_67032363b875d207",
+  "need_restarting": false,
+  "node_id": "rc6-e5-r6-centos-single",
+  "setup_completed": false,
+  "storage_checked_at": "2026-10-26T15:30:58.853642Z",
+  "storage_exceeded": false,
+  "storage_limit_bytes": 1073741824,
+  "storage_state": "ok",
+  "storage_used_bytes": 47815064,
+  "storage_used_percent": 4.449999809265137,
+  "technical_status": "deprovisioned",
+  "tier_name": "small",
+  "tier_snapshot_json": "{\"app_name\":\"e2e-backup\",\"name\":\"small\",\"cpu\":1,\"memory\":\"512M\",\"storage\":\"1G\",\"price_monthly\":5,\"free\":false,\"backup_policy_json\":\"{\\\"enabled\\\":true,\\\"schedule\\\":\\\"disabled\\\",\\\"time\\\":\\\"\\\",\\\"timezone\\\":\\\"\\\",\\\"retention\\\":{\\\"count\\\":7,\\\"days\\\":30},\\\"manual_backups\\\":true,\\\"backup_database\\\":true,\\\"backup_volumes\\\":false,\\\"restore_allowed\\\":true}\"}",
+  "update_type": ""
+}
+issue228_failure_then_retry=PASS
