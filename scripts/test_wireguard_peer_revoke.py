@@ -10,6 +10,7 @@ import pathlib
 import subprocess
 import tempfile
 import unittest
+from types import SimpleNamespace
 from unittest import mock
 
 
@@ -190,7 +191,10 @@ class WireGuardPeerRevokeTests(unittest.TestCase):
             {"node_id": "worker-001", "node_role": "worker", "wireguard_ip": "10.99.0.3"}
         ).encode() + b"\n"
 
-        node_id, target = HELPER._load_removal_request(raw, known_hosts=inventory)
+        with mock.patch.object(
+            HELPER.pwd, "getpwnam", return_value=SimpleNamespace(pw_uid=os.getuid())
+        ):
+            node_id, target = HELPER._load_removal_request(raw, known_hosts=inventory)
 
         self.assertEqual(node_id, "worker-001")
         self.assertEqual(str(target), "10.99.0.3")
@@ -256,7 +260,17 @@ class WireGuardPeerRevokeTests(unittest.TestCase):
             encoding="utf-8",
         )
         result = subprocess.CompletedProcess([], 0, json.dumps(inventory_output), "")
-        with mock.patch.object(HELPER.subprocess, "run", return_value=result) as run:
+        original_lstat = pathlib.Path.lstat
+
+        def root_owned_install_state(path: pathlib.Path) -> object:
+            info = original_lstat(path)
+            if path == install_state:
+                return SimpleNamespace(st_uid=0, st_mode=info.st_mode)
+            return info
+
+        with mock.patch.object(
+            HELPER.Path, "lstat", autospec=True, side_effect=root_owned_install_state
+        ), mock.patch.object(HELPER.subprocess, "run", return_value=result) as run:
             inventory_path, vars_path = HELPER._build_removal_inventory(
                 "worker-001",
                 temp_directory=self.root,
