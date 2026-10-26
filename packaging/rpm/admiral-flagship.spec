@@ -7,7 +7,7 @@
 Name:    admiral-flagship
 Version: 0.0.1rc6
 Epoch:          5
-Release:        7%{?dist}
+Release:        8%{?dist}
 Summary: Admiral Administrative Web Console
 
 License: Apache-2.0
@@ -82,6 +82,9 @@ restorecon -R %{_prefix}/lib/admiral/flagship 2>/dev/null || :
 %{python3} -m pytest tests/ -x --tb=short
 
 %changelog
+* Mon Oct 26 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 5:0.0.1rc6-8
+- Rebuild all six RPMs with Caddy TLS CA traversal permissions in the installer
+
 * Mon Oct 26 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 5:0.0.1rc6-6
 - Rebuild coordinated RC6 candidate after spoke WireGuard PSK preservation fix
 
