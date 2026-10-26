@@ -10,21 +10,28 @@ workflows, security considerations, and common deployment scenarios.
 A single host runs all Admiral services: control plane, portal, worker,
 database, and reverse proxy. Suitable for teams evaluating Admiral or
 running a small number of customer instances.
-.SS Multi-node with admin-portal and workers
-The control plane and customer portal share one host
-.RB ( \-\-admin-portal-node ).
-Dedicated worker nodes
-.RB ( \-\-worker-node )
-run customer workloads via Podman rootless. Communication between nodes
-uses WireGuard on 10.99.0.0/24 by default; operators can select another IPv4
-subnet with ADMIRAL_WIREGUARD_SUBNET and optionally set the hub address with
-ADMIRAL_WIREGUARD_HUB_IP. Use the same values for every node installation.
+.SS Multi-node with independent roles
+The release topology uses a dedicated
+.BR \-\-admin-node ,
+one or more
+.BR \-\-worker-node s,
+and an independent
+.BR \-\-portal-node .
+Workers run customer workloads via rootless Podman and Harbor runs only on the
+portal. Communication uses WireGuard on 10.99.0.0/24 by default; operators can
+select another IPv4 subnet with ADMIRAL_WIREGUARD_SUBNET and optionally set the
+hub address with ADMIRAL_WIREGUARD_HUB_IP. The combined
+.B \-\-admin-portal-node
+profile remains available for deployments that intentionally co-locate those
+roles, but it does not provide an independent portal.
 .SS Split admin and portal
 .B \-\-admin-node
 installs only the control plane.
 .B \-\-portal-node
 installs the customer portal on a separate host. Each spoke requires its
-own WireGuard peer and admiral-ssh identity.
+own WireGuard peer and admiral-ssh identity. Once at least one Worker and one
+independent Portal are registered, completing either spoke installation runs
+the packaged peer-exchange playbook automatically.
 .SH SECURITY MODEL
 .SS Bootstrap SSH
 During spoke installation the operator connects as root via SSH, creates a
@@ -40,8 +47,21 @@ handshake is verified, the installer:
 To preserve the bootstrap key for re-convergence, pass
 .BR \-\-no-revoke-ssh-key .
 .SS WireGuard isolation
-Each spoke has a /32 route to the hub only. Lateral spoke\[en]spoke
-communication is blocked. The WireGuard firewalld zone uses target DROP.
+Each spoke has a /32 route to the hub. Once a Worker and independent Portal
+are both registered, the installer also configures a direct Worker-to-Portal
+WireGuard peer for authenticated uploaded-backup restore. The Portal firewall
+permits TCP/5001 only from registered Worker WireGuard addresses. Other
+lateral spoke communication remains blocked. The WireGuard firewalld zone
+uses target DROP.
+.P
+Removing an idle spoke with
+.B admiralctl
+.B nodes remove
+.I node-id
+reconciles remaining WireGuard peers before deleting the node. Removing a
+Worker also removes its Portal TCP/5001 firewall authorization. If a remaining
+spoke is unreachable through its pinned SSH identity, removal fails closed and
+retains the node and token for retry.
 .SS Service hardening
 All Admiral services run with systemd hardening:
 .NoNewPrivileges ,
@@ -109,7 +129,9 @@ key stored on the admin node:
 .IP
 The delivery key remains available under
 /var/lib/admiral/ssh-delivery/<node-id>.ed25519 on the admin node until
-spoke reconvergence is complete. Use
+spoke reconvergence and automatic Worker-to-Portal reconciliation are no
+longer required. Keep the corresponding verified
+<node-id>.known_hosts pin in that root-only directory as well. Use
 .B --no-revoke-ssh-key
 only when the operator intentionally wants to retain bootstrap access.
 .RE

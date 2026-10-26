@@ -205,10 +205,13 @@ ssh -i /var/lib/admiral/ssh-delivery/worker-01.ed25519 \
   admiral-ssh@198.51.100.20 'sudo -n systemctl is-active admiral-fleet'
 ```
 
-The private key is a temporary delivery artifact on the Admin node. Extract it
-to secure administrator storage, verify its fingerprint and delete the local
-copy. Admiral does not use this key for normal Fleet, WireGuard, API, or TLS
-operations, and each Worker or Portal receives a different key pair.
+Each Worker or Portal receives a different key pair. Keep the private key and
+the host-key pin on the Admin node for secure spoke reconvergence and automatic
+Worker-to-Portal peer reconciliation. The package owns the directory as
+`root:root 0700`; these credentials are not used for Fleet, WireGuard, API, or
+TLS traffic. If an operator intentionally removes a node's key and pin, remote
+reconvergence and automatic peer reconciliation for that node stop until its
+SSH identity and host fingerprint are provisioned again.
 
 Use the packaged cleanup helper to inspect residual credentials without
 printing their contents. It is a dry run by default and accepts only explicit
@@ -221,8 +224,9 @@ sudo admiral-ssh-delivery-cleanup --node-id worker-01 \
 ```
 
 The apply form verifies that the replacement key is a private, restricted SSH
-key before securely removing only the selected delivery files. It never
-recursively removes the delivery directory or `/etc/admiral/secrets`.
+key before securely removing only the selected delivery files, including the
+verified host-key pin. It never recursively removes the delivery directory or
+`/etc/admiral/secrets`.
 
 For a portal, replace the final service with `admiral-harbor`.
 
@@ -240,6 +244,23 @@ preserves existing secrets and registrations, and treats bootstrap-key
 revocation as idempotent. Supply the currently verified SSH host fingerprint on
 every run. If the host key changed, stop and verify the new key through the
 provider console before retrying.
+
+When the installed topology has at least one active Worker and one active
+independent Portal, completing either spoke installation automatically runs
+`wireguard-peers.yml` with strict SSH host-key checking. The installer uses the
+fingerprints supplied during each node's onboarding and the per-node delivery
+keys retained on the Admin host. Missing keys or pins stop reconciliation with
+an actionable error; SSH host-key checking is never disabled.
+
+Removing an idle Worker or Portal with `admiralctl nodes remove <node-id>`
+also reconciles the remaining registered spokes before Admiral deletes the
+node record. Removing a Worker removes its direct peer and TCP/5001 firewall
+allow rule from the remaining Portal; removing a Portal removes its peer from
+the remaining Workers. The operation is serialized with peer onboarding and
+has a bounded timeout. If a remaining spoke is unreachable or its verified
+SSH identity is unavailable, the API returns HTTP 503 and retains the node and
+token; restore SSH access and retry the removal. Drain/deprovision workloads
+before removing a node.
 
 `--single-node` and `--dev-node` are local co-located setups, not commands for
 adding remote cluster hosts. `--single-node` is the secure beta profile

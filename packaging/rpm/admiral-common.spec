@@ -17,8 +17,10 @@ BuildArch: noarch
 
 BuildRequires: systemd-rpm-macros
 BuildRequires: python3
+BuildRequires: python3-pyyaml
 
 Requires: python3
+Requires: python3-pyyaml
 Requires: ansible-core
 Requires: ansible-collection-ansible-posix
 Requires: openssh-clients
@@ -28,6 +30,7 @@ Requires: wireguard-tools
 Requires: policycoreutils-python-utils
 Requires: openssl
 Requires: acl
+Requires: util-linux-core
 Requires: curl
 Requires: gnupg2
 Requires: postgresql
@@ -57,6 +60,7 @@ cp -r ansible/* %{buildroot}%{_datadir}/admiral/ansible/
 # Installer command
 install -Dm0755 scripts/install.sh %{buildroot}%{_bindir}/admiral-install
 install -Dm0755 scripts/admiral_known_host.py %{buildroot}%{_bindir}/admiral-known-host
+install -Dm0755 scripts/admiral_wireguard_peer_inventory.py %{buildroot}%{_bindir}/admiral-wireguard-peer-inventory
 install -Dm0755 scripts/admiral_revoke_bootstrap_key.py %{buildroot}%{_bindir}/admiral-revoke-bootstrap-key
 install -Dm0755 scripts/admiral_ssh_delivery_cleanup.py %{buildroot}%{_bindir}/admiral-ssh-delivery-cleanup
 install -Dm0755 scripts/admiral_control_plane_backup.sh %{buildroot}%{_bindir}/admiral-control-plane-backup
@@ -129,6 +133,7 @@ for script in \
 done
 python3 - \
     %{buildroot}%{_bindir}/admiral-known-host \
+    %{buildroot}%{_bindir}/admiral-wireguard-peer-inventory \
     %{buildroot}%{_bindir}/admiral-revoke-bootstrap-key \
     %{buildroot}%{_bindir}/admiral-ssh-delivery-cleanup \
     %{buildroot}%{_bindir}/admiral-rootless-subids \
@@ -142,6 +147,7 @@ for filename in sys.argv[1:]:
 PY
 python3 scripts/test_wireguard_peer_revoke.py
 python3 scripts/test_wireguard_peer_add.py
+python3 scripts/test_wireguard_peer_inventory.py
 
 %pre
 %sysusers_create_package %{name} %{SOURCE1}
@@ -189,6 +195,7 @@ python3 scripts/test_wireguard_peer_add.py
 %{_bindir}/admiral-https-setup
 %{_bindir}/admiral-install
 %{_bindir}/admiral-known-host
+%{_bindir}/admiral-wireguard-peer-inventory
 %{_bindir}/admiral-revoke-bootstrap-key
 %{_bindir}/admiral-ssh-delivery-cleanup
 %{_bindir}/admiral-rootless-subids

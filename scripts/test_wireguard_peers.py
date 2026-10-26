@@ -88,7 +88,10 @@ class WireGuardPeerExchangeTests(unittest.TestCase):
         self.assertIn("CapabilityBoundingSet=CAP_NET_ADMIN", service_unit)
         self.assertIn("ProtectSystem=strict", service_unit)
         self.assertIn("NoNewPrivileges=yes", service_unit)
+        self.assertIn("RuntimeMaxSec=27s", service_unit)
+        self.assertIn("AF_INET AF_INET6", service_unit)
         self.assertIn("def revoke_peer(", helper)
+        self.assertIn("_run_peer_playbook(inventory, extra_vars)", helper)
 
     def test_spoke_peer_add_rechecks_registration_under_shared_lock(self) -> None:
         installer = (ROOT / "scripts/install.sh").read_text(encoding="utf-8")
@@ -100,6 +103,14 @@ class WireGuardPeerExchangeTests(unittest.TestCase):
         self.assertIn("_registered_node(item_id, item_ip, os.environ)", helper)
         self.assertIn("/usr/libexec/admiral-wireguard-peer-add", fleet)
         self.assertNotIn("wg set wg-admiral peer", installer)
+
+    def test_installer_serializes_automatic_spoke_reconciliation(self) -> None:
+        installer = (ROOT / "scripts/install.sh").read_text(encoding="utf-8")
+
+        self.assertIn("flock -x \"$PEER_LOCK_FD\"", installer)
+        self.assertIn("/run/lock/admiral-wireguard-peer-add.lock", installer)
+        self.assertIn('PEER_SYNC_REQUIRED="true"', installer)
+        self.assertIn('"$ANSIBLE_DIR/wireguard-peers.yml"', installer)
 
     def test_peer_loader_replays_fragments_in_order_without_leaking_wg_output(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
@@ -233,9 +244,15 @@ class WireGuardPeerExchangeTests(unittest.TestCase):
         firewall_tasks = (ROOT / "ansible" / "roles" / "admiral_firewall" / "tasks" / "main.yml").read_text(encoding="utf-8")
         egress_template = (ROOT / "ansible" / "roles" / "admiral_firewall" / "templates" / "admiral-egress.nft.j2").read_text(encoding="utf-8")
 
-        self.assertIn('INSTALL_WIREGUARD_SUBNET="${ADMIRAL_WIREGUARD_SUBNET:-10.99.0.0/24}"', installer)
+        self.assertIn(
+            'INSTALL_WIREGUARD_SUBNET="${ADMIRAL_WIREGUARD_SUBNET:-$(read_install_state_value ADMIRAL_WIREGUARD_SUBNET || printf \'%s\' \'10.99.0.0/24\')}"',
+            installer,
+        )
+        self.assertIn('"ADMIRAL_WIREGUARD_SUBNET": os.environ["INSTALL_STATE_WIREGUARD_SUBNET"]', installer)
+        self.assertIn('"ADMIRAL_WIREGUARD_HUB_IP": os.environ["INSTALL_STATE_WIREGUARD_HUB_IP"]', installer)
         self.assertIn('ADMIRAL_WIREGUARD_SUBNET="$INSTALL_WIREGUARD_SUBNET"', installer)
-        self.assertIn('"admiral_wireguard_subnet": os.environ["ADMIRAL_WIREGUARD_SUBNET"]', installer)
+        self.assertIn('"admiral_wireguard_subnet": os.environ["INSTALL_STATE_WIREGUARD_SUBNET"]', installer)
+        self.assertIn('"admiral_wireguard_hub_ip": os.environ["INSTALL_STATE_WIREGUARD_HUB_IP"]', installer)
         self.assertIn('"https://{{ admiral_admin_wireguard_ip | default(admiral_admin_endpoint | default(admiral_wireguard_hub_ip)) }}:8080"', harbor_tasks)
         self.assertEqual(firewall_tasks.count('rule: "-d {{ admiral_wireguard_subnet }} -j ACCEPT"'), 4)
         self.assertIn("ip daddr {{ admiral_wireguard_subnet }} accept", egress_template)

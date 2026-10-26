@@ -256,7 +256,8 @@ INSTALL_DEV_MODE="false"
 INSTALL_NODE_ID=""
 INSTALL_PUBLIC_IP=""
 INSTALL_WIREGUARD_IP=""
-INSTALL_WIREGUARD_SUBNET="${ADMIRAL_WIREGUARD_SUBNET:-10.99.0.0/24}"
+INSTALL_WIREGUARD_SUBNET="${ADMIRAL_WIREGUARD_SUBNET:-$(read_install_state_value ADMIRAL_WIREGUARD_SUBNET || printf '%s' '10.99.0.0/24')}"
+INSTALL_WIREGUARD_HUB_IP="${ADMIRAL_WIREGUARD_HUB_IP:-$(read_install_state_value ADMIRAL_WIREGUARD_HUB_IP || true)}"
 INSTALL_ADMIN_ENDPOINT=""
 INSTALL_TARGET_SSH_USER="root"
 INSTALL_TARGET_SSH_USER_EXPLICIT="false"
@@ -275,6 +276,11 @@ INSTALLER_TEMP_BASE=""
 EXTRA_VARS_FILE=""
 TMP_INVENTORY=""
 TMP_KNOWN_HOSTS=""
+PEER_INVENTORY_FILE=""
+PEER_INVENTORY_ERROR=""
+PEER_EXTRA_VARS_FILE=""
+PEER_SYNC_REQUIRED="false"
+PEER_LOCK_FD=""
 SSH_OPTIONS=()
 
 wireguard_hub_ip_for_subnet() {
@@ -304,8 +310,16 @@ PY
 }
 
 cleanup_installer_temps() {
+    if [[ -n "$PEER_LOCK_FD" ]]; then
+        flock -u "$PEER_LOCK_FD" 2>/dev/null || true
+        exec {PEER_LOCK_FD}>&-
+        PEER_LOCK_FD=""
+    fi
     [[ -z "$TMP_INVENTORY" ]] || rm -f -- "$TMP_INVENTORY"
     [[ -z "$TMP_KNOWN_HOSTS" ]] || rm -f -- "$TMP_KNOWN_HOSTS"
+    [[ -z "$PEER_INVENTORY_FILE" ]] || rm -f -- "$PEER_INVENTORY_FILE"
+    [[ -z "$PEER_INVENTORY_ERROR" ]] || rm -f -- "$PEER_INVENTORY_ERROR"
+    [[ -z "$PEER_EXTRA_VARS_FILE" ]] || rm -f -- "$PEER_EXTRA_VARS_FILE"
     [[ -z "$EXTRA_VARS_FILE" ]] || rm -f -- "$EXTRA_VARS_FILE"
     [[ -z "$INSTALLER_TEMP_BASE" ]] || rm -rf -- "$INSTALLER_TEMP_BASE"
 }
@@ -412,8 +426,9 @@ while [[ $# -gt 0 ]]; do
     shift
 done
 
-INSTALL_ADMIN_WIREGUARD_IP="$(wireguard_hub_ip_for_subnet "$INSTALL_WIREGUARD_SUBNET" "${ADMIRAL_WIREGUARD_HUB_IP:-}")" ||
+INSTALL_ADMIN_WIREGUARD_IP="$(wireguard_hub_ip_for_subnet "$INSTALL_WIREGUARD_SUBNET" "$INSTALL_WIREGUARD_HUB_IP")" ||
     die "Set ADMIRAL_WIREGUARD_SUBNET to a valid IPv4 subnet and keep the hub address inside it."
+INSTALL_WIREGUARD_HUB_IP="$INSTALL_ADMIN_WIREGUARD_IP"
 
 S3_ACCESS_KEY_VALUE=""
 S3_SECRET_KEY_VALUE=""
@@ -699,6 +714,41 @@ fi
 
 # --- 1. root check ---
 [[ $EUID -eq 0 ]] || die "This script must be run as root."
+
+# Preserve only SSH host keys whose fingerprints the operator explicitly
+# verified. The peer-reconciliation playbook later uses these pins together
+# with the per-node delivery identities; it must never fall back to accepting
+# an unverified key or disabling host-key checking.
+if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]]; then
+    DELIVERY_ID="$INSTALL_NODE_ID"
+    SSH_DELIVERY_DIR="/var/lib/admiral/ssh-delivery"
+    [[ -d "$SSH_DELIVERY_DIR" ]] || die "The admiral-common RPM did not create $SSH_DELIVERY_DIR."
+    VERIFIED_HOST_KEYS_TMP="$(mktemp "$SSH_DELIVERY_DIR/.${DELIVERY_ID}.known_hosts.XXXXXX")"
+    printf '%s' "$MATCHING_HOST_KEYS" > "$VERIFIED_HOST_KEYS_TMP"
+    chown root:root "$VERIFIED_HOST_KEYS_TMP"
+    chmod 0600 "$VERIFIED_HOST_KEYS_TMP"
+    mv -f -- "$VERIFIED_HOST_KEYS_TMP" "$SSH_DELIVERY_DIR/${DELIVERY_ID}.known_hosts"
+    unset VERIFIED_HOST_KEYS_TMP
+
+    PEER_PREFLIGHT_OUTPUT="$(admiral-wireguard-peer-inventory \
+        --known-hosts /var/lib/admiral/know_host.yaml \
+        --ssh-directory "$SSH_DELIVERY_DIR" \
+        preflight --role "$([[ "$INSTALL_MODE" == "portal-node" ]] && printf portal || printf worker)" \
+        --current-node-id "$DELIVERY_ID")" ||
+        die "WireGuard Worker-to-Portal peer preflight failed: $PEER_PREFLIGHT_OUTPUT"
+    case "$PEER_PREFLIGHT_OUTPUT" in
+        required)
+            PEER_SYNC_REQUIRED="true"
+            info "An independent Worker and Portal are registered; installer will reconcile direct WireGuard and Harbor access."
+            ;;
+        not-required)
+            info "No opposite spoke role is registered yet; direct Worker-to-Portal reconciliation will run when both roles exist."
+            ;;
+        *)
+            die "WireGuard peer preflight returned an unexpected result: $PEER_PREFLIGHT_OUTPUT"
+            ;;
+    esac
+fi
 
 # --- 2. detect OS ---
 if ! source /etc/os-release 2>/dev/null; then
@@ -1163,10 +1213,21 @@ if [[ "$INSTALL_MODE" == "single-node" || "$INSTALL_MODE" == "admin-node" || "$I
     [[ -d /etc/admiral ]] || die "The admiral-common RPM did not create /etc/admiral; reinstall the Admiral packages before continuing."
     state_tmp="$(mktemp /etc/admiral/install.env.XXXXXX)"
     chmod 0640 "$state_tmp"
-    INSTALL_STATE_PUBLIC_IP="$INSTALL_PUBLIC_IP" python3 - "$state_tmp" <<'PY'
+    INSTALL_STATE_PUBLIC_IP="$INSTALL_PUBLIC_IP" \
+    INSTALL_STATE_WIREGUARD_SUBNET="$INSTALL_WIREGUARD_SUBNET" \
+    INSTALL_STATE_WIREGUARD_HUB_IP="$INSTALL_ADMIN_WIREGUARD_IP" \
+    python3 - "$state_tmp" <<'PY'
 import json, os, sys
 with open(sys.argv[1], "w", encoding="utf-8") as stream:
-    json.dump({"version": 1, "ADMIRAL_PUBLIC_IP": os.environ["INSTALL_STATE_PUBLIC_IP"]}, stream)
+    json.dump(
+        {
+            "version": 2,
+            "ADMIRAL_PUBLIC_IP": os.environ["INSTALL_STATE_PUBLIC_IP"],
+            "ADMIRAL_WIREGUARD_SUBNET": os.environ["INSTALL_STATE_WIREGUARD_SUBNET"],
+            "ADMIRAL_WIREGUARD_HUB_IP": os.environ["INSTALL_STATE_WIREGUARD_HUB_IP"],
+        },
+        stream,
+    )
     stream.write("\n")
 PY
     chown root:root "$state_tmp"
@@ -1601,6 +1662,84 @@ if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]] &&
     info "Bootstrap SSH credential revoked; per-node admiral-ssh identity is now authoritative."
 fi
 
+# When an independent Worker and Portal exist, reconcile their direct
+# WireGuard peer and firewall state as part of normal spoke onboarding. The
+# inventory builder requires previously fingerprint-pinned host keys and
+# per-node delivery identities; there is deliberately no insecure SSH fallback.
+if [[ "$PEER_SYNC_REQUIRED" == "true" ]]; then
+    ANSIBLE_DIR="/usr/share/admiral/ansible"
+    [[ -f "$ANSIBLE_DIR/wireguard-peers.yml" ]] ||
+        die "The admiral-common package is missing wireguard-peers.yml. Update the complete Admiral package set."
+    python3 - <<'PY'
+import os
+fd = os.open(
+    "/run/lock/admiral-wireguard-peer-add.lock",
+    os.O_CREAT | os.O_RDWR | getattr(os, "O_NOFOLLOW", 0),
+    0o600,
+)
+os.close(fd)
+PY
+    exec {PEER_LOCK_FD}>>/run/lock/admiral-wireguard-peer-add.lock
+    flock -x "$PEER_LOCK_FD" || die "Could not lock WireGuard peer reconciliation."
+    PEER_INVENTORY_FILE="$(mktemp "$INSTALLER_TEMP_BASE/peer-inventory.XXXXXX.json")"
+    PEER_INVENTORY_ERROR="$(mktemp "$INSTALLER_TEMP_BASE/peer-inventory-error.XXXXXX")"
+    PEER_EXTRA_VARS_FILE="$(mktemp "$INSTALLER_TEMP_BASE/peer-extra-vars.XXXXXX.json")"
+    INSTALL_STATE_WIREGUARD_SUBNET="$INSTALL_WIREGUARD_SUBNET" \
+    INSTALL_STATE_WIREGUARD_HUB_IP="$INSTALL_ADMIN_WIREGUARD_IP" \
+    python3 - "$PEER_EXTRA_VARS_FILE" <<'PY'
+import json, os, sys
+with open(sys.argv[1], "w", encoding="utf-8") as stream:
+    json.dump(
+        {
+            "admiral_wireguard_subnet": os.environ["INSTALL_STATE_WIREGUARD_SUBNET"],
+            "admiral_wireguard_hub_ip": os.environ["INSTALL_STATE_WIREGUARD_HUB_IP"],
+        },
+        stream,
+    )
+    stream.write("\n")
+PY
+    chmod 0600 "$PEER_INVENTORY_FILE" "$PEER_INVENTORY_ERROR" "$PEER_EXTRA_VARS_FILE"
+
+    peer_inventory_ready=false
+    for attempt in $(seq 1 30); do
+        if admiral-wireguard-peer-inventory \
+            --known-hosts /var/lib/admiral/know_host.yaml \
+            --ssh-directory /var/lib/admiral/ssh-delivery \
+            inventory \
+            --admin-endpoint "$INSTALL_ADMIN_ENDPOINT" \
+            --current-node-id "$SPOKE_NODE_ID" \
+            >"$PEER_INVENTORY_FILE" 2>"$PEER_INVENTORY_ERROR"; then
+            peer_inventory_ready=true
+            break
+        fi
+        if grep -Fq "is not active in know_host.yaml yet" "$PEER_INVENTORY_ERROR"; then
+            info "Waiting for the new spoke to appear in Admirald's peer inventory (attempt ${attempt}/30)."
+            sleep 2
+            continue
+        fi
+        cat "$PEER_INVENTORY_ERROR" >&2
+        die "Could not build a secure Worker-to-Portal Ansible inventory."
+    done
+    [[ "$peer_inventory_ready" == true ]] || {
+        cat "$PEER_INVENTORY_ERROR" >&2
+        die "The new spoke was not added to Admirald's peer inventory in time."
+    }
+
+    info "Reconciling registered Worker and independent Portal WireGuard peers..."
+    ANSIBLE_LOCAL_TEMP="$INSTALLER_TEMP_BASE/ansible-peer-local" \
+    ANSIBLE_REMOTE_TEMP="/tmp" \
+    ANSIBLE_GALAXY_CACHE_DIR="$INSTALLER_TEMP_BASE/ansible-galaxy-cache" \
+    ANSIBLE_HOST_KEY_CHECKING=True \
+        ansible-playbook \
+            "$ANSIBLE_DIR/wireguard-peers.yml" \
+            -i "$PEER_INVENTORY_FILE" \
+            --extra-vars "@$PEER_EXTRA_VARS_FILE" \
+            || die "Worker-to-Portal WireGuard reconciliation failed; rerun admiral-install after correcting the reported preflight or SSH error."
+    flock -u "$PEER_LOCK_FD" || die "Could not release the WireGuard peer reconciliation lock."
+    exec {PEER_LOCK_FD}>&-
+    PEER_LOCK_FD=""
+fi
+
 # --- 12. final message ---
 cat <<EOF
 
@@ -1678,13 +1817,14 @@ Administrative SSH credential for this node:
   Public key:    ${ADMIN_SSH_DELIVERY_KEY}.pub
   Fingerprint:   ${ADMIN_SSH_FINGERPRINT}
 
-Extract this private key to secure administrator storage and delete both
-delivery artifacts from the Admin node after verification. Admiral will not
-use this key for normal control-plane operations. Inspect them without
-deleting anything first with:
+Keep this private key and its verified host-key pin on the Admin node for
+secure spoke reconvergence and automatic Worker-to-Portal peer reconciliation.
+The directory is root-only. It is not used for Fleet control-plane traffic.
+If you intentionally remove it after arranging another supported operator
+workflow, peer reconciliation and automated spoke reconvergence will stop.
+Inspect the exact artifacts without deleting anything first with:
   sudo admiral-ssh-delivery-cleanup --node-id ${DELIVERY_ID}
-After confirming an alternate operator key works, remove only these exact
-files with --apply and --replacement-key.
+Remove only these exact files with --apply and --replacement-key.
 EOF
 fi
 

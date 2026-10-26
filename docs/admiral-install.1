@@ -36,6 +36,13 @@ modes. Spoke modes
 revoke the bootstrap SSH key after onboarding; use
 .B \-\-no-revoke-ssh-key
 to preserve it for reconvergence.
+.P
+When an active Worker and independent Portal are both registered, onboarding
+either spoke automatically runs the packaged WireGuard peer-exchange playbook.
+It uses the verified per-node SSH host-key pins and delivery identities on the
+Admin host; SSH host-key checking is not disabled.
+Removing an idle spoke also reconciles remaining peers before node deletion;
+an unreachable spoke causes removal to fail closed and retain the node record.
 .SH INSTALLATION MODES
 .TP
 \fB\-\-single-node\fR
@@ -54,8 +61,9 @@ and supporting services. Does not install Caddy, flagship, or harbor.
 .TP
 \fB\-\-admin-portal-node\fR
 Control plane and customer portal on one host. Installs all admin-node
-components plus Caddy, admiral-flagship, and admiral-harbor. The typical
-multi-node admin topology.
+components plus Caddy, admiral-flagship, and admiral-harbor. This combined
+profile is supported but does not satisfy deployments that require an
+independent Harbor portal.
 .TP
 \fB\-\-worker-node\fR
 Worker node for running customer workloads. Installs admiral-fleet, WireGuard
@@ -68,6 +76,8 @@ into the target worker host.
 Standalone portal node. Installs admiral-harbor, WireGuard spoke, and
 supporting services. Mutually exclusive with
 .BR \-\-worker-node .
+When Workers are already active, the installer reconciles their direct
+WireGuard access to Harbor as part of onboarding.
 .SH OPTIONS
 .TP
 \fB\-\-public-ip\fR \fIIP\fR

@@ -43,6 +43,7 @@ def _targets(key_dir: Path, node_ids: list[str], extra: list[str]) -> list[Path]
             [
                 key_dir / f"{node_id}.ed25519",
                 key_dir / f"{node_id}.ed25519.pub",
+                key_dir / f"{node_id}.known_hosts",
             ]
         )
     paths.extend(Path(value) for value in extra)

@@ -1,10 +1,12 @@
 [Unit]
-Description=Revoke one Admiral WireGuard peer
+Description=Revoke and reconcile one Admiral WireGuard node peer
 After=network.target
 
 [Service]
 Type=exec
 ExecStart=/usr/libexec/admiral-wireguard-revoke-peer
+TimeoutStartSec=30s
+RuntimeMaxSec=27s
 User=root
 Group=root
 StandardInput=socket
@@ -20,7 +22,7 @@ ProtectKernelTunables=yes
 ProtectKernelModules=yes
 ProtectKernelLogs=yes
 ReadWritePaths=/etc/wireguard /run/lock
-RestrictAddressFamilies=AF_UNIX AF_NETLINK
+RestrictAddressFamilies=AF_UNIX AF_NETLINK AF_INET AF_INET6
 LockPersonality=yes
 MemoryDenyWriteExecute=yes
 RestrictRealtime=yes

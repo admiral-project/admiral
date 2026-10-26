@@ -151,10 +151,11 @@ The worker and portal are separate spokes. A worker cannot run Harbor, and a
 portal cannot run Fleet. `--admin-portal-node` is a supported combined profile
 for other deployments, but it does not satisfy this release-matrix topology.
 
-Only these communication paths are required:
+The required communication paths are:
 
 - admin/control plane → worker and portal
 - worker and portal → admin/control plane
+- worker → dedicated portal on WireGuard TCP/5001 for authenticated uploaded-backup restore
 
 Worker-to-worker communication is out of scope.
 
@@ -226,6 +227,26 @@ and keeps Ansible output hidden. Existing peer fragments preserve their PSK;
 removing a peer fragment and onboarding that node again generates a new one.
 The PSK is an additional defense-in-depth secret, not a replacement for the
 WireGuard key pair or the firewall policy.
+
+When both an active Worker and an independent Portal are registered,
+`admiral-install --worker-node` or `admiral-install --portal-node` automatically
+runs the packaged peer-exchange playbook. The installer builds its Ansible
+inventory from Admirald's active node inventory and uses the per-node SSH
+delivery keys plus host-key pins verified during onboarding. Keep those files
+in the root-only `/var/lib/admiral/ssh-delivery` directory while automatic
+reconciliation is required. The installer fails with an actionable error if a
+registered spoke lacks its key or verified host-key pin; host-key checking is
+never disabled. An operator may run `wireguard-peers.yml` manually for repair,
+but routine two-role onboarding does not require that manual step.
+
+Removing an idle Worker or Portal with `admiralctl nodes remove <node-id>`
+reconciles the remaining spokes before deleting the node record. The operation
+removes the departing Worker's direct peer and TCP/5001 allow rule from the
+remaining Portal, or removes the departing Portal's peer from remaining
+Workers. It is serialized with onboarding. If a remaining spoke cannot be
+reached through its pinned SSH identity, removal fails closed with HTTP 503
+and retains the node and token; restore SSH access and retry. Drain and
+deprovision workloads before removing a node.
 
 ---
 

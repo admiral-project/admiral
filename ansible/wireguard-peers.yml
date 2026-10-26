@@ -1,9 +1,11 @@
 ---
 # WireGuard peer exchange playbook.
 #
-# Run this AFTER all nodes have been installed with install.sh.
-# It collects public keys from all nodes and updates the hub
-# and spoke WireGuard configurations.
+# admiral-install invokes this after a Worker and independent Portal are both
+# registered. Node removal also invokes it with the departing node excluded.
+# It collects public keys from active spokes and reconciles hub, spoke and
+# Worker-to-Portal WireGuard/firewall state. Operators may also run it with a
+# trusted inventory to repair a manually changed cluster.
 #
 # Usage:
 #   ansible-playbook -i hosts.ini wireguard-peers.yml

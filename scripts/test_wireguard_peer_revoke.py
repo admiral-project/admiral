@@ -4,10 +4,13 @@
 from __future__ import annotations
 
 import importlib.util
+import json
+import os
 import pathlib
 import subprocess
 import tempfile
 import unittest
+from unittest import mock
 
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
@@ -175,6 +178,184 @@ class WireGuardPeerRevokeTests(unittest.TestCase):
         self.assertEqual(result["persistent_peer_entries_removed"], 2)
         self.assertNotIn("10.99.0.3/32", self.config.read_text(encoding="utf-8"))
         self.assertFalse((self.peer_dir / "worker-001.conf").exists())
+
+    def test_removal_request_requires_exact_active_node_identity(self) -> None:
+        inventory = self.root / "know_host.yaml"
+        inventory.write_text(
+            "version: 1\nnodes:\n  worker-001:\n    node_id: worker-001\n"
+            "    node_role: worker\n    wireguard_ip: 10.99.0.3\n    status: active\n",
+            encoding="utf-8",
+        )
+        raw = json.dumps(
+            {"node_id": "worker-001", "node_role": "worker", "wireguard_ip": "10.99.0.3"}
+        ).encode() + b"\n"
+
+        node_id, target = HELPER._load_removal_request(raw, known_hosts=inventory)
+
+        self.assertEqual(node_id, "worker-001")
+        self.assertEqual(str(target), "10.99.0.3")
+        for request in (
+            {"node_id": "worker-001", "node_role": "portal", "wireguard_ip": "10.99.0.3"},
+            {"node_id": "worker-001", "node_role": ["worker"], "wireguard_ip": "10.99.0.3"},
+            {"node_id": "worker-001", "node_role": "worker", "wireguard_ip": "10.99.0.4"},
+            {"node_id": "../worker-001", "node_role": "worker", "wireguard_ip": "10.99.0.3"},
+        ):
+            with self.subTest(request=request), self.assertRaises(HELPER.RevocationError):
+                HELPER._load_removal_request(json.dumps(request).encode() + b"\n", known_hosts=inventory)
+
+    def test_unreachable_spoke_keeps_hub_peer_revocation_unapplied(self) -> None:
+        lock_path = self.root / "peer.lock"
+        lock_path.touch()
+        lock_fd = os.open(lock_path, os.O_RDWR)
+        inventory = self.root / "inventory.json"
+        vars_file = self.root / "vars.json"
+        config = self.root / "wg-admiral.conf"
+        inventory.write_text("{}\n", encoding="utf-8")
+        vars_file.write_text("{}\n", encoding="utf-8")
+        config.write_text("[Interface]\nAddress = 10.99.0.1/24\n", encoding="utf-8")
+
+        with mock.patch.object(
+            HELPER, "_load_removal_request", return_value=("worker-001", HELPER.ipaddress.ip_address("10.99.0.3"))
+        ), mock.patch.object(HELPER, "_acquire_peer_lock", return_value=lock_fd), mock.patch.object(
+            HELPER, "_build_removal_inventory", return_value=(inventory, vars_file)
+        ), mock.patch.object(HELPER, "_interface_network", return_value=(True, HELPER.ipaddress.ip_network("10.99.0.0/24"))), mock.patch.object(
+            HELPER, "_run_peer_playbook", side_effect=HELPER.RevocationError("unreachable")
+        ), mock.patch.object(HELPER, "CONFIG", config), mock.patch.object(HELPER, "_revoke_peer_under_lock") as revoke:
+            with self.assertRaisesRegex(HELPER.RevocationError, "unreachable"):
+                HELPER._remove_node_and_reconcile(b"request\n")
+
+        revoke.assert_not_called()
+        with self.assertRaises(OSError):
+            os.fstat(lock_fd)
+
+    def test_removal_inventory_excludes_target_and_keeps_strict_host_key_policy(self) -> None:
+        inventory_output = {
+            "all": {
+                "children": {
+                    "admin": {"hosts": {"admin": {"ansible_connection": "local"}}},
+                    "workers": {"hosts": {}},
+                    "portal": {
+                        "hosts": {
+                            "portal-001": {
+                                "ansible_ssh_common_args": "-o StrictHostKeyChecking=yes"
+                            }
+                        }
+                    },
+                }
+            }
+        }
+        install_state = self.root / "install.env"
+        install_state.write_text(
+            json.dumps(
+                {
+                    "ADMIRAL_PUBLIC_IP": "192.0.2.1",
+                    "ADMIRAL_WIREGUARD_SUBNET": "10.99.0.0/24",
+                    "ADMIRAL_WIREGUARD_HUB_IP": "10.99.0.1",
+                }
+            ),
+            encoding="utf-8",
+        )
+        result = subprocess.CompletedProcess([], 0, json.dumps(inventory_output), "")
+        with mock.patch.object(HELPER.subprocess, "run", return_value=result) as run:
+            inventory_path, vars_path = HELPER._build_removal_inventory(
+                "worker-001",
+                temp_directory=self.root,
+                known_hosts=self.root / "know_host.yaml",
+                ssh_directory=self.root / "ssh-delivery",
+                install_state=install_state,
+            )
+
+        self.assertIn("--exclude-node-id", run.call_args.args[0])
+        self.assertIn("worker-001", run.call_args.args[0])
+        self.assertIn("--allow-unpaired", run.call_args.args[0])
+        self.assertEqual(json.loads(inventory_path.read_text(encoding="utf-8")), inventory_output)
+        self.assertEqual(
+            json.loads(vars_path.read_text(encoding="utf-8")),
+            {"admiral_wireguard_subnet": "10.99.0.0/24", "admiral_wireguard_hub_ip": "10.99.0.1"},
+        )
+        self.assertEqual(inventory_path.stat().st_mode & 0o777, 0o600)
+        self.assertEqual(vars_path.stat().st_mode & 0o777, 0o600)
+
+    def test_removal_inventory_rejects_an_inventory_that_keeps_target_or_weakens_ssh(self) -> None:
+        state = self.root / "install.env"
+        state.write_text(
+            json.dumps(
+                {
+                    "ADMIRAL_PUBLIC_IP": "192.0.2.1",
+                    "ADMIRAL_WIREGUARD_SUBNET": "10.99.0.0/24",
+                    "ADMIRAL_WIREGUARD_HUB_IP": "10.99.0.1",
+                }
+            ),
+            encoding="utf-8",
+        )
+        invalid_inventories = (
+            {"all": {"children": {"workers": {"hosts": {"worker-001": {}}}, "portal": {"hosts": {}}}}},
+            {
+                "all": {
+                    "children": {
+                        "workers": {"hosts": {}},
+                        "portal": {
+                            "hosts": {
+                                "portal-001": {
+                                    "ansible_ssh_common_args": "-o StrictHostKeyChecking=no"
+                                }
+                            }
+                        },
+                    }
+                }
+            },
+        )
+        for payload in invalid_inventories:
+            with self.subTest(payload=payload), mock.patch.object(
+                HELPER.subprocess,
+                "run",
+                return_value=subprocess.CompletedProcess([], 0, json.dumps(payload), ""),
+            ), self.assertRaises(HELPER.RevocationError):
+                HELPER._build_removal_inventory(
+                    "worker-001",
+                    temp_directory=self.root,
+                    known_hosts=self.root / "know_host.yaml",
+                    ssh_directory=self.root / "ssh-delivery",
+                    install_state=state,
+                )
+
+    def test_peer_playbook_failure_is_reported_without_echoing_command_output(self) -> None:
+        playbook = self.root / "wireguard-peers.yml"
+        playbook.write_text("---\n", encoding="utf-8")
+        inventory = self.root / "inventory.json"
+        vars_file = self.root / "vars.json"
+        inventory.write_text("{}\n", encoding="utf-8")
+        vars_file.write_text("{}\n", encoding="utf-8")
+        failed = mock.Mock()
+        failed.returncode = 2
+        with mock.patch.object(HELPER, "PEER_PLAYBOOK", playbook), mock.patch.object(
+            HELPER.subprocess, "Popen", return_value=failed
+        ):
+            with self.assertRaisesRegex(HELPER.RevocationError, "node remains registered") as caught:
+                HELPER._run_peer_playbook(inventory, vars_file)
+        self.assertNotIn("secret output", str(caught.exception))
+
+    def test_peer_playbook_timeout_stops_its_process_group(self) -> None:
+        playbook = self.root / "wireguard-peers.yml"
+        playbook.write_text("---\n", encoding="utf-8")
+        inventory = self.root / "inventory.json"
+        vars_file = self.root / "vars.json"
+        inventory.write_text("{}\n", encoding="utf-8")
+        vars_file.write_text("{}\n", encoding="utf-8")
+        process = mock.Mock()
+        process.pid = 12345
+        process.returncode = -15
+        process.communicate.side_effect = [
+            subprocess.TimeoutExpired("ansible-playbook", 1),
+            ("", ""),
+        ]
+        with mock.patch.object(HELPER, "PEER_PLAYBOOK", playbook), mock.patch.object(
+            HELPER.subprocess, "Popen", return_value=process
+        ), mock.patch.object(HELPER.os, "killpg") as killpg:
+            with self.assertRaisesRegex(HELPER.RevocationError, "timed out and was stopped"):
+                HELPER._run_peer_playbook(inventory, vars_file)
+
+        killpg.assert_called_once_with(12345, HELPER.signal.SIGTERM)
 
 
 if __name__ == "__main__":
