@@ -2,23 +2,17 @@
 
 Audit ID: `ADM-AUDIT-2026-10-21`<br>
 
-## Topology correction — R75 Multi-Node evidence is invalid for the release gate
+## Current candidate — RC6 Release 2, local Epoch 5
 
-The required Multi-Node roles are `--admin-node`, `--worker-node`, and an
-independent `--portal-node`. R75 used `--admin-portal-node` plus workers.
-Therefore its Rocky, CentOS Stream, and Fedora Multi-Node runs are historical
-observations only and receive **no cell credit**. In particular, they did not
-validate independent Harbor installation, WireGuard API access, portal routing,
-or customer workflows. The RC6 Multi-Node matrix is **0/3 PASS** until these
-three-node topologies are run against the exact candidate.
+The exact current candidate is Epoch 5: 0.0.1rc6-2, root commit e710237fd908feabf17b12fb61d08429deb21e52; package identity and hashes are in [R2 RPM-MANIFEST.tsv](evidence/rc6-r2-epoch5/x86_64/RPM-MANIFEST.tsv). A valid Multi-Node cell requires three real guests of one OS: Admin (--admin-node), Worker (--worker-node), and independent Portal (--portal-node). Older --admin-portal-node runs and all earlier candidate observations receive no current-cell credit.
 
-| Platform | Secure install and enrollment | Placement, replay and cleanup | Concurrency | Worker reboot and partition/rejoin | Node removal | Hub reboot | Cell |
-|---|---:|---:|---:|---:|---:|---:|---:|
-| Rocky Linux 10 x86_64 | Historical observation | Historical observation | Historical observation | Historical observation | Historical observation | Historical observation | **NO GATE CREDIT** |
-| CentOS Stream 10 x86_64 | Historical observation | Historical observation | Historical observation | Historical observation | Historical observation | Historical observation | **NO GATE CREDIT** |
-| Fedora Rawhide x86_64 | Historical observation | Historical observation | Historical observation | Historical observation | Historical observation | Historical observation | **NO GATE CREDIT** |
+| Platform | Current candidate observation | Cell status |
+|---|---|---|
+| Rocky Linux 10 x86_64 | No full current-candidate three-guest run | NOT TESTED |
+| CentOS Stream 10 x86_64 | Three exact-candidate guests installed; targeted #299 independent Portal signup/customer flow and #300 repeated deprovision passed; current evidence includes strict-CA portal/app routing and cleanup | PARTIAL; remaining checklist and issue gates outstanding |
+| Fedora Rawhide x86_64 | No full current-candidate three-guest run | NOT TESTED |
 
-The R75 reports document those earlier `admin-portal + workers` observations. They did not exercise `--portal-node` and cannot establish independent Harbor behavior. Do not interpret their scenario-level PASS entries as current Multi-Node gate PASS.
+The CentOS scoped captures are under [RC6 R2 CentOS Multi-Node evidence](evidence/rc6-r2-epoch5/multinode-centos/); the independent Portal is a separate guest. Exact-candidate targeted reports: [#299 Portal flow](evidence/rc6-r2-epoch5/issue-299/REPORT.md) and [#300 repeated deprovision](evidence/rc6-r2-epoch5/issue-300/REPORT.md). Issue #295 has separate current-candidate Fedora Single-Node evidence in [its R2 report](evidence/rc6-r2-epoch5/issue-295/fedora/REPORT.md). These probes confirm only their named behaviors; complete placement/replay, node and hub failure permutations, partition/rejoin, security/isolation, resource exhaustion, broader concurrency and performance remain incomplete. The formal Multi-Node matrix is **0/3 complete cells**.
 
 ## Historical Release 74 Rocky Linux 10.2 x86_64 functional cell — no Release 75 credit
 

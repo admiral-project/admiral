@@ -3,16 +3,16 @@
 Audit ID: `ADM-AUDIT-2026-10-21`<br>
 Audit began: 2026-10-21 UTC<br>
 Release 75 functional closeout: [RELEASE75_VALIDATION_CLOSURE.md](RELEASE75_VALIDATION_CLOSURE.md).
-> **Current RC6 candidate — 2026-10-25:** Release 3, `0.0.1rc6-3`, Epoch 0; root test commit `55f67122613f13f13fa254f30a78d444e69b35d3`, with green root CI. Rocky Linux 10 Single-Node passed the six-stage functional lane on a fresh updated seed overlay. The same installed candidate also passed issue-specific probes #259 (four user-manager restarts), #260 (61 PostgreSQL-outage samples), #271 (two redirect targets), and #295 (Harbor-generated customer prepaid expiry). These results do not complete a matrix cell: issue-wide release gates remain, and current-candidate Fedora, CentOS Stream, and all three independent-Portal Multi-Node lanes are still pending. The matrix remains **0/6 formally complete cells**; production readiness is **NOT VALIDATED**. PayPal was not exercised.
+> **Current local RC6 candidate — 2026-10-26:** Release 2, Epoch 5, native EL10 and Fedora Rawhide RPMs. Candidate RPM source root is e710237fd908feabf17b12fb61d08429deb21e52; current origin/main evidence head is b5d9a5a0148f3cba3becdc0ff837a8130d0957e5 and CI run [40254207999](https://github.com/admiral-project/admiral/actions/runs/40254207999) passed. All three Single-Node six-stage functional lanes passed. Exact-candidate issue probes #259/#260 passed on Rocky and Fedora Single-Node, #271 passed on Rocky and Fedora, #295 passed its corrected Harbor-generated flow on Fedora, and #299/#300 passed scoped tests in the independent-Portal CentOS three-guest environment. The full release-wide issue gate and Multi-Node checklists remain incomplete. Formal matrix: **0/6 complete cells**. Release 2 is a local validation candidate, not a published/validated release.
 
-Production readiness is **NOT VALIDATED**. The functional release gate is narrower than the full production audit and cannot establish production security, fault-tolerance, scalability or performance.
+Production readiness is **NOT VALIDATED**. Passing functional lanes and issue-specific probes do not establish the broader security, fault-tolerance, scalability, or performance properties in this audit.
 
 ## Current decision by topology
 
 | Topology | Decision | Basis |
 | --- | --- | --- |
-| Single-Node | **NOT VALIDATED** | Rocky Release 3 has a six-stage functional lane and exact-candidate targeted evidence for #259, #260, #271 and #295; the formal cell is still incomplete because other release-wide issue gates remain. Fedora and CentOS Stream have no Release 3 cell run yet. Broader isolation/security negatives, resource-exhaustion behavior, stress and controlled performance also remain incomplete. |
-| Multi-Node | **NOT VALIDATED** | No complete current-candidate cell has passed. Rocky, CentOS Stream and Fedora each require a fresh three-guest `--admin-node` + `--worker-node` + independent `--portal-node` run on the same candidate. Earlier Rocky issue-specific portal checks were on Release 1; R75 used the wrong co-located Portal topology. |
+| Single-Node | **NOT VALIDATED** | Three exact-candidate six-stage functional lanes passed, but release-wide issue acceptance and broader isolation/security, resource-pressure, concurrency, and performance coverage remain incomplete; no formal cell is complete. |
+| Multi-Node | **NOT VALIDATED** | CentOS Stream has partial three-guest evidence on the exact candidate, including independent Portal, scoped #299/#300, recovery, and strict-CA routes. Rocky and Fedora have no current-candidate Multi-Node run; the full checklist is incomplete on CentOS as well. |
 
 Neither topology is READY or CONDITIONALLY READY on current evidence. Exact-commit CI and scoped scenarios do not substitute for a complete matrix cell. No production system was touched.
 
@@ -37,4 +37,4 @@ R75's historical reports recorded six functional PASS results, but the three Mul
 
 ## Current answer to the audit question
 
-The broader production-readiness question remains **NOT VALIDATED**. R75 has three historical Single-Node passes; its three Multi-Node results used the wrong topology and receive no gate credit. RC6 has **0/6 formally complete cells**. Earlier RC6-1 Single-Node runs predate the current component pins and receive no current-candidate credit. Even a complete functional matrix would not establish all security, isolation, fault-tolerance, resource-exhaustion or performance properties required for a production decision. No production-readiness claim is made.
+The broader production-readiness question remains **NOT VALIDATED**. R75 has three historical Single-Node passes; its three Multi-Node results used the wrong topology and receive no gate credit. RC6 has **0/6 formally complete cells**. The three prior R1 Single-Node lane results were rerun on exact Epoch 5 / Release 2 RPMs and passed; only the R2 evidence is counted for the current candidate. Even a complete functional matrix would not establish all security, isolation, fault-tolerance, resource-exhaustion or performance properties required for a production decision. No production-readiness claim is made.

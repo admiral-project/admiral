@@ -1,0 +1,4 @@
+containers=none
+pods=none
+volumes=none
+no_instance_runtime_resources=PASS

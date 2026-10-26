@@ -1,0 +1,19 @@
+SHELL=/bin/bash
+SUDO_GID=1000
+SUDO_COMMAND=/usr/sbin/bash -s
+SUDO_USER=validator
+PWD=/home/validator
+LOGNAME=root
+SUDO_HOME=/home/validator
+HOME=/var/lib/admiral-apps
+LANG=en_US.UTF-8
+TERM=unknown
+USER=root
+SHLVL=1
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/var/lib/snapd/snap/bin
+SUDO_UID=1000
+MAIL=/var/mail/root
+_=/usr/sbin/env
+XDG_RUNTIME_DIR=/run/user/986
+DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/986/bus
+no_instance_runtime_resources=PASS

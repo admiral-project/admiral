@@ -1,0 +1,12 @@
+21f1396f49441a7212ec7f13107913228c33fcae2bf94d873deaa221c4980d94  /var/lib/libvirt/images/admiral-validation/repo/rc6-r2-epoch5/el10/x86_64/admiral-common-0.0.1rc6-2.el10.noarch.rpm
+72da127ca94693bc314dc5edddaff5b609e5f5e697545afe70b4cca3ac245363  /var/lib/libvirt/images/admiral-validation/repo/rc6-r2-epoch5/el10/x86_64/admiral-flagship-0.0.1rc6-2.el10.noarch.rpm
+b1863f3cd46e98fff090c94d7d71a701be71befb017f67860a5ec59ec25d16bf  /var/lib/libvirt/images/admiral-validation/repo/rc6-r2-epoch5/el10/x86_64/admiral-fleet-0.0.1rc6-2.el10.x86_64.rpm
+2d577861a5194017179760bac96915d41c00dd7999293c4f1d41cec93e0c1203  /var/lib/libvirt/images/admiral-validation/repo/rc6-r2-epoch5/el10/x86_64/admiral-harbor-0.0.1rc6-2.el10.noarch.rpm
+3e835af095400c6ac2bbc31414d14595d399ac6451fb4fb6d76fe16bf38f5b57  /var/lib/libvirt/images/admiral-validation/repo/rc6-r2-epoch5/el10/x86_64/admiralctl-0.0.1rc6-2.el10.x86_64.rpm
+c9c29815efbda025ea0ae1504a4fb8a124f1b39a77e35f9390b00cf3a349515c  /var/lib/libvirt/images/admiral-validation/repo/rc6-r2-epoch5/el10/x86_64/admirald-0.0.1rc6-2.el10.x86_64.rpm
+40ba49069ce19789afd31233d9b5fa9efae40ddecde3e673677528cc8649382d  /var/lib/libvirt/images/admiral-validation/repo/rc6-r2-epoch5/fedora/x86_64/admiral-common-0.0.1rc6-2.fc46.noarch.rpm
+e01bfc078e6a9e5f206c928afd07857e60d5fda7ff59e565c7fa4ee3a0ed02f6  /var/lib/libvirt/images/admiral-validation/repo/rc6-r2-epoch5/fedora/x86_64/admiral-flagship-0.0.1rc6-2.fc46.noarch.rpm
+e0e65e44caf9f4d4a3e64c9c292c40600210469f323458aab646366ef0d8a605  /var/lib/libvirt/images/admiral-validation/repo/rc6-r2-epoch5/fedora/x86_64/admiral-fleet-0.0.1rc6-2.fc46.x86_64.rpm
+fa3202fb4517d5166e675f2b3834be531002d90316fdd0f5273600e419915222  /var/lib/libvirt/images/admiral-validation/repo/rc6-r2-epoch5/fedora/x86_64/admiral-harbor-0.0.1rc6-2.fc46.noarch.rpm
+d6e1deb0eceaac7dd25774d50bfe66077e09b3e998f950d20dc87b327d910892  /var/lib/libvirt/images/admiral-validation/repo/rc6-r2-epoch5/fedora/x86_64/admiralctl-0.0.1rc6-2.fc46.x86_64.rpm
+e1f1a0b846e9770b8155f26ac2f064cd900c5b68454c923affeecd973476e5f8  /var/lib/libvirt/images/admiral-validation/repo/rc6-r2-epoch5/fedora/x86_64/admirald-0.0.1rc6-2.fc46.x86_64.rpm

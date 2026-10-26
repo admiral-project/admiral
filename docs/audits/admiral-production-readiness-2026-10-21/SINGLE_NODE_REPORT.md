@@ -2,11 +2,11 @@
 
 Audit ID: `ADM-AUDIT-2026-10-21`<br>
 
-## Current candidate — RC6 Release 3
+## Current candidate — RC6 Release 2, local Epoch 5
 
-Rocky Linux 10.2 x86_64 completed the six-stage Single-Node functional lane on exact native RPMs `0.0.1rc6-3.el10` from a fresh overlay of the 2026-10-25 updated seed. Install, workload lifecycle/idempotency, resize/data continuity, local backup/restore, instance/control-plane lifecycle, reboot recovery/SQL persistence, and final cleanup all passed. Exact-candidate issue regressions #259 (4/4), #260, #271, and #295 also passed; see [`RC6 R3 Rocky Single-Node evidence`](evidence/rc6-r3-rocky-single/REPORT.md).
+Rocky Linux 10.2, CentOS Stream 10, and Fedora Rawhide x86_64 each completed all six stages of the Single-Node functional lane on the same local candidate `Epoch 5: 0.0.1rc6-2`, using native EL10 or Fedora RPMs. Stages cover install/setup, workload lifecycle and idempotency, resize/data continuity, local backup/restore and invalid-state rejection, Admiral lifecycle, real guest reboot with SQL/HTTP persistence, and final cleanup/package/service checks. The raw logs and per-run identities are in [`RC6 R2 functional evidence`](evidence/rc6-r2-epoch5/SINGLE_NODE_REPORT.md); package NEVRA and SHA-256 values are in [`RPM-MANIFEST.tsv`](evidence/rc6-r2-epoch5/x86_64/RPM-MANIFEST.tsv).
 
-This is a functional lane plus targeted issue evidence, **not a complete matrix cell**. Other linked issue gates remain. Fedora Rawhide, CentOS Stream 10 and all Multi-Node cells have no Release 3 runtime credit. Formal matrix: **0/6 complete cells**.
+These are **three functional-lane PASS results, not complete matrix cells**. The release-wide issue gate and broader Single-Node security, isolation, fault-injection, resource-pressure, concurrency, and performance checks remain incomplete. The formal release matrix remains **0/6 complete cells**. Issue #295 was separately repeated on this exact Fedora candidate using a Harbor-generated customer; its original synthetic-fixture cause remains unconfirmed. See [the R2 #295 report](evidence/rc6-r2-epoch5/issue-295/fedora/REPORT.md).
 
 ## Historical Release 75 — 3/3 Single-Node cells PASS
 

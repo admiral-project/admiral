@@ -1,0 +1,262 @@
+candidate=0.0.1rc6-2 epoch=5 os=fedora guest=192.168.122.249 node=rc6r2-fedora-sn run_id=r2fedora2601 root_commit=e710237fd908feabf17b12fb61d08429deb21e52 start_utc=2026-10-26T00:41:04Z
+ADMIRALD_COMMIT=aec9914c5909af7f66407b6c3dd0822576cc66dc
+FLEET_COMMIT=fc6909f6c41507d04aa204ebeafbbaaa4ef2c686
+ADMIRALCTL_COMMIT=fa2a65e866310bd82bea78859804b6c3aea7989a
+FLAGSHIP_COMMIT=b7325bbc71fc474a521496e593b2967e4d555ac1
+HARBOR_COMMIT=dd4818b6e2bc53eea4495fc5e374a4893cfcb107
+
+=== stage=workload_create_idempotency_deprovision start_utc=2026-10-26T00:41:04Z ===
+id=rc6r2-fedora-sn
+os=Fedora 46
+status=active
+health_status=healthy
+available_for_provisioning=True
+wireguard_ip=10.99.0.1
+fleet_version=0.0.1rc6
+Application definition "e2e-whoami" applied successfully!
+test=RC6-SINGLE-NODE-LIFECYCLE start_utc=2026-10-26T00:41:06Z node=rc6r2-fedora-sn
+id=op_a02cc50ed07d2e28
+instance_id=inst_85483b303f7f4367
+node_id=rc6r2-fedora-sn
+status=succeeded
+created_at=2026-10-26T00:41:07.427363Z
+updated_at=2026-10-26T00:42:00.357598Z
+idempotency_replay_same_operation=True
+idempotency_replay_same_instance=True
+database_ready_attempt=3 utc=2026-10-26T00:42:19Z
+admiral-inst_85483b303f7f4367-infra|Up About a minute|127.0.0.1:40000->80/tcp
+admiral-inst_85483b303f7f4367-app|Up About a minute|127.0.0.1:40000->80/tcp
+admiral-inst_85483b303f7f4367-db|Up 23 seconds|127.0.0.1:40000->80/tcp, 5432/tcp
+app_endpoint=127.0.0.1:40000
+CREATE TABLE
+INSERT 0 1
+              value               
+----------------------------------
+ rc6-single-inst_85483b303f7f4367
+(1 row)
+
+local_workload_http_status=200 endpoint=127.0.0.1:40000
+id=inst_85483b303f7f4367
+node_id=rc6r2-fedora-sn
+technical_status=running
+health_status=healthy
+effective_availability=available
+availability_reason=None
+deprovision_operation=op_3b33d55971e5c2d2 status=succeeded
+remaining_matching_containers=none
+remaining_matching_pods=none
+remaining_matching_volumes=none
+remaining_matching_units=none
+remaining_matching_files=none
+single_node_lifecycle=PASS node=rc6r2-fedora-sn instance=inst_85483b303f7f4367 end_utc=2026-10-26T00:42:33Z
+private-run-evidence=/var/tmp/rc6-single-lifecycle.sl7WeryP
+stage=workload_create_idempotency_deprovision result=PASS end_utc=2026-10-26T00:42:34Z
+
+=== stage=resize_data_continuity start_utc=2026-10-26T00:42:34Z ===
+test=RC6-SN-RESIZE
+start_utc=2026-10-26T00:42:35Z
+instance_id=inst_c2412f800a2517e2
+tier=small state=small running healthy available
+before_resize_http=200 endpoint=127.0.0.1:40001
+before_resize_sql_marker=rc6-resize-marker
+resize_target=medium requested_utc=2026-10-26T00:43:00Z
+resize_operation= op_efa15bb1e63a6fc5 status= succeeded tier= None
+tier=medium state=medium running healthy available
+after_medium_http=200 endpoint=127.0.0.1:40001
+after_medium_sql_marker=rc6-resize-marker
+resize_target=small requested_utc=2026-10-26T00:43:16Z
+resize_operation= op_2106b2a6c37449ba status= succeeded tier= None
+tier=small state=small running healthy available
+after_small_http=200 endpoint=127.0.0.1:40001
+after_small_sql_marker=rc6-resize-marker
+resize_data_and_health=PASS
+end_utc=2026-10-26T00:43:29Z
+stage=resize_data_continuity result=PASS end_utc=2026-10-26T00:43:38Z
+
+=== stage=backup_restore_checksum_negative_state start_utc=2026-10-26T00:43:38Z ===
+candidate=RC6 os=fedora customer=rc6-backup-fedora-r2fedora2601 start_utc=2026-10-26T00:43:39Z
+provision_operation= op_8908813682cd3e96 instance= inst_5e6353017f45751e status= succeeded
+ready_poll=1 utc=2026-10-26T00:43:57Z running healthy available
+CREATE TABLE
+TRUNCATE TABLE
+INSERT 0 1
+  value   
+----------
+ original
+(1 row)
+
+{
+  "action": "backup_database",
+  "admin_user": "system",
+  "created_at": "2026-10-26T00:43:58.464312Z",
+  "error_message": null,
+  "id": "op_bce849c5354333b6",
+  "instance_id": "inst_5e6353017f45751e",
+  "node_id": "rc6r2-fedora-sn",
+  "status": "succeeded",
+  "task_id": "task_aeb2cb1454a31734",
+  "updated_at": "2026-10-26T00:44:01.919051Z"
+}
+id=bk_d943d2d0e52c853f
+instance_id=inst_5e6353017f45751e
+backup_type=database
+service=db
+status=succeeded
+storage_backend=local
+size_bytes=712
+checksum_sha256=5638731de13ef19e5c4a740be3e7ced3beaf88640425afbe85f406e8725f8448
+storage_uri_admin=None
+Error: restore backup failed: HTTP 409 - Restore is only allowed when the app is paused
+Usage:
+  admiralctl backups restore [flags]
+
+Flags:
+      --backup-id string     Backup ID to restore (required)
+  -h, --help                 help for restore
+      --instance-id string   Target instance ID (required)
+      --service string       Service name matching the backup source (required)
+      --source-type string   Optional source type override
+      --source-uri string    Optional source URI override
+      --target-node string   Optional target node ID
+      --verify-checksum      Verify checksum during restore (default true)
+
+Global Flags:
+      --ca-cert string    CA certificate file for admirald HTTPS validation
+      --operator string   Operator name for audit logs
+      --server string     Control plane server endpoint URL
+
+Error: restore backup failed: HTTP 409 - Restore is only allowed when the app is paused
+restore_while_running_exit=1
+UPDATE 1
+        value         
+----------------------
+ mutated-after-backup
+(1 row)
+
+{
+  "action": "pause_app",
+  "admin_user": "system",
+  "created_at": "2026-10-26T00:44:04.213062Z",
+  "error_message": null,
+  "id": "op_a6b9c3f402617a50",
+  "instance_id": "inst_5e6353017f45751e",
+  "node_id": "rc6r2-fedora-sn",
+  "status": "succeeded",
+  "task_id": "task_18616815e169c585",
+  "updated_at": "2026-10-26T00:44:06.655138Z"
+}
+Restore queued successfully!
+Operation ID: op_a27d28a15bf1e0f8
+restore_poll=1 utc=2026-10-26T00:44:08Z status=queued
+restore_poll=2 utc=2026-10-26T00:44:11Z status=queued
+restore_poll=3 utc=2026-10-26T00:44:13Z status=queued
+restore_poll=4 utc=2026-10-26T00:44:15Z status=queued
+restore_poll=5 utc=2026-10-26T00:44:17Z status=succeeded
+post_restore_ready_poll=1 utc=2026-10-26T00:44:21Z running stopped unavailable
+post_restore_ready_poll=2 utc=2026-10-26T00:44:27Z running healthy available
+original
+app_after_restore_endpoint=127.0.0.1:40002 http=200
+Are you sure you want to delete backup bk_d943d2d0e52c853f? (y/N): Backup bk_d943d2d0e52c853f deleted.
+{
+  "action": "deprovision_app",
+  "admin_user": "system",
+  "created_at": "2026-10-26T00:44:28.24802Z",
+  "error_message": null,
+  "id": "op_4b6800c17937126f",
+  "instance_id": "inst_5e6353017f45751e",
+  "node_id": "rc6r2-fedora-sn",
+  "status": "succeeded",
+  "task_id": "task_78cb9105aaddbe1a",
+  "updated_at": "2026-10-26T00:44:36.867564Z"
+}
+deprovision_operation=op_4b6800c17937126f status=succeeded
+remaining_matching_containers=none
+remaining_matching_pods=none
+remaining_matching_volumes=none
+remaining_matching_units=none
+remaining_matching_files=none
+deleted_backup_tombstone_retained=True id=bk_d943d2d0e52c853f status=deleted
+deleted_backup_artifact_absent=/var/lib/admiral/backups/inst_5e6353017f45751e/postgresql-database-op_bce849c5354333b6.tar.gz
+backup_restore_and_marker_integrity=PASS
+backup_test_end_utc=2026-10-26T00:44:39Z instance_id=inst_5e6353017f45751e backup_id=bk_d943d2d0e52c853f
+stage=backup_restore_checksum_negative_state result=PASS end_utc=2026-10-26T00:44:39Z
+
+=== stage=instance_and_admirald_lifecycle start_utc=2026-10-26T00:44:39Z ===
+test=RC6-fedora-SN-CONTROL-PLANE-LIFECYCLE
+start_utc=2026-10-26T00:44:40Z
+instance_id=inst_3c6a376533f5960a
+initial_poll=1 state=running stopped unavailable
+initial_available_poll=2 http=200 endpoint=127.0.0.1:40003
+action=pause requested_utc=2026-10-26T00:44:50Z
+operation= op_3f4649f3489ae40b action_status= succeeded
+action=resume requested_utc=2026-10-26T00:44:54Z
+operation= op_1a084da57e72110c action_status= succeeded
+resume_poll=1 state=running stopped unavailable
+resume_available_poll=2 http=200 endpoint=127.0.0.1:40003
+action=stop requested_utc=2026-10-26T00:45:04Z
+operation= op_e45a76cc09bdc3f7 action_status= succeeded
+action=start requested_utc=2026-10-26T00:45:11Z
+operation= op_99b94e3b9f3352ef action_status= succeeded
+start_available_poll=1 http=200 endpoint=127.0.0.1:40003
+action=restart requested_utc=2026-10-26T00:45:18Z
+operation= None action_status= succeeded
+restart_poll=1 state=running stopped unavailable
+restart_available_poll=2 http=200 endpoint=127.0.0.1:40003
+admirald_restart_available_poll=1 http=200 endpoint=127.0.0.1:40003
+admiralctl_status_while_service_stopped_exit=1
+admirald_start_available_poll=1 http=200 endpoint=127.0.0.1:40003
+instance_and_control_plane_lifecycle=PASS
+end_utc=2026-10-26T00:45:41Z
+cleanup_rc=0
+stage=instance_and_admirald_lifecycle result=PASS end_utc=2026-10-26T00:45:49Z
+
+=== stage=host_reboot_persistence start_utc=2026-10-26T00:45:49Z ===
+test=R2-fedora-SN-REBOOT guest=rc6r2-fedora-sn start_utc=2026-10-26T00:45:50Z
+idempotency_key=r2-fedora-reboot-20261026T004549Z-2945083
+boot_id_before=8fe00549-6334-466f-8588-92d7a39ae9bc
+pre_reboot_setup_started_utc=2026-10-26T00:45:50Z
+provision_status= succeeded instance_id= inst_ceb5368ea22b237e operation_id= op_e0f3717971965832
+provision_readiness_poll=1 utc=2026-10-26T00:46:10Z api=running healthy available db_state=running db_ready=1
+database_readiness_seconds_tested=1
+CREATE TABLE
+TRUNCATE TABLE
+INSERT 0 1
+reboot_requested_utc=2026-10-26T00:46:10Z instance_id=inst_ceb5368ea22b237e operation_id=op_e0f3717971965832
+reboot_request_issued_utc=2026-10-26T00:46:10Z
+reboot_ssh_exit=0 (disconnect after reboot request is expected)
+reboot_confirmed_attempt=9 boot_id_after=1a4ec5d6-8756-4a84-b559-76efb1d64d99 utc=2026-10-26T00:46:58Z
+post_reboot_start_utc=2026-10-26T00:47:00Z instance_id=inst_ceb5368ea22b237e operation_id=op_e0f3717971965832
+post_reboot_poll=1 utc=2026-10-26T00:47:02Z status=running healthy unavailable running_containers=0 db_ready=0
+post_reboot_poll=2 utc=2026-10-26T00:47:09Z status=failed unhealthy unavailable running_containers=3 db_ready=1
+post_reboot_poll=3 utc=2026-10-26T00:47:15Z status=running healthy available running_containers=3 db_ready=1
+post_reboot_http=200 port=40004
+r2-reboot-persisted
+{
+  "action": "deprovision_app",
+  "admin_user": "system",
+  "created_at": "2026-10-26T00:47:15.86683Z",
+  "error_message": null,
+  "id": "op_a8ca53beb8eff62f",
+  "instance_id": "inst_ceb5368ea22b237e",
+  "node_id": "rc6r2-fedora-sn",
+  "status": "succeeded",
+  "task_id": "task_a8fdd1bfcf40da05",
+  "updated_at": "2026-10-26T00:47:24.144523Z"
+}
+host_reboot_recovery_and_sql_marker=PASS
+provision_readiness_consistency=PASS
+post_reboot_end_utc=2026-10-26T00:47:26Z
+stage=host_reboot_persistence result=PASS end_utc=2026-10-26T00:47:26Z
+
+=== stage=final_services_resources_rpms start_utc=2026-10-26T00:47:26Z ===
+failed_units=none
+5:admiral-common-0.0.1rc6-2.fc46.noarch
+5:admirald-0.0.1rc6-2.fc46.x86_64
+5:admiral-fleet-0.0.1rc6-2.fc46.x86_64
+5:admiralctl-0.0.1rc6-2.fc46.x86_64
+5:admiral-harbor-0.0.1rc6-2.fc46.noarch
+5:admiral-flagship-0.0.1rc6-2.fc46.noarch
+final_rootless_containers=none pods=none volumes=none
+final_boot_id=1a4ec5d6-8756-4a84-b559-76efb1d64d99
+stage=final_services_resources_rpms result=PASS end_utc=2026-10-26T00:47:27Z
+single_node_lane=os:fedora result:PASS failed_stages:0 end_utc:2026-10-26T00:47:27Z
