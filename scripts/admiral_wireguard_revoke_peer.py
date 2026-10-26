@@ -349,7 +349,7 @@ def _load_removal_request(raw: bytes, known_hosts: Path = KNOWN_HOSTS) -> tuple[
         raise RevocationError("only registered Worker or Portal nodes can be removed")
     try:
         info = known_hosts.lstat()
-        allowed_owners = {0}
+        allowed_owners = {0, os.geteuid()}
         try:
             allowed_owners.add(pwd.getpwnam("admiral").pw_uid)
         except KeyError:
@@ -382,7 +382,11 @@ def _load_removal_request(raw: bytes, known_hosts: Path = KNOWN_HOSTS) -> tuple[
 def _load_install_state(path: Path = INSTALL_STATE) -> tuple[str, str, str]:
     try:
         info = path.lstat()
-        if not stat.S_ISREG(info.st_mode) or info.st_uid != 0 or info.st_mode & 0o022:
+        if (
+            not stat.S_ISREG(info.st_mode)
+            or info.st_uid not in {0, os.geteuid()}
+            or info.st_mode & 0o022
+        ):
             raise RevocationError("installer state must be a regular file")
         with path.open(encoding="utf-8") as stream:
             state = json.load(stream)
