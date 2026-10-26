@@ -1,0 +1,32 @@
+candidate=rc6-e5-r8
+key_fingerprint=8D2E8FC99FB218979157C5DBFCC63E30ED44F66E
+
+[el10]
+./admiral-common-0.0.1rc6-8.el10.noarch.rpm: OK
+./admiral-flagship-0.0.1rc6-8.el10.noarch.rpm: OK
+./admiral-fleet-0.0.1rc6-8.el10.x86_64.rpm: OK
+./admiral-harbor-0.0.1rc6-8.el10.noarch.rpm: OK
+./admiralctl-0.0.1rc6-8.el10.x86_64.rpm: OK
+./admirald-0.0.1rc6-8.el10.x86_64.rpm: OK
+repo_http=PASS
+
+[fedora]
+./admiral-common-0.0.1rc6-8.fc46.noarch.rpm: OK
+./admiral-flagship-0.0.1rc6-8.fc46.noarch.rpm: OK
+./admiral-fleet-0.0.1rc6-8.fc46.x86_64.rpm: OK
+./admiral-harbor-0.0.1rc6-8.fc46.noarch.rpm: OK
+./admiralctl-0.0.1rc6-8.fc46.x86_64.rpm: OK
+./admirald-0.0.1rc6-8.fc46.x86_64.rpm: OK
+repo_http=PASS
+
+[dnf repo policy]
+packaging/build/validation/rc6-e5-r8/admiral-local-fedora.repo:3:baseurl=http://192.168.122.1/rc6-e5-r8/fedora/$basearch
+packaging/build/validation/rc6-e5-r8/admiral-local-fedora.repo:4:enabled=1
+packaging/build/validation/rc6-e5-r8/admiral-local-fedora.repo:5:gpgcheck=1
+packaging/build/validation/rc6-e5-r8/admiral-local-fedora.repo:6:repo_gpgcheck=1
+packaging/build/validation/rc6-e5-r8/admiral-local-fedora.repo:7:gpgkey=http://192.168.122.1/rc6-e5-r8/RPM-GPG-KEY-admiral-r8
+packaging/build/validation/rc6-e5-r8/admiral-local-el10.repo:3:baseurl=http://192.168.122.1/rc6-e5-r8/el10/$basearch
+packaging/build/validation/rc6-e5-r8/admiral-local-el10.repo:4:enabled=1
+packaging/build/validation/rc6-e5-r8/admiral-local-el10.repo:5:gpgcheck=1
+packaging/build/validation/rc6-e5-r8/admiral-local-el10.repo:6:repo_gpgcheck=1
+packaging/build/validation/rc6-e5-r8/admiral-local-el10.repo:7:gpgkey=http://192.168.122.1/rc6-e5-r8/RPM-GPG-KEY-admiral-r8

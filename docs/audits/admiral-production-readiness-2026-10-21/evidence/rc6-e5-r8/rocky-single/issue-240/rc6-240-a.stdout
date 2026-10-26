@@ -1,0 +1,18 @@
+{
+  "code": "no_node_available_for_requested_tier",
+  "message": "No hay nodos disponibles con capacidad suficiente para este tier.",
+  "error": "No hay nodos disponibles con capacidad suficiente para este tier.",
+  "detail": "No hay nodos disponibles con capacidad suficiente para este tier. La politica de capacidad impide asignar mas workloads al nodo evaluado.",
+  "operation_id": "op_9d93deb8c57b3c6d",
+  "task_id": "task_72551a7e1dd8abb5",
+  "requested_node_id": "rc6r8-rocky-single",
+  "node_evaluations": [
+    {
+      "node_id": "rc6r8-rocky-single",
+      "eligible": false,
+      "rejection_reasons": [
+        "insufficient_ram_commit_capacity"
+      ]
+    }
+  ]
+}

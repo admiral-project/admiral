@@ -1,0 +1,32 @@
+cleanup_instance=inst_f313fdf94f2be774
+{
+  "action": "deprovision_app",
+  "admin_user": "system",
+  "created_at": "2026-10-26T19:37:09.550903Z",
+  "error_message": null,
+  "id": "op_d8c4e5fa426874e7",
+  "instance_id": "inst_f313fdf94f2be774",
+  "node_id": "rc6r8-rocky-single",
+  "status": "succeeded",
+  "task_id": "task_413b75dab7cf6d8f",
+  "updated_at": "2026-10-26T19:37:14.38783Z"
+}
+cleanup_instance=inst_cdead32137c10870
+{
+  "action": "deprovision_app",
+  "admin_user": "system",
+  "created_at": "2026-10-26T19:37:15.691868Z",
+  "error_message": null,
+  "id": "op_609a32a5badbaf84",
+  "instance_id": "inst_cdead32137c10870",
+  "node_id": "rc6r8-rocky-single",
+  "status": "succeeded",
+  "task_id": "task_6cad78e65567bb21",
+  "updated_at": "2026-10-26T19:37:20.66514Z"
+}
+remaining_containers=none
+remaining_pods=none
+remaining_volumes=none
+remaining_units=none
+remaining_files=none
+final_committed_ram_bytes=0

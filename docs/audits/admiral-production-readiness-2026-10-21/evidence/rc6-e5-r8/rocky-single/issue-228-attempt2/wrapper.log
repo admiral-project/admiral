@@ -1,0 +1,9 @@
+injected_failure argv=rm injected_failure argv=-v injected_failure argv=-f injected_failure argv=-i injected_failure argv=admiral-inst_5d1a7b0052380cc9-app 
+injected_failure argv=rm injected_failure argv=-v injected_failure argv=-f injected_failure argv=-i injected_failure argv=admiral-inst_5d1a7b0052380cc9-db 
+injected_failure argv=rm injected_failure argv=-v injected_failure argv=-f injected_failure argv=-i injected_failure argv=admiral-inst_5d1a7b0052380cc9-app 
+injected_failure argv=rm injected_failure argv=-v injected_failure argv=-f injected_failure argv=-i injected_failure argv=admiral-inst_5d1a7b0052380cc9-db 
+injected_failure argv=pod injected_failure argv=rm injected_failure argv=--ignore injected_failure argv=--force injected_failure argv=admiral-inst_5d1a7b0052380cc9 
+injected_failure argv=pod injected_failure argv=rm injected_failure argv=--force injected_failure argv=--ignore injected_failure argv=admiral-inst_5d1a7b0052380cc9 
+injected_failure argv=rm injected_failure argv=--force injected_failure argv=--ignore injected_failure argv=admiral-inst_5d1a7b0052380cc9-app 
+injected_failure argv=rm injected_failure argv=--force injected_failure argv=--ignore injected_failure argv=admiral-inst_5d1a7b0052380cc9-db 
+injected_failure argv=volume injected_failure argv=rm injected_failure argv=--force injected_failure argv=admiral-inst_5d1a7b0052380cc9-db 

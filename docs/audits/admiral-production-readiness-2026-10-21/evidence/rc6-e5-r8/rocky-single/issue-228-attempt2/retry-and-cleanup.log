@@ -1,0 +1,15 @@
+{
+  "action": "deprovision_app",
+  "admin_user": "system",
+  "created_at": "2026-10-26T19:34:16.190165Z",
+  "error_message": null,
+  "id": "op_d5030e614a37857c",
+  "instance_id": "inst_5d1a7b0052380cc9",
+  "node_id": "rc6r8-rocky-single",
+  "status": "succeeded",
+  "task_id": "task_65f1fb42acbaec8a",
+  "updated_at": "2026-10-26T19:34:20.964315Z"
+}
+retry_status=succeeded
+final_containers=none\nfinal_pods=none\nfinal_volumes=none\nfinal_quadlets=none\nfinal_instance_files=none\npodman_sha256_final=e84e97e99038d6a40acdd02b6ca77faa57f20525aff82a8566172bdc2d2ebcfb
+result=PASS end_utc=2026-10-26T19:34:23Z

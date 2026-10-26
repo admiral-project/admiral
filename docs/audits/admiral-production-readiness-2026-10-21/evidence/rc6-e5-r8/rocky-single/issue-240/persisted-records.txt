@@ -1,0 +1,21 @@
+kind|customer_id|instance_id|operation_id|task_id|response_status
+provision_request|rc6-240-b|inst_cdead32137c10870|op_787dde52a38444c2|task_3aa086a2721153d5|202
+provision_request|rc6-240-reserve|inst_f313fdf94f2be774|op_a81983f1f36744eb|task_d284c3f0ec474677|202
+(2 rows)
+kind|id|status|action|instance_id|node_id|task_id
+operation|op_787dde52a38444c2|succeeded|provision_app|inst_cdead32137c10870|rc6r8-rocky-single|task_3aa086a2721153d5
+operation|op_9d93deb8c57b3c6d|failed|provision_app||rc6r8-rocky-single|task_72551a7e1dd8abb5
+operation|op_a81983f1f36744eb|succeeded|provision_app|inst_f313fdf94f2be774|rc6r8-rocky-single|task_d284c3f0ec474677
+(3 rows)
+kind|operation_id|id|action|status|retry_count|max_retries
+(0 rows)
+kind|customer_id|id|technical_status|node_id
+customer_app|rc6-240-b|inst_cdead32137c10870|running|rc6r8-rocky-single
+customer_app|rc6-240-reserve|inst_f313fdf94f2be774|running|rc6r8-rocky-single
+(2 rows)
+admiral-inst_f313fdf94f2be774-infra|Up 56 seconds
+admiral-inst_f313fdf94f2be774-app|Up 55 seconds
+admiral-inst_f313fdf94f2be774-db|Up 55 seconds
+admiral-inst_cdead32137c10870-infra|Up 26 seconds
+admiral-inst_cdead32137c10870-app|Up 26 seconds
+admiral-inst_cdead32137c10870-db|Up 25 seconds

@@ -1,0 +1,25 @@
+podman_sha256_restored=e84e97e99038d6a40acdd02b6ca77faa57f20525aff82a8566172bdc2d2ebcfb
+podman_mode=root:root:755
+injected_containers=admiral-inst_5d1a7b0052380cc9-infra|Exited (0) 23 seconds ago
+injected_pods=admiral-inst_5d1a7b0052380cc9|Exited
+injected_volumes=admiral-inst_5d1a7b0052380cc9-db
+injected_quadlets=admiral-inst_5d1a7b0052380cc9-app.service       generated -
+admiral-inst_5d1a7b0052380cc9-db-volume.service generated -
+admiral-inst_5d1a7b0052380cc9-db.service        generated -
+admiral-inst_5d1a7b0052380cc9-pod.service       generated -
+injected_instance_files=/etc/containers/systemd/users/991/admiral/admiral-inst_5d1a7b0052380cc9.pod
+/etc/containers/systemd/users/991/admiral/admiral-inst_5d1a7b0052380cc9-db.volume
+/etc/containers/systemd/users/991/admiral/admiral-inst_5d1a7b0052380cc9-db.container
+/etc/containers/systemd/users/991/admiral/admiral-inst_5d1a7b0052380cc9-app.container
+/var/lib/admiral/instances/inst_5d1a7b0052380cc9
+wrapper_log_begin
+injected_failure argv=rm injected_failure argv=-v injected_failure argv=-f injected_failure argv=-i injected_failure argv=admiral-inst_5d1a7b0052380cc9-app 
+injected_failure argv=rm injected_failure argv=-v injected_failure argv=-f injected_failure argv=-i injected_failure argv=admiral-inst_5d1a7b0052380cc9-db 
+injected_failure argv=rm injected_failure argv=-v injected_failure argv=-f injected_failure argv=-i injected_failure argv=admiral-inst_5d1a7b0052380cc9-app 
+injected_failure argv=rm injected_failure argv=-v injected_failure argv=-f injected_failure argv=-i injected_failure argv=admiral-inst_5d1a7b0052380cc9-db 
+injected_failure argv=pod injected_failure argv=rm injected_failure argv=--ignore injected_failure argv=--force injected_failure argv=admiral-inst_5d1a7b0052380cc9 
+injected_failure argv=pod injected_failure argv=rm injected_failure argv=--force injected_failure argv=--ignore injected_failure argv=admiral-inst_5d1a7b0052380cc9 
+injected_failure argv=rm injected_failure argv=--force injected_failure argv=--ignore injected_failure argv=admiral-inst_5d1a7b0052380cc9-app 
+injected_failure argv=rm injected_failure argv=--force injected_failure argv=--ignore injected_failure argv=admiral-inst_5d1a7b0052380cc9-db 
+injected_failure argv=volume injected_failure argv=rm injected_failure argv=--force injected_failure argv=admiral-inst_5d1a7b0052380cc9-db 
+wrapper_log_end

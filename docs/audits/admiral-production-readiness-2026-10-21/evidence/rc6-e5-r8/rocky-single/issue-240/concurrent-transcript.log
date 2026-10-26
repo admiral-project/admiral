@@ -1,0 +1,64 @@
+start_utc=2026-10-26T19:35:59Z
+cli_exit_a=1 cli_exit_b=0
+--- request A stdout ---
+{
+  "code": "no_node_available_for_requested_tier",
+  "message": "No hay nodos disponibles con capacidad suficiente para este tier.",
+  "error": "No hay nodos disponibles con capacidad suficiente para este tier.",
+  "detail": "No hay nodos disponibles con capacidad suficiente para este tier. La politica de capacidad impide asignar mas workloads al nodo evaluado.",
+  "operation_id": "op_9d93deb8c57b3c6d",
+  "task_id": "task_72551a7e1dd8abb5",
+  "requested_node_id": "rc6r8-rocky-single",
+  "node_evaluations": [
+    {
+      "node_id": "rc6r8-rocky-single",
+      "eligible": false,
+      "rejection_reasons": [
+        "insufficient_ram_commit_capacity"
+      ]
+    }
+  ]
+}
+--- request A stderr ---
+Error: provision rejected
+Usage:
+  admiralctl instances provision [flags]
+
+Flags:
+      --app string                   Name of application definition (required)
+      --customer string              Unique Customer ID (required)
+  -h, --help                         help for provision
+      --idempotency-key string       Stable key to safely retry this provision request (required)
+      --logical-instance-id string   Preserve logical instance identity for migration
+      --node string                  Explicit node ID to target
+      --output string                Output format: table or json (default "table")
+      --quiet                        Suppress credential output in all formats
+      --tier string                  Name of the service tier (required)
+      --wait                         Wait until the operation reaches a terminal state
+      --wait-timeout duration        Maximum time to wait for an operation (default 30m0s)
+
+Global Flags:
+      --ca-cert string    CA certificate file for admirald HTTPS validation
+      --operator string   Operator name for audit logs
+      --server string     Control plane server endpoint URL
+
+Error: provision rejected
+--- request B stdout ---
+{
+  "action": "provision_app",
+  "admin_user": "system",
+  "created_at": "2026-10-26T19:36:00.352118Z",
+  "error_message": null,
+  "id": "op_787dde52a38444c2",
+  "instance_id": "inst_cdead32137c10870",
+  "node_id": "rc6r8-rocky-single",
+  "status": "succeeded",
+  "task_id": "task_3aa086a2721153d5",
+  "updated_at": "2026-10-26T19:36:06.414937Z"
+}
+--- request B stderr ---
+--- capacity after requests ---
+ram_commit_limit_bytes=1430156083
+committed_ram_bytes=1073741824
+ram_used_bytes=843378688
+end_utc=2026-10-26T19:36:06Z

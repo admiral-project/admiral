@@ -1,0 +1,5 @@
+operation_public_id|task_public_id|instance_id|node_id|command_type|status|attempt_count|max_attempts|last_error
+op_787dde52a38444c2|task_3aa086a2721153d5|inst_cdead32137c10870|rc6r8-rocky-single|provision_app|succeeded|1|5|
+op_9d93deb8c57b3c6d|task_72551a7e1dd8abb5||rc6r8-rocky-single|provision_policy_rejected|failed|0|0|No hay nodos disponibles con capacidad suficiente para este tier. La politica de capacidad impide asignar mas workloads al nodo evaluado.
+op_a81983f1f36744eb|task_d284c3f0ec474677|inst_f313fdf94f2be774|rc6r8-rocky-single|provision_app|succeeded|1|5|
+(3 rows)

@@ -1,0 +1,12 @@
+{
+  "action": "provision_app",
+  "admin_user": "system",
+  "created_at": "2026-10-26T19:35:31.330938Z",
+  "error_message": null,
+  "id": "op_a81983f1f36744eb",
+  "instance_id": "inst_f313fdf94f2be774",
+  "node_id": "rc6r8-rocky-single",
+  "status": "succeeded",
+  "task_id": "task_d284c3f0ec474677",
+  "updated_at": "2026-10-26T19:35:36.363968Z"
+}

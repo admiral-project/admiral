@@ -1,0 +1,32 @@
+NAME="Rocky Linux"
+VERSION="10.2 (Red Quartz)"
+RELEASE_TYPE="stable"
+ID="rocky"
+ID_LIKE="rhel centos fedora"
+VERSION_ID="10.2"
+PLATFORM_ID="platform:el10"
+PRETTY_NAME="Rocky Linux 10.2 (Red Quartz)"
+ANSI_COLOR="0;32"
+LOGO="fedora-logo-icon"
+CPE_NAME="cpe:/o:rocky:rocky:10::baseos"
+HOME_URL="https://rockylinux.org/"
+VENDOR_NAME="RESF"
+VENDOR_URL="https://resf.org/"
+BUG_REPORT_URL="https://bugs.rockylinux.org/"
+SUPPORT_END="2035-05-31"
+ROCKY_SUPPORT_PRODUCT="Rocky-Linux-10"
+ROCKY_SUPPORT_PRODUCT_VERSION="10.2"
+REDHAT_SUPPORT_PRODUCT="Rocky Linux"
+REDHAT_SUPPORT_PRODUCT_VERSION="10.2"
+
+ARCH=x86_64
+
+GO=go version go1.26.10 (Red Hat 1.26.10-1.el10_2) linux/amd64
+
+RPM=RPM version 4.19.1.1
+
+DIST=.el10
+
+ROOT_SOURCE=7fe5c9e product fix; ROOT_HEAD=50dfc0c1b6b2a55120df29b31283173d0fbec371
+RPM_SOURCE_ROOT=7fe5c9e69c2673747676e27cd134e0d69d3ebc51
+PYTEST=pytest 7.4.3

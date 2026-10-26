@@ -1,0 +1,45 @@
+warning: /var/lib/libvirt/images/admiral-validation/repo/rc6-e5-r8/el10/x86_64/admiral-common-0.0.1rc6-8.el10.noarch.rpm: Header V4 RSA/SHA256 Signature, key ID ed44f66e: NOKEY
+warning: /var/lib/libvirt/images/admiral-validation/repo/rc6-e5-r8/el10/x86_64/admiral-flagship-0.0.1rc6-8.el10.noarch.rpm: Header V4 RSA/SHA256 Signature, key ID ed44f66e: NOKEY
+warning: /var/lib/libvirt/images/admiral-validation/repo/rc6-e5-r8/el10/x86_64/admiral-fleet-0.0.1rc6-8.el10.x86_64.rpm: Header V4 RSA/SHA256 Signature, key ID ed44f66e: NOKEY
+warning: /var/lib/libvirt/images/admiral-validation/repo/rc6-e5-r8/el10/x86_64/admiral-harbor-0.0.1rc6-8.el10.noarch.rpm: Header V4 RSA/SHA256 Signature, key ID ed44f66e: NOKEY
+warning: /var/lib/libvirt/images/admiral-validation/repo/rc6-e5-r8/el10/x86_64/admiralctl-0.0.1rc6-8.el10.x86_64.rpm: Header V4 RSA/SHA256 Signature, key ID ed44f66e: NOKEY
+warning: /var/lib/libvirt/images/admiral-validation/repo/rc6-e5-r8/el10/x86_64/admirald-0.0.1rc6-8.el10.x86_64.rpm: Header V4 RSA/SHA256 Signature, key ID ed44f66e: NOKEY
+gpg: Signature made Mon Oct 26 19:11:04 2026 UTC
+gpg:                using RSA key 8D2E8FC99FB218979157C5DBFCC63E30ED44F66E
+gpg: Good signature from "Admiral RC6 Release 5 Validation <admiral-validation@localhost>" [ultimate]
+warning: ./admiral-common-0.0.1rc6-8.el10.noarch.rpm: Header V4 RSA/SHA256 Signature, key ID ed44f66e: NOKEY
+warning: ./admiral-flagship-0.0.1rc6-8.el10.noarch.rpm: Header V4 RSA/SHA256 Signature, key ID ed44f66e: NOKEY
+warning: ./admiral-fleet-0.0.1rc6-8.el10.x86_64.rpm: Header V4 RSA/SHA256 Signature, key ID ed44f66e: NOKEY
+warning: ./admiral-harbor-0.0.1rc6-8.el10.noarch.rpm: Header V4 RSA/SHA256 Signature, key ID ed44f66e: NOKEY
+warning: ./admiralctl-0.0.1rc6-8.el10.x86_64.rpm: Header V4 RSA/SHA256 Signature, key ID ed44f66e: NOKEY
+warning: ./admirald-0.0.1rc6-8.el10.x86_64.rpm: Header V4 RSA/SHA256 Signature, key ID ed44f66e: NOKEY
+./admiral-common-0.0.1rc6-8.el10.noarch.rpm: OK
+./admiral-flagship-0.0.1rc6-8.el10.noarch.rpm: OK
+./admiral-fleet-0.0.1rc6-8.el10.x86_64.rpm: OK
+./admiral-harbor-0.0.1rc6-8.el10.noarch.rpm: OK
+./admiralctl-0.0.1rc6-8.el10.x86_64.rpm: OK
+./admirald-0.0.1rc6-8.el10.x86_64.rpm: OK
+[el10] signed 6 RPMs and repomd.xml with key FCC63E30ED44F66E
+warning: /var/lib/libvirt/images/admiral-validation/repo/rc6-e5-r8/fedora/x86_64/admiral-common-0.0.1rc6-8.fc46.noarch.rpm: Header V4 RSA/SHA256 Signature, key ID ed44f66e: NOKEY
+warning: /var/lib/libvirt/images/admiral-validation/repo/rc6-e5-r8/fedora/x86_64/admiral-flagship-0.0.1rc6-8.fc46.noarch.rpm: Header V4 RSA/SHA256 Signature, key ID ed44f66e: NOKEY
+warning: /var/lib/libvirt/images/admiral-validation/repo/rc6-e5-r8/fedora/x86_64/admiral-fleet-0.0.1rc6-8.fc46.x86_64.rpm: Header V4 RSA/SHA256 Signature, key ID ed44f66e: NOKEY
+warning: /var/lib/libvirt/images/admiral-validation/repo/rc6-e5-r8/fedora/x86_64/admiral-harbor-0.0.1rc6-8.fc46.noarch.rpm: Header V4 RSA/SHA256 Signature, key ID ed44f66e: NOKEY
+warning: /var/lib/libvirt/images/admiral-validation/repo/rc6-e5-r8/fedora/x86_64/admiralctl-0.0.1rc6-8.fc46.x86_64.rpm: Header V4 RSA/SHA256 Signature, key ID ed44f66e: NOKEY
+warning: /var/lib/libvirt/images/admiral-validation/repo/rc6-e5-r8/fedora/x86_64/admirald-0.0.1rc6-8.fc46.x86_64.rpm: Header V4 RSA/SHA256 Signature, key ID ed44f66e: NOKEY
+gpg: Signature made Mon Oct 26 19:11:05 2026 UTC
+gpg:                using RSA key 8D2E8FC99FB218979157C5DBFCC63E30ED44F66E
+gpg: Good signature from "Admiral RC6 Release 5 Validation <admiral-validation@localhost>" [ultimate]
+warning: ./admiral-common-0.0.1rc6-8.fc46.noarch.rpm: Header V4 RSA/SHA256 Signature, key ID ed44f66e: NOKEY
+warning: ./admiral-flagship-0.0.1rc6-8.fc46.noarch.rpm: Header V4 RSA/SHA256 Signature, key ID ed44f66e: NOKEY
+warning: ./admiral-fleet-0.0.1rc6-8.fc46.x86_64.rpm: Header V4 RSA/SHA256 Signature, key ID ed44f66e: NOKEY
+warning: ./admiral-harbor-0.0.1rc6-8.fc46.noarch.rpm: Header V4 RSA/SHA256 Signature, key ID ed44f66e: NOKEY
+warning: ./admiralctl-0.0.1rc6-8.fc46.x86_64.rpm: Header V4 RSA/SHA256 Signature, key ID ed44f66e: NOKEY
+warning: ./admirald-0.0.1rc6-8.fc46.x86_64.rpm: Header V4 RSA/SHA256 Signature, key ID ed44f66e: NOKEY
+./admiral-common-0.0.1rc6-8.fc46.noarch.rpm: OK
+./admiral-flagship-0.0.1rc6-8.fc46.noarch.rpm: OK
+./admiral-fleet-0.0.1rc6-8.fc46.x86_64.rpm: OK
+./admiral-harbor-0.0.1rc6-8.fc46.noarch.rpm: OK
+./admiralctl-0.0.1rc6-8.fc46.x86_64.rpm: OK
+./admirald-0.0.1rc6-8.fc46.x86_64.rpm: OK
+[fedora] signed 6 RPMs and repomd.xml with key FCC63E30ED44F66E
+Signed candidate repositories and DNF configs are ready at /var/lib/libvirt/images/admiral-validation/repo/rc6-e5-r8
