@@ -1,0 +1,1945 @@
+audit_start_utc=2026-10-26T15:03:00Z
+candidate=0.0.1rc6-6 epoch=5
+Admiral 0.0.1rc6 Release 6 signed local validat  48 kB/s | 659  B     00:00    
+Admiral 0.0.1rc6 Release 6 signed local validat 347 kB/s | 1.3 kB     00:00    
+Importing GPG key 0xED44F66E:
+ Userid     : "Admiral RC6 Release 5 Validation <admiral-validation@localhost>"
+ Fingerprint: 8D2E 8FC9 9FB2 1897 9157 C5DB FCC6 3E30 ED44 F66E
+ From       : http://192.168.122.1/rc6-e5-r6/RPM-GPG-KEY-admiral-r6
+Admiral 0.0.1rc6 Release 6 signed local validat  73 kB/s | 2.9 kB     00:00    
+Extra Packages for Enterprise Linux 10 - x86_64  32 kB/s | 4.0 kB     00:00    
+Extra Packages for Enterprise Linux 10 - x86_64  11 MB/s | 7.3 MB     00:00    
+Rocky Linux 10 - BaseOS                          23 kB/s | 4.3 kB     00:00    
+Rocky Linux 10 - BaseOS                          60 MB/s |  41 MB     00:00    
+Rocky Linux 10 - AppStream                       30 kB/s | 4.4 kB     00:00    
+Rocky Linux 10 - AppStream                      4.8 MB/s | 2.8 MB     00:00    
+Rocky Linux 10 - CRB                             23 kB/s | 4.3 kB     00:00    
+Rocky Linux 10 - Extras                          21 kB/s | 3.1 kB     00:00    
+Package dnf-plugins-core-4.7.0-10.el10.noarch is already installed.
+Dependencies resolved.
+Nothing to do.
+Complete!
+Last metadata expiration check: 0:00:05 ago on Mon 26 Oct 2026 03:03:23 PM UTC.
+Package epel-release-10-9.el10_3.noarch is already installed.
+Dependencies resolved.
+Nothing to do.
+Complete!
+Enabling a Copr repository. Please note that this repository is not part
+of the main distribution, and quality may vary.
+
+The Fedora Project does not exercise any power over the contents of
+this repository beyond the rules outlined in the Copr FAQ at
+<https://docs.pagure.org/copr.copr/user_documentation.html#what-i-can-build-in-copr>,
+and packages are not held to any quality or security level.
+
+Please do not file bug reports about these packages in Fedora
+Bugzilla. In case of problems, contact the owner of this repository.
+Repository successfully enabled.
+Rocky Linux 10 - BaseOS                          25 kB/s | 4.3 kB     00:00    
+Rocky Linux 10 - AppStream                       60 kB/s | 4.4 kB     00:00    
+Rocky Linux 10 - CRB                             31 kB/s | 4.3 kB     00:00    
+Dependencies resolved.
+================================================================================
+ Package              Arch       Version                Repository         Size
+================================================================================
+Installing:
+ admiral-common       noarch     5:0.0.1rc6-6.el10      admiral-local     129 k
+ admiral-flagship     noarch     5:0.0.1rc6-6.el10      admiral-local     1.5 M
+ admiral-fleet        x86_64     5:0.0.1rc6-6.el10      admiral-local     5.4 M
+ admiral-harbor       noarch     5:0.0.1rc6-6.el10      admiral-local     1.1 M
+ admiralctl           x86_64     5:0.0.1rc6-6.el10      admiral-local     3.1 M
+ admirald             x86_64     5:0.0.1rc6-6.el10      admiral-local     4.0 M
+Installing dependencies:
+ acl                  x86_64     2.4.0-1.el10_2         baseos             75 k
+
+Transaction Summary
+================================================================================
+Install  7 Packages
+
+Total download size: 15 M
+Installed size: 52 M
+Downloading Packages:
+(1/7): admiral-common-0.0.1rc6-6.el10.noarch.rp 1.9 MB/s | 129 kB     00:00    
+(2/7): admiral-flagship-0.0.1rc6-6.el10.noarch.  13 MB/s | 1.5 MB     00:00    
+(3/7): admiral-harbor-0.0.1rc6-6.el10.noarch.rp  14 MB/s | 1.1 MB     00:00    
+(4/7): admiralctl-0.0.1rc6-6.el10.x86_64.rpm     30 MB/s | 3.1 MB     00:00    
+(5/7): admiral-fleet-0.0.1rc6-6.el10.x86_64.rpm  17 MB/s | 5.4 MB     00:00    
+(6/7): admirald-0.0.1rc6-6.el10.x86_64.rpm       16 MB/s | 4.0 MB     00:00    
+(7/7): acl-2.4.0-1.el10_2.x86_64.rpm            254 kB/s |  75 kB     00:00    
+--------------------------------------------------------------------------------
+Total                                            25 MB/s |  15 MB     00:00     
+retrieving repo key for admiral-local unencrypted from http://192.168.122.1/rc6-e5-r6/RPM-GPG-KEY-admiral-r6
+Admiral 0.0.1rc6 Release 6 signed local validat 564 kB/s | 1.3 kB     00:00    
+Importing GPG key 0xED44F66E:
+ Userid     : "Admiral RC6 Release 5 Validation <admiral-validation@localhost>"
+ Fingerprint: 8D2E 8FC9 9FB2 1897 9157 C5DB FCC6 3E30 ED44 F66E
+ From       : http://192.168.122.1/rc6-e5-r6/RPM-GPG-KEY-admiral-r6
+Key imported successfully
+Running transaction check
+Transaction check succeeded.
+Running transaction test
+Transaction test succeeded.
+Running transaction
+  Preparing        :                                                        1/1 
+  Installing       : acl-2.4.0-1.el10_2.x86_64                              1/7 
+  Running scriptlet: admiral-common-5:0.0.1rc6-6.el10.noarch                2/7 
+Creating group 'admiral' with GID 992.
+Creating user 'admiral' (Admiral service account) with UID 992 and GID 992.
+Creating group 'admiral-apps' with GID 991.
+Creating user 'admiral-apps' (Admiral rootless apps) with UID 991 and GID 991.
+
+  Installing       : admiral-common-5:0.0.1rc6-6.el10.noarch                2/7 
+  Running scriptlet: admiral-common-5:0.0.1rc6-6.el10.noarch                2/7 
+  Installing       : admiral-flagship-5:0.0.1rc6-6.el10.noarch              3/7 
+  Running scriptlet: admiral-flagship-5:0.0.1rc6-6.el10.noarch              3/7 
+  Installing       : admiral-fleet-5:0.0.1rc6-6.el10.x86_64                 4/7 
+  Running scriptlet: admiral-fleet-5:0.0.1rc6-6.el10.x86_64                 4/7 
+  Installing       : admiral-harbor-5:0.0.1rc6-6.el10.noarch                5/7 
+  Running scriptlet: admiral-harbor-5:0.0.1rc6-6.el10.noarch                5/7 
+  Installing       : admiralctl-5:0.0.1rc6-6.el10.x86_64                    6/7 
+  Running scriptlet: admiralctl-5:0.0.1rc6-6.el10.x86_64                    6/7 
+  Installing       : admirald-5:0.0.1rc6-6.el10.x86_64                      7/7 
+  Running scriptlet: admirald-5:0.0.1rc6-6.el10.x86_64                      7/7 
+
+Installed:
+  acl-2.4.0-1.el10_2.x86_64                                                     
+  admiral-common-5:0.0.1rc6-6.el10.noarch                                       
+  admiral-flagship-5:0.0.1rc6-6.el10.noarch                                     
+  admiral-fleet-5:0.0.1rc6-6.el10.x86_64                                        
+  admiral-harbor-5:0.0.1rc6-6.el10.noarch                                       
+  admiralctl-5:0.0.1rc6-6.el10.x86_64                                           
+  admirald-5:0.0.1rc6-6.el10.x86_64                                             
+
+Complete!
+python_helper_baseline_unchanged
+python3-alembic-0:1.20.1-5.el10.noarch
+python3-flask-1:3.1.3-4.el10.noarch
+python3-flask-alembic-0:3.3.0-5.el10.noarch
+python3-flask-login-0:0.6.3-10.el10.noarch
+python3-flask-sqlalchemy-0:3.1.1-11.el10.noarch
+python3-mistune-0:3.4.0-2.el10.noarch
+python3-sqlalchemy-0:2.0.55-5.el10.x86_64
+python3-typing-extensions-0:4.16.0-2.el10.noarch
+[WARN] Validation seed mode skips base OS and security update transactions; use only with a verified, recently updated disposable image.
+[INFO] Skipping OS update transactions for the explicitly selected, recently updated validation seed.
+[INFO] EPEL already installed.
+[INFO] Enabling EL10 CRB repository...
+[INFO] Enabling Admiral COPR repository...
+Enabling a Copr repository. Please note that this repository is not part
+of the main distribution, and quality may vary.
+
+The Fedora Project does not exercise any power over the contents of
+this repository beyond the rules outlined in the Copr FAQ at
+<https://docs.pagure.org/copr.copr/user_documentation.html#what-i-can-build-in-copr>,
+and packages are not held to any quality or security level.
+
+Please do not file bug reports about these packages in Fedora
+Bugzilla. In case of problems, contact the owner of this repository.
+Repository successfully enabled.
+38 files removed
+[INFO] Installing the current Admiral component packages...
+Admiral 0.0.1rc6 Release 6 signed local validat 108 kB/s | 2.9 kB     00:00    
+Copr repo for admiral owned by admiral-project   40 kB/s |  40 kB     00:01    
+Extra Packages for Enterprise Linux 10 - x86_64  13 MB/s | 7.3 MB     00:00    
+Rocky Linux 10 - BaseOS                          22 MB/s |  41 MB     00:01    
+Rocky Linux 10 - AppStream                      5.0 MB/s | 2.8 MB     00:00    
+Rocky Linux 10 - CRB                            1.7 MB/s | 562 kB     00:00    
+Rocky Linux 10 - Extras                          35 kB/s | 6.1 kB     00:00    
+Package admiral-common-5:0.0.1rc6-6.el10.noarch is already installed.
+Package admirald-5:0.0.1rc6-6.el10.x86_64 is already installed.
+Package admiralctl-5:0.0.1rc6-6.el10.x86_64 is already installed.
+Package admiral-fleet-5:0.0.1rc6-6.el10.x86_64 is already installed.
+Package admiral-harbor-5:0.0.1rc6-6.el10.noarch is already installed.
+Package admiral-flagship-5:0.0.1rc6-6.el10.noarch is already installed.
+Dependencies resolved.
+Nothing to do.
+Complete!
+[INFO] Running Admiral configuration playbook for mode: single-node
+
+PLAY [Configure Admiral platform] **********************************************
+
+TASK [Gathering Facts] *********************************************************
+ok: [localhost]
+
+TASK [Set the default WireGuard subnet when no custom subnet is configured] ****
+skipping: [localhost]
+
+TASK [Derive the WireGuard hub address when no explicit address is configured] ***
+skipping: [localhost]
+
+TASK [Map installer mode to persistent node role] ******************************
+ok: [localhost]
+
+TASK [Check persistent Admiral node role] **************************************
+ok: [localhost]
+
+TASK [Read persistent Admiral node role] ***************************************
+skipping: [localhost]
+
+TASK [Decode persistent Admiral node role] *************************************
+skipping: [localhost]
+
+TASK [Detect fresh admiral-common RPM baseline] ********************************
+ok: [localhost]
+
+TASK [Detect placeholder Admirald configuration baseline] **********************
+ok: [localhost]
+
+TASK [Detect missing Fleet callback key in Admirald configuration] *************
+ok: [localhost]
+
+TASK [Check for legacy Admiral installation state] *****************************
+ok: [localhost] => (item=/etc/admiral/secrets)
+ok: [localhost] => (item=/etc/admiral/harbor.env)
+ok: [localhost] => (item=/etc/admiral/fleet.env)
+ok: [localhost] => (item=/etc/admirald.ini)
+
+TASK [Reject unprofiled legacy Admiral installations] **************************
+ok: [localhost] => {
+    "changed": false,
+    "msg": "All assertions passed"
+}
+
+TASK [Reject incompatible persistent node role] ********************************
+skipping: [localhost]
+
+TASK [Determine WireGuard role] ************************************************
+ok: [localhost]
+
+TASK [Determine effective host security profile] *******************************
+ok: [localhost]
+
+TASK [Determine control-plane runtime address] *********************************
+ok: [localhost]
+
+TASK [Stop standalone WireGuard service] ***************************************
+ok: [localhost]
+
+TASK [Remove standalone WireGuard configuration] *******************************
+ok: [localhost]
+
+TASK [admiral_common : Install DNF plugins for Admiral COPR] *******************
+ok: [localhost]
+
+TASK [admiral_common : Enable EPEL repository] *********************************
+ok: [localhost]
+
+TASK [admiral_common : Enable EL10 CRB repository] *****************************
+ok: [localhost]
+
+TASK [admiral_common : Remove obsolete Caddy COPR repository] ******************
+ok: [localhost]
+
+TASK [admiral_common : Enable Admiral COPR repository] *************************
+ok: [localhost]
+
+TASK [admiral_common : Verify COPR repositories enforce GPG signature checks] ***
+ok: [localhost] => (item=/etc/yum.repos.d/_copr:copr.fedorainfracloud.org:admiral-project:admiral.repo)
+
+TASK [admiral_common : Refresh package metadata after enabling repositories] ***
+ok: [localhost]
+
+TASK [admiral_common : Apply available security updates] ***********************
+skipping: [localhost]
+
+TASK [admiral_common : Install automatic security update support] **************
+changed: [localhost]
+
+TASK [admiral_common : Configure automatic security updates] *******************
+changed: [localhost] => (item={'option': 'upgrade_type', 'value': 'security'})
+ok: [localhost] => (item={'option': 'download_updates', 'value': 'yes'})
+changed: [localhost] => (item={'option': 'apply_updates', 'value': 'yes'})
+ok: [localhost] => (item={'option': 'emit_via', 'value': 'stdio'})
+
+TASK [admiral_common : Enable automatic security updates] **********************
+changed: [localhost]
+
+TASK [admiral_common : Install production time synchronization] ****************
+ok: [localhost]
+
+TASK [admiral_common : Enable production time synchronization] *****************
+ok: [localhost]
+
+TASK [admiral_common : Install admiral-common baseline package] ****************
+ok: [localhost]
+
+TASK [admiral_common : Detect Fedora systemd-resolved service for secure LLMNR policy] ***
+skipping: [localhost]
+
+TASK [admiral_common : Disable LLMNR on Fedora secure installs] ****************
+skipping: [localhost]
+
+TASK [admiral_common : Restart systemd-resolved after changing the Fedora LLMNR policy] ***
+skipping: [localhost]
+
+TASK [admiral_common : Read effective Fedora resolver protocols] ***************
+skipping: [localhost]
+
+TASK [admiral_common : Verify LLMNR is disabled on Fedora secure installs] *****
+skipping: [localhost]
+
+TASK [admiral_common : Install admin-plane packages] ***************************
+ok: [localhost]
+
+TASK [admiral_common : Read Caddy SELinux executable context on Fedora 45 and later] ***
+skipping: [localhost]
+
+TASK [admiral_common : Read SELinux port mappings when Fedora confines Caddy] ***
+skipping: [localhost]
+
+TASK [admiral_common : Resolve the explicit SELinux type for Caddy admin TCP/2019] ***
+skipping: [localhost]
+
+TASK [admiral_common : Allow Caddy's loopback admin API port under Fedora SELinux policy] ***
+skipping: [localhost]
+
+TASK [admiral_common : Stop obsolete Caddy Unix socket permission watcher] *****
+ok: [localhost]
+
+TASK [admiral_common : Remove obsolete Caddy Unix socket configuration] ********
+ok: [localhost] => (item=/etc/systemd/system/caddy.service.d/admiral-runtime.conf)
+ok: [localhost] => (item=/etc/systemd/system/admiral-caddy-socket-permissions.service)
+ok: [localhost] => (item=/etc/systemd/system/admiral-caddy-socket-permissions.path)
+
+TASK [admiral_common : Reload systemd after removing Caddy Unix socket configuration] ***
+ok: [localhost]
+
+TASK [admiral_common : Install managed Caddyfile for Admiral] ******************
+changed: [localhost]
+
+TASK [admiral_common : Apply Caddy admin endpoint before dependent services] ***
+
+RUNNING HANDLER [admiral_common : restart caddy] *******************************
+changed: [localhost]
+
+TASK [admiral_common : Deploy Admiral SSH hardening baseline] ******************
+changed: [localhost]
+
+TASK [admiral_common : Reload sshd after hardening update] *********************
+changed: [localhost]
+
+TASK [admiral_common : Install PostgreSQL server utilities] ********************
+ok: [localhost]
+
+TASK [admiral_common : Inspect Admiral configuration directories installed by admiral-common] ***
+ok: [localhost] => (item=/etc/admiral)
+ok: [localhost] => (item=/etc/admiral/tls)
+ok: [localhost] => (item=/etc/admiral/ssh)
+
+TASK [admiral_common : Require the admiral-common RPM directory attributes] ****
+ok: [localhost] => (item={'changed': False, 'stat': {'exists': True, 'path': '/etc/admiral', 'mode': '0750', 'isdir': True, 'ischr': False, 'isblk': False, 'isreg': False, 'isfifo': False, 'islnk': False, 'issock': False, 'uid': 0, 'gid': 992, 'size': 83, 'inode': 8397759, 'dev': 64516, 'nlink': 4, 'atime': 1793027018.2579825, 'mtime': 1793027023.80948, 'ctime': 1793027023.80948, 'wusr': True, 'rusr': True, 'xusr': True, 'wgrp': False, 'rgrp': True, 'xgrp': True, 'woth': False, 'roth': False, 'xoth': False, 'isuid': False, 'isgid': False, 'blocks': 0, 'block_size': 4096, 'device_type': 0, 'readable': True, 'writeable': True, 'executable': True, 'pw_name': 'root', 'gr_name': 'admiral', 'mimetype': 'inode/directory', 'charset': 'binary', 'version': '1128755677', 'attributes': [], 'attr_flags': ''}, 'invocation': {'module_args': {'path': '/etc/admiral', 'follow': False, 'get_checksum': True, 'get_mime': True, 'get_attributes': True, 'checksum_algorithm': 'sha1'}}, 'failed': False, 'item': '/etc/admiral', 'ansible_loop_var': 'item'}) => {
+    "ansible_loop_var": "item",
+    "changed": false,
+    "item": {
+        "ansible_loop_var": "item",
+        "changed": false,
+        "failed": false,
+        "invocation": {
+            "module_args": {
+                "checksum_algorithm": "sha1",
+                "follow": false,
+                "get_attributes": true,
+                "get_checksum": true,
+                "get_mime": true,
+                "path": "/etc/admiral"
+            }
+        },
+        "item": "/etc/admiral",
+        "stat": {
+            "atime": 1793027018.2579825,
+            "attr_flags": "",
+            "attributes": [],
+            "block_size": 4096,
+            "blocks": 0,
+            "charset": "binary",
+            "ctime": 1793027023.80948,
+            "dev": 64516,
+            "device_type": 0,
+            "executable": true,
+            "exists": true,
+            "gid": 992,
+            "gr_name": "admiral",
+            "inode": 8397759,
+            "isblk": false,
+            "ischr": false,
+            "isdir": true,
+            "isfifo": false,
+            "isgid": false,
+            "islnk": false,
+            "isreg": false,
+            "issock": false,
+            "isuid": false,
+            "mimetype": "inode/directory",
+            "mode": "0750",
+            "mtime": 1793027023.80948,
+            "nlink": 4,
+            "path": "/etc/admiral",
+            "pw_name": "root",
+            "readable": true,
+            "rgrp": true,
+            "roth": false,
+            "rusr": true,
+            "size": 83,
+            "uid": 0,
+            "version": "1128755677",
+            "wgrp": false,
+            "woth": false,
+            "writeable": true,
+            "wusr": true,
+            "xgrp": true,
+            "xoth": false,
+            "xusr": true
+        }
+    },
+    "msg": "All assertions passed"
+}
+ok: [localhost] => (item={'changed': False, 'stat': {'exists': True, 'path': '/etc/admiral/tls', 'mode': '0750', 'isdir': True, 'ischr': False, 'isblk': False, 'isreg': False, 'isfifo': False, 'islnk': False, 'issock': False, 'uid': 0, 'gid': 992, 'size': 6, 'inode': 25170705, 'dev': 64516, 'nlink': 2, 'atime': 1793027018.259697, 'mtime': 1792972800.0, 'ctime': 1793027017.754317, 'wusr': True, 'rusr': True, 'xusr': True, 'wgrp': False, 'rgrp': True, 'xgrp': True, 'woth': False, 'roth': False, 'xoth': False, 'isuid': False, 'isgid': False, 'blocks': 0, 'block_size': 4096, 'device_type': 0, 'readable': True, 'writeable': True, 'executable': True, 'pw_name': 'root', 'gr_name': 'admiral', 'mimetype': 'inode/directory', 'charset': 'binary', 'version': '238374885', 'attributes': [], 'attr_flags': ''}, 'invocation': {'module_args': {'path': '/etc/admiral/tls', 'follow': False, 'get_checksum': True, 'get_mime': True, 'get_attributes': True, 'checksum_algorithm': 'sha1'}}, 'failed': False, 'item': '/etc/admiral/tls', 'ansible_loop_var': 'item'}) => {
+    "ansible_loop_var": "item",
+    "changed": false,
+    "item": {
+        "ansible_loop_var": "item",
+        "changed": false,
+        "failed": false,
+        "invocation": {
+            "module_args": {
+                "checksum_algorithm": "sha1",
+                "follow": false,
+                "get_attributes": true,
+                "get_checksum": true,
+                "get_mime": true,
+                "path": "/etc/admiral/tls"
+            }
+        },
+        "item": "/etc/admiral/tls",
+        "stat": {
+            "atime": 1793027018.259697,
+            "attr_flags": "",
+            "attributes": [],
+            "block_size": 4096,
+            "blocks": 0,
+            "charset": "binary",
+            "ctime": 1793027017.754317,
+            "dev": 64516,
+            "device_type": 0,
+            "executable": true,
+            "exists": true,
+            "gid": 992,
+            "gr_name": "admiral",
+            "inode": 25170705,
+            "isblk": false,
+            "ischr": false,
+            "isdir": true,
+            "isfifo": false,
+            "isgid": false,
+            "islnk": false,
+            "isreg": false,
+            "issock": false,
+            "isuid": false,
+            "mimetype": "inode/directory",
+            "mode": "0750",
+            "mtime": 1792972800.0,
+            "nlink": 2,
+            "path": "/etc/admiral/tls",
+            "pw_name": "root",
+            "readable": true,
+            "rgrp": true,
+            "roth": false,
+            "rusr": true,
+            "size": 6,
+            "uid": 0,
+            "version": "238374885",
+            "wgrp": false,
+            "woth": false,
+            "writeable": true,
+            "wusr": true,
+            "xgrp": true,
+            "xoth": false,
+            "xusr": true
+        }
+    },
+    "msg": "All assertions passed"
+}
+ok: [localhost] => (item={'changed': False, 'stat': {'exists': True, 'path': '/etc/admiral/ssh', 'mode': '0750', 'isdir': True, 'ischr': False, 'isblk': False, 'isreg': False, 'isfifo': False, 'islnk': False, 'issock': False, 'uid': 0, 'gid': 992, 'size': 6, 'inode': 17703306, 'dev': 64516, 'nlink': 2, 'atime': 1793027018.259697, 'mtime': 1792972800.0, 'ctime': 1793027017.7541177, 'wusr': True, 'rusr': True, 'xusr': True, 'wgrp': False, 'rgrp': True, 'xgrp': True, 'woth': False, 'roth': False, 'xoth': False, 'isuid': False, 'isgid': False, 'blocks': 0, 'block_size': 4096, 'device_type': 0, 'readable': True, 'writeable': True, 'executable': True, 'pw_name': 'root', 'gr_name': 'admiral', 'mimetype': 'inode/directory', 'charset': 'binary', 'version': '3906378008', 'attributes': [], 'attr_flags': ''}, 'invocation': {'module_args': {'path': '/etc/admiral/ssh', 'follow': False, 'get_checksum': True, 'get_mime': True, 'get_attributes': True, 'checksum_algorithm': 'sha1'}}, 'failed': False, 'item': '/etc/admiral/ssh', 'ansible_loop_var': 'item'}) => {
+    "ansible_loop_var": "item",
+    "changed": false,
+    "item": {
+        "ansible_loop_var": "item",
+        "changed": false,
+        "failed": false,
+        "invocation": {
+            "module_args": {
+                "checksum_algorithm": "sha1",
+                "follow": false,
+                "get_attributes": true,
+                "get_checksum": true,
+                "get_mime": true,
+                "path": "/etc/admiral/ssh"
+            }
+        },
+        "item": "/etc/admiral/ssh",
+        "stat": {
+            "atime": 1793027018.259697,
+            "attr_flags": "",
+            "attributes": [],
+            "block_size": 4096,
+            "blocks": 0,
+            "charset": "binary",
+            "ctime": 1793027017.7541177,
+            "dev": 64516,
+            "device_type": 0,
+            "executable": true,
+            "exists": true,
+            "gid": 992,
+            "gr_name": "admiral",
+            "inode": 17703306,
+            "isblk": false,
+            "ischr": false,
+            "isdir": true,
+            "isfifo": false,
+            "isgid": false,
+            "islnk": false,
+            "isreg": false,
+            "issock": false,
+            "isuid": false,
+            "mimetype": "inode/directory",
+            "mode": "0750",
+            "mtime": 1792972800.0,
+            "nlink": 2,
+            "path": "/etc/admiral/ssh",
+            "pw_name": "root",
+            "readable": true,
+            "rgrp": true,
+            "roth": false,
+            "rusr": true,
+            "size": 6,
+            "uid": 0,
+            "version": "3906378008",
+            "wgrp": false,
+            "woth": false,
+            "writeable": true,
+            "wusr": true,
+            "xgrp": true,
+            "xoth": false,
+            "xusr": true
+        }
+    },
+    "msg": "All assertions passed"
+}
+
+TASK [admiral_common : Copy admin bootstrap materials to remote spokes] ********
+skipping: [localhost] => (item={'src': '/etc/admiral/tls/ca.pem', 'dest': '/etc/admiral/tls/ca.pem', 'mode': '0644'}) 
+skipping: [localhost] => (item={'src': '/etc/wireguard/admiral.pub', 'dest': '/etc/wireguard/hub.pub', 'mode': '0644'}) 
+skipping: [localhost]
+
+TASK [admiral_common : Check whether Admiral secret inventory already exists] ***
+ok: [localhost]
+
+TASK [admiral_common : Read existing Admiral secret inventory] *****************
+skipping: [localhost]
+
+TASK [admiral_common : Decode existing Admiral secret inventory] ***************
+skipping: [localhost]
+
+TASK [admiral_common : Initialize empty Admiral secret inventory text] *********
+ok: [localhost]
+
+TASK [admiral_common : Migrate legacy admin service token name before inventory validation] ***
+skipping: [localhost]
+
+TASK [admiral_common : Require a complete existing Admiral secret inventory] ***
+skipping: [localhost] => (item=None) 
+skipping: [localhost] => (item=None) 
+skipping: [localhost] => (item=None) 
+skipping: [localhost] => (item=None) 
+skipping: [localhost] => (item=None) 
+skipping: [localhost] => (item=None) 
+skipping: [localhost] => (item=None) 
+skipping: [localhost] => (item=None) 
+skipping: [localhost] => (item=None) 
+skipping: [localhost] => (item=None) 
+skipping: [localhost] => (item=None) 
+skipping: [localhost] => (item=None) 
+skipping: [localhost] => (item=None) 
+skipping: [localhost] => (item=None) 
+skipping: [localhost] => (item=None) 
+skipping: [localhost] => (item=None) 
+skipping: [localhost] => (item=None) 
+skipping: [localhost] => (item=None) 
+skipping: [localhost] => (item=None) 
+skipping: [localhost] => (item=None) 
+skipping: [localhost] => (item=None) 
+skipping: [localhost] => (item=None) 
+skipping: [localhost] => (item=None) 
+skipping: [localhost]
+
+TASK [admiral_common : Extract existing Admiral secrets] ***********************
+ok: [localhost]
+
+TASK [admiral_common : Generate Admiral PostgreSQL password] *******************
+changed: [localhost]
+
+TASK [admiral_common : Generate Admiral internal service token] ****************
+changed: [localhost]
+
+TASK [admiral_common : Generate Admiral token pepper] **************************
+changed: [localhost]
+
+TASK [admiral_common : Generate Admiral secrets key] ***************************
+changed: [localhost]
+
+TASK [admiral_common : Generate Flagship secret key] ***************************
+changed: [localhost]
+
+TASK [admiral_common : Generate Flagship bootstrap username suffix] ************
+changed: [localhost]
+
+TASK [admiral_common : Generate Flagship bootstrap password] *******************
+changed: [localhost]
+
+TASK [admiral_common : Generate Harbor secret key] *****************************
+changed: [localhost]
+
+TASK [admiral_common : Generate Harbor encryption key] *************************
+changed: [localhost]
+
+TASK [admiral_common : Generate Harbor bootstrap username suffix] **************
+changed: [localhost]
+
+TASK [admiral_common : Generate Harbor bootstrap password] *********************
+changed: [localhost]
+
+TASK [admiral_common : Generate Harbor legacy admin rotation password] *********
+changed: [localhost]
+
+TASK [admiral_common : Generate Harbor API token (scoped, not admin-level)] ****
+changed: [localhost]
+
+TASK [admiral_common : Generate Cockpit admin username suffix] *****************
+changed: [localhost]
+
+TASK [admiral_common : Generate Cockpit admin password] ************************
+changed: [localhost]
+
+TASK [admiral_common : Generate Admiral fleet token] ***************************
+changed: [localhost]
+
+TASK [admiral_common : Generate Ed25519 signing key pair (admin only)] *********
+changed: [localhost]
+
+TASK [admiral_common : Extract Ed25519 private key file path from CLI output] ***
+ok: [localhost]
+
+TASK [admiral_common : Read Ed25519 private key seed from generated file] ******
+ok: [localhost]
+
+TASK [admiral_common : Set Ed25519 private key from file content] **************
+ok: [localhost]
+
+TASK [admiral_common : Generate control-plane queue encryption key (AES-256-GCM)] ***
+changed: [localhost]
+
+TASK [admiral_common : Generate Fleet callback HMAC key] ***********************
+changed: [localhost]
+
+TASK [admiral_common : Determine stable SSH delivery identifier] ***************
+ok: [localhost]
+
+TASK [admiral_common : Inspect package-owned SSH delivery directory on the Admin controller] ***
+ok: [localhost]
+
+TASK [admiral_common : Require the package-owned SSH delivery directory] *******
+ok: [localhost] => {
+    "changed": false,
+    "msg": "All assertions passed"
+}
+
+TASK [admiral_common : Generate per-node administrative SSH identity on the Admin controller] ***
+changed: [localhost]
+
+TASK [admiral_common : Read per-node administrative public key from the Admin controller] ***
+ok: [localhost]
+
+TASK [admiral_common : Select generated per-node public key for SSH administration] ***
+skipping: [localhost]
+
+TASK [admiral_common : Calculate administrative SSH key fingerprint] ***********
+ok: [localhost]
+
+TASK [admiral_common : Report administrative SSH delivery artifact] ************
+ok: [localhost] => {
+    "msg": {
+        "node_id": "rc6-e5-r6-rocky-single",
+        "private_key": "/var/lib/admiral/ssh-delivery/rc6-e5-r6-rocky-single.ed25519",
+        "public_key_fingerprint": "256 SHA256:r/yd8CIVg97UxZ9mRbmcAYXxpW0LIdiaWKWy2RBsO6I admiral-ssh@rc6-e5-r6-rocky-single (ED25519)",
+        "user": "admiral-ssh"
+    }
+}
+
+TASK [admiral_common : Generate persistent session HMAC key] *******************
+changed: [localhost]
+
+TASK [admiral_common : Consolidate Admiral installation secrets] ***************
+ok: [localhost]
+
+TASK [admiral_common : Persist bootstrap secret inventory] *********************
+changed: [localhost]
+
+TASK [admiral_common : Verify bootstrap secret inventory permissions] **********
+ok: [localhost]
+
+TASK [admiral_common : Enforce bootstrap secret inventory permissions] *********
+ok: [localhost]
+
+TASK [admiral_common : Remove secrets file from non-admin nodes (safety cleanup)] ***
+skipping: [localhost]
+
+TASK [admiral_common : Determine spoke SSH delivery identifier] ****************
+skipping: [localhost]
+
+TASK [admiral_common : Generate spoke administrative SSH identity on the Admin controller] ***
+skipping: [localhost]
+
+TASK [admiral_common : Read spoke administrative SSH public key] ***************
+skipping: [localhost]
+
+TASK [admiral_common : Select spoke administrative SSH identity] ***************
+skipping: [localhost]
+
+TASK [admiral_common : Calculate spoke administrative SSH fingerprint] *********
+skipping: [localhost]
+
+TASK [admiral_common : Report spoke administrative SSH delivery artifact] ******
+skipping: [localhost]
+
+TASK [admiral_common : Read existing Harbor environment for database credential] ***
+skipping: [localhost]
+
+TASK [admiral_common : Extract existing portal PostgreSQL credential] **********
+skipping: [localhost]
+
+TASK [admiral_common : Generate portal-local PostgreSQL credential] ************
+skipping: [localhost]
+
+TASK [admiral_common : Set dedicated portal PostgreSQL identity] ***************
+skipping: [localhost]
+
+TASK [admiral_common : Create Admiral SSH admin user] **************************
+changed: [localhost]
+
+TASK [admiral_common : Configure NOPASSWD sudo for SSH admin user] *************
+changed: [localhost]
+
+TASK [admiral_common : Disable inherited Cockpit socket on worker and portal profiles] ***
+skipping: [localhost]
+
+TASK [admiral_common : Deploy SSH public key to admin user] ********************
+changed: [localhost]
+
+TASK [admiral_common : Validate legacy SSH admin identity before retirement] ***
+skipping: [localhost]
+
+TASK [admiral_common : Remove legacy SSH admin sudo privilege] *****************
+skipping: [localhost]
+
+TASK [admiral_common : Disable legacy SSH admin account] ***********************
+skipping: [localhost]
+
+TASK [admiral_common : Remove legacy SSH admin authorized keys] ****************
+skipping: [localhost]
+
+TASK [admiral_common : Determine TLS SAN string including public IP and WireGuard IP] ***
+ok: [localhost]
+
+TASK [admiral_common : Generate self-signed CA certificate on hub nodes] *******
+changed: [localhost]
+
+TASK [admiral_common : Check whether the admirald leaf certificate already exists] ***
+ok: [localhost]
+
+TASK [admiral_common : Verify an existing admirald leaf against the configured CA] ***
+skipping: [localhost]
+
+TASK [admiral_common : Determine whether the existing leaf must be replaced with a CA-signed certificate] ***
+ok: [localhost]
+
+TASK [admiral_common : Generate admirald server key] ***************************
+changed: [localhost]
+
+TASK [admiral_common : Generate admirald CSR with dynamic SAN] *****************
+changed: [localhost]
+
+TASK [admiral_common : Write openssl extensions file for SAN] ******************
+changed: [localhost]
+
+TASK [admiral_common : Sign admirald certificate with CA on hub nodes] *********
+changed: [localhost]
+
+TASK [admiral_common : Deploy CA-signed admirald server certificate atomically] ***
+changed: [localhost]
+
+TASK [admiral_common : Remove pending admirald server certificate] *************
+changed: [localhost]
+
+TASK [admiral_common : Read portal-node CSR for controller-side signing] *******
+skipping: [localhost]
+
+TASK [admiral_common : Create temporary CSR file on controller for portal-node] ***
+skipping: [localhost]
+
+TASK [admiral_common : Create temporary extensions file on controller for portal-node] ***
+skipping: [localhost]
+
+TASK [admiral_common : Create temporary certificate file on controller for portal-node] ***
+skipping: [localhost]
+
+TASK [admiral_common : Write portal-node CSR to controller temporary file] *****
+skipping: [localhost]
+
+TASK [admiral_common : Write portal-node SAN extensions to controller temporary file] ***
+skipping: [localhost]
+
+TASK [admiral_common : Sign portal-node certificate on controller] *************
+skipping: [localhost]
+
+TASK [admiral_common : Read signed portal-node certificate from controller] ****
+skipping: [localhost]
+
+TASK [admiral_common : Deploy signed portal-node certificate] ******************
+skipping: [localhost]
+
+TASK [admiral_common : Remove temporary openssl extensions file] ***************
+changed: [localhost]
+
+TASK [admiral_common : Remove CSR after signing] *******************************
+changed: [localhost]
+
+TASK [admiral_common : Remove CA private key from spoke nodes after cert generation] ***
+skipping: [localhost]
+
+TASK [admiral_common : Remove temporary portal-node signing files from controller] ***
+skipping: [localhost] => (item=) 
+skipping: [localhost] => (item=) 
+skipping: [localhost] => (item=) 
+skipping: [localhost]
+
+TASK [admiral_common : Set TLS cert permissions] *******************************
+ok: [localhost] => (item=/etc/admiral/tls/admirald.pem)
+changed: [localhost] => (item=/etc/admiral/tls/admirald-key.pem)
+
+TASK [admiral_common : Set CA certificate permissions] *************************
+changed: [localhost]
+
+TASK [admiral_common : Set CA private key permissions] *************************
+ok: [localhost]
+
+TASK [admiral_common : Ensure admirald.pem exists for dev mode] ****************
+skipping: [localhost]
+
+TASK [admiral_common : Set permissions on dev mode certificates] ***************
+skipping: [localhost] => (item=/etc/admiral/tls/admirald.pem) 
+skipping: [localhost] => (item=/etc/admiral/tls/admirald-key.pem) 
+skipping: [localhost]
+
+TASK [admiral_common : Initialize PostgreSQL database cluster] *****************
+changed: [localhost]
+
+TASK [admiral_common : Include WireGuard subnet in PostgreSQL listen_addresses for multi-node] ***
+ok: [localhost]
+
+TASK [admiral_common : Update PostgreSQL listen_addresses] *********************
+changed: [localhost]
+
+TASK [admiral_common : Require password authentication for localhost PostgreSQL] ***
+changed: [localhost]
+
+TASK [admiral_common : Require password authentication for localhost PostgreSQL over IPv6] ***
+changed: [localhost]
+
+TASK [admiral_common : Copy TLS certificates for PostgreSQL SSL] ***************
+changed: [localhost] => (item={'src': '/etc/admiral/tls/ca.pem', 'dest': '/var/lib/pgsql/data/ca.crt', 'mode': '0600'})
+changed: [localhost] => (item={'src': '/etc/admiral/tls/admirald.pem', 'dest': '/var/lib/pgsql/data/server.crt', 'mode': '0600'})
+changed: [localhost] => (item={'src': '/etc/admiral/tls/admirald-key.pem', 'dest': '/var/lib/pgsql/data/server.key', 'mode': '0600'})
+
+TASK [admiral_common : Enable SSL in PostgreSQL configuration] *****************
+changed: [localhost] => (item={'param': 'ssl', 'value': 'on'})
+changed: [localhost] => (item={'param': 'ssl_ca_file', 'value': 'ca.crt'})
+changed: [localhost] => (item={'param': 'ssl_cert_file', 'value': 'server.crt'})
+changed: [localhost] => (item={'param': 'ssl_key_file', 'value': 'server.key'})
+
+TASK [admiral_common : Ensure PostgreSQL is enabled and running] ***************
+changed: [localhost]
+
+TASK [admiral_common : Restart PostgreSQL when TLS files or SSL configuration change] ***
+changed: [localhost]
+
+TASK [admiral_common : Verify PostgreSQL accepts local connections after restart] ***
+ok: [localhost]
+
+TASK [admiral_common : Validate Admiral PostgreSQL role name] ******************
+ok: [localhost] => {
+    "changed": false,
+    "msg": "All assertions passed"
+}
+
+TASK [admiral_common : Check whether Admiral PostgreSQL role exists] ***********
+ok: [localhost]
+
+TASK [admiral_common : Ensure Admiral PostgreSQL role exists with generated password] ***
+changed: [localhost]
+
+TASK [admiral_common : Ensure Admiral PostgreSQL databases exist (admin/single only)] ***
+ok: [localhost] => (item=admiral)
+ok: [localhost] => (item=admiral_queue)
+
+TASK [admiral_common : Ensure Harbor PostgreSQL database exists when Harbor is enabled] ***
+ok: [localhost]
+
+TASK [admiral_selinux : Check if SELinux is enabled] ***************************
+ok: [localhost]
+
+TASK [admiral_selinux : Ensure SELinux is enforcing] ***************************
+skipping: [localhost]
+
+TASK [admiral_selinux : Persist SELinux enforcing mode across reboots] *********
+ok: [localhost]
+
+TASK [admiral_selinux : Read SELinux enforcing runtime state] ******************
+ok: [localhost]
+
+TASK [admiral_selinux : Verify SELinux enforcing boot policy] ******************
+ok: [localhost]
+
+TASK [admiral_selinux : Assert SELinux remains enforcing at runtime and after reboot] ***
+ok: [localhost] => {
+    "changed": false,
+    "msg": "All assertions passed"
+}
+
+TASK [admiral_selinux : Read SELinux permission for reverse proxy connections] ***
+ok: [localhost]
+
+TASK [admiral_selinux : Allow the reverse proxy to reach loopback services] ****
+skipping: [localhost]
+
+TASK [admiral_firewall : Ensure firewalld is installed] ************************
+changed: [localhost]
+
+TASK [admiral_firewall : Unmask firewalld service] *****************************
+ok: [localhost]
+
+TASK [admiral_firewall : Ensure firewalld is enabled and running] **************
+changed: [localhost]
+
+TASK [admiral_firewall : Load nftables modules for iptables direct rules (AlmaLinux workaround)] ***
+ok: [localhost] => (item=nf_conntrack)
+ok: [localhost] => (item=nft_ct)
+ok: [localhost] => (item=nft_reject_ipv4)
+
+TASK [admiral_firewall : Check if firewalld is in failed state] ****************
+ok: [localhost]
+
+TASK [admiral_firewall : Remove stuck permanent direct rules] ******************
+skipping: [localhost]
+
+TASK [admiral_firewall : Restart firewalld to clear failed state] **************
+skipping: [localhost]
+
+TASK [admiral_firewall : Use one dual-stack nftables egress policy on every supported distribution] ***
+ok: [localhost]
+
+TASK [admiral_firewall : Set default firewalld zone to public] *****************
+changed: [localhost]
+
+TASK [admiral_firewall : Ensure public zone target is default deny] ************
+changed: [localhost]
+
+TASK [admiral_firewall : Define allowed public firewall rules for the host profile] ***
+ok: [localhost]
+
+TASK [admiral_firewall : Read configured public services and ports] ************
+ok: [localhost] => (item=services)
+ok: [localhost] => (item=ports)
+
+TASK [admiral_firewall : Remove public services outside the declared host profile] ***
+changed: [localhost] => (item=cockpit)
+changed: [localhost] => (item=dhcpv6-client)
+
+TASK [admiral_firewall : Remove public ports outside the declared host profile] ***
+skipping: [localhost]
+
+TASK [admiral_firewall : Allow public services for all modes] ******************
+changed: [localhost]
+
+TASK [admiral_firewall : Allow HTTP/HTTPS on admin and single nodes] ***********
+changed: [localhost] => (item=http)
+changed: [localhost] => (item=https)
+
+TASK [admiral_firewall : Allow WireGuard UDP port on multinode profiles] *******
+skipping: [localhost]
+
+TASK [admiral_firewall : Remove managed egress direct rules (admin profile)] ***
+skipping: [localhost] => (item={'priority': 10, 'rule': '-o lo -j ACCEPT'}) 
+skipping: [localhost] => (item={'priority': 20, 'rule': '-m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT'}) 
+skipping: [localhost] => (item={'priority': 30, 'rule': '-d 10.99.0.0/24 -j ACCEPT'}) 
+skipping: [localhost] => (item={'priority': 35, 'rule': '-p tcp --dport 22 -j ACCEPT'}) 
+skipping: [localhost] => (item={'priority': 40, 'rule': '-p tcp --dport 80 -j ACCEPT'}) 
+skipping: [localhost] => (item={'priority': 41, 'rule': '-p tcp --dport 443 -j ACCEPT'}) 
+skipping: [localhost] => (item={'priority': 44, 'rule': '-p tcp --dport 9000 -j ACCEPT'}) 
+skipping: [localhost] => (item={'priority': 42, 'rule': '-p udp --dport 53 -j ACCEPT'}) 
+skipping: [localhost] => (item={'priority': 43, 'rule': '-p tcp --dport 53 -j ACCEPT'}) 
+skipping: [localhost] => (item={'priority': 200, 'rule': '-j REJECT'}) 
+skipping: [localhost]
+
+TASK [admiral_firewall : Remove managed egress direct rules (spoke profile)] ***
+skipping: [localhost] => (item={'priority': 10, 'rule': '-o lo -j ACCEPT'}) 
+skipping: [localhost] => (item={'priority': 20, 'rule': '-m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT'}) 
+skipping: [localhost] => (item={'priority': 30, 'rule': '-d 10.99.0.0/24 -j ACCEPT'}) 
+skipping: [localhost] => (item={'priority': 35, 'rule': '-p tcp --dport 22 -j ACCEPT'}) 
+skipping: [localhost] => (item={'priority': 37, 'rule': '-p tcp --dport 9000 -j ACCEPT'}) 
+skipping: [localhost] => (item={'priority': 36, 'rule': '-p udp --dport 51820 -j ACCEPT'}) 
+skipping: [localhost] => (item={'priority': 200, 'rule': '-j REJECT'}) 
+skipping: [localhost]
+
+TASK [admiral_firewall : Apply egress controls for admin and single nodes] *****
+skipping: [localhost] => (item={'priority': 10, 'rule': '-o lo -j ACCEPT'}) 
+skipping: [localhost] => (item={'priority': 20, 'rule': '-m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT'}) 
+skipping: [localhost] => (item={'priority': 30, 'rule': '-d 10.99.0.0/24 -j ACCEPT'}) 
+skipping: [localhost] => (item={'priority': 35, 'rule': '-p tcp --dport 22 -j ACCEPT'}) 
+skipping: [localhost] => (item={'priority': 40, 'rule': '-p tcp --dport 80 -j ACCEPT'}) 
+skipping: [localhost] => (item={'priority': 41, 'rule': '-p tcp --dport 443 -j ACCEPT'}) 
+skipping: [localhost] => (item={'priority': 44, 'rule': '-p tcp --dport 9000 -j ACCEPT'}) 
+skipping: [localhost] => (item={'priority': 42, 'rule': '-p udp --dport 53 -j ACCEPT'}) 
+skipping: [localhost] => (item={'priority': 43, 'rule': '-p tcp --dport 53 -j ACCEPT'}) 
+skipping: [localhost] => (item={'priority': 200, 'rule': '-j REJECT'}) 
+skipping: [localhost]
+
+TASK [admiral_firewall : Apply egress controls for worker and portal spokes] ***
+skipping: [localhost] => (item={'priority': 10, 'rule': '-o lo -j ACCEPT'}) 
+skipping: [localhost] => (item={'priority': 20, 'rule': '-m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT'}) 
+skipping: [localhost] => (item={'priority': 30, 'rule': '-d 10.99.0.0/24 -j ACCEPT'}) 
+skipping: [localhost] => (item={'priority': 35, 'rule': '-p tcp --dport 22 -j ACCEPT'}) 
+skipping: [localhost] => (item={'priority': 37, 'rule': '-p tcp --dport 9000 -j ACCEPT'}) 
+skipping: [localhost] => (item={'priority': 36, 'rule': '-p udp --dport 51820 -j ACCEPT'}) 
+skipping: [localhost] => (item={'priority': 200, 'rule': '-j REJECT'}) 
+skipping: [localhost]
+
+TASK [admiral_firewall : Allow dev mode services] ******************************
+skipping: [localhost] => (item=cockpit) 
+skipping: [localhost]
+
+TASK [admiral_firewall : Allow dev mode ports] *********************************
+skipping: [localhost] => (item=5000/tcp) 
+skipping: [localhost] => (item=5001/tcp) 
+skipping: [localhost] => (item=40000-49999/tcp) 
+skipping: [localhost]
+
+TASK [admiral_firewall : Reload firewall to apply policy] **********************
+ok: [localhost]
+
+TASK [admiral_firewall : Remove previous egress nftables table if present] *****
+changed: [localhost]
+
+TASK [admiral_firewall : Write egress nftables ruleset] ************************
+changed: [localhost]
+
+TASK [admiral_firewall : Load egress nftables ruleset] *************************
+changed: [localhost]
+
+TASK [admiral_firewall : Write egress systemd oneshot service for boot persistence] ***
+changed: [localhost]
+
+TASK [admiral_firewall : Enable egress boot service] ***************************
+changed: [localhost]
+
+TASK [admiral_firewall : Delete active Admiral egress table in dev mode] *******
+skipping: [localhost]
+
+TASK [admiral_firewall : Disable persistent Admiral egress policy in dev mode] ***
+skipping: [localhost]
+
+TASK [admiral_firewall : Verify effective public services] *********************
+ok: [localhost]
+
+TASK [admiral_firewall : Verify effective public ports] ************************
+ok: [localhost]
+
+TASK [admiral_firewall : Assert only expected public services remain exposed (admin/single)] ***
+ok: [localhost] => {
+    "changed": false,
+    "msg": "All assertions passed"
+}
+
+TASK [admiral_firewall : Assert only ssh remains exposed (worker)] *************
+skipping: [localhost]
+
+TASK [admiral_firewall : Assert only ssh remains exposed on dedicated portal spokes] ***
+skipping: [localhost]
+
+TASK [admiral_firewall : Assert only expected public ports remain exposed] *****
+ok: [localhost] => {
+    "changed": false,
+    "msg": "All assertions passed"
+}
+
+TASK [admiral_firewall : Query egress direct rules (non-AlmaLinux)] ************
+skipping: [localhost]
+
+TASK [admiral_firewall : Query dual-stack egress nftables rules] ***************
+ok: [localhost]
+
+TASK [admiral_firewall : Assert managed egress reject rule is active (non-AlmaLinux)] ***
+skipping: [localhost]
+
+TASK [admiral_firewall : Assert managed dual-stack egress reject rule is active] ***
+ok: [localhost] => {
+    "changed": false,
+    "msg": "All assertions passed"
+}
+
+TASK [admiral_firewall : Wait for production time synchronization through the egress policy] ***
+ok: [localhost]
+
+TASK [admiral_auditd : Install auditd] *****************************************
+ok: [localhost]
+
+TASK [admiral_auditd : Configure explicit auditd rotation and disk-space policy] ***
+changed: [localhost] => (item={'key': 'space_left', 'value': '100'})
+ok: [localhost] => (item={'key': 'admin_space_left', 'value': '50'})
+ok: [localhost] => (item={'key': 'space_left_action', 'value': 'SYSLOG'})
+ok: [localhost] => (item={'key': 'admin_space_left_action', 'value': 'SUSPEND'})
+ok: [localhost] => (item={'key': 'disk_full_action', 'value': 'SUSPEND'})
+ok: [localhost] => (item={'key': 'disk_error_action', 'value': 'SUSPEND'})
+changed: [localhost] => (item={'key': 'max_log_file', 'value': '50'})
+changed: [localhost] => (item={'key': 'num_logs', 'value': '10'})
+ok: [localhost] => (item={'key': 'max_log_file_action', 'value': 'ROTATE'})
+
+TASK [admiral_auditd : Deploy Admiral audit rules baseline] ********************
+changed: [localhost]
+
+TASK [admiral_auditd : Enable and start auditd] ********************************
+ok: [localhost]
+
+TASK [admiral_auditd : Detect audit rule loader availability] ******************
+ok: [localhost]
+
+TASK [admiral_auditd : Detect auditctl availability] ***************************
+ok: [localhost]
+
+TASK [admiral_auditd : Read current audit immutability state] ******************
+ok: [localhost]
+
+TASK [admiral_auditd : Load audit rules with augenrules] ***********************
+ok: [localhost]
+
+TASK [admiral_auditd : Load audit rules via auditctl when augenrules is unavailable] ***
+skipping: [localhost]
+
+TASK [admiral_auditd : Verify Admiral audit rules are loaded] ******************
+ok: [localhost]
+
+TASK [admiral_auditd : Confirm audit rules file when audit rule loader utilities are unavailable] ***
+skipping: [localhost]
+
+TASK [admiral_auditd : Assert audit rules file is present when audit rule loader utilities are unavailable] ***
+skipping: [localhost]
+
+TASK [admiral_auditd : Warn when audit rule loader utilities are unavailable] ***
+skipping: [localhost]
+
+TASK [admiral_auditd : Verify optional immutable audit policy] *****************
+skipping: [localhost]
+
+TASK [admiral_fail2ban : Install fail2ban and firewalld backend] ***************
+changed: [localhost]
+
+TASK [admiral_fail2ban : Deploy admiral-flagship fail2ban filter] **************
+changed: [localhost]
+
+TASK [admiral_fail2ban : Deploy admiral-harbor fail2ban filter] ****************
+changed: [localhost]
+
+TASK [admiral_fail2ban : Configure admiral fail2ban baseline] ******************
+changed: [localhost]
+
+TASK [admiral_fail2ban : Enable and start fail2ban] ****************************
+ok: [localhost]
+
+TASK [admiral_fail2ban : Enable and start fail2ban service] ********************
+changed: [localhost]
+
+TASK [admiral_fail2ban : Wait for the Fail2ban SSH jail to become ready] *******
+ok: [localhost]
+
+TASK [admiral_fail2ban : Add a temporary documentation-range ban] **************
+ok: [localhost]
+
+TASK [admiral_fail2ban : Read active Fail2ban nftables rules] ******************
+ok: [localhost]
+
+TASK [admiral_fail2ban : Verify the temporary ban is enforced by nftables] *****
+ok: [localhost] => {
+    "changed": false,
+    "msg": "All assertions passed"
+}
+
+TASK [admiral_fail2ban : Remove the temporary documentation-range ban] *********
+ok: [localhost]
+
+TASK [admiral_wireguard : Install wireguard-tools] *****************************
+skipping: [localhost]
+
+TASK [admiral_wireguard : Generate WireGuard private key] **********************
+skipping: [localhost]
+
+TASK [admiral_wireguard : Read WireGuard private key] **************************
+skipping: [localhost]
+
+TASK [admiral_wireguard : Set WireGuard private key fact] **********************
+skipping: [localhost]
+
+TASK [admiral_wireguard : Derive WireGuard public key] *************************
+skipping: [localhost]
+
+TASK [admiral_wireguard : Store this node's WireGuard public key for peer exchange] ***
+skipping: [localhost]
+
+TASK [admiral_wireguard : Set WireGuard listen port] ***************************
+skipping: [localhost]
+
+TASK [admiral_wireguard : Check for Admirald-managed known host inventory] *****
+skipping: [localhost]
+
+TASK [admiral_wireguard : Read Admirald-managed known host inventory] **********
+skipping: [localhost]
+
+TASK [admiral_wireguard : Decode Admirald-managed known host inventory] ********
+skipping: [localhost]
+
+TASK [admiral_wireguard : Determine known host inventory lookup key] ***********
+skipping: [localhost]
+
+TASK [admiral_wireguard : Resolve current node entry from Admirald-managed inventory] ***
+skipping: [localhost]
+
+TASK [admiral_wireguard : Resolve next bootstrap assignment from known host inventory] ***
+skipping: [localhost]
+
+TASK [admiral_wireguard : Require explicit or inventory-derived WireGuard IP for spoke nodes] ***
+skipping: [localhost]
+
+TASK [admiral_wireguard : Determine WireGuard IP address for this node] ********
+skipping: [localhost]
+
+TASK [admiral_wireguard : Check for an existing hub WireGuard configuration] ***
+skipping: [localhost]
+
+TASK [admiral_wireguard : Read existing hub WireGuard configuration] ***********
+skipping: [localhost]
+
+TASK [admiral_wireguard : Extract existing hub WireGuard peers] ****************
+skipping: [localhost]
+
+TASK [admiral_wireguard : Find durable WireGuard peer fragments on hub] ********
+skipping: [localhost]
+
+TASK [admiral_wireguard : Read durable WireGuard peer fragments on hub] ********
+skipping: [localhost]
+
+TASK [admiral_wireguard : Collect durable WireGuard peer fragments] ************
+skipping: [localhost]
+
+TASK [admiral_wireguard : Disable inter-node IP forwarding] ********************
+skipping: [localhost] => (item=net.ipv4.ip_forward) 
+skipping: [localhost] => (item=net.ipv6.conf.all.forwarding) 
+skipping: [localhost]
+
+TASK [admiral_wireguard : Read hub WireGuard public key from file for spoke nodes] ***
+skipping: [localhost]
+
+TASK [admiral_wireguard : Set hub public key fact for spoke] *******************
+skipping: [localhost]
+
+TASK [admiral_wireguard : Check for an existing spoke WireGuard configuration] ***
+skipping: [localhost]
+
+TASK [admiral_wireguard : Read existing spoke WireGuard configuration] *********
+skipping: [localhost]
+
+TASK [admiral_wireguard : Extract peer blocks from existing spoke WireGuard configuration] ***
+skipping: [localhost]
+
+TASK [admiral_wireguard : Select the existing hub peer from spoke configuration] ***
+skipping: [localhost]
+
+TASK [admiral_wireguard : Extract the existing hub preshared key from spoke configuration] ***
+skipping: [localhost]
+
+TASK [admiral_wireguard : Reject conflicting hub preshared keys in spoke configuration] ***
+skipping: [localhost]
+
+TASK [admiral_wireguard : Preserve the existing hub preshared key during spoke reconciliation] ***
+skipping: [localhost]
+
+TASK [admiral_wireguard : Deploy WireGuard configuration] **********************
+skipping: [localhost]
+
+TASK [admiral_wireguard : Enable and start WireGuard] **************************
+skipping: [localhost]
+
+TASK [admiral_wireguard : Enable WireGuard peer revocation socket on hub nodes] ***
+skipping: [localhost]
+
+TASK [admiral_wireguard : Disable WireGuard peer revocation socket on spoke nodes] ***
+skipping: [localhost]
+
+TASK [admiral_wireguard : Re-assert disabled IP forwarding after WireGuard starts] ***
+skipping: [localhost] => (item=net.ipv4.ip_forward) 
+skipping: [localhost] => (item=net.ipv6.conf.all.forwarding) 
+skipping: [localhost]
+
+TASK [admiral_wireguard : Read runtime IP forwarding state after WireGuard start] ***
+skipping: [localhost] => (item=net.ipv4.ip_forward) 
+skipping: [localhost] => (item=net.ipv6.conf.all.forwarding) 
+skipping: [localhost]
+
+TASK [admiral_wireguard : Assert inter-node IP forwarding remains disabled] ****
+skipping: [localhost]
+
+TASK [admiral_wireguard : Query permanent firewalld zones] *********************
+skipping: [localhost]
+
+TASK [admiral_wireguard : Create restricted Admiral WireGuard firewalld zone] ***
+skipping: [localhost]
+
+TASK [admiral_wireguard : Set restricted Admiral zone target] ******************
+skipping: [localhost]
+
+TASK [admiral_wireguard : Remove WireGuard interface from trusted zone] ********
+skipping: [localhost]
+
+TASK [admiral_wireguard : Assign WireGuard interface to restricted Admiral zone] ***
+skipping: [localhost]
+
+TASK [admiral_wireguard : Permit admin API from WireGuard peers on admin hosts] ***
+skipping: [localhost]
+
+TASK [admiral_wireguard : Permit WireGuard peers to reach Harbor on co-located admin-portal hosts] ***
+skipping: [localhost]
+
+TASK [admiral_wireguard : Permit admin-to-worker Fleet and workload traffic] ***
+skipping: [localhost] => (item=9099) 
+skipping: [localhost] => (item=40000-49999) 
+skipping: [localhost]
+
+TASK [admiral_wireguard : Permit admin-to-portal traffic] **********************
+skipping: [localhost]
+
+TASK [admiral_wireguard : Reload firewall to apply zone changes] ***************
+skipping: [localhost]
+
+TASK [admiral_wireguard : Verify the admin-portal Harbor WireGuard firewall rule] ***
+skipping: [localhost]
+
+TASK [admiral_wireguard : Assert the admin-portal Harbor WireGuard firewall rule is active] ***
+skipping: [localhost]
+
+TASK [admirald : Install admirald package] *************************************
+ok: [localhost]
+
+TASK [admirald : Ensure Caddy is enabled and running] **************************
+changed: [localhost]
+
+TASK [admirald : Deploy admirald INI configuration] ****************************
+changed: [localhost]
+
+TASK [admirald : Deploy optional Admirald S3 credentials] **********************
+skipping: [localhost]
+
+TASK [admirald : Configure Admirald S3 credential environment] *****************
+skipping: [localhost]
+
+TASK [admirald : Set ADMIRAL_ENV=development in dev mode] **********************
+skipping: [localhost]
+
+TASK [admirald : Remove development mode override on secure reconciliation] ****
+ok: [localhost]
+
+TASK [admirald : Set ADMIRAL_SINGLE_NODE for single-node installations] ********
+changed: [localhost]
+
+TASK [admirald : Remove single-node override from non-single-node profiles] ****
+skipping: [localhost]
+
+TASK [admirald : Enable and start admirald] ************************************
+changed: [localhost]
+
+TASK [admirald : Resolve admiralctl token for control-plane tasks] *************
+ok: [localhost]
+
+TASK [admirald : Require non-empty token for admiralctl configuration] *********
+ok: [localhost]
+
+TASK [admirald : Deploy admiralctl configuration] ******************************
+changed: [localhost]
+
+TASK [admiral_harbor : Check for Admirald-managed known host inventory] ********
+skipping: [localhost]
+
+TASK [admiral_harbor : Read Admirald-managed known host inventory] *************
+skipping: [localhost]
+
+TASK [admiral_harbor : Decode Admirald-managed known host inventory] ***********
+skipping: [localhost]
+
+TASK [admiral_harbor : Resolve effective harbor node id] ***********************
+ok: [localhost]
+
+TASK [admiral_harbor : Set harbor API URL for portal-node] *********************
+skipping: [localhost]
+
+TASK [admiral_harbor : Determine admiral-harbor bind address] ******************
+ok: [localhost]
+
+TASK [admiral_harbor : Verify Harbor uses the local address only in single-node mode] ***
+ok: [localhost] => {
+    "changed": false,
+    "msg": "All assertions passed"
+}
+
+TASK [admiral_harbor : Determine admiral-harbor route target] ******************
+ok: [localhost]
+
+TASK [admiral_harbor : Require WireGuard bind address for dedicated portal nodes] ***
+skipping: [localhost]
+
+TASK [admiral_harbor : Check for existing Harbor node token] *******************
+ok: [localhost]
+
+TASK [admiral_harbor : Extract existing Harbor node token] *********************
+ok: [localhost]
+
+TASK [admiral_harbor : Preserve operator-managed Harbor commercial settings] ***
+ok: [localhost]
+
+TASK [admiral_harbor : Generate random Harbor node token] **********************
+ok: [localhost]
+
+TASK [admiral_harbor : Install admiral-harbor] *********************************
+ok: [localhost]
+
+TASK [admiral_harbor : Deploy admiral-harbor environment] **********************
+changed: [localhost]
+
+TASK [admiral_harbor : Check if admiral-harbor SMTP environment exists] ********
+ok: [localhost]
+
+TASK [admiral_harbor : Deploy admiral-harbor SMTP environment] *****************
+changed: [localhost]
+
+TASK [admiral_harbor : Deploy admiral-harbor systemd binding override] *********
+changed: [localhost]
+
+TASK [admiral_harbor : Set Harbor background service environment to development] ***
+skipping: [localhost] => (item=admiral-harbor-worker.service) 
+skipping: [localhost] => (item=admiral-harbor-catalog-sync.service) 
+skipping: [localhost]
+
+TASK [admiral_harbor : Remove Harbor background service development environment on secure reconciliation] ***
+ok: [localhost] => (item=admiral-harbor-worker.service)
+ok: [localhost] => (item=admiral-harbor-catalog-sync.service)
+
+TASK [admiral_harbor : Enable and start admiral-harbor] ************************
+changed: [localhost]
+
+TASK [admiral_harbor : Enable and start admiral-harbor worker timer] ***********
+changed: [localhost]
+
+TASK [admiral_harbor : Enable and start admiral-harbor catalog sync timer] *****
+changed: [localhost]
+
+TASK [admiral_harbor : Read persisted Harbor node token for registration] ******
+ok: [localhost]
+
+TASK [admiral_harbor : Resolve persisted Harbor node token for registration] ***
+ok: [localhost]
+
+TASK [admiral_harbor : Read admin token from controller environment for portal registration] ***
+ok: [localhost]
+
+TASK [admiral_harbor : Resolve admin token from controller environment for portal registration] ***
+ok: [localhost]
+
+TASK [admiral_harbor : Require non-empty admin token for portal registration] ***
+ok: [localhost]
+
+TASK [admiral_harbor : Register portal node with admirald] *********************
+changed: [localhost]
+
+TASK [admiral_harbor : Configure admin portal route target for this portal node] ***
+skipping: [localhost]
+
+TASK [admiral_harbor : Restart admirald after portal route target change] ******
+skipping: [localhost]
+
+TASK [admiral_harbor : Wait for admirald after portal route target change] *****
+skipping: [localhost]
+
+TASK [admiral_harbor : Synchronize public routes after portal registration] ****
+skipping: [localhost]
+
+TASK [admiral_harbor : Apply admiral-harbor configuration changes before bootstrap commands] ***
+
+RUNNING HANDLER [admirald : restart admirald] **********************************
+changed: [localhost]
+
+RUNNING HANDLER [admiral_harbor : restart admiral-harbor] **********************
+changed: [localhost]
+
+TASK [admiral_harbor : Remind operator to configure SMTP] **********************
+ok: [localhost] => {
+    "msg": "Admiral Harbor SMTP is provisioned in /etc/admiral/harbor.smtp.env. Update it with the real SMTP host, credentials, and transport settings before relying on email confirmation in production."
+}
+
+TASK [admiral_harbor : Read Harbor user inventory] *****************************
+ok: [localhost]
+
+TASK [admiral_harbor : Parse Harbor admin inventory] ***************************
+ok: [localhost]
+
+TASK [admiral_harbor : Create generated Harbor bootstrap admin user] ***********
+skipping: [localhost]
+
+TASK [admiral_harbor : Rotate legacy Harbor default admin password] ************
+skipping: [localhost]
+
+TASK [admiral_harbor : Refresh Harbor user inventory after bootstrap changes] ***
+ok: [localhost]
+
+TASK [admiral_harbor : Parse refreshed Harbor admin inventory] *****************
+ok: [localhost]
+
+TASK [admiral_harbor : Deactivate legacy Harbor default admin user] ************
+skipping: [localhost]
+
+TASK [admiral_flagship : Install admiral-flagship] *****************************
+ok: [localhost]
+
+TASK [admiral_flagship : Deploy admiral-flagship environment] ******************
+changed: [localhost]
+
+TASK [admiral_flagship : Relax admiral-flagship binding in dev mode] ***********
+skipping: [localhost]
+
+TASK [admiral_flagship : Remove legacy admiral-flagship systemd override] ******
+ok: [localhost]
+
+TASK [admiral_flagship : Enable and start admiral-flagship] ********************
+changed: [localhost]
+
+TASK [admiral_flagship : Apply admiral-flagship configuration changes before validation] ***
+
+RUNNING HANDLER [admiral_flagship : restart admiral-flagship] ******************
+changed: [localhost]
+
+TASK [admiral_fleet : Install admiral-fleet] ***********************************
+ok: [localhost]
+
+TASK [admiral_fleet : Read SELinux permission for rootless cgroup management] ***
+ok: [localhost]
+
+TASK [admiral_fleet : Allow rootless containers to manage delegated cgroups] ***
+changed: [localhost]
+
+TASK [admiral_fleet : Allocate non-overlapping subordinate IDs for rootless workloads] ***
+ok: [localhost]
+
+TASK [admiral_fleet : Enable linger for admiral-apps (rootless workload persistence)] ***
+ok: [localhost]
+
+TASK [admiral_fleet : Resolve rootless workload UID] ***************************
+ok: [localhost]
+
+TASK [admiral_fleet : Enable and start systemd-machined] ***********************
+changed: [localhost]
+
+TASK [admiral_fleet : Start persistent rootless user manager] ******************
+ok: [localhost]
+
+TASK [admiral_fleet : Wait for rootless user D-Bus] ****************************
+ok: [localhost]
+
+TASK [admiral_fleet : Verify rootless Podman storage ownership] ****************
+ok: [localhost]
+
+TASK [admiral_fleet : Check for Admirald-managed known host inventory] *********
+ok: [localhost]
+
+TASK [admiral_fleet : Read Admirald-managed known host inventory] **************
+ok: [localhost]
+
+TASK [admiral_fleet : Decode Admirald-managed known host inventory] ************
+ok: [localhost]
+
+TASK [admiral_fleet : Resolve effective fleet node id] *************************
+ok: [localhost]
+
+TASK [admiral_fleet : Require remote control-plane settings for worker-node installs] ***
+skipping: [localhost]
+
+TASK [admiral_fleet : Require VPN addresses for secure worker installs] ********
+skipping: [localhost]
+
+TASK [admiral_fleet : Derive remote control-plane URLs for worker-node installs] ***
+skipping: [localhost]
+
+TASK [admiral_fleet : Check for existing Fleet node token] *********************
+ok: [localhost]
+
+TASK [admiral_fleet : Extract existing Fleet node token] ***********************
+ok: [localhost]
+
+TASK [admiral_fleet : Preserve existing Fleet storage credentials] *************
+ok: [localhost]
+
+TASK [admiral_fleet : Generate random Fleet node token] ************************
+ok: [localhost]
+
+TASK [admiral_fleet : Deploy admiral-fleet configuration] **********************
+changed: [localhost]
+
+TASK [admiral_fleet : Read admin token from controller environment for worker registration] ***
+skipping: [localhost]
+
+TASK [admiral_fleet : Resolve admin token from controller environment for worker registration] ***
+skipping: [localhost]
+
+TASK [admiral_fleet : Require non-empty admin token for worker registration] ***
+skipping: [localhost]
+
+TASK [admiral_fleet : Register node with admirald before starting Fleet] *******
+changed: [localhost]
+
+TASK [admiral_fleet : Read active hub WireGuard peers before registering the worker] ***
+skipping: [localhost]
+
+TASK [admiral_fleet : Require the hub WireGuard interface before registering the worker] ***
+skipping: [localhost]
+
+TASK [admiral_fleet : Add and persist the registered worker peer under the shared WireGuard lock] ***
+skipping: [localhost]
+
+TASK [admiral_fleet : Enable and start admiral-fleet after worker registration] ***
+changed: [localhost]
+
+TASK [admiral_fleet : Apply admiral-fleet configuration changes after worker registration] ***
+
+RUNNING HANDLER [admiral_fleet : restart admiral-fleet] ************************
+changed: [localhost]
+
+TASK [admiral_fleet : Poll the worker record until Fleet heartbeat and metrics are current] ***
+FAILED - RETRYING: [localhost]: Poll the worker record until Fleet heartbeat and metrics are current (24 retries left).
+FAILED - RETRYING: [localhost]: Poll the worker record until Fleet heartbeat and metrics are current (23 retries left).
+ok: [localhost]
+
+TASK [admiral_cockpit : Install Cockpit bridge without the web service] ********
+ok: [localhost]
+
+TASK [admiral_cockpit : Remove Cockpit web service from production profiles] ***
+changed: [localhost]
+
+TASK [admiral_cockpit : Disable Cockpit web socket from production profiles] ***
+ok: [localhost]
+
+TASK [admiral_ssh_tunnel : Generate SSH service key (if not present)] **********
+skipping: [localhost]
+
+TASK [admiral_ssh_tunnel : Make SSH tunnel key readable by the service account only] ***
+skipping: [localhost]
+
+TASK [admiral_ssh_tunnel : Install SSH tunnel systemd service] *****************
+skipping: [localhost]
+
+TASK [admiral_ssh_tunnel : Reload systemd after tunnel unit change] ************
+skipping: [localhost]
+
+TASK [admiral_ssh_tunnel : Configure SSH client for Admiral tunnel] ************
+skipping: [localhost]
+
+TASK [Persist Admiral node role after package-managed setup succeeds] **********
+changed: [localhost]
+
+TASK [Read single-node registered nodes] ***************************************
+ok: [localhost]
+
+TASK [Verify single-node worker and portal registrations] **********************
+ok: [localhost] => {
+    "changed": false,
+    "msg": "All assertions passed"
+}
+
+PLAY RECAP *********************************************************************
+localhost                  : ok=232  changed=96   unreachable=0    failed=0    skipped=156  rescued=0    ignored=0   
+
+[INFO] Podman version: 5.8.2
+[INFO] Verifying Harbor authentication with the Admiral API...
+✓ admirald reachable at https://127.0.0.1:8080/api/v1/harbor_ping (0.013s)
+
+Admiral installation completed.
+
+Installation mode:
+  single-node
+
+Bootstrap credentials and signing keys are stored at:
+  /etc/admiral/secrets
+
+***** WARNING *****
+This file contains ALL your Admiral secrets, including database
+passwords, shared tokens, and encryption keys. Without it you
+cannot recover the platform.
+
+BACK UP this file to a secure location OFF this node IMMEDIATELY.
+If /etc/admiral/secrets is lost, the installation CANNOT be recovered.
+***** WARNING *****
+
+HTTPS has not been configured yet.
+This is intentional.
+
+Run:
+  sudo admiral-https-setup
+
+The Admiral API is not publicly exposed.
+Internal services stay on loopback behind Caddy.
+
+SSH access (recommended, non-root):
+  ssh admiral-ssh@192.168.122.168
+
+This user has sudo NOPASSWD access.
+Root login is restricted to key-based authentication only.
+
+***** REMINDER *****
+Harbor PayPal mode is 'sandbox'. To accept real payments:
+  1. Set HARBOR_PAYPAL_MODE=live in /etc/admiral/harbor.env
+  2. Configure HARBOR_PAYPAL_CLIENT_ID and HARBOR_PAYPAL_CLIENT_SECRET
+See https://admiral-project.github.io for PayPal setup guide.
+***** REMINDER *****
+installer_start_utc=2026-10-26T15:03:48Z installer_end_utc=2026-10-26T15:11:24Z installer_elapsed_seconds=456 installer_exit_code=0
+package_nevra_delta_begin (minus=before, plus=after)
+--- /tmp/tmp.Hg5Osi5aU0	2026-10-26 15:03:48.485134148 +0000
++++ /tmp/tmp.JTivOWen5H	2026-10-26 15:11:24.950173096 +0000
+@@ -30,7 +30,6 @@
+ cloud-utils-growpart-0.33-11.el10.noarch
+ cockpit-bridge-356.3-1.el10_2.rocky.0.1.noarch
+ cockpit-system-356.3-1.el10_2.rocky.0.1.noarch
+-cockpit-ws-356.3-1.el10_2.rocky.0.1.x86_64
+ cockpit-ws-selinux-356.3-1.el10_2.rocky.0.1.x86_64
+ conmon-2.2.1-2.el10.x86_64
+ containers-common-5.8-2.el10.noarch
+@@ -67,6 +66,7 @@
+ diffutils-3.10-8.el10.x86_64
+ dmidecode-3.6-5.el10.x86_64
+ dnf-4.20.0-22.el10_2.rocky.0.1.noarch
++dnf-automatic-4.20.0-22.el10_2.rocky.0.1.noarch
+ dnf-data-4.20.0-22.el10_2.rocky.0.1.noarch
+ dnf-plugins-core-4.7.0-10.el10.noarch
+ dosfstools-4.2-12.el10.x86_64
+@@ -84,15 +84,24 @@
+ elfutils-default-yama-scope-0.194-2.el10.rocky.0.1.noarch
+ elfutils-libelf-0.194-2.el10.rocky.0.1.x86_64
+ elfutils-libs-0.194-2.el10.rocky.0.1.x86_64
++emacs-filesystem-29.4-14.el10_2.3.noarch
+ epel-release-10-9.el10_3.noarch
+ erofs-utils-1.8.10-1.el10.x86_64
+ ethtool-6.15-2.el10.x86_64
+ exfatprogs-1.2.8-1.el10.x86_64
++exim-4.99.5-1.el10_3.x86_64
+ expat-2.7.3-1.el10_2.7.x86_64
++fail2ban-1.1.0-6.el10_0.noarch
++fail2ban-firewalld-1.1.0-6.el10_0.noarch
++fail2ban-selinux-1.1.0-6.el10_0.noarch
++fail2ban-sendmail-1.1.0-6.el10_0.noarch
++fail2ban-server-1.1.0-6.el10_0.noarch
+ file-5.45-9.el10.x86_64
+ file-libs-5.45-9.el10.x86_64
+ filesystem-3.18-17.el10.x86_64
+ findutils-4.10.0-5.el10.x86_64
++firewalld-2.4.3-4.el10_2.noarch
++firewalld-filesystem-2.4.3-4.el10_2.noarch
+ flashrom-1.3.0-8.el10.x86_64
+ fontawesome4-fonts-4.7.0-24.el10_2.noarch
+ fonts-filesystem-2.0.5-18.el10.noarch
+@@ -153,7 +162,10 @@
+ initscripts-service-10.26-2.el10.noarch
+ iproute-6.17.0-2.el10.x86_64
+ iproute-tc-6.17.0-2.el10.x86_64
++ipset-7.22-13.el10_2.x86_64
++ipset-libs-7.22-13.el10_2.x86_64
+ iptables-libs-1.8.11-16.el10_2.x86_64
++iptables-nft-1.8.11-16.el10_2.x86_64
+ iputils-20240905-5.el10.x86_64
+ irqbalance-1.9.4-6.el10.x86_64
+ jansson-2.14-3.el10.x86_64
+@@ -167,8 +179,10 @@
+ kdump-utils-1.0.58-15.el10.x86_64
+ kernel-core-6.12.0-211.16.1.el10_2.0.1.x86_64
+ kernel-core-6.12.0-211.68.1.el10_2.x86_64
++kernel-modules-6.12.0-211.68.1.el10_2.x86_64
+ kernel-modules-core-6.12.0-211.16.1.el10_2.0.1.x86_64
+ kernel-modules-core-6.12.0-211.68.1.el10_2.x86_64
++kernel-modules-extra-6.12.0-211.68.1.el10_2.x86_64
+ kernel-tools-6.12.0-211.68.1.el10_2.x86_64
+ kernel-tools-libs-6.12.0-211.68.1.el10_2.x86_64
+ kexec-tools-2.0.32-3.el10.x86_64
+@@ -206,11 +220,13 @@
+ libbytesize-2.10-5.el10.x86_64
+ libcap-2.69-7.el10_1.1.x86_64
+ libcap-ng-0.8.4-6.el10.x86_64
++libcap-ng-python3-0.8.4-6.el10.x86_64
+ libcbor-0.11.0-3.el10.x86_64
+ libcollection-0.7.0-58.el10.x86_64
+ libcom_err-1.47.1-5.el10.x86_64
+ libcomps-0.1.21-3.el10.x86_64
+ libcurl-8.12.1-4.el10_2.7.x86_64
++libdb-5.3.28-64.el10_0.x86_64
+ libdhash-0.5.0-58.el10.x86_64
+ libdnf-0.73.1-15.el10_2.rocky.0.1.x86_64
+ libdrm-2.4.128-1.el10.x86_64
+@@ -227,8 +243,10 @@
+ libgcrypt-1.11.0-7.el10_2.x86_64
+ libgomp-14.3.1-4.4.el10.x86_64
+ libgpg-error-1.50-2.el10.x86_64
++libgsasl-1.10.0-17.el10_3.x86_64
+ libgudev-238-7.el10.x86_64
+ libicu-74.2-5.el10_0.x86_64
++libidn-1.44-1.el10_3.x86_64
+ libidn2-2.3.7-3.el10.x86_64
+ libini_config-1.3.1-58.el10.x86_64
+ libjcat-0.2.5-1.el10.x86_64
+@@ -248,7 +266,10 @@
+ libnftnl-1.3.0-3.el10.x86_64
+ libnghttp2-1.68.0-3.el10_2.2.x86_64
+ libnl3-3.11.0-1.el10.x86_64
++libnsl2-2.0.1-1.el10_0.x86_64
++libntlm-1.8-1.el10_0.x86_64
+ libnvme-1.16.1-3.el10_2.x86_64
++libopendmarc-1.4.2-33.el10_2.x86_64
+ libpath_utils-0.2.1-58.el10.x86_64
+ libpciaccess-0.16-16.el10.x86_64
+ libpipeline-1.5.7-7.el10.x86_64
+@@ -265,6 +286,7 @@
+ libsepol-3.10-1.el10.x86_64
+ libsmartcols-2.40.2-18.el10.x86_64
+ libsolv-0.7.33-5.el10_2.x86_64
++libspf2-1.2.11-16.20210922git4915c308.el10_0.x86_64
+ libss-1.47.1-5.el10.x86_64
+ libssh-0.12.0-3.el10_2.x86_64
+ libssh-config-0.12.0-3.el10_2.noarch
+@@ -347,6 +369,65 @@
+ pciutils-libs-3.13.0-6.el10.x86_64
+ pcre2-10.44-1.5.el10_2.x86_64
+ pcre2-syntax-10.44-1.5.el10_2.noarch
++perl-AutoLoader-5.74-515.el10_2.noarch
++perl-B-1.89-515.el10_2.x86_64
++perl-base-2.27-515.el10_2.noarch
++perl-Carp-1.54-511.el10.noarch
++perl-Class-Struct-0.68-515.el10_2.noarch
++perl-constant-1.33-512.el10.noarch
++perl-Data-Dumper-2.189-512.el10.x86_64
++perl-Digest-1.20-511.el10.noarch
++perl-Digest-MD5-2.59-6.el10.x86_64
++perl-DynaLoader-1.56-515.el10_2.x86_64
++perl-Encode-3.21-511.el10.x86_64
++perl-Errno-1.38-515.el10_2.x86_64
++perl-Exporter-5.78-511.el10.noarch
++perl-Fcntl-1.18-515.el10_2.x86_64
++perl-File-Basename-2.86-515.el10_2.noarch
++perl-FileHandle-2.05-515.el10_2.noarch
++perl-File-Path-2.18-512.el10.noarch
++perl-File-stat-1.14-515.el10_2.noarch
++perl-File-Temp-0.231.100-512.el10.noarch
++perl-Getopt-Long-2.58-3.el10.noarch
++perl-Getopt-Std-1.14-515.el10_2.noarch
++perl-HTTP-Tiny-0.088-512.el10.noarch
++perl-if-0.61.000-515.el10_2.noarch
++perl-interpreter-5.40.2-515.el10_2.x86_64
++perl-IO-1.55-515.el10_2.x86_64
++perl-IO-Socket-IP-0.42-512.el10.noarch
++perl-IO-Socket-SSL-2.085-3.el10.noarch
++perl-IPC-Open3-1.22-515.el10_2.noarch
++perl-libnet-3.15-512.el10.noarch
++perl-libs-5.40.2-515.el10_2.x86_64
++perl-locale-1.12-515.el10_2.noarch
++perl-MIME-Base64-3.16-511.el10.x86_64
++perl-Mozilla-CA-20231213-5.el10.noarch
++perl-mro-1.29-515.el10_2.x86_64
++perl-NDBM_File-1.17-515.el10_2.x86_64
++perl-Net-SSLeay-1.94-8.el10.x86_64
++perl-overload-1.37-515.el10_2.noarch
++perl-overloading-0.02-515.el10_2.noarch
++perl-parent-0.241-512.el10.noarch
++perl-PathTools-3.91-512.el10.x86_64
++perl-Pod-Escapes-1.07-511.el10.noarch
++perl-podlators-5.01-511.el10.noarch
++perl-Pod-Perldoc-3.28.01-512.el10.noarch
++perl-Pod-Simple-3.45-511.el10.noarch
++perl-Pod-Usage-2.03-511.el10.noarch
++perl-POSIX-2.20-515.el10_2.x86_64
++perl-Scalar-List-Utils-1.63-511.el10.x86_64
++perl-SelectSaver-1.02-515.el10_2.noarch
++perl-Socket-2.038-511.el10.x86_64
++perl-Storable-3.32-511.el10.x86_64
++perl-Symbol-1.09-515.el10_2.noarch
++perl-Term-ANSIColor-5.01-512.el10.noarch
++perl-Term-Cap-1.18-511.el10.noarch
++perl-Text-ParseWords-3.31-511.el10.noarch
++perl-Text-Tabs+Wrap-2024.001-511.el10.noarch
++perl-Time-Local-1.350-511.el10.noarch
++perl-Unicode-Normalize-1.32-511.el10.x86_64
++perl-URI-5.27-3.el10_2.1.noarch
++perl-vars-1.05-515.el10_2.noarch
+ pigz-2.8-7.el10.x86_64
+ pkgconf-2.1.0-3.el10.x86_64
+ pkgconf-m4-2.1.0-3.el10.noarch
+@@ -366,6 +447,7 @@
+ procps-ng-4.0.4-11.el10.x86_64
+ protobuf-c-1.5.0-6.el10.x86_64
+ psmisc-23.6-8.el10.x86_64
++publicsuffix-list-20240107-5.el10.noarch
+ publicsuffix-list-dafsa-20240107-5.el10.noarch
+ python3-3.12.15-1.el10_2.x86_64
+ python3-acme-4.2.0-1.el10_2.noarch
+@@ -389,6 +471,7 @@
+ python3-dnf-4.20.0-22.el10_2.rocky.0.1.noarch
+ python3-dnf-plugins-core-4.7.0-10.el10.noarch
+ python3-file-magic-5.45-9.el10.noarch
++python3-firewall-2.4.3-4.el10_2.noarch
+ python3-flask-3.1.3-4.el10.noarch
+ python3-flask-alembic-3.3.0-5.el10.noarch
+ python3-flask-login-0.6.3-10.el10.noarch
+@@ -415,6 +498,7 @@
+ python3-mako-1.2.3-9.el10.noarch
+ python3-markupsafe-2.1.3-6.el10.x86_64
+ python3-mistune-3.4.0-2.el10.noarch
++python3-nftables-1.1.5-6.el10_2.x86_64
+ python3-oauthlib-3.2.2-6.el10.noarch
+ python3-packaging-24.2-2.el10.noarch
+ python3-parsedatetime-2.6-1.el10_0.noarch
+package_nevra_delta_end
+Transaction ID : 12
+Begin time     : Mon 26 Oct 2026 03:11:12 PM UTC
+Begin rpmdb    : dadf437c5550e070738953a70d8c233b2aab1f9b37a36fabd2df4203473a404b
+End time       : Mon 26 Oct 2026 03:11:13 PM UTC (1 seconds)
+End rpmdb      : 4ab8460ad16c3162492a321f2f50ed8b9996142ed071fcff311966702f3c0933
+User           : Admiral production audit <validator>
+Return-Code    : Success
+Releasever     : 10
+Command Line   : 
+Persistence    : Unknown
+Comment        : 
+Packages Altered:
+    Removed cockpit-ws-356.3-1.el10_2.rocky.0.1.x86_64 @@System
+Scriptlet output:
+   1 Removed '/etc/systemd/system/sockets.target.wants/cockpit.socket'.
+Configuration initialized successfully!
+Saved to: /home/validator/.config/admiralctl/config.yaml
+Target server: https://127.0.0.1:8080
+audit_end_utc=2026-10-26T15:11:25Z

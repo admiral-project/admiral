@@ -48,8 +48,8 @@ Evidence hashes:
 
 | Operating system | Single-Node | Multi-Node |
 |---|---:|---:|
-| Rocky Linux 10 x86_64 | Pending | Pending |
+| Rocky Linux 10 x86_64 | **PASS** | Pending |
 | CentOS Stream 10 x86_64 | Pending | Pending |
 | Fedora Rawhide x86_64 | **PASS** | Pending |
 
-Current matrix result: **1/6**.
+Current matrix result: **2/6**.

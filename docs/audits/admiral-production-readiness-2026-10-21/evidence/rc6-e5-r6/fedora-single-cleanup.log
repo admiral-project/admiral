@@ -1,0 +1,6 @@
+undefined_domain=rc6-e5-r6-fedora-single
+removed_overlay=/var/lib/libvirt/images/admiral-validation/overlays/rc6-e5-r6-fedora-single.qcow2
+removed_cloud_init_iso=/var/lib/libvirt/images/admiral-validation/cloud-init/rc6-e5-r6-fedora-single.iso
+removed_cloud_init_dir=/var/lib/libvirt/images/admiral-validation/cloud-init/rc6-e5-r6-fedora-single
+removed_dhcp_reservation=name:rc6-e5-r6-fedora-single,mac:52:54:00:86:06:01,ip:192.168.122.167
+shared_seed_images=preserved

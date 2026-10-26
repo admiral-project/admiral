@@ -1,0 +1,27 @@
+known_hosts_file=/var/lib/libvirt/images/admiral-validation/cloud-init/rc6-e5-r6-rocky-single/known_hosts
+host_key_fingerprint=SHA256:Vsdipqxxsay/lajtb4CMTbg1mBZq5hyQoT/AINLRPBk
+host_key_private_material=protected-cloud-init-only
+Updated network default persistent config and live state
+xorriso 1.5.6 : RockRidge filesystem manipulator, libburnia project.
+
+Drive current: -outdev 'stdio:/var/lib/libvirt/images/admiral-validation/cloud-init/rc6-e5-r6-rocky-single.iso'
+Media current: stdio file, overwriteable
+Media status : is blank
+Media summary: 0 sessions, 0 data blocks, 0 data, 58.5g free
+Added to ISO image: file '/user-data'='/var/lib/libvirt/images/admiral-validation/cloud-init/rc6-e5-r6-rocky-single/user-data'
+xorriso : UPDATE :       1 files added in 1 seconds
+Added to ISO image: file '/meta-data'='/var/lib/libvirt/images/admiral-validation/cloud-init/rc6-e5-r6-rocky-single/meta-data'
+xorriso : UPDATE :       2 files added in 1 seconds
+ISO image produced: 185 sectors
+Written to medium : 185 sectors at LBA 0
+Writing to 'stdio:/var/lib/libvirt/images/admiral-validation/cloud-init/rc6-e5-r6-rocky-single.iso' completed successfully.
+
+Formatting '/var/lib/libvirt/images/admiral-validation/overlays/rc6-e5-r6-rocky-single.qcow2', fmt=qcow2 cluster_size=65536 extended_l2=off compression_type=zlib size=10737418240 backing_file=/var/lib/libvirt/images/admiral-validation/seeds/Rocky-10.2-seed-20261025-rc6-updated.x86_64.qcow2 backing_fmt=qcow2 lazy_refcounts=off refcount_bits=16
+
+Starting install...
+Creating domain...                                          |         00:00     
+Domain creation completed.
+DHCP lease verified: 52:54:00:86:06:02 -> 192.168.122.168
+Created rc6-e5-r6-rocky-single from Rocky-10.2-seed-20261025-rc6-updated.x86_64.qcow2 at NAT 192.168.122.168 with 2048 MiB RAM.
+known_hosts_file=/var/lib/libvirt/images/admiral-validation/cloud-init/rc6-e5-r6-rocky-single/known_hosts
+256 SHA256:Vsdipqxxsay/lajtb4CMTbg1mBZq5hyQoT/AINLRPBk admiral-audit-rc6-e5-r6-rocky-single (ED25519)

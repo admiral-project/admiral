@@ -1,0 +1,27 @@
+NAME="Rocky Linux"
+VERSION="10.2 (Red Quartz)"
+VERSION_ID="10.2"
+PRETTY_NAME="Rocky Linux 10.2 (Red Quartz)"
+arch=x86_64
+kernel=6.12.0-211.68.1.el10_2.x86_64
+selinux=Enforcing
+boot_id=6687d3bd-8bf5-456c-8c76-61c6fa34323b
+
+services:
+postgresql.service=active
+admirald.service=active
+admiral-fleet.service=active
+caddy.service=active
+admiral-harbor.service=active
+admiral-flagship.service=active
+
+failed_units:
+
+packages:
+5:admiral-common-0.0.1rc6-6.el10.noarch
+5:admirald-0.0.1rc6-6.el10.x86_64
+5:admiral-fleet-0.0.1rc6-6.el10.x86_64
+5:admiralctl-0.0.1rc6-6.el10.x86_64
+5:admiral-harbor-0.0.1rc6-6.el10.noarch
+5:admiral-flagship-0.0.1rc6-6.el10.noarch
+selinux_config=enforcing
