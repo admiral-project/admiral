@@ -217,7 +217,6 @@
     - ansible_facts['distribution'] == 'Fedora'
     - ansible_facts['distribution_major_version'] | int >= 45
     - admiral_install_mode in ['single-node', 'admin-node', 'admin-portal-node']
-    - not (admiral_dev_mode | default(false) | bool)
     - ansible_facts.get('selinux', {}).get('status', 'disabled') | default('disabled') == 'enabled'
 
 - name: Read SELinux port mappings when Fedora confines Caddy

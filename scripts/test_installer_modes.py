@@ -857,6 +857,18 @@ done
         self.assertNotIn("admin unix//run/caddy/admin.sock", common_tasks)
         self.assertNotIn("setfacl -m u:admiral", common_tasks)
 
+    def test_fedora_dev_mode_allows_caddy_loopback_admin_port_under_selinux(self) -> None:
+        common_tasks = COMMON_TASKS.read_text(encoding="utf-8")
+        caddy_context_task = common_tasks.split(
+            "- name: Read Caddy SELinux executable context on Fedora 45 and later",
+            1,
+        )[1].split("- name: Read SELinux port mappings when Fedora confines Caddy", 1)[0]
+
+        self.assertIn("ansible_facts['distribution'] == 'Fedora'", caddy_context_task)
+        self.assertIn("ansible_facts['distribution_major_version'] | int >= 45", caddy_context_task)
+        self.assertIn("admiral_install_mode in ['single-node', 'admin-node', 'admin-portal-node']", caddy_context_task)
+        self.assertNotIn("admiral_dev_mode", caddy_context_task)
+
     def test_rpm_baseline_configuration_is_not_treated_as_existing_installation(self) -> None:
         installer = INSTALLER.read_text(encoding="utf-8")
         playbook = PLAYBOOK.read_text(encoding="utf-8")
