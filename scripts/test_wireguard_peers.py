@@ -51,6 +51,16 @@ class WireGuardPeerExchangeTests(unittest.TestCase):
         self.assertIn("admiral_existing_wireguard_peer_fragments", template)
         self.assertIn("peer.preshared_key", template)
 
+    def test_spoke_reconciliation_preserves_existing_hub_preshared_key(self) -> None:
+        tasks = (WIREGUARD_ROLE / "tasks/main.yml").read_text(encoding="utf-8")
+
+        self.assertIn("Read existing spoke WireGuard configuration", tasks)
+        self.assertIn("Extract the existing hub preshared key from spoke configuration", tasks)
+        self.assertIn("admiral_wireguard_hub_public_key | regex_escape", tasks)
+        self.assertIn("Preserve the existing hub preshared key during spoke reconciliation", tasks)
+        self.assertIn("admiral_wireguard_preshared_key:", tasks)
+        self.assertIn("no_log: true", tasks)
+
     def test_direct_restore_peers_are_exact_and_firewall_rules_are_reconciled(self) -> None:
         content = PLAYBOOK.read_text(encoding="utf-8")
         template = (WIREGUARD_ROLE / "templates/wg-admiral.conf.j2").read_text(encoding="utf-8")

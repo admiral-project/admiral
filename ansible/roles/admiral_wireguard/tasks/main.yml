@@ -188,6 +188,66 @@
     - admiral_wireguard_hub_pub_slurp is defined
     - admiral_wireguard_hub_pub_slurp.content is defined
 
+- name: Check for an existing spoke WireGuard configuration
+  stat:
+    path: /etc/wireguard/wg-admiral.conf
+  register: admiral_existing_spoke_wireguard_config_file
+  when: admiral_wireguard_role == 'spoke'
+
+- name: Read existing spoke WireGuard configuration
+  slurp:
+    src: /etc/wireguard/wg-admiral.conf
+  register: admiral_existing_spoke_wireguard_config
+  when:
+    - admiral_wireguard_role == 'spoke'
+    - admiral_existing_spoke_wireguard_config_file.stat.exists
+  no_log: true
+
+- name: Extract peer blocks from existing spoke WireGuard configuration
+  set_fact:
+    admiral_existing_spoke_peer_blocks: "{{ admiral_existing_spoke_wireguard_config.content | b64decode | regex_findall('(?ms)^\\[Peer\\]\\s*\\n.*?(?=^\\[Peer\\]|\\Z)') }}"
+  when:
+    - admiral_wireguard_role == 'spoke'
+    - admiral_existing_spoke_wireguard_config is defined
+    - admiral_existing_spoke_wireguard_config.content is defined
+  no_log: true
+
+- name: Select the existing hub peer from spoke configuration
+  set_fact:
+    admiral_existing_spoke_hub_peer_blocks: "{{ admiral_existing_spoke_peer_blocks | select('search', '(?m)^PublicKey\\s*=\\s*' ~ (admiral_wireguard_hub_public_key | regex_escape) ~ '\\s*$') | list }}"
+  when:
+    - admiral_wireguard_role == 'spoke'
+    - admiral_existing_spoke_peer_blocks is defined
+  no_log: true
+
+- name: Extract the existing hub preshared key from spoke configuration
+  set_fact:
+    admiral_existing_spoke_hub_preshared_keys: "{{ admiral_existing_spoke_hub_peer_blocks | map('regex_findall', '(?m)^PresharedKey\\s*=\\s*([^\\s#]+)\\s*$') | flatten | unique | list }}"
+  when:
+    - admiral_wireguard_role == 'spoke'
+    - admiral_existing_spoke_hub_peer_blocks is defined
+  no_log: true
+
+- name: Reject conflicting hub preshared keys in spoke configuration
+  assert:
+    that:
+      - admiral_existing_spoke_hub_preshared_keys | length <= 1
+    fail_msg: "Existing spoke WireGuard configuration contains conflicting hub preshared keys."
+  when:
+    - admiral_wireguard_role == 'spoke'
+    - admiral_existing_spoke_hub_preshared_keys is defined
+  no_log: true
+
+- name: Preserve the existing hub preshared key during spoke reconciliation
+  set_fact:
+    admiral_wireguard_preshared_key: "{{ admiral_existing_spoke_hub_preshared_keys | first }}"
+  when:
+    - admiral_wireguard_role == 'spoke'
+    - admiral_wireguard_preshared_key | default('') | trim == ''
+    - admiral_existing_spoke_hub_preshared_keys is defined
+    - admiral_existing_spoke_hub_preshared_keys | length == 1
+  no_log: true
+
 - name: Deploy WireGuard configuration
   template:
     src: wg-admiral.conf.j2
