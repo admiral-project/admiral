@@ -16,7 +16,7 @@
 Name:    admiral-fleet
 Version: 0.0.1rc6
 Epoch:          5
-Release:        4%{?dist}
+Release:        5%{?dist}
 Summary: Admiral Fleet Worker Agent
 
 License: Apache-2.0
@@ -113,6 +113,9 @@ loginctl enable-linger admiral-apps 2>/dev/null || :
 %systemd_postun_with_restart admiral-fleet.service
 
 %changelog
+* Mon Oct 26 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 5:0.0.1rc6-5
+- Rebuild coordinated Admiral candidate with Fedora dev-mode Caddy SELinux fix
+
 * Mon Oct 26 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 5:0.0.1rc6-4
 - Rebuild coordinated x86_64 candidate after Worker-to-Portal peer reconciliation fix
 
