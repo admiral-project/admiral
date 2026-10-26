@@ -81,7 +81,8 @@ fi
 dnf -y update --refresh --allowerasing
 
 packages=(
-  ansible-collection-ansible-posix ansible-core caddy certbot curl gnupg2
+  acl ansible-collection-ansible-posix ansible-core audit audit-rules caddy
+  certbot chrony cockpit-bridge curl fail2ban fail2ban-firewalld firewalld gnupg2
   openssh-clients openssh-server openssl policycoreutils-python-utils podman
   postgresql postgresql-server python3 python3-argon2-cffi python3-cryptography
   python3-flask python3-flask-alembic python3-flask-login
@@ -90,6 +91,11 @@ packages=(
   python3-pyyaml python3-requests python3-werkzeug shadow-utils systemd
   systemd-container wireguard-tools
 )
+if [[ $os_id == fedora ]]; then
+  packages+=(dnf5-plugin-automatic)
+else
+  packages+=(dnf-automatic)
+fi
 dnf install -y "${packages[@]}"
 
 # The current local release-candidate repository carries newer Python RPMs

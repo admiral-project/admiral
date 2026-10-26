@@ -222,7 +222,14 @@ verify_status=0
     verify_status=1
   fi
   printf '\nRequired runtime package inventory:\n'
-  for package in ansible-collection-ansible-posix ansible-core caddy certbot curl gnupg2 openssh-clients openssh-server openssl policycoreutils-python-utils podman postgresql postgresql-server python3 python3-argon2-cffi python3-cryptography python3-flask python3-flask-alembic python3-flask-login python3-flask-sqlalchemy python3-gunicorn python3-mistune python3-psycopg2 python3-sqlalchemy python3-pyyaml python3-requests python3-werkzeug shadow-utils systemd systemd-container wireguard-tools python3-alembic python3-typing-extensions; do
+  if [[ $ID == fedora ]]; then
+    auto_update_package=dnf5-plugin-automatic
+    dnf_plugin_package=dnf5-plugins
+  else
+    auto_update_package=dnf-automatic
+    dnf_plugin_package=dnf-plugins-core
+  fi
+  for package in acl ansible-collection-ansible-posix ansible-core audit audit-rules caddy certbot chrony cockpit-bridge curl "$dnf_plugin_package" fail2ban fail2ban-firewalld firewalld gnupg2 openssh-clients openssh-server openssl policycoreutils-python-utils podman postgresql postgresql-server python3 python3-argon2-cffi python3-cryptography python3-flask python3-flask-alembic python3-flask-login python3-flask-sqlalchemy python3-gunicorn python3-mistune python3-psycopg2 python3-sqlalchemy python3-pyyaml python3-requests python3-werkzeug shadow-utils systemd systemd-container wireguard-tools python3-alembic python3-typing-extensions "$auto_update_package"; do
     rpm -q --qf '%{NAME}-%{VERSION}-%{RELEASE}.%{ARCH}\n' "$package" || verify_status=1
   done
   if [[ $ID == rocky || $ID == almalinux ]]; then
