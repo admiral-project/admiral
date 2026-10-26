@@ -1,0 +1,265 @@
+candidate=0.0.1rc6-8 epoch=5 os=centos guest=192.168.122.175 node=rc6r8-centos-single run_id=r8centos1 root_commit=7415e59dd4f97610f70a18e1deaafcc533d6fc0f start_utc=2026-10-26T20:23:17Z
+ADMIRALD_COMMIT=6e4a725d30c0fff877fe2252e843fae687810ae6
+FLEET_COMMIT=fc6909f6c41507d04aa204ebeafbbaaa4ef2c686
+ADMIRALCTL_COMMIT=fa2a65e866310bd82bea78859804b6c3aea7989a
+FLAGSHIP_COMMIT=b7325bbc71fc474a521496e593b2967e4d555ac1
+HARBOR_COMMIT=dd4818b6e2bc53eea4495fc5e374a4893cfcb107
+
+=== stage=workload_create_idempotency_deprovision start_utc=2026-10-26T20:23:17Z ===
+id=rc6r8-centos-single
+os=CentOS 10
+status=active
+health_status=healthy
+available_for_provisioning=True
+wireguard_ip=10.99.0.1
+fleet_version=0.0.1rc6
+Application definition "e2e-whoami" applied successfully!
+test=RC6-SINGLE-NODE-LIFECYCLE start_utc=2026-10-26T20:23:19Z node=rc6r8-centos-single
+id=op_e7be53f3c7d0c805
+instance_id=inst_9cd5e6ba0ac35a4c
+node_id=rc6r8-centos-single
+status=succeeded
+created_at=2026-10-26T20:23:19.435586Z
+updated_at=2026-10-26T20:23:54.194784Z
+idempotency_replay_same_operation=True
+idempotency_replay_same_instance=True
+database_ready_attempt=1 utc=2026-10-26T20:23:57Z
+admiral-inst_9cd5e6ba0ac35a4c-infra|Up 35 seconds|127.0.0.1:40000->80/tcp
+admiral-inst_9cd5e6ba0ac35a4c-app|Up 29 seconds|127.0.0.1:40000->80/tcp
+admiral-inst_9cd5e6ba0ac35a4c-db|Up 6 seconds|127.0.0.1:40000->80/tcp, 5432/tcp
+app_endpoint=127.0.0.1:40000
+CREATE TABLE
+INSERT 0 1
+              value               
+----------------------------------
+ rc6-single-inst_9cd5e6ba0ac35a4c
+(1 row)
+
+local_workload_http_status=200 endpoint=127.0.0.1:40000
+id=inst_9cd5e6ba0ac35a4c
+node_id=rc6r8-centos-single
+technical_status=running
+health_status=healthy
+effective_availability=available
+availability_reason=None
+deprovision_operation=op_3f3aa4f2a6f7f2ff status=succeeded
+remaining_matching_containers=none
+remaining_matching_pods=none
+remaining_matching_volumes=none
+remaining_matching_units=none
+remaining_matching_files=none
+single_node_lifecycle=PASS node=rc6r8-centos-single instance=inst_9cd5e6ba0ac35a4c end_utc=2026-10-26T20:24:09Z
+private-run-evidence=/var/tmp/rc6-single-lifecycle.9S1ktEi2
+stage=workload_create_idempotency_deprovision result=PASS end_utc=2026-10-26T20:24:09Z
+
+=== stage=resize_data_continuity start_utc=2026-10-26T20:24:09Z ===
+test=RC6-SN-RESIZE
+start_utc=2026-10-26T20:24:10Z
+instance_id=inst_f0ea27ee0d481c5f
+tier=small state=small running healthy available
+before_resize_http=200 endpoint=127.0.0.1:40001
+before_resize_sql_marker=rc6-resize-marker
+resize_target=medium requested_utc=2026-10-26T20:24:22Z
+resize_operation= op_44052b784d201424 status= succeeded tier= None
+tier=medium state=medium running healthy available
+after_medium_http=200 endpoint=127.0.0.1:40001
+after_medium_sql_marker=rc6-resize-marker
+resize_target=small requested_utc=2026-10-26T20:24:35Z
+resize_operation= op_fc742611ceeb7115 status= succeeded tier= None
+tier=small state=small running healthy available
+after_small_http=200 endpoint=127.0.0.1:40001
+after_small_sql_marker=rc6-resize-marker
+resize_data_and_health=PASS
+end_utc=2026-10-26T20:24:46Z
+stage=resize_data_continuity result=PASS end_utc=2026-10-26T20:24:55Z
+
+=== stage=backup_restore_checksum_negative_state start_utc=2026-10-26T20:24:55Z ===
+candidate=RC6 os=centos customer=rc6-backup-centos-r8centos1 start_utc=2026-10-26T20:24:56Z
+provision_operation= op_ea10c2ba36209e5d instance= inst_b609c818a739c114 status= succeeded
+ready_poll=1 utc=2026-10-26T20:25:09Z running healthy available
+CREATE TABLE
+TRUNCATE TABLE
+INSERT 0 1
+  value   
+----------
+ original
+(1 row)
+
+{
+  "action": "backup_database",
+  "admin_user": "system",
+  "created_at": "2026-10-26T20:25:09.875953Z",
+  "error_message": null,
+  "id": "op_5f0c2a726ecc4dbf",
+  "instance_id": "inst_b609c818a739c114",
+  "node_id": "rc6r8-centos-single",
+  "status": "succeeded",
+  "task_id": "task_6ec13859c5e82ade",
+  "updated_at": "2026-10-26T20:25:11.36965Z"
+}
+id=bk_7c887826973839e2
+instance_id=inst_b609c818a739c114
+backup_type=database
+service=db
+status=succeeded
+storage_backend=local
+size_bytes=709
+checksum_sha256=a00f77b7dc0e5f033d2795194bc48212dce99c3b085c124cad107dc4a8eac335
+storage_uri_admin=None
+Error: restore backup failed: HTTP 409 - Restore is only allowed when the app is paused
+Usage:
+  admiralctl backups restore [flags]
+
+Flags:
+      --backup-id string     Backup ID to restore (required)
+  -h, --help                 help for restore
+      --instance-id string   Target instance ID (required)
+      --service string       Service name matching the backup source (required)
+      --source-type string   Optional source type override
+      --source-uri string    Optional source URI override
+      --target-node string   Optional target node ID
+      --verify-checksum      Verify checksum during restore (default true)
+
+Global Flags:
+      --ca-cert string    CA certificate file for admirald HTTPS validation
+      --operator string   Operator name for audit logs
+      --server string     Control plane server endpoint URL
+
+Error: restore backup failed: HTTP 409 - Restore is only allowed when the app is paused
+restore_while_running_exit=1
+UPDATE 1
+        value         
+----------------------
+ mutated-after-backup
+(1 row)
+
+{
+  "action": "pause_app",
+  "admin_user": "system",
+  "created_at": "2026-10-26T20:25:13.113933Z",
+  "error_message": null,
+  "id": "op_b5c6b68a42b082b0",
+  "instance_id": "inst_b609c818a739c114",
+  "node_id": "rc6r8-centos-single",
+  "status": "succeeded",
+  "task_id": "task_7bf96cfaf6cdece9",
+  "updated_at": "2026-10-26T20:25:15.787367Z"
+}
+Restore queued successfully!
+Operation ID: op_754c519b82010bcf
+restore_poll=1 utc=2026-10-26T20:25:17Z status=queued
+restore_poll=2 utc=2026-10-26T20:25:19Z status=queued
+restore_poll=3 utc=2026-10-26T20:25:21Z status=queued
+restore_poll=4 utc=2026-10-26T20:25:24Z status=queued
+restore_poll=5 utc=2026-10-26T20:25:26Z status=succeeded
+post_restore_ready_poll=1 utc=2026-10-26T20:25:30Z running stopped unavailable
+post_restore_ready_poll=2 utc=2026-10-26T20:25:35Z running stopped unavailable
+post_restore_ready_poll=3 utc=2026-10-26T20:25:40Z running healthy available
+original
+app_after_restore_endpoint=127.0.0.1:40002 http=200
+Are you sure you want to delete backup bk_7c887826973839e2? (y/N): Backup bk_7c887826973839e2 deleted.
+{
+  "action": "deprovision_app",
+  "admin_user": "system",
+  "created_at": "2026-10-26T20:25:41.651735Z",
+  "error_message": null,
+  "id": "op_2b80ddfce8b34ae9",
+  "instance_id": "inst_b609c818a739c114",
+  "node_id": "rc6r8-centos-single",
+  "status": "succeeded",
+  "task_id": "task_7a175c1d9648275b",
+  "updated_at": "2026-10-26T20:25:48.262128Z"
+}
+deprovision_operation=op_2b80ddfce8b34ae9 status=succeeded
+remaining_matching_containers=none
+remaining_matching_pods=none
+remaining_matching_volumes=none
+remaining_matching_units=none
+remaining_matching_files=none
+deleted_backup_tombstone_retained=True id=bk_7c887826973839e2 status=deleted
+deleted_backup_artifact_absent=/var/lib/admiral/backups/inst_b609c818a739c114/postgresql-database-op_5f0c2a726ecc4dbf.tar.gz
+backup_restore_and_marker_integrity=PASS
+backup_test_end_utc=2026-10-26T20:25:50Z instance_id=inst_b609c818a739c114 backup_id=bk_7c887826973839e2
+stage=backup_restore_checksum_negative_state result=PASS end_utc=2026-10-26T20:25:50Z
+
+=== stage=instance_and_admirald_lifecycle start_utc=2026-10-26T20:25:50Z ===
+test=RC6-centos-SN-CONTROL-PLANE-LIFECYCLE
+start_utc=2026-10-26T20:25:51Z
+instance_id=inst_f52b86edfd7aa8b0
+initial_poll=1 state=running stopped unavailable
+initial_available_poll=2 http=200 endpoint=127.0.0.1:40003
+action=pause requested_utc=2026-10-26T20:26:01Z
+operation= op_c07f2117bd2efd88 action_status= succeeded
+action=resume requested_utc=2026-10-26T20:26:08Z
+operation= op_25a96b33b733500c action_status= succeeded
+resume_poll=1 state=running stopped unavailable
+resume_poll=2 state=running stopped unavailable
+resume_available_poll=3 http=200 endpoint=127.0.0.1:40003
+action=stop requested_utc=2026-10-26T20:26:19Z
+operation= op_e005c01315899da3 action_status= succeeded
+action=start requested_utc=2026-10-26T20:26:23Z
+operation= op_d799ee116c9371a8 action_status= succeeded
+start_poll=1 state=running stopped unavailable
+start_available_poll=2 http=200 endpoint=127.0.0.1:40003
+action=restart requested_utc=2026-10-26T20:26:33Z
+operation= None action_status= succeeded
+restart_poll=1 state=running stopped unavailable
+restart_available_poll=2 http=200 endpoint=127.0.0.1:40003
+admirald_restart_available_poll=1 http=200 endpoint=127.0.0.1:40003
+admiralctl_status_while_service_stopped_exit=1
+admirald_start_available_poll=1 http=200 endpoint=127.0.0.1:40003
+instance_and_control_plane_lifecycle=PASS
+end_utc=2026-10-26T20:26:53Z
+cleanup_rc=0
+stage=instance_and_admirald_lifecycle result=PASS end_utc=2026-10-26T20:27:01Z
+
+=== stage=host_reboot_persistence start_utc=2026-10-26T20:27:01Z ===
+test=R8-centos-SN-REBOOT guest=rc6r8-centos-single start_utc=2026-10-26T20:27:01Z
+idempotency_key=r8-centos-reboot-20261026T202701Z-54773
+boot_id_before=b7a93b0d-46f3-44cf-b4f2-b4dce651cef4
+pre_reboot_setup_started_utc=2026-10-26T20:27:02Z
+provision_status= succeeded instance_id= inst_4cefee26c390970f operation_id= op_d3c8b996c1929204
+provision_readiness_poll=1 utc=2026-10-26T20:27:16Z api=stopped stopped unavailable db_state=running db_ready=1
+database_readiness_seconds_tested=1
+CREATE TABLE
+TRUNCATE TABLE
+INSERT 0 1
+reboot_requested_utc=2026-10-26T20:27:16Z instance_id=inst_4cefee26c390970f operation_id=op_d3c8b996c1929204
+reboot_request_issued_utc=2026-10-26T20:27:16Z
+reboot_ssh_exit=0 (disconnect after reboot request is expected)
+reboot_confirmed_attempt=7 boot_id_after=e4916def-9ba5-4252-a6b7-50b63bf683d2 utc=2026-10-26T20:27:52Z
+post_reboot_start_utc=2026-10-26T20:27:52Z instance_id=inst_4cefee26c390970f operation_id=op_d3c8b996c1929204
+post_reboot_poll=1 utc=2026-10-26T20:27:55Z status=stopped stopped unavailable running_containers=1 db_ready=0
+post_reboot_poll=2 utc=2026-10-26T20:28:02Z status=running healthy unavailable running_containers=3 db_ready=1
+post_reboot_poll=3 utc=2026-10-26T20:28:08Z status=running healthy available running_containers=3 db_ready=1
+post_reboot_http=200 port=40004
+r8-reboot-persisted
+{
+  "action": "deprovision_app",
+  "admin_user": "system",
+  "created_at": "2026-10-26T20:28:09.339058Z",
+  "error_message": null,
+  "id": "op_650d7c739ef4dd01",
+  "instance_id": "inst_4cefee26c390970f",
+  "node_id": "rc6r8-centos-single",
+  "status": "succeeded",
+  "task_id": "task_c8c62a5688f5a375",
+  "updated_at": "2026-10-26T20:28:16.407931Z"
+}
+host_reboot_recovery_and_sql_marker=PASS
+provision_readiness_consistency=PASS
+post_reboot_end_utc=2026-10-26T20:28:17Z
+stage=host_reboot_persistence result=PASS end_utc=2026-10-26T20:28:17Z
+
+=== stage=final_services_resources_rpms start_utc=2026-10-26T20:28:17Z ===
+failed_units=none
+5:admiral-common-0.0.1rc6-8.el10.noarch
+5:admirald-0.0.1rc6-8.el10.x86_64
+5:admiral-fleet-0.0.1rc6-8.el10.x86_64
+5:admiralctl-0.0.1rc6-8.el10.x86_64
+5:admiral-harbor-0.0.1rc6-8.el10.noarch
+5:admiral-flagship-0.0.1rc6-8.el10.noarch
+final_rootless_containers=none pods=none volumes=none
+final_boot_id=e4916def-9ba5-4252-a6b7-50b63bf683d2
+stage=final_services_resources_rpms result=PASS end_utc=2026-10-26T20:28:19Z
+single_node_lane=os:centos result:PASS failed_stages:0 end_utc:2026-10-26T20:28:19Z
