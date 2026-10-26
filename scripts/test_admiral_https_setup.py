@@ -108,7 +108,12 @@ def test_letsencrypt_deploy_hook_replaces_the_admiral_copy_atomically():
     ],
     ids=["explicit-probe", "single-label-wildcard"],
 )
-def test_letsencrypt_deploy_hook_updates_a_renewed_pair(tmp_path, san):
+@pytest.mark.parametrize(
+    "initial_pair",
+    [False, True],
+    ids=["first-deployment", "renewal"],
+)
+def test_letsencrypt_deploy_hook_updates_a_renewed_pair(tmp_path, san, initial_pair):
     lineage = tmp_path / "letsencrypt" / "live" / "apps.example.com"
     lineage.mkdir(parents=True)
     subprocess.run(
@@ -135,8 +140,9 @@ def test_letsencrypt_deploy_hook_updates_a_renewed_pair(tmp_path, san):
     )
     deployed = tmp_path / "deployed"
     (deployed / "fullchain.pem").parent.mkdir()
-    (deployed / "fullchain.pem").write_text("old certificate")
-    (deployed / "privkey.pem").write_text("old key")
+    if initial_pair:
+        (deployed / "fullchain.pem").write_text("old certificate")
+        (deployed / "privkey.pem").write_text("old key")
     fake_bin = tmp_path / "bin"
     fake_bin.mkdir()
     calls = tmp_path / "systemctl.calls"

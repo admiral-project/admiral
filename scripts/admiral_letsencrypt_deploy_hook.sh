@@ -82,6 +82,7 @@ cleanup() {
     rm -f -- "$tmp_cert" "$tmp_key"
     [[ -n "$backup_cert" ]] && rm -f -- "$backup_cert"
     [[ -n "$backup_key" ]] && rm -f -- "$backup_key"
+    return 0
 }
 trap cleanup EXIT
 
