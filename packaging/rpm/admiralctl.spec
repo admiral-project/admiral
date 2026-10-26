@@ -16,7 +16,7 @@
 Name:    admiralctl
 Version: 0.0.1rc6
 Epoch:          5
-Release:        8%{?dist}
+Release:        9%{?dist}
 Summary: Admiral Command-Line Interface
 
 License: Apache-2.0
@@ -88,6 +88,9 @@ test "$(./admiralctl version 2>&1)" = "admiralctl %{version}"
 restorecon -F %{_bindir}/admiralctl 2>/dev/null || :
 
 %changelog
+* Mon Oct 26 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 5:0.0.1rc6-9
+- Rebuild coordinated RC6 Release 9 after HTTPS certificate validation correction.
+
 * Mon Oct 26 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 5:0.0.1rc6-8
 - Rebuild all six RPMs with Caddy TLS CA traversal permissions in the installer
 
