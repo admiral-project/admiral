@@ -1,0 +1,1544 @@
+python3 scripts/validate-release-refs.py
+RPM source references match checked-out component commits.
+mkdir -p /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES
+mkdir -p /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/RPMS/noarch
+mkdir -p /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/RPMS/x86_64
+mkdir -p /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SRPMS
+mkdir -p /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SPECS
+mkdir -p /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILD
+mkdir -p /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/tmp
+=== Generating pinned Admiral source archives ===
+git archive --format=tar.gz \
+	--prefix=admiral-bfa00c07f462bafc32627922d884248f9523c603/ \
+	-o /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/bfa00c07f462bafc32627922d884248f9523c603.tar.gz bfa00c07f462bafc32627922d884248f9523c603
+for sm in admirald admiral-fleet admiralctl; do \
+	echo "  Adding $sm..."; \
+	commit="HEAD"; \
+	if [ "$sm" = "admirald" ]; then commit="6e4a725d30c0fff877fe2252e843fae687810ae6"; fi; \
+	if [ "$sm" = "admiral-fleet" ]; then commit="fc6909f6c41507d04aa204ebeafbbaaa4ef2c686"; fi; \
+	if [ "$sm" = "admiralctl" ]; then commit="fa2a65e866310bd82bea78859804b6c3aea7989a"; fi; \
+	git -C $sm archive --format=tar.gz \
+		--prefix=$sm-$commit/ \
+		-o /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/$commit.tar.gz $commit || exit $?; \
+done
+  Adding admirald...
+  Adding admiral-fleet...
+  Adding admiralctl...
+git -C admiral-flagship archive --format=tar.gz \
+	--prefix=admiral-flagship-b7325bbc71fc474a521496e593b2967e4d555ac1/ \
+	-o /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/b7325bbc71fc474a521496e593b2967e4d555ac1.tar.gz b7325bbc71fc474a521496e593b2967e4d555ac1
+git -C admiral-harbor archive --format=tar.gz \
+	--prefix=admiral-harbor-dd4818b6e2bc53eea4495fc5e374a4893cfcb107/ \
+	-o /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/dd4818b6e2bc53eea4495fc5e374a4893cfcb107.tar.gz dd4818b6e2bc53eea4495fc5e374a4893cfcb107
+curl -fsSL -o /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/alembic-1.20.1.tar.gz https://github.com/sqlalchemy/alembic/archive/refs/tags/rel_1_20_1/alembic-1.20.1.tar.gz
+echo 'c2982961a193cca5ea19ff541637f002bb568a9bd1f45ae141216e86eb45e5e5  /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/alembic-1.20.1.tar.gz' | sha256sum -c -
+/root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/alembic-1.20.1.tar.gz: OK
+curl -fsSL -o /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/typing_extensions-4.16.0.tar.gz https://github.com/python/typing_extensions/archive/refs/tags/4.16.0/typing_extensions-4.16.0.tar.gz
+echo '4d569f4d4bcd3d26345e0d92cfd14ce1f1302cac2f62a5a7e337c06fb0fdc1ea  /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/typing_extensions-4.16.0.tar.gz' | sha256sum -c -
+/root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/typing_extensions-4.16.0.tar.gz: OK
+curl -fsSL -o /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/flask-sqlalchemy-3.1.1.tar.gz https://github.com/pallets-eco/flask-sqlalchemy/archive/refs/tags/3.1.1/flask-sqlalchemy-3.1.1.tar.gz
+echo '1989afdf046a935bd1ab98dbd9a2d68e5ba1c69d0cd3e3646df0876bf8d997d3  /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/flask-sqlalchemy-3.1.1.tar.gz' | sha256sum -c -
+/root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/flask-sqlalchemy-3.1.1.tar.gz: OK
+curl -fsSL -o /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/flask-alembic-3.3.0.tar.gz https://github.com/pallets-eco/flask-alembic/archive/refs/tags/3.3.0/flask-alembic-3.3.0.tar.gz
+echo '487c20d93e5ce1da1f9cf18d7b4e5c8d420e5588cf1ec6ca5eddbaab680a6f19  /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/flask-alembic-3.3.0.tar.gz' | sha256sum -c -
+/root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/flask-alembic-3.3.0.tar.gz: OK
+curl -fsSL -o /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/flask-login-0.6.3.tar.gz https://github.com/maxcountryman/flask-login/archive/refs/tags/0.6.3/flask-login-0.6.3.tar.gz
+echo '3b2489f46d854b5f1d7a55007271d2eae9f744e0935ca7b88ab584c770a7e4d2  /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/flask-login-0.6.3.tar.gz' | sha256sum -c -
+/root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/flask-login-0.6.3.tar.gz: OK
+curl -fsSL -o /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/mistune-3.4.0.tar.gz https://github.com/lepture/mistune/archive/refs/tags/v3.4.0/mistune-3.4.0.tar.gz
+echo '121828b8bb4b9b8f0ace26e7574dab4d9a3f391e97e7f07b30aa3d34b9f5690a  /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/mistune-3.4.0.tar.gz' | sha256sum -c -
+/root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/mistune-3.4.0.tar.gz: OK
+curl -fsSL -o /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/flask-3.1.3-py3-none-any.whl https://files.pythonhosted.org/packages/7f/9c/34f6962f9b9e9c71f6e5ed806e0d0ff03c9d1b0b2340088a0cf4bce09b18/flask-3.1.3-py3-none-any.whl
+echo 'f4bcbefc124291925f1a26446da31a5178f9483862233b23c0c96a20701f670c  /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/flask-3.1.3-py3-none-any.whl' | sha256sum -c -
+/root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/flask-3.1.3-py3-none-any.whl: OK
+curl -fsSL -o /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/sqlalchemy-2.0.55.tar.gz https://files.pythonhosted.org/packages/a5/bd/08864ddfffbb8914ee13b0c887d84b4b13bc8dd8da3077c0dace5a87699c/sqlalchemy-2.0.55.tar.gz
+echo 'ae40c563bc10a8d56f1fd1f39f069aeb5eb85ca26913b2314dd8d190139258fa  /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/sqlalchemy-2.0.55.tar.gz' | sha256sum -c -
+/root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/sqlalchemy-2.0.55.tar.gz: OK
+cp /root/admiral/packaging/systemd/admirald.service /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/systemd/admiral-fleet.service /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/systemd/admiral-flagship.service /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/systemd/admiral-harbor.service /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/systemd/admiral-harbor-worker.service /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/systemd/admiral-harbor-worker.timer /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/systemd/admiral-harbor-catalog-sync.service /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/systemd/admiral-harbor-catalog-sync.timer /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/systemd/admiral-control-plane-backup.service /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/systemd/admiral-control-plane-backup.timer /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/systemd/admiral-wireguard-peer-revoke.socket /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/systemd/admiral-wireguard-peer-revoke@.service /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/config/admirald.ini /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/config/fleet.env /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/config/admiralctl.yaml /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/config/flagship.env /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/config/harbor.env /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/bin/harborctl /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/bin/harbor-gunicorn /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/bin/harbor-migrate /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/rpm/admiral-common.sysusers /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/scripts/admiral_letsencrypt_deploy_hook.sh /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+=== Building admiral-common ===
+make rpm-admiral-common
+make[1]: Entering directory '/root/admiral'
+python3 scripts/validate-release-refs.py
+RPM source references match checked-out component commits.
+=== Generating pinned Admiral source archives ===
+git archive --format=tar.gz \
+	--prefix=admiral-bfa00c07f462bafc32627922d884248f9523c603/ \
+	-o /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/bfa00c07f462bafc32627922d884248f9523c603.tar.gz bfa00c07f462bafc32627922d884248f9523c603
+for sm in admirald admiral-fleet admiralctl; do \
+	echo "  Adding $sm..."; \
+	commit="HEAD"; \
+	if [ "$sm" = "admirald" ]; then commit="6e4a725d30c0fff877fe2252e843fae687810ae6"; fi; \
+	if [ "$sm" = "admiral-fleet" ]; then commit="fc6909f6c41507d04aa204ebeafbbaaa4ef2c686"; fi; \
+	if [ "$sm" = "admiralctl" ]; then commit="fa2a65e866310bd82bea78859804b6c3aea7989a"; fi; \
+	git -C $sm archive --format=tar.gz \
+		--prefix=$sm-$commit/ \
+		-o /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/$commit.tar.gz $commit || exit $?; \
+done
+  Adding admirald...
+  Adding admiral-fleet...
+  Adding admiralctl...
+cp /root/admiral/packaging/systemd/admirald.service /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/systemd/admiral-fleet.service /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/systemd/admiral-flagship.service /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/systemd/admiral-harbor.service /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/systemd/admiral-harbor-worker.service /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/systemd/admiral-harbor-worker.timer /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/systemd/admiral-harbor-catalog-sync.service /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/systemd/admiral-harbor-catalog-sync.timer /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/systemd/admiral-control-plane-backup.service /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/systemd/admiral-control-plane-backup.timer /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/systemd/admiral-wireguard-peer-revoke.socket /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/systemd/admiral-wireguard-peer-revoke@.service /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/config/admirald.ini /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/config/fleet.env /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/config/admiralctl.yaml /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/config/flagship.env /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/config/harbor.env /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/bin/harborctl /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/bin/harbor-gunicorn /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/bin/harbor-migrate /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/rpm/admiral-common.sysusers /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/scripts/admiral_letsencrypt_deploy_hook.sh /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/rpm/admiral-common.spec /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SPECS/
+rpmbuild -ba --target x86_64 --define '_topdir /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir' --define '_sourcedir /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES' --define '_specdir /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SPECS' --define '_builddir /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILD' --define '_rpmdir /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/RPMS' --define '_srcrpmdir /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SRPMS' --define '_tmppath /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/tmp' /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SPECS/admiral-common.spec
+Building target platforms: x86_64
+Building for target x86_64
+setting SOURCE_DATE_EPOCH=1792972800
+Executing(%prep): /bin/sh -e /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/tmp/rpm-tmp.ZzppSe
++ umask 022
++ cd /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILD
++ cd /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILD
++ rm -rf admiral-bfa00c07f462bafc32627922d884248f9523c603
++ /usr/lib/rpm/rpmuncompress -x /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/bfa00c07f462bafc32627922d884248f9523c603.tar.gz
++ STATUS=0
++ '[' 0 -ne 0 ']'
++ cd admiral-bfa00c07f462bafc32627922d884248f9523c603
++ rm -rf /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILD/admiral-bfa00c07f462bafc32627922d884248f9523c603-SPECPARTS
++ /usr/bin/mkdir -p /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILD/admiral-bfa00c07f462bafc32627922d884248f9523c603-SPECPARTS
++ /usr/bin/chmod -Rf a+rX,u+w,g-w,o-w .
++ RPM_EC=0
+++ jobs -p
++ exit 0
+Executing(%build): /bin/sh -e /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/tmp/rpm-tmp.I2zeGb
++ umask 022
++ cd /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILD
++ CFLAGS='-O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Werror=format-security -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64-v3 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -mtls-dialect=gnu2   '
++ export CFLAGS
++ CXXFLAGS='-O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Werror=format-security -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64-v3 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -mtls-dialect=gnu2   '
++ export CXXFLAGS
++ FFLAGS='-O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64-v3 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -mtls-dialect=gnu2   -I/usr/lib64/gfortran/modules '
++ export FFLAGS
++ FCFLAGS='-O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64-v3 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -mtls-dialect=gnu2   -I/usr/lib64/gfortran/modules '
++ export FCFLAGS
++ VALAFLAGS=-g
++ export VALAFLAGS
++ LDFLAGS='-Wl,-z,relro -Wl,--as-needed  -Wl,-z,pack-relative-relocs -Wl,-z,now -specs=/usr/lib/rpm/redhat/redhat-hardened-ld -specs=/usr/lib/rpm/redhat/redhat-hardened-ld-errors -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -Wl,--build-id=sha1 -specs=/usr/lib/rpm/redhat/redhat-package-notes '
++ export LDFLAGS
++ LT_SYS_LIBRARY_PATH=/usr/lib64:
++ export LT_SYS_LIBRARY_PATH
++ CC=gcc
++ export CC
++ CXX=g++
++ export CXX
++ cd admiral-bfa00c07f462bafc32627922d884248f9523c603
++ RPM_EC=0
+++ jobs -p
++ exit 0
+Executing(%install): /bin/sh -e /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/tmp/rpm-tmp.Bh2LzU
++ umask 022
++ cd /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILD
++ '[' /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-common-0.0.1rc6-6.el10.x86_64 '!=' / ']'
++ rm -rf /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-common-0.0.1rc6-6.el10.x86_64
+++ dirname /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-common-0.0.1rc6-6.el10.x86_64
++ mkdir -p /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT
++ mkdir /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-common-0.0.1rc6-6.el10.x86_64
++ CFLAGS='-O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Werror=format-security -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64-v3 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -mtls-dialect=gnu2   '
++ export CFLAGS
++ CXXFLAGS='-O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Werror=format-security -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64-v3 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -mtls-dialect=gnu2   '
++ export CXXFLAGS
++ FFLAGS='-O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64-v3 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -mtls-dialect=gnu2   -I/usr/lib64/gfortran/modules '
++ export FFLAGS
++ FCFLAGS='-O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64-v3 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -mtls-dialect=gnu2   -I/usr/lib64/gfortran/modules '
++ export FCFLAGS
++ VALAFLAGS=-g
++ export VALAFLAGS
++ LDFLAGS='-Wl,-z,relro -Wl,--as-needed  -Wl,-z,pack-relative-relocs -Wl,-z,now -specs=/usr/lib/rpm/redhat/redhat-hardened-ld -specs=/usr/lib/rpm/redhat/redhat-hardened-ld-errors -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -Wl,--build-id=sha1 -specs=/usr/lib/rpm/redhat/redhat-package-notes '
++ export LDFLAGS
++ LT_SYS_LIBRARY_PATH=/usr/lib64:
++ export LT_SYS_LIBRARY_PATH
++ CC=gcc
++ export CC
++ CXX=g++
++ export CXX
++ cd admiral-bfa00c07f462bafc32627922d884248f9523c603
++ mkdir -p /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-common-0.0.1rc6-6.el10.x86_64/usr/share/admiral/ansible
++ cp -r ansible/filter_plugins ansible/inventory ansible/roles ansible/site.yml ansible/wireguard-peers.yml /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-common-0.0.1rc6-6.el10.x86_64/usr/share/admiral/ansible/
++ install -Dm0755 scripts/install.sh /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-common-0.0.1rc6-6.el10.x86_64/usr/bin/admiral-install
++ install -Dm0755 scripts/admiral_known_host.py /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-common-0.0.1rc6-6.el10.x86_64/usr/bin/admiral-known-host
++ install -Dm0755 scripts/admiral_wireguard_peer_inventory.py /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-common-0.0.1rc6-6.el10.x86_64/usr/bin/admiral-wireguard-peer-inventory
++ install -Dm0755 scripts/admiral_revoke_bootstrap_key.py /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-common-0.0.1rc6-6.el10.x86_64/usr/bin/admiral-revoke-bootstrap-key
++ install -Dm0755 scripts/admiral_ssh_delivery_cleanup.py /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-common-0.0.1rc6-6.el10.x86_64/usr/bin/admiral-ssh-delivery-cleanup
++ install -Dm0755 scripts/admiral_control_plane_backup.sh /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-common-0.0.1rc6-6.el10.x86_64/usr/bin/admiral-control-plane-backup
++ install -Dm0755 scripts/admiral_wireguard_load_peers.sh /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-common-0.0.1rc6-6.el10.x86_64/usr/libexec/admiral-wireguard-load-peers
++ install -Dm0750 scripts/admiral_wireguard_revoke_peer.py /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-common-0.0.1rc6-6.el10.x86_64/usr/libexec/admiral-wireguard-revoke-peer
++ install -Dm0644 scripts/admiral_wireguard_revoke_peer.py /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-common-0.0.1rc6-6.el10.x86_64/usr/libexec/admiral_wireguard_revoke_peer.py
++ install -Dm0750 scripts/admiral_wireguard_peer_add.py /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-common-0.0.1rc6-6.el10.x86_64/usr/libexec/admiral-wireguard-peer-add
++ install -Dm0644 /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/admiral-control-plane-backup.service /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-common-0.0.1rc6-6.el10.x86_64/usr/lib/systemd/system/admiral-control-plane-backup.service
++ install -Dm0644 /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/admiral-control-plane-backup.timer /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-common-0.0.1rc6-6.el10.x86_64/usr/lib/systemd/system/admiral-control-plane-backup.timer
++ install -Dm0644 /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/admiral-wireguard-peer-revoke.socket /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-common-0.0.1rc6-6.el10.x86_64/usr/lib/systemd/system/admiral-wireguard-peer-revoke.socket
++ install -Dm0644 /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/admiral-wireguard-peer-revoke@.service /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-common-0.0.1rc6-6.el10.x86_64/usr/lib/systemd/system/admiral-wireguard-peer-revoke@.service
++ install -Dm0644 docs/admiral-install.1 /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-common-0.0.1rc6-6.el10.x86_64/usr/share/man/man1/admiral-install.1
++ install -Dm0644 docs/admiral-install.8 /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-common-0.0.1rc6-6.el10.x86_64/usr/share/man/man8/admiral-install.8
++ install -Dm0755 scripts/admiral_rootless_subids.py /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-common-0.0.1rc6-6.el10.x86_64/usr/bin/admiral-rootless-subids
++ install -Dm0755 scripts/admiral_https_setup.py /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-common-0.0.1rc6-6.el10.x86_64/usr/bin/admiral-https-setup
++ install -Dm0755 /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/admiral_letsencrypt_deploy_hook.sh /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-common-0.0.1rc6-6.el10.x86_64/usr/libexec/admiral-letsencrypt-deploy-hook
++ mkdir -p /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-common-0.0.1rc6-6.el10.x86_64/etc/admiral
++ mkdir -p /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-common-0.0.1rc6-6.el10.x86_64/etc/admiral/tls
++ mkdir -p /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-common-0.0.1rc6-6.el10.x86_64/etc/admiral/ssh
++ mkdir -p /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-common-0.0.1rc6-6.el10.x86_64/etc/admiralctl
++ mkdir -p /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-common-0.0.1rc6-6.el10.x86_64/etc/wireguard/peers.d
++ mkdir -p /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-common-0.0.1rc6-6.el10.x86_64/etc/systemd/resolved.conf.d
++ mkdir -p /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-common-0.0.1rc6-6.el10.x86_64/etc/systemd/system/admirald.service.d
++ mkdir -p /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-common-0.0.1rc6-6.el10.x86_64/etc/systemd/system/admiral-flagship.service.d
++ mkdir -p /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-common-0.0.1rc6-6.el10.x86_64/etc/systemd/system/admiral-harbor.service.d
++ mkdir -p /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-common-0.0.1rc6-6.el10.x86_64/etc/systemd/system/admiral-harbor-worker.service.d
++ mkdir -p /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-common-0.0.1rc6-6.el10.x86_64/etc/systemd/system/admiral-harbor-catalog-sync.service.d
++ mkdir -p /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-common-0.0.1rc6-6.el10.x86_64/etc/systemd/system/caddy.service.d
++ mkdir -p /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-common-0.0.1rc6-6.el10.x86_64/etc/ssh/sshd_config.d
++ mkdir -p /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-common-0.0.1rc6-6.el10.x86_64/etc/nftables
++ mkdir -p /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-common-0.0.1rc6-6.el10.x86_64/etc/fail2ban/jail.d
++ mkdir -p /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-common-0.0.1rc6-6.el10.x86_64/etc/fail2ban/filter.d
++ mkdir -p /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-common-0.0.1rc6-6.el10.x86_64/etc/audit/rules.d
++ mkdir -p /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-common-0.0.1rc6-6.el10.x86_64/root/.config/admiralctl
++ mkdir -p /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-common-0.0.1rc6-6.el10.x86_64/usr/lib/admiral/flagship
++ mkdir -p /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-common-0.0.1rc6-6.el10.x86_64/usr/lib/admiral/harbor
++ mkdir -p /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-common-0.0.1rc6-6.el10.x86_64/var/log/admiral
++ mkdir -p /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-common-0.0.1rc6-6.el10.x86_64/etc/containers/systemd/admiral
++ mkdir -p /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-common-0.0.1rc6-6.el10.x86_64/var/lib/admiral/outbox
++ mkdir -p /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-common-0.0.1rc6-6.el10.x86_64/var/lib/admiral/backups
++ mkdir -p /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-common-0.0.1rc6-6.el10.x86_64/var/lib/admiral/restore
++ mkdir -p /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-common-0.0.1rc6-6.el10.x86_64/var/lib/admiral/tmp
++ mkdir -p /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-common-0.0.1rc6-6.el10.x86_64/var/lib/admiral/instances
++ mkdir -p /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-common-0.0.1rc6-6.el10.x86_64/var/lib/admiral/control-plane-backups
++ mkdir -p /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-common-0.0.1rc6-6.el10.x86_64/var/lib/admiral/harbor/uploads
++ mkdir -p /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-common-0.0.1rc6-6.el10.x86_64/var/lib/admiral/ssh-delivery
++ mkdir -p /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-common-0.0.1rc6-6.el10.x86_64/var/lib/admiral-apps
++ install -D -m 0644 /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/admiral-common.sysusers /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-common-0.0.1rc6-6.el10.x86_64/usr/lib/sysusers.d/admiral-common.conf
++ /usr/bin/find-debuginfo -j4 --strict-build-id -m -i --build-id-seed 0.0.1rc6-6.el10 --unique-debug-suffix -0.0.1rc6-6.el10.x86_64 --unique-debug-src-base admiral-common-0.0.1rc6-6.el10.x86_64 --run-dwz --dwz-low-mem-die-limit 10000000 --dwz-max-die-limit 110000000 -S debugsourcefiles.list /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILD/admiral-bfa00c07f462bafc32627922d884248f9523c603
+find-debuginfo: starting
+Extracting debug info from 0 files
+Creating .debug symlinks for symlinks to ELF files
+find: ‘debug’: No such file or directory
+find-debuginfo: done
++ /usr/lib/rpm/check-buildroot
++ /usr/lib/rpm/redhat/brp-ldconfig
++ /usr/lib/rpm/brp-compress
++ /usr/lib/rpm/redhat/brp-strip-lto /usr/bin/strip
++ /usr/lib/rpm/brp-strip-static-archive /usr/bin/strip
++ /usr/lib/rpm/check-rpaths
++ /usr/lib/rpm/redhat/brp-mangle-shebangs
+mangling shebang in /usr/bin/admiral-install from /usr/bin/env bash to #!/usr/bin/bash
+mangling shebang in /usr/bin/admiral-known-host from /usr/bin/env python3 to #!/usr/bin/python3
+mangling shebang in /usr/bin/admiral-wireguard-peer-inventory from /usr/bin/env python3 to #!/usr/bin/python3
+mangling shebang in /usr/bin/admiral-revoke-bootstrap-key from /usr/bin/env python3 to #!/usr/bin/python3
+mangling shebang in /usr/bin/admiral-ssh-delivery-cleanup from /usr/bin/env python3 to #!/usr/bin/python3
+mangling shebang in /usr/bin/admiral-control-plane-backup from /usr/bin/env bash to #!/usr/bin/bash
+mangling shebang in /usr/bin/admiral-rootless-subids from /usr/bin/env python3 to #!/usr/bin/python3
+mangling shebang in /usr/bin/admiral-https-setup from /usr/bin/env python3 to #!/usr/bin/python3
+mangling shebang in /usr/libexec/admiral-wireguard-load-peers from /usr/bin/env bash to #!/usr/bin/bash
+mangling shebang in /usr/libexec/admiral-wireguard-revoke-peer from /usr/bin/env python3 to #!/usr/bin/python3
+mangling shebang in /usr/libexec/admiral-wireguard-peer-add from /usr/bin/env python3 to #!/usr/bin/python3
+mangling shebang in /usr/libexec/admiral-letsencrypt-deploy-hook from /usr/bin/env bash to #!/usr/bin/bash
++ /usr/lib/rpm/brp-remove-la-files
++ /usr/lib/rpm/redhat/brp-python-rpm-in-distinfo
++ env /usr/lib/rpm/redhat/brp-python-bytecompile '' 1 0 -j4
++ /usr/lib/rpm/redhat/brp-python-hardlink
+Executing(%check): /bin/sh -e /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/tmp/rpm-tmp.d5xH2D
++ umask 022
++ cd /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILD
++ CFLAGS='-O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Werror=format-security -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64-v3 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -mtls-dialect=gnu2   '
++ export CFLAGS
++ CXXFLAGS='-O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Werror=format-security -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64-v3 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -mtls-dialect=gnu2   '
++ export CXXFLAGS
++ FFLAGS='-O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64-v3 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -mtls-dialect=gnu2   -I/usr/lib64/gfortran/modules '
++ export FFLAGS
++ FCFLAGS='-O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64-v3 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -mtls-dialect=gnu2   -I/usr/lib64/gfortran/modules '
++ export FCFLAGS
++ VALAFLAGS=-g
++ export VALAFLAGS
++ LDFLAGS='-Wl,-z,relro -Wl,--as-needed  -Wl,-z,pack-relative-relocs -Wl,-z,now -specs=/usr/lib/rpm/redhat/redhat-hardened-ld -specs=/usr/lib/rpm/redhat/redhat-hardened-ld-errors -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -Wl,--build-id=sha1 -specs=/usr/lib/rpm/redhat/redhat-package-notes '
++ export LDFLAGS
++ LT_SYS_LIBRARY_PATH=/usr/lib64:
++ export LT_SYS_LIBRARY_PATH
++ CC=gcc
++ export CC
++ CXX=g++
++ export CXX
++ cd admiral-bfa00c07f462bafc32627922d884248f9523c603
++ for script in /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-common-0.0.1rc6-6.el10.x86_64/usr/bin/admiral-install /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-common-0.0.1rc6-6.el10.x86_64/usr/bin/admiral-control-plane-backup /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-common-0.0.1rc6-6.el10.x86_64/usr/libexec/admiral-wireguard-load-peers /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-common-0.0.1rc6-6.el10.x86_64/usr/libexec/admiral-letsencrypt-deploy-hook
++ bash -n /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-common-0.0.1rc6-6.el10.x86_64/usr/bin/admiral-install
++ for script in /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-common-0.0.1rc6-6.el10.x86_64/usr/bin/admiral-install /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-common-0.0.1rc6-6.el10.x86_64/usr/bin/admiral-control-plane-backup /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-common-0.0.1rc6-6.el10.x86_64/usr/libexec/admiral-wireguard-load-peers /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-common-0.0.1rc6-6.el10.x86_64/usr/libexec/admiral-letsencrypt-deploy-hook
++ bash -n /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-common-0.0.1rc6-6.el10.x86_64/usr/bin/admiral-control-plane-backup
++ for script in /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-common-0.0.1rc6-6.el10.x86_64/usr/bin/admiral-install /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-common-0.0.1rc6-6.el10.x86_64/usr/bin/admiral-control-plane-backup /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-common-0.0.1rc6-6.el10.x86_64/usr/libexec/admiral-wireguard-load-peers /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-common-0.0.1rc6-6.el10.x86_64/usr/libexec/admiral-letsencrypt-deploy-hook
++ bash -n /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-common-0.0.1rc6-6.el10.x86_64/usr/libexec/admiral-wireguard-load-peers
++ for script in /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-common-0.0.1rc6-6.el10.x86_64/usr/bin/admiral-install /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-common-0.0.1rc6-6.el10.x86_64/usr/bin/admiral-control-plane-backup /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-common-0.0.1rc6-6.el10.x86_64/usr/libexec/admiral-wireguard-load-peers /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-common-0.0.1rc6-6.el10.x86_64/usr/libexec/admiral-letsencrypt-deploy-hook
++ bash -n /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-common-0.0.1rc6-6.el10.x86_64/usr/libexec/admiral-letsencrypt-deploy-hook
++ python3 - /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-common-0.0.1rc6-6.el10.x86_64/usr/bin/admiral-known-host /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-common-0.0.1rc6-6.el10.x86_64/usr/bin/admiral-wireguard-peer-inventory /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-common-0.0.1rc6-6.el10.x86_64/usr/bin/admiral-revoke-bootstrap-key /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-common-0.0.1rc6-6.el10.x86_64/usr/bin/admiral-ssh-delivery-cleanup /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-common-0.0.1rc6-6.el10.x86_64/usr/bin/admiral-rootless-subids /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-common-0.0.1rc6-6.el10.x86_64/usr/bin/admiral-https-setup
++ python3 scripts/test_wireguard_peer_revoke.py
+............
+----------------------------------------------------------------------
+Ran 12 tests in 0.129s
+
+OK
++ python3 scripts/test_wireguard_peer_add.py
+...
+----------------------------------------------------------------------
+Ran 3 tests in 0.017s
+
+OK
++ python3 scripts/test_wireguard_peer_inventory.py
+.........
+----------------------------------------------------------------------
+Ran 9 tests in 0.040s
+
+OK
++ RPM_EC=0
+++ jobs -p
++ exit 0
+Processing files: admiral-common-0.0.1rc6-6.el10.noarch
+Executing(%doc): /bin/sh -e /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/tmp/rpm-tmp.PqqgCR
++ umask 022
++ cd /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILD
++ cd admiral-bfa00c07f462bafc32627922d884248f9523c603
++ DOCDIR=/root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-common-0.0.1rc6-6.el10.x86_64/usr/share/doc/admiral-common
++ export LC_ALL=
++ LC_ALL=
++ export DOCDIR
++ /usr/bin/mkdir -p /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-common-0.0.1rc6-6.el10.x86_64/usr/share/doc/admiral-common
++ cp -pr /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILD/admiral-bfa00c07f462bafc32627922d884248f9523c603/README.md /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-common-0.0.1rc6-6.el10.x86_64/usr/share/doc/admiral-common
++ RPM_EC=0
+++ jobs -p
++ exit 0
+Executing(%license): /bin/sh -e /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/tmp/rpm-tmp.NkQtSh
++ umask 022
++ cd /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILD
++ cd admiral-bfa00c07f462bafc32627922d884248f9523c603
++ LICENSEDIR=/root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-common-0.0.1rc6-6.el10.x86_64/usr/share/licenses/admiral-common
++ export LC_ALL=
++ LC_ALL=
++ export LICENSEDIR
++ /usr/bin/mkdir -p /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-common-0.0.1rc6-6.el10.x86_64/usr/share/licenses/admiral-common
++ cp -pr /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILD/admiral-bfa00c07f462bafc32627922d884248f9523c603/LICENSE /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-common-0.0.1rc6-6.el10.x86_64/usr/share/licenses/admiral-common
++ RPM_EC=0
+++ jobs -p
++ exit 0
+Provides: admiral-common = 5:0.0.1rc6-6.el10 group(admiral) group(admiral-apps) user(admiral) = dSBhZG1pcmFsIC0gIkFkbWlyYWwgc2VydmljZSBhY2NvdW50IiAvdmFyL2xpYi9hZG1pcmFsIC9zYmluL25vbG9naW4A user(admiral-apps) = dSBhZG1pcmFsLWFwcHMgLSAiQWRtaXJhbCByb290bGVzcyBhcHBzIiAvdmFyL2xpYi9hZG1pcmFsLWFwcHMgL3NiaW4vbm9sb2dpbgAA
+Requires(interp): /bin/sh /bin/sh /bin/sh /bin/sh
+Requires(rpmlib): rpmlib(CompressedFileNames) <= 3.0.4-1 rpmlib(FileDigests) <= 4.6.0-1 rpmlib(PayloadFilesHavePrefix) <= 4.0-1
+Requires(pre): /bin/sh
+Requires(post): /bin/sh
+Requires(preun): /bin/sh
+Requires(postun): /bin/sh
+Requires: /usr/bin/bash /usr/bin/python3
+Recommends: group(admiral) group(admiral-apps) user(admiral) user(admiral-apps)
+Checking for unpackaged file(s): /usr/lib/rpm/check-files /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-common-0.0.1rc6-6.el10.x86_64
+Wrote: /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SRPMS/admiral-common-0.0.1rc6-6.el10.src.rpm
+Wrote: /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/RPMS/noarch/admiral-common-0.0.1rc6-6.el10.noarch.rpm
+Executing(%clean): /bin/sh -e /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/tmp/rpm-tmp.0eH6uC
++ umask 022
++ cd /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILD
++ cd admiral-bfa00c07f462bafc32627922d884248f9523c603
++ /usr/bin/rm -rf /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-common-0.0.1rc6-6.el10.x86_64
++ RPM_EC=0
+++ jobs -p
++ exit 0
+Executing(rmbuild): /bin/sh -e /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/tmp/rpm-tmp.BczaaY
++ umask 022
++ cd /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILD
++ rm -rf /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILD/admiral-bfa00c07f462bafc32627922d884248f9523c603-SPECPARTS
++ rm -rf admiral-bfa00c07f462bafc32627922d884248f9523c603 admiral-bfa00c07f462bafc32627922d884248f9523c603.gemspec
++ RPM_EC=0
+++ jobs -p
++ exit 0
+make[1]: Leaving directory '/root/admiral'
+=== Building admirald ===
+make rpm-admirald
+make[1]: Entering directory '/root/admiral'
+python3 scripts/validate-release-refs.py
+RPM source references match checked-out component commits.
+=== Generating pinned Admiral source archives ===
+git archive --format=tar.gz \
+	--prefix=admiral-bfa00c07f462bafc32627922d884248f9523c603/ \
+	-o /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/bfa00c07f462bafc32627922d884248f9523c603.tar.gz bfa00c07f462bafc32627922d884248f9523c603
+for sm in admirald admiral-fleet admiralctl; do \
+	echo "  Adding $sm..."; \
+	commit="HEAD"; \
+	if [ "$sm" = "admirald" ]; then commit="6e4a725d30c0fff877fe2252e843fae687810ae6"; fi; \
+	if [ "$sm" = "admiral-fleet" ]; then commit="fc6909f6c41507d04aa204ebeafbbaaa4ef2c686"; fi; \
+	if [ "$sm" = "admiralctl" ]; then commit="fa2a65e866310bd82bea78859804b6c3aea7989a"; fi; \
+	git -C $sm archive --format=tar.gz \
+		--prefix=$sm-$commit/ \
+		-o /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/$commit.tar.gz $commit || exit $?; \
+done
+  Adding admirald...
+  Adding admiral-fleet...
+  Adding admiralctl...
+cp /root/admiral/packaging/systemd/admirald.service /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/systemd/admiral-fleet.service /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/systemd/admiral-flagship.service /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/systemd/admiral-harbor.service /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/systemd/admiral-harbor-worker.service /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/systemd/admiral-harbor-worker.timer /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/systemd/admiral-harbor-catalog-sync.service /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/systemd/admiral-harbor-catalog-sync.timer /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/systemd/admiral-control-plane-backup.service /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/systemd/admiral-control-plane-backup.timer /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/systemd/admiral-wireguard-peer-revoke.socket /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/systemd/admiral-wireguard-peer-revoke@.service /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/config/admirald.ini /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/config/fleet.env /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/config/admiralctl.yaml /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/config/flagship.env /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/config/harbor.env /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/bin/harborctl /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/bin/harbor-gunicorn /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/bin/harbor-migrate /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/rpm/admiral-common.sysusers /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/scripts/admiral_letsencrypt_deploy_hook.sh /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/rpm/admirald.spec /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SPECS/
+rpmbuild -ba --target x86_64 --define '_topdir /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir' --define '_sourcedir /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES' --define '_specdir /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SPECS' --define '_builddir /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILD' --define '_rpmdir /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/RPMS' --define '_srcrpmdir /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SRPMS' --define '_tmppath /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/tmp' /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SPECS/admirald.spec
+Building target platforms: x86_64
+Building for target x86_64
+setting SOURCE_DATE_EPOCH=1792972800
+Executing(%prep): /bin/sh -e /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/tmp/rpm-tmp.YBnhXi
++ umask 022
++ cd /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILD
++ cd /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILD
++ rm -rf admirald-6e4a725d30c0fff877fe2252e843fae687810ae6
++ /usr/lib/rpm/rpmuncompress -x /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/6e4a725d30c0fff877fe2252e843fae687810ae6.tar.gz
++ STATUS=0
++ '[' 0 -ne 0 ']'
++ cd admirald-6e4a725d30c0fff877fe2252e843fae687810ae6
++ rm -rf /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILD/admirald-6e4a725d30c0fff877fe2252e843fae687810ae6-SPECPARTS
++ /usr/bin/mkdir -p /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILD/admirald-6e4a725d30c0fff877fe2252e843fae687810ae6-SPECPARTS
++ /usr/bin/chmod -Rf a+rX,u+w,g-w,o-w .
++ RPM_EC=0
+++ jobs -p
++ exit 0
+Executing(%build): /bin/sh -e /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/tmp/rpm-tmp.HBuetu
++ umask 022
++ cd /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILD
++ CFLAGS='-O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Werror=format-security -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64-v3 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -mtls-dialect=gnu2   '
++ export CFLAGS
++ CXXFLAGS='-O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Werror=format-security -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64-v3 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -mtls-dialect=gnu2   '
++ export CXXFLAGS
++ FFLAGS='-O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64-v3 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -mtls-dialect=gnu2   -I/usr/lib64/gfortran/modules '
++ export FFLAGS
++ FCFLAGS='-O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64-v3 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -mtls-dialect=gnu2   -I/usr/lib64/gfortran/modules '
++ export FCFLAGS
++ VALAFLAGS=-g
++ export VALAFLAGS
++ LDFLAGS='-Wl,-z,relro -Wl,--as-needed  -Wl,-z,pack-relative-relocs -Wl,-z,now -specs=/usr/lib/rpm/redhat/redhat-hardened-ld -specs=/usr/lib/rpm/redhat/redhat-hardened-ld-errors -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -Wl,--build-id=sha1 -specs=/usr/lib/rpm/redhat/redhat-package-notes '
++ export LDFLAGS
++ LT_SYS_LIBRARY_PATH=/usr/lib64:
++ export LT_SYS_LIBRARY_PATH
++ CC=gcc
++ export CC
++ CXX=g++
++ export CXX
++ cd admirald-6e4a725d30c0fff877fe2252e843fae687810ae6
++ export GOWORK=off
++ GOWORK=off
++ export GOOS=linux
++ GOOS=linux
++ export GOARCH=amd64
++ GOARCH=amd64
++ export CGO_ENABLED=0
++ CGO_ENABLED=0
++ export PATH=/usr/lib/golang/bin:/usr/bin:/root/.codex/packages/app-server-daemon/releases/0.164.0-x86_64-unknown-linux-musl/codex-path:/root/.opencode/bin:/root/.opencode/bin:/root/.codex/tmp/arg0-linux/codex-arg0B7sz80:/root/.codex/packages/app-server-daemon/releases/0.164.0-x86_64-unknown-linux-musl/codex-path:/root/.codex/tmp/arg0-linux/codex-arg0c8cdru:/root/.codex/packages/app-server-daemon/releases/0.163.0-x86_64-unknown-linux-musl/codex-path:/root/.codex/tmp/arg0-linux/codex-arg0PisjEk:/usr/local/lib/node_modules/@openai/codex/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/codex-path:/root/.local/bin:/root/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin
++ PATH=/usr/lib/golang/bin:/usr/bin:/root/.codex/packages/app-server-daemon/releases/0.164.0-x86_64-unknown-linux-musl/codex-path:/root/.opencode/bin:/root/.opencode/bin:/root/.codex/tmp/arg0-linux/codex-arg0B7sz80:/root/.codex/packages/app-server-daemon/releases/0.164.0-x86_64-unknown-linux-musl/codex-path:/root/.codex/tmp/arg0-linux/codex-arg0c8cdru:/root/.codex/packages/app-server-daemon/releases/0.163.0-x86_64-unknown-linux-musl/codex-path:/root/.codex/tmp/arg0-linux/codex-arg0PisjEk:/usr/local/lib/node_modules/@openai/codex/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/codex-path:/root/.local/bin:/root/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin
++ export GOCACHE=/root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/tmp/go-cache
++ GOCACHE=/root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/tmp/go-cache
++ mkdir -p /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/tmp/go-cache
++ go build -trimpath -buildmode=pie '-ldflags=-s -w -X main.Version=0.0.1rc6' -o admirald ./cmd/admirald/
++ RPM_EC=0
+++ jobs -p
++ exit 0
+Executing(%install): /bin/sh -e /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/tmp/rpm-tmp.MKVzb3
++ umask 022
++ cd /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILD
++ '[' /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admirald-0.0.1rc6-6.el10.x86_64 '!=' / ']'
++ rm -rf /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admirald-0.0.1rc6-6.el10.x86_64
+++ dirname /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admirald-0.0.1rc6-6.el10.x86_64
++ mkdir -p /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT
++ mkdir /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admirald-0.0.1rc6-6.el10.x86_64
++ CFLAGS='-O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Werror=format-security -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64-v3 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -mtls-dialect=gnu2   '
++ export CFLAGS
++ CXXFLAGS='-O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Werror=format-security -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64-v3 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -mtls-dialect=gnu2   '
++ export CXXFLAGS
++ FFLAGS='-O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64-v3 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -mtls-dialect=gnu2   -I/usr/lib64/gfortran/modules '
++ export FFLAGS
++ FCFLAGS='-O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64-v3 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -mtls-dialect=gnu2   -I/usr/lib64/gfortran/modules '
++ export FCFLAGS
++ VALAFLAGS=-g
++ export VALAFLAGS
++ LDFLAGS='-Wl,-z,relro -Wl,--as-needed  -Wl,-z,pack-relative-relocs -Wl,-z,now -specs=/usr/lib/rpm/redhat/redhat-hardened-ld -specs=/usr/lib/rpm/redhat/redhat-hardened-ld-errors -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -Wl,--build-id=sha1 -specs=/usr/lib/rpm/redhat/redhat-package-notes '
++ export LDFLAGS
++ LT_SYS_LIBRARY_PATH=/usr/lib64:
++ export LT_SYS_LIBRARY_PATH
++ CC=gcc
++ export CC
++ CXX=g++
++ export CXX
++ cd admirald-6e4a725d30c0fff877fe2252e843fae687810ae6
++ install -Dm0755 admirald /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admirald-0.0.1rc6-6.el10.x86_64/usr/bin/admirald
++ install -Dm0644 /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/admirald.service /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admirald-0.0.1rc6-6.el10.x86_64/usr/lib/systemd/system/admirald.service
++ install -Dm0600 /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/admirald.ini /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admirald-0.0.1rc6-6.el10.x86_64/etc/admirald.ini
++ /usr/lib/rpm/check-buildroot
++ /usr/lib/rpm/redhat/brp-ldconfig
++ /usr/lib/rpm/brp-compress
++ /usr/lib/rpm/brp-strip /usr/bin/strip
++ /usr/lib/rpm/brp-strip-comment-note /usr/bin/strip /usr/bin/objdump
++ /usr/lib/rpm/redhat/brp-strip-lto /usr/bin/strip
++ /usr/lib/rpm/brp-strip-static-archive /usr/bin/strip
++ /usr/lib/rpm/check-rpaths
++ /usr/lib/rpm/redhat/brp-mangle-shebangs
++ /usr/lib/rpm/brp-remove-la-files
++ /usr/lib/rpm/redhat/brp-python-rpm-in-distinfo
++ env /usr/lib/rpm/redhat/brp-python-bytecompile '' 1 0 -j4
++ /usr/lib/rpm/redhat/brp-python-hardlink
+Executing(%check): /bin/sh -e /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/tmp/rpm-tmp.7htzbX
++ umask 022
++ cd /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILD
++ CFLAGS='-O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Werror=format-security -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64-v3 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -mtls-dialect=gnu2   '
++ export CFLAGS
++ CXXFLAGS='-O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Werror=format-security -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64-v3 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -mtls-dialect=gnu2   '
++ export CXXFLAGS
++ FFLAGS='-O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64-v3 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -mtls-dialect=gnu2   -I/usr/lib64/gfortran/modules '
++ export FFLAGS
++ FCFLAGS='-O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64-v3 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -mtls-dialect=gnu2   -I/usr/lib64/gfortran/modules '
++ export FCFLAGS
++ VALAFLAGS=-g
++ export VALAFLAGS
++ LDFLAGS='-Wl,-z,relro -Wl,--as-needed  -Wl,-z,pack-relative-relocs -Wl,-z,now -specs=/usr/lib/rpm/redhat/redhat-hardened-ld -specs=/usr/lib/rpm/redhat/redhat-hardened-ld-errors -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -Wl,--build-id=sha1 -specs=/usr/lib/rpm/redhat/redhat-package-notes '
++ export LDFLAGS
++ LT_SYS_LIBRARY_PATH=/usr/lib64:
++ export LT_SYS_LIBRARY_PATH
++ CC=gcc
++ export CC
++ CXX=g++
++ export CXX
++ cd admirald-6e4a725d30c0fff877fe2252e843fae687810ae6
++ export GOWORK=off
++ GOWORK=off
++ export PATH=/usr/lib/golang/bin:/usr/bin:/root/.codex/packages/app-server-daemon/releases/0.164.0-x86_64-unknown-linux-musl/codex-path:/root/.opencode/bin:/root/.opencode/bin:/root/.codex/tmp/arg0-linux/codex-arg0B7sz80:/root/.codex/packages/app-server-daemon/releases/0.164.0-x86_64-unknown-linux-musl/codex-path:/root/.codex/tmp/arg0-linux/codex-arg0c8cdru:/root/.codex/packages/app-server-daemon/releases/0.163.0-x86_64-unknown-linux-musl/codex-path:/root/.codex/tmp/arg0-linux/codex-arg0PisjEk:/usr/local/lib/node_modules/@openai/codex/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/codex-path:/root/.local/bin:/root/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin
++ PATH=/usr/lib/golang/bin:/usr/bin:/root/.codex/packages/app-server-daemon/releases/0.164.0-x86_64-unknown-linux-musl/codex-path:/root/.opencode/bin:/root/.opencode/bin:/root/.codex/tmp/arg0-linux/codex-arg0B7sz80:/root/.codex/packages/app-server-daemon/releases/0.164.0-x86_64-unknown-linux-musl/codex-path:/root/.codex/tmp/arg0-linux/codex-arg0c8cdru:/root/.codex/packages/app-server-daemon/releases/0.163.0-x86_64-unknown-linux-musl/codex-path:/root/.codex/tmp/arg0-linux/codex-arg0PisjEk:/usr/local/lib/node_modules/@openai/codex/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/codex-path:/root/.local/bin:/root/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin
++ export GOCACHE=/root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/tmp/go-cache
++ GOCACHE=/root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/tmp/go-cache
++ mkdir -p /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/tmp/go-cache
++ go test ./...
+?   	github.com/admiral-project/admiral/admirald/cmd/admirald	[no test files]
+ok  	github.com/admiral-project/admiral/admirald/internal/api	0.024s
+ok  	github.com/admiral-project/admiral/admirald/internal/bootstrap	0.018s
+ok  	github.com/admiral-project/admiral/admirald/internal/config	0.021s
+ok  	github.com/admiral-project/admiral/admirald/internal/database	0.013s
+ok  	github.com/admiral-project/admiral/admirald/internal/logging	0.008s
+ok  	github.com/admiral-project/admiral/admirald/internal/networking	2.161s
+ok  	github.com/admiral-project/admiral/admirald/internal/queue	0.012s
+?   	github.com/admiral-project/admiral/admirald/internal/queuedb	[no test files]
+ok  	github.com/admiral-project/admiral/admirald/internal/secrets	0.013s
+ok  	github.com/admiral-project/admiral/admirald/internal/security	0.547s
+ok  	github.com/admiral-project/admiral/admirald/internal/version	0.008s
+ok  	github.com/admiral-project/admiral/admirald/pkg/admiral	0.016s
+ok  	github.com/admiral-project/admiral/admirald/pkg/admiral/storage	0.029s
+ok  	github.com/admiral-project/admiral/admirald/pkg/admiral/tlsconfig	0.085s
++ readelf -h ./admirald
++ grep -Eq 'Machine:[[:space:]]+Advanced Micro Devices X86-64'
++ RPM_EC=0
+++ jobs -p
++ exit 0
+Processing files: admirald-0.0.1rc6-6.el10.x86_64
+Executing(%license): /bin/sh -e /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/tmp/rpm-tmp.LRCmvJ
++ umask 022
++ cd /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILD
++ cd admirald-6e4a725d30c0fff877fe2252e843fae687810ae6
++ LICENSEDIR=/root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admirald-0.0.1rc6-6.el10.x86_64/usr/share/licenses/admirald
++ export LC_ALL=
++ LC_ALL=
++ export LICENSEDIR
++ /usr/bin/mkdir -p /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admirald-0.0.1rc6-6.el10.x86_64/usr/share/licenses/admirald
++ cp -pr /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILD/admirald-6e4a725d30c0fff877fe2252e843fae687810ae6/LICENSE /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admirald-0.0.1rc6-6.el10.x86_64/usr/share/licenses/admirald
++ RPM_EC=0
+++ jobs -p
++ exit 0
+Provides: admirald = 5:0.0.1rc6-6.el10 admirald(x86-64) = 5:0.0.1rc6-6.el10 config(admirald) = 5:0.0.1rc6-6.el10
+Requires(interp): /bin/sh /bin/sh /bin/sh
+Requires(rpmlib): rpmlib(CompressedFileNames) <= 3.0.4-1 rpmlib(FileDigests) <= 4.6.0-1 rpmlib(PayloadFilesHavePrefix) <= 4.0-1
+Requires(post): /bin/sh
+Requires(preun): /bin/sh
+Requires(postun): /bin/sh
+Checking for unpackaged file(s): /usr/lib/rpm/check-files /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admirald-0.0.1rc6-6.el10.x86_64
+Wrote: /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SRPMS/admirald-0.0.1rc6-6.el10.src.rpm
+Wrote: /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/RPMS/x86_64/admirald-0.0.1rc6-6.el10.x86_64.rpm
+Executing(%clean): /bin/sh -e /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/tmp/rpm-tmp.lCJzxs
++ umask 022
++ cd /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILD
++ cd admirald-6e4a725d30c0fff877fe2252e843fae687810ae6
++ /usr/bin/rm -rf /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admirald-0.0.1rc6-6.el10.x86_64
++ RPM_EC=0
+++ jobs -p
++ exit 0
+Executing(rmbuild): /bin/sh -e /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/tmp/rpm-tmp.A2B3Od
++ umask 022
++ cd /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILD
++ rm -rf /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILD/admirald-6e4a725d30c0fff877fe2252e843fae687810ae6-SPECPARTS
++ rm -rf admirald-6e4a725d30c0fff877fe2252e843fae687810ae6 admirald-6e4a725d30c0fff877fe2252e843fae687810ae6.gemspec
++ RPM_EC=0
+++ jobs -p
++ exit 0
+make[1]: Leaving directory '/root/admiral'
+=== Building admiral-fleet ===
+make rpm-admiral-fleet
+make[1]: Entering directory '/root/admiral'
+python3 scripts/validate-release-refs.py
+RPM source references match checked-out component commits.
+=== Generating pinned Admiral source archives ===
+git archive --format=tar.gz \
+	--prefix=admiral-bfa00c07f462bafc32627922d884248f9523c603/ \
+	-o /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/bfa00c07f462bafc32627922d884248f9523c603.tar.gz bfa00c07f462bafc32627922d884248f9523c603
+for sm in admirald admiral-fleet admiralctl; do \
+	echo "  Adding $sm..."; \
+	commit="HEAD"; \
+	if [ "$sm" = "admirald" ]; then commit="6e4a725d30c0fff877fe2252e843fae687810ae6"; fi; \
+	if [ "$sm" = "admiral-fleet" ]; then commit="fc6909f6c41507d04aa204ebeafbbaaa4ef2c686"; fi; \
+	if [ "$sm" = "admiralctl" ]; then commit="fa2a65e866310bd82bea78859804b6c3aea7989a"; fi; \
+	git -C $sm archive --format=tar.gz \
+		--prefix=$sm-$commit/ \
+		-o /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/$commit.tar.gz $commit || exit $?; \
+done
+  Adding admirald...
+  Adding admiral-fleet...
+  Adding admiralctl...
+cp /root/admiral/packaging/systemd/admirald.service /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/systemd/admiral-fleet.service /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/systemd/admiral-flagship.service /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/systemd/admiral-harbor.service /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/systemd/admiral-harbor-worker.service /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/systemd/admiral-harbor-worker.timer /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/systemd/admiral-harbor-catalog-sync.service /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/systemd/admiral-harbor-catalog-sync.timer /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/systemd/admiral-control-plane-backup.service /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/systemd/admiral-control-plane-backup.timer /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/systemd/admiral-wireguard-peer-revoke.socket /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/systemd/admiral-wireguard-peer-revoke@.service /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/config/admirald.ini /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/config/fleet.env /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/config/admiralctl.yaml /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/config/flagship.env /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/config/harbor.env /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/bin/harborctl /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/bin/harbor-gunicorn /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/bin/harbor-migrate /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/rpm/admiral-common.sysusers /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/scripts/admiral_letsencrypt_deploy_hook.sh /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/rpm/admiral-fleet.spec /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SPECS/
+rpmbuild -ba --target x86_64 --define '_topdir /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir' --define '_sourcedir /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES' --define '_specdir /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SPECS' --define '_builddir /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILD' --define '_rpmdir /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/RPMS' --define '_srcrpmdir /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SRPMS' --define '_tmppath /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/tmp' /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SPECS/admiral-fleet.spec
+Building target platforms: x86_64
+Building for target x86_64
+setting SOURCE_DATE_EPOCH=1792972800
+Executing(%prep): /bin/sh -e /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/tmp/rpm-tmp.hUUbcZ
++ umask 022
++ cd /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILD
++ cd /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILD
++ rm -rf admiral-fleet-fc6909f6c41507d04aa204ebeafbbaaa4ef2c686
++ /usr/lib/rpm/rpmuncompress -x /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/fc6909f6c41507d04aa204ebeafbbaaa4ef2c686.tar.gz
++ STATUS=0
++ '[' 0 -ne 0 ']'
++ cd admiral-fleet-fc6909f6c41507d04aa204ebeafbbaaa4ef2c686
++ rm -rf /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILD/admiral-fleet-fc6909f6c41507d04aa204ebeafbbaaa4ef2c686-SPECPARTS
++ /usr/bin/mkdir -p /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILD/admiral-fleet-fc6909f6c41507d04aa204ebeafbbaaa4ef2c686-SPECPARTS
++ /usr/bin/chmod -Rf a+rX,u+w,g-w,o-w .
++ mkdir -p local_deps/admirald
++ tar -xzf /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/6e4a725d30c0fff877fe2252e843fae687810ae6.tar.gz --strip-components=1 -C local_deps/admirald
++ RPM_EC=0
+++ jobs -p
++ exit 0
+Executing(%build): /bin/sh -e /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/tmp/rpm-tmp.tVZkwV
++ umask 022
++ cd /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILD
++ CFLAGS='-O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Werror=format-security -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64-v3 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -mtls-dialect=gnu2   '
++ export CFLAGS
++ CXXFLAGS='-O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Werror=format-security -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64-v3 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -mtls-dialect=gnu2   '
++ export CXXFLAGS
++ FFLAGS='-O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64-v3 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -mtls-dialect=gnu2   -I/usr/lib64/gfortran/modules '
++ export FFLAGS
++ FCFLAGS='-O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64-v3 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -mtls-dialect=gnu2   -I/usr/lib64/gfortran/modules '
++ export FCFLAGS
++ VALAFLAGS=-g
++ export VALAFLAGS
++ LDFLAGS='-Wl,-z,relro -Wl,--as-needed  -Wl,-z,pack-relative-relocs -Wl,-z,now -specs=/usr/lib/rpm/redhat/redhat-hardened-ld -specs=/usr/lib/rpm/redhat/redhat-hardened-ld-errors -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -Wl,--build-id=sha1 -specs=/usr/lib/rpm/redhat/redhat-package-notes '
++ export LDFLAGS
++ LT_SYS_LIBRARY_PATH=/usr/lib64:
++ export LT_SYS_LIBRARY_PATH
++ CC=gcc
++ export CC
++ CXX=g++
++ export CXX
++ cd admiral-fleet-fc6909f6c41507d04aa204ebeafbbaaa4ef2c686
++ export GOWORK=off
++ GOWORK=off
++ export GOOS=linux
++ GOOS=linux
++ export GOARCH=amd64
++ GOARCH=amd64
++ export CGO_ENABLED=0
++ CGO_ENABLED=0
++ export PATH=/usr/lib/golang/bin:/usr/bin:/root/.codex/packages/app-server-daemon/releases/0.164.0-x86_64-unknown-linux-musl/codex-path:/root/.opencode/bin:/root/.opencode/bin:/root/.codex/tmp/arg0-linux/codex-arg0B7sz80:/root/.codex/packages/app-server-daemon/releases/0.164.0-x86_64-unknown-linux-musl/codex-path:/root/.codex/tmp/arg0-linux/codex-arg0c8cdru:/root/.codex/packages/app-server-daemon/releases/0.163.0-x86_64-unknown-linux-musl/codex-path:/root/.codex/tmp/arg0-linux/codex-arg0PisjEk:/usr/local/lib/node_modules/@openai/codex/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/codex-path:/root/.local/bin:/root/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin
++ PATH=/usr/lib/golang/bin:/usr/bin:/root/.codex/packages/app-server-daemon/releases/0.164.0-x86_64-unknown-linux-musl/codex-path:/root/.opencode/bin:/root/.opencode/bin:/root/.codex/tmp/arg0-linux/codex-arg0B7sz80:/root/.codex/packages/app-server-daemon/releases/0.164.0-x86_64-unknown-linux-musl/codex-path:/root/.codex/tmp/arg0-linux/codex-arg0c8cdru:/root/.codex/packages/app-server-daemon/releases/0.163.0-x86_64-unknown-linux-musl/codex-path:/root/.codex/tmp/arg0-linux/codex-arg0PisjEk:/usr/local/lib/node_modules/@openai/codex/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/codex-path:/root/.local/bin:/root/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin
++ export GOCACHE=/root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/tmp/go-cache
++ GOCACHE=/root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/tmp/go-cache
++ mkdir -p /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/tmp/go-cache
++ go build -trimpath -buildmode=pie '-ldflags=-s -w -X github.com/admiral-project/admiral/admiral-fleet/internal/agent.FleetVersion=0.0.1rc6' -o admiral-fleet ./cmd/admiral-fleet/
++ go build -trimpath -buildmode=pie '-ldflags=-s -w' -o admiral-fleet-lifecycle ./cmd/admiral-fleet-lifecycle/
++ go build -trimpath -buildmode=pie '-ldflags=-s -w' -o admiral-fleet-setup ./cmd/admiral-fleet-setup/
++ go build -trimpath -buildmode=pie '-ldflags=-s -w' -o admiral-fleet-backup ./cmd/admiral-fleet-backup/
++ RPM_EC=0
+++ jobs -p
++ exit 0
+Executing(%install): /bin/sh -e /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/tmp/rpm-tmp.Cp3lGK
++ umask 022
++ cd /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILD
++ '[' /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-fleet-0.0.1rc6-6.el10.x86_64 '!=' / ']'
++ rm -rf /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-fleet-0.0.1rc6-6.el10.x86_64
+++ dirname /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-fleet-0.0.1rc6-6.el10.x86_64
++ mkdir -p /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT
++ mkdir /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-fleet-0.0.1rc6-6.el10.x86_64
++ CFLAGS='-O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Werror=format-security -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64-v3 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -mtls-dialect=gnu2   '
++ export CFLAGS
++ CXXFLAGS='-O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Werror=format-security -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64-v3 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -mtls-dialect=gnu2   '
++ export CXXFLAGS
++ FFLAGS='-O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64-v3 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -mtls-dialect=gnu2   -I/usr/lib64/gfortran/modules '
++ export FFLAGS
++ FCFLAGS='-O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64-v3 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -mtls-dialect=gnu2   -I/usr/lib64/gfortran/modules '
++ export FCFLAGS
++ VALAFLAGS=-g
++ export VALAFLAGS
++ LDFLAGS='-Wl,-z,relro -Wl,--as-needed  -Wl,-z,pack-relative-relocs -Wl,-z,now -specs=/usr/lib/rpm/redhat/redhat-hardened-ld -specs=/usr/lib/rpm/redhat/redhat-hardened-ld-errors -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -Wl,--build-id=sha1 -specs=/usr/lib/rpm/redhat/redhat-package-notes '
++ export LDFLAGS
++ LT_SYS_LIBRARY_PATH=/usr/lib64:
++ export LT_SYS_LIBRARY_PATH
++ CC=gcc
++ export CC
++ CXX=g++
++ export CXX
++ cd admiral-fleet-fc6909f6c41507d04aa204ebeafbbaaa4ef2c686
++ install -Dm0755 admiral-fleet /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-fleet-0.0.1rc6-6.el10.x86_64/usr/bin/admiral-fleet
++ install -Dm0755 admiral-fleet-lifecycle /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-fleet-0.0.1rc6-6.el10.x86_64/usr/bin/admiral-fleet-lifecycle
++ install -Dm0755 admiral-fleet-setup /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-fleet-0.0.1rc6-6.el10.x86_64/usr/bin/admiral-fleet-setup
++ install -Dm0755 admiral-fleet-backup /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-fleet-0.0.1rc6-6.el10.x86_64/usr/bin/admiral-fleet-backup
++ install -Dm0644 /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/admiral-fleet.service /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-fleet-0.0.1rc6-6.el10.x86_64/usr/lib/systemd/system/admiral-fleet.service
++ install -Dm0600 /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/fleet.env /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-fleet-0.0.1rc6-6.el10.x86_64/etc/admiral/fleet.env
++ /usr/lib/rpm/check-buildroot
++ /usr/lib/rpm/redhat/brp-ldconfig
++ /usr/lib/rpm/brp-compress
++ /usr/lib/rpm/brp-strip /usr/bin/strip
++ /usr/lib/rpm/brp-strip-comment-note /usr/bin/strip /usr/bin/objdump
++ /usr/lib/rpm/redhat/brp-strip-lto /usr/bin/strip
++ /usr/lib/rpm/brp-strip-static-archive /usr/bin/strip
++ /usr/lib/rpm/check-rpaths
++ /usr/lib/rpm/redhat/brp-mangle-shebangs
++ /usr/lib/rpm/brp-remove-la-files
++ /usr/lib/rpm/redhat/brp-python-rpm-in-distinfo
++ env /usr/lib/rpm/redhat/brp-python-bytecompile '' 1 0 -j4
++ /usr/lib/rpm/redhat/brp-python-hardlink
+Executing(%check): /bin/sh -e /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/tmp/rpm-tmp.wulWpX
++ umask 022
++ cd /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILD
++ CFLAGS='-O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Werror=format-security -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64-v3 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -mtls-dialect=gnu2   '
++ export CFLAGS
++ CXXFLAGS='-O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Werror=format-security -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64-v3 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -mtls-dialect=gnu2   '
++ export CXXFLAGS
++ FFLAGS='-O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64-v3 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -mtls-dialect=gnu2   -I/usr/lib64/gfortran/modules '
++ export FFLAGS
++ FCFLAGS='-O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64-v3 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -mtls-dialect=gnu2   -I/usr/lib64/gfortran/modules '
++ export FCFLAGS
++ VALAFLAGS=-g
++ export VALAFLAGS
++ LDFLAGS='-Wl,-z,relro -Wl,--as-needed  -Wl,-z,pack-relative-relocs -Wl,-z,now -specs=/usr/lib/rpm/redhat/redhat-hardened-ld -specs=/usr/lib/rpm/redhat/redhat-hardened-ld-errors -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -Wl,--build-id=sha1 -specs=/usr/lib/rpm/redhat/redhat-package-notes '
++ export LDFLAGS
++ LT_SYS_LIBRARY_PATH=/usr/lib64:
++ export LT_SYS_LIBRARY_PATH
++ CC=gcc
++ export CC
++ CXX=g++
++ export CXX
++ cd admiral-fleet-fc6909f6c41507d04aa204ebeafbbaaa4ef2c686
++ export GOWORK=off
++ GOWORK=off
++ export PATH=/usr/lib/golang/bin:/usr/bin:/root/.codex/packages/app-server-daemon/releases/0.164.0-x86_64-unknown-linux-musl/codex-path:/root/.opencode/bin:/root/.opencode/bin:/root/.codex/tmp/arg0-linux/codex-arg0B7sz80:/root/.codex/packages/app-server-daemon/releases/0.164.0-x86_64-unknown-linux-musl/codex-path:/root/.codex/tmp/arg0-linux/codex-arg0c8cdru:/root/.codex/packages/app-server-daemon/releases/0.163.0-x86_64-unknown-linux-musl/codex-path:/root/.codex/tmp/arg0-linux/codex-arg0PisjEk:/usr/local/lib/node_modules/@openai/codex/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/codex-path:/root/.local/bin:/root/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin
++ PATH=/usr/lib/golang/bin:/usr/bin:/root/.codex/packages/app-server-daemon/releases/0.164.0-x86_64-unknown-linux-musl/codex-path:/root/.opencode/bin:/root/.opencode/bin:/root/.codex/tmp/arg0-linux/codex-arg0B7sz80:/root/.codex/packages/app-server-daemon/releases/0.164.0-x86_64-unknown-linux-musl/codex-path:/root/.codex/tmp/arg0-linux/codex-arg0c8cdru:/root/.codex/packages/app-server-daemon/releases/0.163.0-x86_64-unknown-linux-musl/codex-path:/root/.codex/tmp/arg0-linux/codex-arg0PisjEk:/usr/local/lib/node_modules/@openai/codex/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/codex-path:/root/.local/bin:/root/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin
++ export GOCACHE=/root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/tmp/go-cache
++ GOCACHE=/root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/tmp/go-cache
++ mkdir -p /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/tmp/go-cache
++ ADMIRAL_EXPECTED_FLEET_VERSION=0.0.1rc6
++ go test '-ldflags=-X github.com/admiral-project/admiral/admiral-fleet/internal/agent.FleetVersion=0.0.1rc6' ./...
+?   	github.com/admiral-project/admiral/admiral-fleet/cmd/admiral-fleet	[no test files]
+?   	github.com/admiral-project/admiral/admiral-fleet/cmd/admiral-fleet-backup	[no test files]
+?   	github.com/admiral-project/admiral/admiral-fleet/cmd/admiral-fleet-lifecycle	[no test files]
+?   	github.com/admiral-project/admiral/admiral-fleet/cmd/admiral-fleet-setup	[no test files]
+ok  	github.com/admiral-project/admiral/admiral-fleet/internal/agent	12.380s
+ok  	github.com/admiral-project/admiral/admiral-fleet/internal/config	0.016s
+ok  	github.com/admiral-project/admiral/admiral-fleet/internal/executor	8.513s
+ok  	github.com/admiral-project/admiral/admiral-fleet/internal/helper	0.006s
+ok  	github.com/admiral-project/admiral/admiral-fleet/internal/osutil	0.014s
+ok  	github.com/admiral-project/admiral/admiral-fleet/internal/podman	0.026s
+ok  	github.com/admiral-project/admiral/admiral-fleet/internal/quadlet	0.034s
+?   	github.com/admiral-project/admiral/admiral-fleet/internal/rootlessprotocol	[no test files]
+ok  	github.com/admiral-project/admiral/admiral-fleet/internal/security	0.018s
+ok  	github.com/admiral-project/admiral/admiral-fleet/internal/storage	0.045s
+ok  	github.com/admiral-project/admiral/admiral-fleet/internal/systemd	1.041s
++ for binary in admiral-fleet admiral-fleet-lifecycle admiral-fleet-setup admiral-fleet-backup
++ readelf -h ./admiral-fleet
++ grep -Eq 'Machine:[[:space:]]+Advanced Micro Devices X86-64'
++ for binary in admiral-fleet admiral-fleet-lifecycle admiral-fleet-setup admiral-fleet-backup
++ readelf -h ./admiral-fleet-lifecycle
++ grep -Eq 'Machine:[[:space:]]+Advanced Micro Devices X86-64'
++ for binary in admiral-fleet admiral-fleet-lifecycle admiral-fleet-setup admiral-fleet-backup
++ readelf -h ./admiral-fleet-setup
++ grep -Eq 'Machine:[[:space:]]+Advanced Micro Devices X86-64'
++ for binary in admiral-fleet admiral-fleet-lifecycle admiral-fleet-setup admiral-fleet-backup
++ readelf -h ./admiral-fleet-backup
++ grep -Eq 'Machine:[[:space:]]+Advanced Micro Devices X86-64'
++ RPM_EC=0
+++ jobs -p
++ exit 0
+Processing files: admiral-fleet-0.0.1rc6-6.el10.x86_64
+Executing(%license): /bin/sh -e /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/tmp/rpm-tmp.vwpsAH
++ umask 022
++ cd /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILD
++ cd admiral-fleet-fc6909f6c41507d04aa204ebeafbbaaa4ef2c686
++ LICENSEDIR=/root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-fleet-0.0.1rc6-6.el10.x86_64/usr/share/licenses/admiral-fleet
++ export LC_ALL=
++ LC_ALL=
++ export LICENSEDIR
++ /usr/bin/mkdir -p /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-fleet-0.0.1rc6-6.el10.x86_64/usr/share/licenses/admiral-fleet
++ cp -pr /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILD/admiral-fleet-fc6909f6c41507d04aa204ebeafbbaaa4ef2c686/LICENSE /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-fleet-0.0.1rc6-6.el10.x86_64/usr/share/licenses/admiral-fleet
++ RPM_EC=0
+++ jobs -p
++ exit 0
+Provides: admiral-fleet = 5:0.0.1rc6-6.el10 admiral-fleet(x86-64) = 5:0.0.1rc6-6.el10 config(admiral-fleet) = 5:0.0.1rc6-6.el10
+Requires(interp): /bin/sh /bin/sh /bin/sh
+Requires(rpmlib): rpmlib(CompressedFileNames) <= 3.0.4-1 rpmlib(FileDigests) <= 4.6.0-1 rpmlib(PayloadFilesHavePrefix) <= 4.0-1
+Requires(post): /bin/sh
+Requires(preun): /bin/sh
+Requires(postun): /bin/sh
+Recommends: cockpit-bridge
+Checking for unpackaged file(s): /usr/lib/rpm/check-files /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-fleet-0.0.1rc6-6.el10.x86_64
+Wrote: /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SRPMS/admiral-fleet-0.0.1rc6-6.el10.src.rpm
+Wrote: /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/RPMS/x86_64/admiral-fleet-0.0.1rc6-6.el10.x86_64.rpm
+Executing(%clean): /bin/sh -e /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/tmp/rpm-tmp.MUT1Fy
++ umask 022
++ cd /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILD
++ cd admiral-fleet-fc6909f6c41507d04aa204ebeafbbaaa4ef2c686
++ /usr/bin/rm -rf /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-fleet-0.0.1rc6-6.el10.x86_64
++ RPM_EC=0
+++ jobs -p
++ exit 0
+Executing(rmbuild): /bin/sh -e /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/tmp/rpm-tmp.TnGqzP
++ umask 022
++ cd /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILD
++ rm -rf /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILD/admiral-fleet-fc6909f6c41507d04aa204ebeafbbaaa4ef2c686-SPECPARTS
++ rm -rf admiral-fleet-fc6909f6c41507d04aa204ebeafbbaaa4ef2c686 admiral-fleet-fc6909f6c41507d04aa204ebeafbbaaa4ef2c686.gemspec
++ RPM_EC=0
+++ jobs -p
++ exit 0
+make[1]: Leaving directory '/root/admiral'
+=== Building admiralctl ===
+make rpm-admiralctl
+make[1]: Entering directory '/root/admiral'
+python3 scripts/validate-release-refs.py
+RPM source references match checked-out component commits.
+=== Generating pinned Admiral source archives ===
+git archive --format=tar.gz \
+	--prefix=admiral-bfa00c07f462bafc32627922d884248f9523c603/ \
+	-o /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/bfa00c07f462bafc32627922d884248f9523c603.tar.gz bfa00c07f462bafc32627922d884248f9523c603
+for sm in admirald admiral-fleet admiralctl; do \
+	echo "  Adding $sm..."; \
+	commit="HEAD"; \
+	if [ "$sm" = "admirald" ]; then commit="6e4a725d30c0fff877fe2252e843fae687810ae6"; fi; \
+	if [ "$sm" = "admiral-fleet" ]; then commit="fc6909f6c41507d04aa204ebeafbbaaa4ef2c686"; fi; \
+	if [ "$sm" = "admiralctl" ]; then commit="fa2a65e866310bd82bea78859804b6c3aea7989a"; fi; \
+	git -C $sm archive --format=tar.gz \
+		--prefix=$sm-$commit/ \
+		-o /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/$commit.tar.gz $commit || exit $?; \
+done
+  Adding admirald...
+  Adding admiral-fleet...
+  Adding admiralctl...
+cp /root/admiral/packaging/systemd/admirald.service /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/systemd/admiral-fleet.service /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/systemd/admiral-flagship.service /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/systemd/admiral-harbor.service /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/systemd/admiral-harbor-worker.service /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/systemd/admiral-harbor-worker.timer /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/systemd/admiral-harbor-catalog-sync.service /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/systemd/admiral-harbor-catalog-sync.timer /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/systemd/admiral-control-plane-backup.service /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/systemd/admiral-control-plane-backup.timer /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/systemd/admiral-wireguard-peer-revoke.socket /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/systemd/admiral-wireguard-peer-revoke@.service /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/config/admirald.ini /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/config/fleet.env /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/config/admiralctl.yaml /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/config/flagship.env /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/config/harbor.env /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/bin/harborctl /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/bin/harbor-gunicorn /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/bin/harbor-migrate /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/rpm/admiral-common.sysusers /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/scripts/admiral_letsencrypt_deploy_hook.sh /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/rpm/admiralctl.spec /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SPECS/
+rpmbuild -ba --target x86_64 --define '_topdir /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir' --define '_sourcedir /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES' --define '_specdir /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SPECS' --define '_builddir /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILD' --define '_rpmdir /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/RPMS' --define '_srcrpmdir /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SRPMS' --define '_tmppath /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/tmp' /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SPECS/admiralctl.spec
+Building target platforms: x86_64
+Building for target x86_64
+setting SOURCE_DATE_EPOCH=1792972800
+Executing(%prep): /bin/sh -e /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/tmp/rpm-tmp.kGQZZn
++ umask 022
++ cd /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILD
++ cd /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILD
++ rm -rf admiralctl-fa2a65e866310bd82bea78859804b6c3aea7989a
++ /usr/lib/rpm/rpmuncompress -x /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/fa2a65e866310bd82bea78859804b6c3aea7989a.tar.gz
++ STATUS=0
++ '[' 0 -ne 0 ']'
++ cd admiralctl-fa2a65e866310bd82bea78859804b6c3aea7989a
++ rm -rf /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILD/admiralctl-fa2a65e866310bd82bea78859804b6c3aea7989a-SPECPARTS
++ /usr/bin/mkdir -p /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILD/admiralctl-fa2a65e866310bd82bea78859804b6c3aea7989a-SPECPARTS
++ /usr/bin/chmod -Rf a+rX,u+w,g-w,o-w .
++ mkdir -p admirald
++ tar -xzf /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/6e4a725d30c0fff877fe2252e843fae687810ae6.tar.gz --strip-components=1 -C admirald
++ RPM_EC=0
+++ jobs -p
++ exit 0
+Executing(%build): /bin/sh -e /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/tmp/rpm-tmp.32HYYZ
++ umask 022
++ cd /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILD
++ CFLAGS='-O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Werror=format-security -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64-v3 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -mtls-dialect=gnu2   '
++ export CFLAGS
++ CXXFLAGS='-O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Werror=format-security -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64-v3 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -mtls-dialect=gnu2   '
++ export CXXFLAGS
++ FFLAGS='-O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64-v3 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -mtls-dialect=gnu2   -I/usr/lib64/gfortran/modules '
++ export FFLAGS
++ FCFLAGS='-O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64-v3 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -mtls-dialect=gnu2   -I/usr/lib64/gfortran/modules '
++ export FCFLAGS
++ VALAFLAGS=-g
++ export VALAFLAGS
++ LDFLAGS='-Wl,-z,relro -Wl,--as-needed  -Wl,-z,pack-relative-relocs -Wl,-z,now -specs=/usr/lib/rpm/redhat/redhat-hardened-ld -specs=/usr/lib/rpm/redhat/redhat-hardened-ld-errors -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -Wl,--build-id=sha1 -specs=/usr/lib/rpm/redhat/redhat-package-notes '
++ export LDFLAGS
++ LT_SYS_LIBRARY_PATH=/usr/lib64:
++ export LT_SYS_LIBRARY_PATH
++ CC=gcc
++ export CC
++ CXX=g++
++ export CXX
++ cd admiralctl-fa2a65e866310bd82bea78859804b6c3aea7989a
++ export GOWORK=off
++ GOWORK=off
++ export GOOS=linux
++ GOOS=linux
++ export GOARCH=amd64
++ GOARCH=amd64
++ export CGO_ENABLED=0
++ CGO_ENABLED=0
++ export PATH=/usr/lib/golang/bin:/usr/bin:/root/.codex/packages/app-server-daemon/releases/0.164.0-x86_64-unknown-linux-musl/codex-path:/root/.opencode/bin:/root/.opencode/bin:/root/.codex/tmp/arg0-linux/codex-arg0B7sz80:/root/.codex/packages/app-server-daemon/releases/0.164.0-x86_64-unknown-linux-musl/codex-path:/root/.codex/tmp/arg0-linux/codex-arg0c8cdru:/root/.codex/packages/app-server-daemon/releases/0.163.0-x86_64-unknown-linux-musl/codex-path:/root/.codex/tmp/arg0-linux/codex-arg0PisjEk:/usr/local/lib/node_modules/@openai/codex/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/codex-path:/root/.local/bin:/root/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin
++ PATH=/usr/lib/golang/bin:/usr/bin:/root/.codex/packages/app-server-daemon/releases/0.164.0-x86_64-unknown-linux-musl/codex-path:/root/.opencode/bin:/root/.opencode/bin:/root/.codex/tmp/arg0-linux/codex-arg0B7sz80:/root/.codex/packages/app-server-daemon/releases/0.164.0-x86_64-unknown-linux-musl/codex-path:/root/.codex/tmp/arg0-linux/codex-arg0c8cdru:/root/.codex/packages/app-server-daemon/releases/0.163.0-x86_64-unknown-linux-musl/codex-path:/root/.codex/tmp/arg0-linux/codex-arg0PisjEk:/usr/local/lib/node_modules/@openai/codex/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/codex-path:/root/.local/bin:/root/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin
++ export GOCACHE=/root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/tmp/go-cache
++ GOCACHE=/root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/tmp/go-cache
++ mkdir -p /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/tmp/go-cache
++ go build -trimpath -buildmode=pie '-ldflags=-s -w -X github.com/admiral-project/admiral/admiralctl/internal/version.Version=0.0.1rc6' -o admiralctl ./cmd/admiralctl/
++ RPM_EC=0
+++ jobs -p
++ exit 0
+Executing(%install): /bin/sh -e /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/tmp/rpm-tmp.z89zVD
++ umask 022
++ cd /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILD
++ '[' /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiralctl-0.0.1rc6-6.el10.x86_64 '!=' / ']'
++ rm -rf /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiralctl-0.0.1rc6-6.el10.x86_64
+++ dirname /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiralctl-0.0.1rc6-6.el10.x86_64
++ mkdir -p /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT
++ mkdir /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiralctl-0.0.1rc6-6.el10.x86_64
++ CFLAGS='-O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Werror=format-security -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64-v3 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -mtls-dialect=gnu2   '
++ export CFLAGS
++ CXXFLAGS='-O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Werror=format-security -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64-v3 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -mtls-dialect=gnu2   '
++ export CXXFLAGS
++ FFLAGS='-O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64-v3 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -mtls-dialect=gnu2   -I/usr/lib64/gfortran/modules '
++ export FFLAGS
++ FCFLAGS='-O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64-v3 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -mtls-dialect=gnu2   -I/usr/lib64/gfortran/modules '
++ export FCFLAGS
++ VALAFLAGS=-g
++ export VALAFLAGS
++ LDFLAGS='-Wl,-z,relro -Wl,--as-needed  -Wl,-z,pack-relative-relocs -Wl,-z,now -specs=/usr/lib/rpm/redhat/redhat-hardened-ld -specs=/usr/lib/rpm/redhat/redhat-hardened-ld-errors -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -Wl,--build-id=sha1 -specs=/usr/lib/rpm/redhat/redhat-package-notes '
++ export LDFLAGS
++ LT_SYS_LIBRARY_PATH=/usr/lib64:
++ export LT_SYS_LIBRARY_PATH
++ CC=gcc
++ export CC
++ CXX=g++
++ export CXX
++ cd admiralctl-fa2a65e866310bd82bea78859804b6c3aea7989a
++ install -Dm0755 admiralctl /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiralctl-0.0.1rc6-6.el10.x86_64/usr/bin/admiralctl
++ install -Dm0600 /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/admiralctl.yaml /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiralctl-0.0.1rc6-6.el10.x86_64/etc/admiralctl/config.yaml
++ install -Dm0644 docs/admiralctl.1 /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiralctl-0.0.1rc6-6.el10.x86_64/usr/share/man/man1/admiralctl.1
++ install -Dm0644 docs/admiralctl-admin.8 /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiralctl-0.0.1rc6-6.el10.x86_64/usr/share/man/man8/admiralctl-admin.8
++ /usr/lib/rpm/check-buildroot
++ /usr/lib/rpm/redhat/brp-ldconfig
++ /usr/lib/rpm/brp-compress
++ /usr/lib/rpm/brp-strip /usr/bin/strip
++ /usr/lib/rpm/brp-strip-comment-note /usr/bin/strip /usr/bin/objdump
++ /usr/lib/rpm/redhat/brp-strip-lto /usr/bin/strip
++ /usr/lib/rpm/brp-strip-static-archive /usr/bin/strip
++ /usr/lib/rpm/check-rpaths
++ /usr/lib/rpm/redhat/brp-mangle-shebangs
++ /usr/lib/rpm/brp-remove-la-files
++ /usr/lib/rpm/redhat/brp-python-rpm-in-distinfo
++ env /usr/lib/rpm/redhat/brp-python-bytecompile '' 1 0 -j4
++ /usr/lib/rpm/redhat/brp-python-hardlink
+Executing(%check): /bin/sh -e /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/tmp/rpm-tmp.1w9eVg
++ umask 022
++ cd /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILD
++ CFLAGS='-O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Werror=format-security -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64-v3 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -mtls-dialect=gnu2   '
++ export CFLAGS
++ CXXFLAGS='-O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Werror=format-security -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64-v3 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -mtls-dialect=gnu2   '
++ export CXXFLAGS
++ FFLAGS='-O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64-v3 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -mtls-dialect=gnu2   -I/usr/lib64/gfortran/modules '
++ export FFLAGS
++ FCFLAGS='-O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64-v3 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -mtls-dialect=gnu2   -I/usr/lib64/gfortran/modules '
++ export FCFLAGS
++ VALAFLAGS=-g
++ export VALAFLAGS
++ LDFLAGS='-Wl,-z,relro -Wl,--as-needed  -Wl,-z,pack-relative-relocs -Wl,-z,now -specs=/usr/lib/rpm/redhat/redhat-hardened-ld -specs=/usr/lib/rpm/redhat/redhat-hardened-ld-errors -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -Wl,--build-id=sha1 -specs=/usr/lib/rpm/redhat/redhat-package-notes '
++ export LDFLAGS
++ LT_SYS_LIBRARY_PATH=/usr/lib64:
++ export LT_SYS_LIBRARY_PATH
++ CC=gcc
++ export CC
++ CXX=g++
++ export CXX
++ cd admiralctl-fa2a65e866310bd82bea78859804b6c3aea7989a
++ export GOWORK=off
++ GOWORK=off
++ export PATH=/usr/lib/golang/bin:/usr/bin:/root/.codex/packages/app-server-daemon/releases/0.164.0-x86_64-unknown-linux-musl/codex-path:/root/.opencode/bin:/root/.opencode/bin:/root/.codex/tmp/arg0-linux/codex-arg0B7sz80:/root/.codex/packages/app-server-daemon/releases/0.164.0-x86_64-unknown-linux-musl/codex-path:/root/.codex/tmp/arg0-linux/codex-arg0c8cdru:/root/.codex/packages/app-server-daemon/releases/0.163.0-x86_64-unknown-linux-musl/codex-path:/root/.codex/tmp/arg0-linux/codex-arg0PisjEk:/usr/local/lib/node_modules/@openai/codex/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/codex-path:/root/.local/bin:/root/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin
++ PATH=/usr/lib/golang/bin:/usr/bin:/root/.codex/packages/app-server-daemon/releases/0.164.0-x86_64-unknown-linux-musl/codex-path:/root/.opencode/bin:/root/.opencode/bin:/root/.codex/tmp/arg0-linux/codex-arg0B7sz80:/root/.codex/packages/app-server-daemon/releases/0.164.0-x86_64-unknown-linux-musl/codex-path:/root/.codex/tmp/arg0-linux/codex-arg0c8cdru:/root/.codex/packages/app-server-daemon/releases/0.163.0-x86_64-unknown-linux-musl/codex-path:/root/.codex/tmp/arg0-linux/codex-arg0PisjEk:/usr/local/lib/node_modules/@openai/codex/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/codex-path:/root/.local/bin:/root/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin
++ export GOCACHE=/root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/tmp/go-cache
++ GOCACHE=/root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/tmp/go-cache
++ mkdir -p /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/tmp/go-cache
++ go test ./...
+ok  	github.com/admiral-project/admiral/admiralctl/cli	0.115s
+?   	github.com/admiral-project/admiral/admiralctl/cmd/admiralctl	[no test files]
+ok  	github.com/admiral-project/admiral/admiralctl/internal/client	0.119s
+ok  	github.com/admiral-project/admiral/admiralctl/internal/config	0.016s
+ok  	github.com/admiral-project/admiral/admiralctl/internal/output	0.009s
+?   	github.com/admiral-project/admiral/admiralctl/internal/version	[no test files]
++ readelf -h ./admiralctl
++ grep -Eq 'Machine:[[:space:]]+Advanced Micro Devices X86-64'
+++ ./admiralctl version
++ test 'admiralctl 0.0.1rc6' = 'admiralctl 0.0.1rc6'
++ RPM_EC=0
+++ jobs -p
++ exit 0
+Processing files: admiralctl-0.0.1rc6-6.el10.x86_64
+Executing(%license): /bin/sh -e /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/tmp/rpm-tmp.gcDD1R
++ umask 022
++ cd /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILD
++ cd admiralctl-fa2a65e866310bd82bea78859804b6c3aea7989a
++ LICENSEDIR=/root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiralctl-0.0.1rc6-6.el10.x86_64/usr/share/licenses/admiralctl
++ export LC_ALL=
++ LC_ALL=
++ export LICENSEDIR
++ /usr/bin/mkdir -p /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiralctl-0.0.1rc6-6.el10.x86_64/usr/share/licenses/admiralctl
++ cp -pr /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILD/admiralctl-fa2a65e866310bd82bea78859804b6c3aea7989a/LICENSE /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiralctl-0.0.1rc6-6.el10.x86_64/usr/share/licenses/admiralctl
++ RPM_EC=0
+++ jobs -p
++ exit 0
+Provides: admiralctl = 5:0.0.1rc6-6.el10 admiralctl(x86-64) = 5:0.0.1rc6-6.el10 config(admiralctl) = 5:0.0.1rc6-6.el10
+Requires(interp): /bin/sh
+Requires(rpmlib): rpmlib(CompressedFileNames) <= 3.0.4-1 rpmlib(FileDigests) <= 4.6.0-1 rpmlib(PayloadFilesHavePrefix) <= 4.0-1
+Requires(post): /bin/sh
+Checking for unpackaged file(s): /usr/lib/rpm/check-files /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiralctl-0.0.1rc6-6.el10.x86_64
+Wrote: /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SRPMS/admiralctl-0.0.1rc6-6.el10.src.rpm
+Wrote: /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/RPMS/x86_64/admiralctl-0.0.1rc6-6.el10.x86_64.rpm
+Executing(%clean): /bin/sh -e /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/tmp/rpm-tmp.Gj85WV
++ umask 022
++ cd /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILD
++ cd admiralctl-fa2a65e866310bd82bea78859804b6c3aea7989a
++ /usr/bin/rm -rf /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiralctl-0.0.1rc6-6.el10.x86_64
++ RPM_EC=0
+++ jobs -p
++ exit 0
+Executing(rmbuild): /bin/sh -e /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/tmp/rpm-tmp.cY3n8h
++ umask 022
++ cd /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILD
++ rm -rf /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILD/admiralctl-fa2a65e866310bd82bea78859804b6c3aea7989a-SPECPARTS
++ rm -rf admiralctl-fa2a65e866310bd82bea78859804b6c3aea7989a admiralctl-fa2a65e866310bd82bea78859804b6c3aea7989a.gemspec
++ RPM_EC=0
+++ jobs -p
++ exit 0
+make[1]: Leaving directory '/root/admiral'
+=== Building admiral-flagship ===
+make rpm-admiral-flagship
+make[1]: Entering directory '/root/admiral'
+python3 scripts/validate-release-refs.py
+RPM source references match checked-out component commits.
+git -C admiral-flagship archive --format=tar.gz \
+	--prefix=admiral-flagship-b7325bbc71fc474a521496e593b2967e4d555ac1/ \
+	-o /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/b7325bbc71fc474a521496e593b2967e4d555ac1.tar.gz b7325bbc71fc474a521496e593b2967e4d555ac1
+cp /root/admiral/packaging/systemd/admirald.service /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/systemd/admiral-fleet.service /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/systemd/admiral-flagship.service /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/systemd/admiral-harbor.service /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/systemd/admiral-harbor-worker.service /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/systemd/admiral-harbor-worker.timer /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/systemd/admiral-harbor-catalog-sync.service /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/systemd/admiral-harbor-catalog-sync.timer /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/systemd/admiral-control-plane-backup.service /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/systemd/admiral-control-plane-backup.timer /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/systemd/admiral-wireguard-peer-revoke.socket /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/systemd/admiral-wireguard-peer-revoke@.service /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/config/admirald.ini /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/config/fleet.env /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/config/admiralctl.yaml /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/config/flagship.env /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/config/harbor.env /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/bin/harborctl /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/bin/harbor-gunicorn /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/bin/harbor-migrate /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/rpm/admiral-common.sysusers /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/scripts/admiral_letsencrypt_deploy_hook.sh /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/rpm/admiral-flagship.spec /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SPECS/
+rpmbuild -ba --target x86_64 --define '_topdir /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir' --define '_sourcedir /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES' --define '_specdir /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SPECS' --define '_builddir /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILD' --define '_rpmdir /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/RPMS' --define '_srcrpmdir /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SRPMS' --define '_tmppath /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/tmp' /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SPECS/admiral-flagship.spec
+Building target platforms: x86_64
+Building for target x86_64
+setting SOURCE_DATE_EPOCH=1792972800
+Executing(%prep): /bin/sh -e /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/tmp/rpm-tmp.a4iGyu
++ umask 022
++ cd /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILD
++ cd /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILD
++ rm -rf admiral-flagship-b7325bbc71fc474a521496e593b2967e4d555ac1
++ /usr/lib/rpm/rpmuncompress -x /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/b7325bbc71fc474a521496e593b2967e4d555ac1.tar.gz
++ STATUS=0
++ '[' 0 -ne 0 ']'
++ cd admiral-flagship-b7325bbc71fc474a521496e593b2967e4d555ac1
++ rm -rf /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILD/admiral-flagship-b7325bbc71fc474a521496e593b2967e4d555ac1-SPECPARTS
++ /usr/bin/mkdir -p /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILD/admiral-flagship-b7325bbc71fc474a521496e593b2967e4d555ac1-SPECPARTS
++ /usr/bin/chmod -Rf a+rX,u+w,g-w,o-w .
++ RPM_EC=0
+++ jobs -p
++ exit 0
+Executing(%build): /bin/sh -e /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/tmp/rpm-tmp.75CRxw
++ umask 022
++ cd /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILD
++ CFLAGS='-O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Werror=format-security -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64-v3 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -mtls-dialect=gnu2   '
++ export CFLAGS
++ CXXFLAGS='-O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Werror=format-security -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64-v3 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -mtls-dialect=gnu2   '
++ export CXXFLAGS
++ FFLAGS='-O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64-v3 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -mtls-dialect=gnu2   -I/usr/lib64/gfortran/modules '
++ export FFLAGS
++ FCFLAGS='-O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64-v3 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -mtls-dialect=gnu2   -I/usr/lib64/gfortran/modules '
++ export FCFLAGS
++ VALAFLAGS=-g
++ export VALAFLAGS
++ LDFLAGS='-Wl,-z,relro -Wl,--as-needed  -Wl,-z,pack-relative-relocs -Wl,-z,now -specs=/usr/lib/rpm/redhat/redhat-hardened-ld -specs=/usr/lib/rpm/redhat/redhat-hardened-ld-errors -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -Wl,--build-id=sha1 -specs=/usr/lib/rpm/redhat/redhat-package-notes '
++ export LDFLAGS
++ LT_SYS_LIBRARY_PATH=/usr/lib64:
++ export LT_SYS_LIBRARY_PATH
++ CC=gcc
++ export CC
++ CXX=g++
++ export CXX
++ cd admiral-flagship-b7325bbc71fc474a521496e593b2967e4d555ac1
++ RPM_EC=0
+++ jobs -p
++ exit 0
+Executing(%install): /bin/sh -e /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/tmp/rpm-tmp.77gB76
++ umask 022
++ cd /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILD
++ '[' /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-flagship-0.0.1rc6-6.el10.x86_64 '!=' / ']'
++ rm -rf /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-flagship-0.0.1rc6-6.el10.x86_64
+++ dirname /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-flagship-0.0.1rc6-6.el10.x86_64
++ mkdir -p /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT
++ mkdir /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-flagship-0.0.1rc6-6.el10.x86_64
++ CFLAGS='-O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Werror=format-security -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64-v3 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -mtls-dialect=gnu2   '
++ export CFLAGS
++ CXXFLAGS='-O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Werror=format-security -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64-v3 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -mtls-dialect=gnu2   '
++ export CXXFLAGS
++ FFLAGS='-O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64-v3 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -mtls-dialect=gnu2   -I/usr/lib64/gfortran/modules '
++ export FFLAGS
++ FCFLAGS='-O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64-v3 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -mtls-dialect=gnu2   -I/usr/lib64/gfortran/modules '
++ export FCFLAGS
++ VALAFLAGS=-g
++ export VALAFLAGS
++ LDFLAGS='-Wl,-z,relro -Wl,--as-needed  -Wl,-z,pack-relative-relocs -Wl,-z,now -specs=/usr/lib/rpm/redhat/redhat-hardened-ld -specs=/usr/lib/rpm/redhat/redhat-hardened-ld-errors -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -Wl,--build-id=sha1 -specs=/usr/lib/rpm/redhat/redhat-package-notes '
++ export LDFLAGS
++ LT_SYS_LIBRARY_PATH=/usr/lib64:
++ export LT_SYS_LIBRARY_PATH
++ CC=gcc
++ export CC
++ CXX=g++
++ export CXX
++ cd admiral-flagship-b7325bbc71fc474a521496e593b2967e4d555ac1
++ mkdir -p /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-flagship-0.0.1rc6-6.el10.x86_64/usr/lib/admiral/flagship
++ touch flagships.files
++ '[' -d app ']'
++ cp -r app run.py /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-flagship-0.0.1rc6-6.el10.x86_64/usr/lib/admiral/flagship/
++ find /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-flagship-0.0.1rc6-6.el10.x86_64/usr/lib/admiral/flagship -type f
++ sed 's|/root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-flagship-0.0.1rc6-6.el10.x86_64||'
++ sort
++ '[' -f LICENSE ']'
++ install -Dm0644 LICENSE /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-flagship-0.0.1rc6-6.el10.x86_64/usr/share/licenses/admiral-flagship/LICENSE
++ install -Dm0644 /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/admiral-flagship.service /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-flagship-0.0.1rc6-6.el10.x86_64/usr/lib/systemd/system/admiral-flagship.service
++ install -Dm0600 /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/flagship.env /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-flagship-0.0.1rc6-6.el10.x86_64/etc/admiral/flagship.env
++ /usr/lib/rpm/check-buildroot
++ /usr/lib/rpm/redhat/brp-ldconfig
++ /usr/lib/rpm/brp-compress
++ /usr/lib/rpm/brp-strip /usr/bin/strip
++ /usr/lib/rpm/brp-strip-comment-note /usr/bin/strip /usr/bin/objdump
++ /usr/lib/rpm/redhat/brp-strip-lto /usr/bin/strip
++ /usr/lib/rpm/brp-strip-static-archive /usr/bin/strip
++ /usr/lib/rpm/check-rpaths
++ /usr/lib/rpm/redhat/brp-mangle-shebangs
++ /usr/lib/rpm/brp-remove-la-files
++ /usr/lib/rpm/redhat/brp-python-rpm-in-distinfo
++ env /usr/lib/rpm/redhat/brp-python-bytecompile '' 1 0 -j4
++ /usr/lib/rpm/redhat/brp-python-hardlink
+Executing(%check): /bin/sh -e /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/tmp/rpm-tmp.rZoVrD
++ umask 022
++ cd /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILD
++ CFLAGS='-O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Werror=format-security -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64-v3 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -mtls-dialect=gnu2   '
++ export CFLAGS
++ CXXFLAGS='-O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Werror=format-security -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64-v3 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -mtls-dialect=gnu2   '
++ export CXXFLAGS
++ FFLAGS='-O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64-v3 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -mtls-dialect=gnu2   -I/usr/lib64/gfortran/modules '
++ export FFLAGS
++ FCFLAGS='-O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64-v3 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -mtls-dialect=gnu2   -I/usr/lib64/gfortran/modules '
++ export FCFLAGS
++ VALAFLAGS=-g
++ export VALAFLAGS
++ LDFLAGS='-Wl,-z,relro -Wl,--as-needed  -Wl,-z,pack-relative-relocs -Wl,-z,now -specs=/usr/lib/rpm/redhat/redhat-hardened-ld -specs=/usr/lib/rpm/redhat/redhat-hardened-ld-errors -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -Wl,--build-id=sha1 -specs=/usr/lib/rpm/redhat/redhat-package-notes '
++ export LDFLAGS
++ LT_SYS_LIBRARY_PATH=/usr/lib64:
++ export LT_SYS_LIBRARY_PATH
++ CC=gcc
++ export CC
++ CXX=g++
++ export CXX
++ cd admiral-flagship-b7325bbc71fc474a521496e593b2967e4d555ac1
++ /usr/bin/python3 -m pytest tests/ -x --tb=short
+============================= test session starts ==============================
+platform linux -- Python 3.12.15, pytest-7.4.3, pluggy-1.3.0
+rootdir: /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILD/admiral-flagship-b7325bbc71fc474a521496e593b2967e4d555ac1
+collected 266 items
+
+tests/test_admiral_client_internal.py ...........................        [ 10%]
+tests/test_auth.py ..................                                    [ 16%]
+tests/test_auth_internal.py ...........                                  [ 21%]
+tests/test_bff.py ...................................................... [ 41%]
+........                                                                 [ 44%]
+tests/test_bff_internal.py ............................................. [ 61%]
+..........                                                               [ 65%]
+tests/test_csrf_internal.py ..........                                   [ 68%]
+tests/test_dashboard.py .....                                            [ 70%]
+tests/test_dashboard_internal.py .......                                 [ 73%]
+tests/test_factory.py .....                                              [ 75%]
+tests/test_mfa.py .........................                              [ 84%]
+tests/test_pagination.py ........                                        [ 87%]
+tests/test_rate_limit.py ........                                        [ 90%]
+tests/test_routes.py ...........                                         [ 94%]
+tests/test_security_hardening.py ...                                     [ 95%]
+tests/test_security_internal.py ...........                              [100%]
+
+============================= 266 passed in 19.55s =============================
++ RPM_EC=0
+++ jobs -p
++ exit 0
+Processing files: admiral-flagship-0.0.1rc6-6.el10.noarch
+Provides: admiral-flagship = 5:0.0.1rc6-6.el10 config(admiral-flagship) = 5:0.0.1rc6-6.el10
+Requires(interp): /bin/sh /bin/sh /bin/sh
+Requires(rpmlib): rpmlib(CompressedFileNames) <= 3.0.4-1 rpmlib(FileDigests) <= 4.6.0-1 rpmlib(PayloadFilesHavePrefix) <= 4.0-1
+Requires(post): /bin/sh
+Requires(preun): /bin/sh
+Requires(postun): /bin/sh
+Checking for unpackaged file(s): /usr/lib/rpm/check-files /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-flagship-0.0.1rc6-6.el10.x86_64
+Wrote: /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SRPMS/admiral-flagship-0.0.1rc6-6.el10.src.rpm
+Wrote: /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/RPMS/noarch/admiral-flagship-0.0.1rc6-6.el10.noarch.rpm
+Executing(%clean): /bin/sh -e /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/tmp/rpm-tmp.ajU1Md
++ umask 022
++ cd /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILD
++ cd admiral-flagship-b7325bbc71fc474a521496e593b2967e4d555ac1
++ /usr/bin/rm -rf /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-flagship-0.0.1rc6-6.el10.x86_64
++ RPM_EC=0
+++ jobs -p
++ exit 0
+Executing(rmbuild): /bin/sh -e /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/tmp/rpm-tmp.M7ZP3g
++ umask 022
++ cd /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILD
++ rm -rf /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILD/admiral-flagship-b7325bbc71fc474a521496e593b2967e4d555ac1-SPECPARTS
++ rm -rf admiral-flagship-b7325bbc71fc474a521496e593b2967e4d555ac1 admiral-flagship-b7325bbc71fc474a521496e593b2967e4d555ac1.gemspec
++ RPM_EC=0
+++ jobs -p
++ exit 0
+make[1]: Leaving directory '/root/admiral'
+=== Building admiral-harbor ===
+make rpm-admiral-harbor
+make[1]: Entering directory '/root/admiral'
+python3 scripts/validate-release-refs.py
+RPM source references match checked-out component commits.
+git -C admiral-harbor archive --format=tar.gz \
+	--prefix=admiral-harbor-dd4818b6e2bc53eea4495fc5e374a4893cfcb107/ \
+	-o /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/dd4818b6e2bc53eea4495fc5e374a4893cfcb107.tar.gz dd4818b6e2bc53eea4495fc5e374a4893cfcb107
+cp /root/admiral/packaging/systemd/admirald.service /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/systemd/admiral-fleet.service /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/systemd/admiral-flagship.service /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/systemd/admiral-harbor.service /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/systemd/admiral-harbor-worker.service /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/systemd/admiral-harbor-worker.timer /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/systemd/admiral-harbor-catalog-sync.service /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/systemd/admiral-harbor-catalog-sync.timer /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/systemd/admiral-control-plane-backup.service /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/systemd/admiral-control-plane-backup.timer /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/systemd/admiral-wireguard-peer-revoke.socket /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/systemd/admiral-wireguard-peer-revoke@.service /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/config/admirald.ini /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/config/fleet.env /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/config/admiralctl.yaml /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/config/flagship.env /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/config/harbor.env /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/bin/harborctl /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/bin/harbor-gunicorn /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/bin/harbor-migrate /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/rpm/admiral-common.sysusers /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/scripts/admiral_letsencrypt_deploy_hook.sh /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/
+cp /root/admiral/packaging/rpm/admiral-harbor.spec /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SPECS/
+rpmbuild -ba --target x86_64 --define '_topdir /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir' --define '_sourcedir /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES' --define '_specdir /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SPECS' --define '_builddir /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILD' --define '_rpmdir /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/RPMS' --define '_srcrpmdir /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SRPMS' --define '_tmppath /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/tmp' /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SPECS/admiral-harbor.spec
+Building target platforms: x86_64
+Building for target x86_64
+setting SOURCE_DATE_EPOCH=1792972800
+Executing(%prep): /bin/sh -e /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/tmp/rpm-tmp.8QCLs2
++ umask 022
++ cd /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILD
++ cd /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILD
++ rm -rf admiral-harbor-dd4818b6e2bc53eea4495fc5e374a4893cfcb107
++ /usr/lib/rpm/rpmuncompress -x /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/dd4818b6e2bc53eea4495fc5e374a4893cfcb107.tar.gz
++ STATUS=0
++ '[' 0 -ne 0 ']'
++ cd admiral-harbor-dd4818b6e2bc53eea4495fc5e374a4893cfcb107
++ rm -rf /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILD/admiral-harbor-dd4818b6e2bc53eea4495fc5e374a4893cfcb107-SPECPARTS
++ /usr/bin/mkdir -p /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILD/admiral-harbor-dd4818b6e2bc53eea4495fc5e374a4893cfcb107-SPECPARTS
++ /usr/bin/chmod -Rf a+rX,u+w,g-w,o-w .
++ RPM_EC=0
+++ jobs -p
++ exit 0
+Executing(%build): /bin/sh -e /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/tmp/rpm-tmp.MOwmY6
++ umask 022
++ cd /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILD
++ CFLAGS='-O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Werror=format-security -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64-v3 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -mtls-dialect=gnu2   '
++ export CFLAGS
++ CXXFLAGS='-O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Werror=format-security -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64-v3 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -mtls-dialect=gnu2   '
++ export CXXFLAGS
++ FFLAGS='-O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64-v3 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -mtls-dialect=gnu2   -I/usr/lib64/gfortran/modules '
++ export FFLAGS
++ FCFLAGS='-O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64-v3 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -mtls-dialect=gnu2   -I/usr/lib64/gfortran/modules '
++ export FCFLAGS
++ VALAFLAGS=-g
++ export VALAFLAGS
++ LDFLAGS='-Wl,-z,relro -Wl,--as-needed  -Wl,-z,pack-relative-relocs -Wl,-z,now -specs=/usr/lib/rpm/redhat/redhat-hardened-ld -specs=/usr/lib/rpm/redhat/redhat-hardened-ld-errors -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -Wl,--build-id=sha1 -specs=/usr/lib/rpm/redhat/redhat-package-notes '
++ export LDFLAGS
++ LT_SYS_LIBRARY_PATH=/usr/lib64:
++ export LT_SYS_LIBRARY_PATH
++ CC=gcc
++ export CC
++ CXX=g++
++ export CXX
++ cd admiral-harbor-dd4818b6e2bc53eea4495fc5e374a4893cfcb107
++ RPM_EC=0
+++ jobs -p
++ exit 0
+Executing(%install): /bin/sh -e /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/tmp/rpm-tmp.yAh2fM
++ umask 022
++ cd /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILD
++ '[' /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-harbor-0.0.1rc6-6.el10.x86_64 '!=' / ']'
++ rm -rf /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-harbor-0.0.1rc6-6.el10.x86_64
+++ dirname /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-harbor-0.0.1rc6-6.el10.x86_64
++ mkdir -p /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT
++ mkdir /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-harbor-0.0.1rc6-6.el10.x86_64
++ CFLAGS='-O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Werror=format-security -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64-v3 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -mtls-dialect=gnu2   '
++ export CFLAGS
++ CXXFLAGS='-O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Werror=format-security -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64-v3 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -mtls-dialect=gnu2   '
++ export CXXFLAGS
++ FFLAGS='-O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64-v3 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -mtls-dialect=gnu2   -I/usr/lib64/gfortran/modules '
++ export FFLAGS
++ FCFLAGS='-O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64-v3 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -mtls-dialect=gnu2   -I/usr/lib64/gfortran/modules '
++ export FCFLAGS
++ VALAFLAGS=-g
++ export VALAFLAGS
++ LDFLAGS='-Wl,-z,relro -Wl,--as-needed  -Wl,-z,pack-relative-relocs -Wl,-z,now -specs=/usr/lib/rpm/redhat/redhat-hardened-ld -specs=/usr/lib/rpm/redhat/redhat-hardened-ld-errors -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -Wl,--build-id=sha1 -specs=/usr/lib/rpm/redhat/redhat-package-notes '
++ export LDFLAGS
++ LT_SYS_LIBRARY_PATH=/usr/lib64:
++ export LT_SYS_LIBRARY_PATH
++ CC=gcc
++ export CC
++ CXX=g++
++ export CXX
++ cd admiral-harbor-dd4818b6e2bc53eea4495fc5e374a4893cfcb107
++ mkdir -p /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-harbor-0.0.1rc6-6.el10.x86_64/usr/lib/admiral/harbor
++ touch harbor.files
++ '[' -d app ']'
++ cp -r app run.py worker.py cli.py migrate.py alembic.ini migrations /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-harbor-0.0.1rc6-6.el10.x86_64/usr/lib/admiral/harbor/
++ find /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-harbor-0.0.1rc6-6.el10.x86_64/usr/lib/admiral/harbor -type f -o -type l
++ sed 's|/root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-harbor-0.0.1rc6-6.el10.x86_64||'
++ sort
++ install -Dm0755 /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/harborctl /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-harbor-0.0.1rc6-6.el10.x86_64/usr/bin/harborctl
++ install -Dm0755 /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/harbor-gunicorn /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-harbor-0.0.1rc6-6.el10.x86_64/usr/bin/harbor-gunicorn
++ install -Dm0755 /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/harbor-migrate /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-harbor-0.0.1rc6-6.el10.x86_64/usr/bin/harbor-migrate
++ install -Dm0644 docs/harborctl.8 /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-harbor-0.0.1rc6-6.el10.x86_64/usr/share/man/man8/harborctl.8
++ '[' -f LICENSE ']'
++ install -Dm0644 LICENSE /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-harbor-0.0.1rc6-6.el10.x86_64/usr/share/licenses/admiral-harbor/LICENSE
++ install -Dm0644 /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/admiral-harbor.service /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-harbor-0.0.1rc6-6.el10.x86_64/usr/lib/systemd/system/admiral-harbor.service
++ install -Dm0644 /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/admiral-harbor-worker.service /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-harbor-0.0.1rc6-6.el10.x86_64/usr/lib/systemd/system/admiral-harbor-worker.service
++ install -Dm0644 /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/admiral-harbor-worker.timer /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-harbor-0.0.1rc6-6.el10.x86_64/usr/lib/systemd/system/admiral-harbor-worker.timer
++ install -Dm0644 /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/admiral-harbor-catalog-sync.service /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-harbor-0.0.1rc6-6.el10.x86_64/usr/lib/systemd/system/admiral-harbor-catalog-sync.service
++ install -Dm0644 /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/admiral-harbor-catalog-sync.timer /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-harbor-0.0.1rc6-6.el10.x86_64/usr/lib/systemd/system/admiral-harbor-catalog-sync.timer
++ install -Dm0600 /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SOURCES/harbor.env /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-harbor-0.0.1rc6-6.el10.x86_64/etc/admiral/harbor.env
++ /usr/lib/rpm/check-buildroot
++ /usr/lib/rpm/redhat/brp-ldconfig
++ /usr/lib/rpm/brp-compress
++ /usr/lib/rpm/brp-strip /usr/bin/strip
++ /usr/lib/rpm/brp-strip-comment-note /usr/bin/strip /usr/bin/objdump
++ /usr/lib/rpm/redhat/brp-strip-lto /usr/bin/strip
++ /usr/lib/rpm/brp-strip-static-archive /usr/bin/strip
++ /usr/lib/rpm/check-rpaths
++ /usr/lib/rpm/redhat/brp-mangle-shebangs
+mangling shebang in /usr/bin/harbor-gunicorn from /bin/bash to #!/usr/bin/bash
+mangling shebang in /usr/bin/harbor-migrate from /usr/bin/env bash to #!/usr/bin/bash
++ /usr/lib/rpm/brp-remove-la-files
++ /usr/lib/rpm/redhat/brp-python-rpm-in-distinfo
++ env /usr/lib/rpm/redhat/brp-python-bytecompile '' 1 0 -j4
++ /usr/lib/rpm/redhat/brp-python-hardlink
+Executing(%check): /bin/sh -e /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/tmp/rpm-tmp.LBPkiG
++ umask 022
++ cd /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILD
++ CFLAGS='-O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Werror=format-security -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64-v3 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -mtls-dialect=gnu2   '
++ export CFLAGS
++ CXXFLAGS='-O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Werror=format-security -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64-v3 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -mtls-dialect=gnu2   '
++ export CXXFLAGS
++ FFLAGS='-O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64-v3 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -mtls-dialect=gnu2   -I/usr/lib64/gfortran/modules '
++ export FFLAGS
++ FCFLAGS='-O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64-v3 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -mtls-dialect=gnu2   -I/usr/lib64/gfortran/modules '
++ export FCFLAGS
++ VALAFLAGS=-g
++ export VALAFLAGS
++ LDFLAGS='-Wl,-z,relro -Wl,--as-needed  -Wl,-z,pack-relative-relocs -Wl,-z,now -specs=/usr/lib/rpm/redhat/redhat-hardened-ld -specs=/usr/lib/rpm/redhat/redhat-hardened-ld-errors -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -Wl,--build-id=sha1 -specs=/usr/lib/rpm/redhat/redhat-package-notes '
++ export LDFLAGS
++ LT_SYS_LIBRARY_PATH=/usr/lib64:
++ export LT_SYS_LIBRARY_PATH
++ CC=gcc
++ export CC
++ CXX=g++
++ export CXX
++ cd admiral-harbor-dd4818b6e2bc53eea4495fc5e374a4893cfcb107
++ /usr/bin/python3 -m pytest tests/ -x --tb=short
+============================= test session starts ==============================
+platform linux -- Python 3.12.15, pytest-7.4.3, pluggy-1.3.0
+rootdir: /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILD/admiral-harbor-dd4818b6e2bc53eea4495fc5e374a4893cfcb107
+collected 352 items
+
+tests/test_admin.py ........................                             [  6%]
+tests/test_admin_security.py .                                           [  7%]
+tests/test_admiral_client.py ................                            [ 11%]
+tests/test_auth.py ...........................                           [ 19%]
+tests/test_backup_links.py ..                                            [ 19%]
+tests/test_branding.py .................                                 [ 24%]
+tests/test_catalog.py ..                                                 [ 25%]
+tests/test_catalog_service.py .................                          [ 30%]
+tests/test_cli_ping.py .....                                             [ 31%]
+tests/test_cli_user.py .......                                           [ 33%]
+tests/test_client_routes.py ........................................     [ 44%]
+tests/test_context_processor.py ....                                     [ 46%]
+tests/test_csrf.py ...........                                           [ 49%]
+tests/test_factory.py ...                                                [ 50%]
+tests/test_fiscal.py ........                                            [ 52%]
+tests/test_identity.py .....................                             [ 58%]
+tests/test_markdown.py .....                                             [ 59%]
+tests/test_migrate.py .                                                  [ 59%]
+tests/test_paypal.py .........................                           [ 67%]
+tests/test_paypal_config.py .......                                      [ 69%]
+tests/test_presentation.py .                                             [ 69%]
+tests/test_rate_limit.py ....                                            [ 70%]
+tests/test_routes.py ...............................................     [ 83%]
+tests/test_secrets_manager.py .....                                      [ 85%]
+tests/test_security_utils.py ......                                      [ 86%]
+tests/test_settings.py .......                                           [ 88%]
+tests/test_setup_failed.py .....                                         [ 90%]
+tests/test_theming.py .....................                              [ 96%]
+tests/test_validation.py ......                                          [ 98%]
+tests/test_worker.py .......                                             [100%]
+
+======================= 352 passed in 178.52s (0:02:58) ========================
++ RPM_EC=0
+++ jobs -p
++ exit 0
+Processing files: admiral-harbor-0.0.1rc6-6.el10.noarch
+Provides: admiral-harbor = 5:0.0.1rc6-6.el10 config(admiral-harbor) = 5:0.0.1rc6-6.el10
+Requires(interp): /bin/sh /bin/sh /bin/sh
+Requires(rpmlib): rpmlib(CompressedFileNames) <= 3.0.4-1 rpmlib(FileDigests) <= 4.6.0-1 rpmlib(PayloadFilesHavePrefix) <= 4.0-1
+Requires(post): /bin/sh
+Requires(preun): /bin/sh
+Requires(postun): /bin/sh
+Requires: /usr/bin/bash /usr/bin/python3
+Recommends: cockpit-bridge
+Checking for unpackaged file(s): /usr/lib/rpm/check-files /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-harbor-0.0.1rc6-6.el10.x86_64
+Wrote: /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/SRPMS/admiral-harbor-0.0.1rc6-6.el10.src.rpm
+Wrote: /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/RPMS/noarch/admiral-harbor-0.0.1rc6-6.el10.noarch.rpm
+Executing(%clean): /bin/sh -e /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/tmp/rpm-tmp.xymvMF
++ umask 022
++ cd /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILD
++ cd admiral-harbor-dd4818b6e2bc53eea4495fc5e374a4893cfcb107
++ /usr/bin/rm -rf /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILDROOT/admiral-harbor-0.0.1rc6-6.el10.x86_64
++ RPM_EC=0
+++ jobs -p
++ exit 0
+Executing(rmbuild): /bin/sh -e /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/tmp/rpm-tmp.2ILsiy
++ umask 022
++ cd /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILD
++ rm -rf /root/admiral/packaging/build/validation/rc6-e5-r6/el10/topdir/BUILD/admiral-harbor-dd4818b6e2bc53eea4495fc5e374a4893cfcb107-SPECPARTS
++ rm -rf admiral-harbor-dd4818b6e2bc53eea4495fc5e374a4893cfcb107 admiral-harbor-dd4818b6e2bc53eea4495fc5e374a4893cfcb107.gemspec
++ RPM_EC=0
+++ jobs -p
++ exit 0
+make[1]: Leaving directory '/root/admiral'
+=== All 6 Admiral RPMs built ===
+admiral-common-0.0.1rc6-6.el10.noarch.rpm
+admiral-flagship-0.0.1rc6-6.el10.noarch.rpm
+admiral-harbor-0.0.1rc6-6.el10.noarch.rpm
+admirald-0.0.1rc6-6.el10.x86_64.rpm
+admiral-fleet-0.0.1rc6-6.el10.x86_64.rpm
+admiralctl-0.0.1rc6-6.el10.x86_64.rpm

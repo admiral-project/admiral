@@ -1,0 +1,290 @@
+Building target platforms: x86_64
+Building for target x86_64
+setting SOURCE_DATE_EPOCH=1792972800
+Executing(mkbuilddir): /bin/sh -e /var/tmp/rc6-e5-r6/rpmbuild/tmp/rpm-tmp.XVdhHn
+Creating(rpmbuild.env): /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-common-0.0.1rc6-build/rpmbuild.env
+  RPM_SOURCE_DIR="/var/tmp/rc6-e5-r6/rpmbuild/SOURCES"
+  RPM_BUILD_DIR="/var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-common-0.0.1rc6-build"
+  RPM_OPT_FLAGS="-O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Wno-complain-wrong-lang -Werror=format-security -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -mtls-dialect=gnu2 -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer"
+  RPM_LD_FLAGS="-Wl,-z,relro -Wl,--as-needed  -Wl,-z,pack-relative-relocs -Wl,-z,now -specs=/usr/lib/rpm/redhat/redhat-hardened-ld -specs=/usr/lib/rpm/redhat/redhat-hardened-ld-errors -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -Wl,--build-id=sha1 -specs=/usr/lib/rpm/redhat/redhat-package-notes  "
+  RPM_ARCH="x86_64"
+  RPM_OS="linux"
+  RPM_BUILD_NCPUS="2"
+  RPM_SPECPARTS_DIR="/var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-common-0.0.1rc6-build/SPECPARTS"
+  export RPM_SOURCE_DIR RPM_BUILD_DIR RPM_OPT_FLAGS RPM_ARCH RPM_OS RPM_BUILD_NCPUS RPM_SPECPARTS_DIR RPM_LD_FLAGS
+  RPM_DOC_DIR="/usr/share/doc"
+  export RPM_DOC_DIR
+  RPM_PACKAGE_NAME="admiral-common"
+  RPM_PACKAGE_VERSION="0.0.1rc6"
+  RPM_PACKAGE_RELEASE="6.fc46"
+  export RPM_PACKAGE_NAME RPM_PACKAGE_VERSION RPM_PACKAGE_RELEASE
+  LANG=C.UTF-8
+  export LANG
+  unset CDPATH DISPLAY ||:
+  unset DEBUGINFOD_URLS ||:
+  unset RPM_CONFIG_DIR ||:
+  RPM_BUILD_ROOT="/var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-common-0.0.1rc6-build/BUILDROOT"
+  export RPM_BUILD_ROOT
+  
+  PKG_CONFIG_PATH="${PKG_CONFIG_PATH}:/usr/lib64/pkgconfig:/usr/share/pkgconfig"
+  export PKG_CONFIG_PATH
+  CONFIG_SITE=${CONFIG_SITE:-NONE}
+  export CONFIG_SITE
+Executing(%prep): /bin/sh -e /var/tmp/rc6-e5-r6/rpmbuild/tmp/rpm-tmp.FK4A1L
++ umask 022
++ cd /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-common-0.0.1rc6-build
++ cd /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-common-0.0.1rc6-build
++ rm -rf admiral-bfa00c07f462bafc32627922d884248f9523c603
++ /usr/bin/rpmuncompress -x /var/tmp/rc6-e5-r6/rpmbuild/SOURCES/bfa00c07f462bafc32627922d884248f9523c603.tar.gz
++ STATUS=0
++ '[' 0 -ne 0 ']'
++ cd admiral-bfa00c07f462bafc32627922d884248f9523c603
++ /usr/bin/chmod -Rf a+rX,u+w,g-w,o-w .
++ RPM_EC=0
+++ jobs -p
++ exit 0
+Executing(%build): /bin/sh -e /var/tmp/rc6-e5-r6/rpmbuild/tmp/rpm-tmp.Lg2dCM
++ umask 022
++ cd /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-common-0.0.1rc6-build
++ CFLAGS='-O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Werror=format-security -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -mtls-dialect=gnu2 -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer  '
++ export CFLAGS
++ CXXFLAGS='-O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Werror=format-security -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -mtls-dialect=gnu2 -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer  '
++ export CXXFLAGS
++ FFLAGS='-O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -mtls-dialect=gnu2 -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer -I/usr/lib64/gfortran/modules  '
++ export FFLAGS
++ FCFLAGS='-O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -mtls-dialect=gnu2 -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer -I/usr/lib64/gfortran/modules  '
++ export FCFLAGS
++ VALAFLAGS=-g
++ export VALAFLAGS
++ RUSTFLAGS='-Copt-level=3 -Cdebuginfo=2 -Ccodegen-units=1 -Cstrip=none -Cforce-frame-pointers=yes -Clink-arg=-specs=/usr/lib/rpm/redhat/redhat-package-notes --cap-lints=warn'
++ export RUSTFLAGS
++ LDFLAGS='-Wl,-z,relro -Wl,--as-needed  -Wl,-z,pack-relative-relocs -Wl,-z,now -specs=/usr/lib/rpm/redhat/redhat-hardened-ld -specs=/usr/lib/rpm/redhat/redhat-hardened-ld-errors -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -Wl,--build-id=sha1 -specs=/usr/lib/rpm/redhat/redhat-package-notes  '
++ export LDFLAGS
++ LT_SYS_LIBRARY_PATH=/usr/lib64:
++ export LT_SYS_LIBRARY_PATH
++ CC=gcc
++ export CC
++ CXX=g++
++ export CXX
++ cd admiral-bfa00c07f462bafc32627922d884248f9523c603
++ RPM_EC=0
+++ jobs -p
++ exit 0
+Executing(%install): /bin/sh -e /var/tmp/rc6-e5-r6/rpmbuild/tmp/rpm-tmp.rMTABV
++ umask 022
++ cd /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-common-0.0.1rc6-build
++ '[' /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-common-0.0.1rc6-build/BUILDROOT '!=' / ']'
++ rm -rf /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-common-0.0.1rc6-build/BUILDROOT
+++ dirname /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-common-0.0.1rc6-build/BUILDROOT
++ mkdir -p /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-common-0.0.1rc6-build
++ mkdir /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-common-0.0.1rc6-build/BUILDROOT
++ CFLAGS='-O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Werror=format-security -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -mtls-dialect=gnu2 -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer  '
++ export CFLAGS
++ CXXFLAGS='-O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Werror=format-security -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -mtls-dialect=gnu2 -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer  '
++ export CXXFLAGS
++ FFLAGS='-O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -mtls-dialect=gnu2 -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer -I/usr/lib64/gfortran/modules  '
++ export FFLAGS
++ FCFLAGS='-O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -mtls-dialect=gnu2 -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer -I/usr/lib64/gfortran/modules  '
++ export FCFLAGS
++ VALAFLAGS=-g
++ export VALAFLAGS
++ RUSTFLAGS='-Copt-level=3 -Cdebuginfo=2 -Ccodegen-units=1 -Cstrip=none -Cforce-frame-pointers=yes -Clink-arg=-specs=/usr/lib/rpm/redhat/redhat-package-notes --cap-lints=warn'
++ export RUSTFLAGS
++ LDFLAGS='-Wl,-z,relro -Wl,--as-needed  -Wl,-z,pack-relative-relocs -Wl,-z,now -specs=/usr/lib/rpm/redhat/redhat-hardened-ld -specs=/usr/lib/rpm/redhat/redhat-hardened-ld-errors -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -Wl,--build-id=sha1 -specs=/usr/lib/rpm/redhat/redhat-package-notes  '
++ export LDFLAGS
++ LT_SYS_LIBRARY_PATH=/usr/lib64:
++ export LT_SYS_LIBRARY_PATH
++ CC=gcc
++ export CC
++ CXX=g++
++ export CXX
++ cd admiral-bfa00c07f462bafc32627922d884248f9523c603
++ mkdir -p /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-common-0.0.1rc6-build/BUILDROOT/usr/share/admiral/ansible
++ cp -r ansible/filter_plugins ansible/inventory ansible/roles ansible/site.yml ansible/wireguard-peers.yml /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-common-0.0.1rc6-build/BUILDROOT/usr/share/admiral/ansible/
++ install -Dm0755 scripts/install.sh /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-common-0.0.1rc6-build/BUILDROOT/usr/bin/admiral-install
++ install -Dm0755 scripts/admiral_known_host.py /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-common-0.0.1rc6-build/BUILDROOT/usr/bin/admiral-known-host
++ install -Dm0755 scripts/admiral_wireguard_peer_inventory.py /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-common-0.0.1rc6-build/BUILDROOT/usr/bin/admiral-wireguard-peer-inventory
++ install -Dm0755 scripts/admiral_revoke_bootstrap_key.py /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-common-0.0.1rc6-build/BUILDROOT/usr/bin/admiral-revoke-bootstrap-key
++ install -Dm0755 scripts/admiral_ssh_delivery_cleanup.py /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-common-0.0.1rc6-build/BUILDROOT/usr/bin/admiral-ssh-delivery-cleanup
++ install -Dm0755 scripts/admiral_control_plane_backup.sh /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-common-0.0.1rc6-build/BUILDROOT/usr/bin/admiral-control-plane-backup
++ install -Dm0755 scripts/admiral_wireguard_load_peers.sh /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-common-0.0.1rc6-build/BUILDROOT/usr/libexec/admiral-wireguard-load-peers
++ install -Dm0750 scripts/admiral_wireguard_revoke_peer.py /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-common-0.0.1rc6-build/BUILDROOT/usr/libexec/admiral-wireguard-revoke-peer
++ install -Dm0644 scripts/admiral_wireguard_revoke_peer.py /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-common-0.0.1rc6-build/BUILDROOT/usr/libexec/admiral_wireguard_revoke_peer.py
++ install -Dm0750 scripts/admiral_wireguard_peer_add.py /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-common-0.0.1rc6-build/BUILDROOT/usr/libexec/admiral-wireguard-peer-add
++ install -Dm0644 /var/tmp/rc6-e5-r6/rpmbuild/SOURCES/admiral-control-plane-backup.service /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-common-0.0.1rc6-build/BUILDROOT/usr/lib/systemd/system/admiral-control-plane-backup.service
++ install -Dm0644 /var/tmp/rc6-e5-r6/rpmbuild/SOURCES/admiral-control-plane-backup.timer /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-common-0.0.1rc6-build/BUILDROOT/usr/lib/systemd/system/admiral-control-plane-backup.timer
++ install -Dm0644 /var/tmp/rc6-e5-r6/rpmbuild/SOURCES/admiral-wireguard-peer-revoke.socket /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-common-0.0.1rc6-build/BUILDROOT/usr/lib/systemd/system/admiral-wireguard-peer-revoke.socket
++ install -Dm0644 /var/tmp/rc6-e5-r6/rpmbuild/SOURCES/admiral-wireguard-peer-revoke@.service /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-common-0.0.1rc6-build/BUILDROOT/usr/lib/systemd/system/admiral-wireguard-peer-revoke@.service
++ install -Dm0644 docs/admiral-install.1 /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-common-0.0.1rc6-build/BUILDROOT/usr/share/man/man1/admiral-install.1
++ install -Dm0644 docs/admiral-install.8 /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-common-0.0.1rc6-build/BUILDROOT/usr/share/man/man8/admiral-install.8
++ install -Dm0755 scripts/admiral_rootless_subids.py /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-common-0.0.1rc6-build/BUILDROOT/usr/bin/admiral-rootless-subids
++ install -Dm0755 scripts/admiral_https_setup.py /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-common-0.0.1rc6-build/BUILDROOT/usr/bin/admiral-https-setup
++ install -Dm0755 /var/tmp/rc6-e5-r6/rpmbuild/SOURCES/admiral_letsencrypt_deploy_hook.sh /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-common-0.0.1rc6-build/BUILDROOT/usr/libexec/admiral-letsencrypt-deploy-hook
++ mkdir -p /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-common-0.0.1rc6-build/BUILDROOT/etc/admiral
++ mkdir -p /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-common-0.0.1rc6-build/BUILDROOT/etc/admiral/tls
++ mkdir -p /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-common-0.0.1rc6-build/BUILDROOT/etc/admiral/ssh
++ mkdir -p /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-common-0.0.1rc6-build/BUILDROOT/etc/admiralctl
++ mkdir -p /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-common-0.0.1rc6-build/BUILDROOT/etc/wireguard/peers.d
++ mkdir -p /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-common-0.0.1rc6-build/BUILDROOT/etc/systemd/resolved.conf.d
++ mkdir -p /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-common-0.0.1rc6-build/BUILDROOT/etc/systemd/system/admirald.service.d
++ mkdir -p /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-common-0.0.1rc6-build/BUILDROOT/etc/systemd/system/admiral-flagship.service.d
++ mkdir -p /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-common-0.0.1rc6-build/BUILDROOT/etc/systemd/system/admiral-harbor.service.d
++ mkdir -p /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-common-0.0.1rc6-build/BUILDROOT/etc/systemd/system/admiral-harbor-worker.service.d
++ mkdir -p /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-common-0.0.1rc6-build/BUILDROOT/etc/systemd/system/admiral-harbor-catalog-sync.service.d
++ mkdir -p /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-common-0.0.1rc6-build/BUILDROOT/etc/systemd/system/caddy.service.d
++ mkdir -p /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-common-0.0.1rc6-build/BUILDROOT/etc/ssh/sshd_config.d
++ mkdir -p /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-common-0.0.1rc6-build/BUILDROOT/etc/nftables
++ mkdir -p /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-common-0.0.1rc6-build/BUILDROOT/etc/fail2ban/jail.d
++ mkdir -p /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-common-0.0.1rc6-build/BUILDROOT/etc/fail2ban/filter.d
++ mkdir -p /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-common-0.0.1rc6-build/BUILDROOT/etc/audit/rules.d
++ mkdir -p /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-common-0.0.1rc6-build/BUILDROOT/root/.config/admiralctl
++ mkdir -p /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-common-0.0.1rc6-build/BUILDROOT/usr/lib/admiral/flagship
++ mkdir -p /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-common-0.0.1rc6-build/BUILDROOT/usr/lib/admiral/harbor
++ mkdir -p /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-common-0.0.1rc6-build/BUILDROOT/var/log/admiral
++ mkdir -p /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-common-0.0.1rc6-build/BUILDROOT/etc/containers/systemd/admiral
++ mkdir -p /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-common-0.0.1rc6-build/BUILDROOT/var/lib/admiral/outbox
++ mkdir -p /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-common-0.0.1rc6-build/BUILDROOT/var/lib/admiral/backups
++ mkdir -p /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-common-0.0.1rc6-build/BUILDROOT/var/lib/admiral/restore
++ mkdir -p /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-common-0.0.1rc6-build/BUILDROOT/var/lib/admiral/tmp
++ mkdir -p /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-common-0.0.1rc6-build/BUILDROOT/var/lib/admiral/instances
++ mkdir -p /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-common-0.0.1rc6-build/BUILDROOT/var/lib/admiral/control-plane-backups
++ mkdir -p /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-common-0.0.1rc6-build/BUILDROOT/var/lib/admiral/harbor/uploads
++ mkdir -p /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-common-0.0.1rc6-build/BUILDROOT/var/lib/admiral/ssh-delivery
++ mkdir -p /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-common-0.0.1rc6-build/BUILDROOT/var/lib/admiral-apps
++ install -D -m 0644 /var/tmp/rc6-e5-r6/rpmbuild/SOURCES/admiral-common.sysusers /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-common-0.0.1rc6-build/BUILDROOT/usr/lib/sysusers.d/admiral-common.conf
++ /usr/lib/rpm/check-buildroot
++ /usr/lib/rpm/redhat/brp-ldconfig
++ COMPRESS='gzip -9 -n'
++ COMPRESS_EXT=.gz
++ /usr/lib/rpm/brp-compress
++ /usr/lib/rpm/brp-strip /usr/bin/strip
++ /usr/lib/rpm/brp-strip-comment-note /usr/bin/strip /usr/bin/objdump
++ /usr/lib/rpm/redhat/brp-strip-lto /usr/bin/strip
++ /usr/lib/rpm/check-rpaths
++ /usr/lib/rpm/redhat/brp-mangle-shebangs
+mangling shebang in /usr/bin/admiral-install from /usr/bin/env bash to #!/usr/bin/bash
+mangling shebang in /usr/bin/admiral-known-host from /usr/bin/env python3 to #!/usr/bin/python3
+mangling shebang in /usr/bin/admiral-wireguard-peer-inventory from /usr/bin/env python3 to #!/usr/bin/python3
+mangling shebang in /usr/bin/admiral-revoke-bootstrap-key from /usr/bin/env python3 to #!/usr/bin/python3
+mangling shebang in /usr/bin/admiral-ssh-delivery-cleanup from /usr/bin/env python3 to #!/usr/bin/python3
+mangling shebang in /usr/bin/admiral-control-plane-backup from /usr/bin/env bash to #!/usr/bin/bash
+mangling shebang in /usr/bin/admiral-rootless-subids from /usr/bin/env python3 to #!/usr/bin/python3
+mangling shebang in /usr/bin/admiral-https-setup from /usr/bin/env python3 to #!/usr/bin/python3
+mangling shebang in /usr/libexec/admiral-wireguard-load-peers from /usr/bin/env bash to #!/usr/bin/bash
+mangling shebang in /usr/libexec/admiral-wireguard-revoke-peer from /usr/bin/env python3 to #!/usr/bin/python3
+mangling shebang in /usr/libexec/admiral-wireguard-peer-add from /usr/bin/env python3 to #!/usr/bin/python3
+mangling shebang in /usr/libexec/admiral-letsencrypt-deploy-hook from /usr/bin/env bash to #!/usr/bin/bash
++ /usr/lib/rpm/brp-remove-la-files
++ /usr/lib/rpm/redhat/brp-python-rpm-in-distinfo
++ env /usr/lib/rpm/redhat/brp-python-bytecompile '' 1 0 -j2
++ /usr/lib/rpm/redhat/brp-python-hardlink
++ /usr/bin/add-det --brp -j2 /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-common-0.0.1rc6-build/BUILDROOT
+Scanned 99 directories and 47 files,
+    processed 2 inodes,
+    0 modified (0 replaced + 0 rewritten),
+    0 unsupported format, 0 errors
++ /usr/bin/linkdupes --brp /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-common-0.0.1rc6-build/BUILDROOT/usr
+Scanned 53 directories and 47 files,
+    considered 47 files, read 3 files, linked 0 files, 0 errors
+    sum of sizes of linked files: 0 bytes
+Executing(%check): /bin/sh -e /var/tmp/rc6-e5-r6/rpmbuild/tmp/rpm-tmp.r0jMau
++ umask 022
++ cd /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-common-0.0.1rc6-build
++ CFLAGS='-O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Werror=format-security -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -mtls-dialect=gnu2 -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer  '
++ export CFLAGS
++ CXXFLAGS='-O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Werror=format-security -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -mtls-dialect=gnu2 -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer  '
++ export CXXFLAGS
++ FFLAGS='-O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -mtls-dialect=gnu2 -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer -I/usr/lib64/gfortran/modules  '
++ export FFLAGS
++ FCFLAGS='-O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -mtls-dialect=gnu2 -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer -I/usr/lib64/gfortran/modules  '
++ export FCFLAGS
++ VALAFLAGS=-g
++ export VALAFLAGS
++ RUSTFLAGS='-Copt-level=3 -Cdebuginfo=2 -Ccodegen-units=1 -Cstrip=none -Cforce-frame-pointers=yes -Clink-arg=-specs=/usr/lib/rpm/redhat/redhat-package-notes --cap-lints=warn'
++ export RUSTFLAGS
++ LDFLAGS='-Wl,-z,relro -Wl,--as-needed  -Wl,-z,pack-relative-relocs -Wl,-z,now -specs=/usr/lib/rpm/redhat/redhat-hardened-ld -specs=/usr/lib/rpm/redhat/redhat-hardened-ld-errors -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -Wl,--build-id=sha1 -specs=/usr/lib/rpm/redhat/redhat-package-notes  '
++ export LDFLAGS
++ LT_SYS_LIBRARY_PATH=/usr/lib64:
++ export LT_SYS_LIBRARY_PATH
++ CC=gcc
++ export CC
++ CXX=g++
++ export CXX
++ cd admiral-bfa00c07f462bafc32627922d884248f9523c603
++ for script in /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-common-0.0.1rc6-build/BUILDROOT/usr/bin/admiral-install /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-common-0.0.1rc6-build/BUILDROOT/usr/bin/admiral-control-plane-backup /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-common-0.0.1rc6-build/BUILDROOT/usr/libexec/admiral-wireguard-load-peers /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-common-0.0.1rc6-build/BUILDROOT/usr/libexec/admiral-letsencrypt-deploy-hook
++ bash -n /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-common-0.0.1rc6-build/BUILDROOT/usr/bin/admiral-install
++ for script in /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-common-0.0.1rc6-build/BUILDROOT/usr/bin/admiral-install /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-common-0.0.1rc6-build/BUILDROOT/usr/bin/admiral-control-plane-backup /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-common-0.0.1rc6-build/BUILDROOT/usr/libexec/admiral-wireguard-load-peers /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-common-0.0.1rc6-build/BUILDROOT/usr/libexec/admiral-letsencrypt-deploy-hook
++ bash -n /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-common-0.0.1rc6-build/BUILDROOT/usr/bin/admiral-control-plane-backup
++ for script in /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-common-0.0.1rc6-build/BUILDROOT/usr/bin/admiral-install /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-common-0.0.1rc6-build/BUILDROOT/usr/bin/admiral-control-plane-backup /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-common-0.0.1rc6-build/BUILDROOT/usr/libexec/admiral-wireguard-load-peers /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-common-0.0.1rc6-build/BUILDROOT/usr/libexec/admiral-letsencrypt-deploy-hook
++ bash -n /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-common-0.0.1rc6-build/BUILDROOT/usr/libexec/admiral-wireguard-load-peers
++ for script in /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-common-0.0.1rc6-build/BUILDROOT/usr/bin/admiral-install /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-common-0.0.1rc6-build/BUILDROOT/usr/bin/admiral-control-plane-backup /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-common-0.0.1rc6-build/BUILDROOT/usr/libexec/admiral-wireguard-load-peers /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-common-0.0.1rc6-build/BUILDROOT/usr/libexec/admiral-letsencrypt-deploy-hook
++ bash -n /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-common-0.0.1rc6-build/BUILDROOT/usr/libexec/admiral-letsencrypt-deploy-hook
++ python3 - /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-common-0.0.1rc6-build/BUILDROOT/usr/bin/admiral-known-host /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-common-0.0.1rc6-build/BUILDROOT/usr/bin/admiral-wireguard-peer-inventory /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-common-0.0.1rc6-build/BUILDROOT/usr/bin/admiral-revoke-bootstrap-key /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-common-0.0.1rc6-build/BUILDROOT/usr/bin/admiral-ssh-delivery-cleanup /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-common-0.0.1rc6-build/BUILDROOT/usr/bin/admiral-rootless-subids /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-common-0.0.1rc6-build/BUILDROOT/usr/bin/admiral-https-setup
++ python3 scripts/test_wireguard_peer_revoke.py
+............
+----------------------------------------------------------------------
+Ran 12 tests in 0.053s
+
+OK
++ python3 scripts/test_wireguard_peer_add.py
+...
+----------------------------------------------------------------------
+Ran 3 tests in 0.011s
+
+OK
++ python3 scripts/test_wireguard_peer_inventory.py
+.........
+----------------------------------------------------------------------
+Ran 9 tests in 0.040s
+
+OK
++ RPM_EC=0
+++ jobs -p
++ exit 0
+Processing files: admiral-common-0.0.1rc6-6.fc46.noarch
+Executing(%doc): /bin/sh -e /var/tmp/rc6-e5-r6/rpmbuild/tmp/rpm-tmp.0rJT4I
++ umask 022
++ cd /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-common-0.0.1rc6-build
++ cd admiral-bfa00c07f462bafc32627922d884248f9523c603
++ DOCDIR=/var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-common-0.0.1rc6-build/BUILDROOT/usr/share/doc/admiral-common
++ export LC_ALL=C.UTF-8
++ LC_ALL=C.UTF-8
++ export DOCDIR
++ /usr/bin/mkdir -p /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-common-0.0.1rc6-build/BUILDROOT/usr/share/doc/admiral-common
++ cp -pr /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-common-0.0.1rc6-build/admiral-bfa00c07f462bafc32627922d884248f9523c603/README.md /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-common-0.0.1rc6-build/BUILDROOT/usr/share/doc/admiral-common
++ RPM_EC=0
+++ jobs -p
++ exit 0
+Executing(%license): /bin/sh -e /var/tmp/rc6-e5-r6/rpmbuild/tmp/rpm-tmp.43JAoH
++ umask 022
++ cd /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-common-0.0.1rc6-build
++ cd admiral-bfa00c07f462bafc32627922d884248f9523c603
++ LICENSEDIR=/var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-common-0.0.1rc6-build/BUILDROOT/usr/share/licenses/admiral-common
++ export LC_ALL=C.UTF-8
++ LC_ALL=C.UTF-8
++ export LICENSEDIR
++ /usr/bin/mkdir -p /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-common-0.0.1rc6-build/BUILDROOT/usr/share/licenses/admiral-common
++ cp -pr /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-common-0.0.1rc6-build/admiral-bfa00c07f462bafc32627922d884248f9523c603/LICENSE /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-common-0.0.1rc6-build/BUILDROOT/usr/share/licenses/admiral-common
++ RPM_EC=0
+++ jobs -p
++ exit 0
+Provides: admiral-common = 5:0.0.1rc6-6.fc46 group(admiral) group(admiral-apps) user(admiral) = dSBhZG1pcmFsIC0gIkFkbWlyYWwgc2VydmljZSBhY2NvdW50IiAvdmFyL2xpYi9hZG1pcmFsIC9zYmluL25vbG9naW4A user(admiral-apps) = dSBhZG1pcmFsLWFwcHMgLSAiQWRtaXJhbCByb290bGVzcyBhcHBzIiAvdmFyL2xpYi9hZG1pcmFsLWFwcHMgL3NiaW4vbm9sb2dpbgAA
+Requires(interp): /bin/sh /bin/sh /bin/sh /bin/sh
+Requires(rpmlib): rpmlib(CompressedFileNames) <= 3.0.4-1 rpmlib(FileDigests) <= 4.6.0-1 rpmlib(PayloadFilesHavePrefix) <= 4.0-1
+Requires(pre): /bin/sh group(admiral) group(admiral-apps) user(admiral) user(admiral-apps)
+Requires(post): /bin/sh
+Requires(preun): /bin/sh
+Requires(postun): /bin/sh group(admiral) group(admiral-apps) user(admiral) user(admiral-apps)
+Requires: /usr/bin/bash /usr/bin/python3
+Checking for unpackaged file(s): /usr/lib/rpm/check-files /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-common-0.0.1rc6-build/BUILDROOT
+Wrote: /var/tmp/rc6-e5-r6/rpmbuild/SRPMS/admiral-common-0.0.1rc6-6.fc46.src.rpm
+Wrote: /var/tmp/rc6-e5-r6/rpmbuild/RPMS/noarch/admiral-common-0.0.1rc6-6.fc46.noarch.rpm
+Executing(rmbuild): /bin/sh -e /var/tmp/rc6-e5-r6/rpmbuild/tmp/rpm-tmp.dRADVg
++ umask 022
++ cd /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-common-0.0.1rc6-build
++ test -d /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-common-0.0.1rc6-build
++ /usr/bin/chmod -Rf a+rX,u+w,g-w,o-w /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-common-0.0.1rc6-build
++ rm -rf /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-common-0.0.1rc6-build
++ RPM_EC=0
+++ jobs -p
++ exit 0

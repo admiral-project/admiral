@@ -1,0 +1,50 @@
+timestamp_utc=2026-10-26T14:44:29Z
+NAME="Rocky Linux"
+VERSION="10.2 (Red Quartz)"
+RELEASE_TYPE="stable"
+ID="rocky"
+ID_LIKE="rhel centos fedora"
+VERSION_ID="10.2"
+PLATFORM_ID="platform:el10"
+PRETTY_NAME="Rocky Linux 10.2 (Red Quartz)"
+ANSI_COLOR="0;32"
+LOGO="fedora-logo-icon"
+CPE_NAME="cpe:/o:rocky:rocky:10::baseos"
+HOME_URL="https://rockylinux.org/"
+VENDOR_NAME="RESF"
+VENDOR_URL="https://resf.org/"
+BUG_REPORT_URL="https://bugs.rockylinux.org/"
+SUPPORT_END="2035-05-31"
+ROCKY_SUPPORT_PRODUCT="Rocky-Linux-10"
+ROCKY_SUPPORT_PRODUCT_VERSION="10.2"
+REDHAT_SUPPORT_PRODUCT="Rocky Linux"
+REDHAT_SUPPORT_PRODUCT_VERSION="10.2"
+Linux rocky-linux-s-4vcpu-8gb-nyc1 6.12.0-211.56.1.el10_2.0.1.x86_64 #1 SMP PREEMPT_DYNAMIC Thu Sep 17 20:27:00 UTC 2026 x86_64 GNU/Linux
+Architecture:                            x86_64
+CPU(s):                                  4
+Model name:                              DO-Regular
+               total        used        free      shared  buff/cache   available
+Mem:           7.5Gi       1.9Gi       4.3Gi       9.0Mi       1.7Gi       5.6Gi
+Swap:          4.0Gi       969Mi       3.1Gi
+NAME          TYPE SIZE   USED PRIO
+/var/swapfile file   4G 969.4M   -2
+Filesystem      Size  Used Avail Use% Mounted on
+/dev/vda1       159G  100G   59G  64% /
+
+KVM: available
+
+SELinux: Enforcing
+
+Libvirt/QEMU:
+Compiled against library: libvirt 11.10.0
+Using library: libvirt 11.10.0
+Using API: QEMU 11.10.0
+Running hypervisor: QEMU 10.1.0
+
+QEMU emulator version 10.1.0 (qemu-kvm-10.1.0-16.el10_2.5)
+
+Active guests:
+
+Free storage:
+Filesystem      Size  Used Avail Use% Mounted on
+/dev/vda1       159G  100G   59G  64% /

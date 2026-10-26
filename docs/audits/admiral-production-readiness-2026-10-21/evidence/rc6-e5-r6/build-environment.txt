@@ -1,0 +1,32 @@
+candidate_id=rc6-e5-r6
+version=0.0.1rc6
+epoch=5
+release=6
+root_source_sha=bfa00c07f462bafc32627922d884248f9523c603
+
+component_checkouts_and_origin_main:
+admirald	6e4a725d30c0fff877fe2252e843fae687810ae6	6e4a725d30c0fff877fe2252e843fae687810ae6
+admiral-fleet	fc6909f6c41507d04aa204ebeafbbaaa4ef2c686	fc6909f6c41507d04aa204ebeafbbaaa4ef2c686
+admiralctl	fa2a65e866310bd82bea78859804b6c3aea7989a	fa2a65e866310bd82bea78859804b6c3aea7989a
+admiral-flagship	b7325bbc71fc474a521496e593b2967e4d555ac1	b7325bbc71fc474a521496e593b2967e4d555ac1
+admiral-harbor	dd4818b6e2bc53eea4495fc5e374a4893cfcb107	dd4818b6e2bc53eea4495fc5e374a4893cfcb107
+
+rocky_builder:
+PRETTY_NAME=Rocky Linux 10.2 (Red Quartz)
+VERSION_ID=10.2
+ARCH=x86_64
+6.12.0-211.56.1.el10_2.0.1.x86_64
+RPM version 4.19.1.1
+go version go1.26.10 (Red Hat 1.26.10-1.el10_2) linux/amd64
+
+fedora_builder:
+PRETTY_NAME=Fedora Linux 46 (Cloud Edition Prerelease)
+VERSION_ID=46
+ARCH=x86_64
+7.4.0-0.rc0.261023g734bef548a96.6.fc46.x86_64
+RPM version 6.1.0
+go version go1.27.3-X:nodwarf5 linux/amd64
+repo id                                                repo name
+copr:copr.fedorainfracloud.org:admiral-project:admiral Copr repo for admiral owned by admiral-project
+fedora-cisco-openh264                                  Fedora rawhide openh264 (From Cisco) - x86_64
+rawhide                                                Fedora - Rawhide - Developmental packages for the next Fedora release

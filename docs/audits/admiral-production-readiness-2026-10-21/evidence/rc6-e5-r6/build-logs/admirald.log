@@ -1,0 +1,235 @@
+Building target platforms: x86_64
+Building for target x86_64
+setting SOURCE_DATE_EPOCH=1792972800
+Executing(mkbuilddir): /bin/sh -e /var/tmp/rc6-e5-r6/rpmbuild/tmp/rpm-tmp.2EAY3K
+Creating(rpmbuild.env): /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admirald-0.0.1rc6-build/rpmbuild.env
+  RPM_SOURCE_DIR="/var/tmp/rc6-e5-r6/rpmbuild/SOURCES"
+  RPM_BUILD_DIR="/var/tmp/rc6-e5-r6/rpmbuild/BUILD/admirald-0.0.1rc6-build"
+  RPM_OPT_FLAGS="-O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Wno-complain-wrong-lang -Werror=format-security -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -mtls-dialect=gnu2 -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer"
+  RPM_LD_FLAGS="-Wl,-z,relro -Wl,--as-needed  -Wl,-z,pack-relative-relocs -Wl,-z,now -specs=/usr/lib/rpm/redhat/redhat-hardened-ld -specs=/usr/lib/rpm/redhat/redhat-hardened-ld-errors -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -Wl,--build-id=sha1 -specs=/usr/lib/rpm/redhat/redhat-package-notes  "
+  RPM_ARCH="x86_64"
+  RPM_OS="linux"
+  RPM_BUILD_NCPUS="2"
+  RPM_SPECPARTS_DIR="/var/tmp/rc6-e5-r6/rpmbuild/BUILD/admirald-0.0.1rc6-build/SPECPARTS"
+  export RPM_SOURCE_DIR RPM_BUILD_DIR RPM_OPT_FLAGS RPM_ARCH RPM_OS RPM_BUILD_NCPUS RPM_SPECPARTS_DIR RPM_LD_FLAGS
+  RPM_DOC_DIR="/usr/share/doc"
+  export RPM_DOC_DIR
+  RPM_PACKAGE_NAME="admirald"
+  RPM_PACKAGE_VERSION="0.0.1rc6"
+  RPM_PACKAGE_RELEASE="6.fc46"
+  export RPM_PACKAGE_NAME RPM_PACKAGE_VERSION RPM_PACKAGE_RELEASE
+  LANG=C.UTF-8
+  export LANG
+  unset CDPATH DISPLAY ||:
+  unset DEBUGINFOD_URLS ||:
+  unset RPM_CONFIG_DIR ||:
+  RPM_BUILD_ROOT="/var/tmp/rc6-e5-r6/rpmbuild/BUILD/admirald-0.0.1rc6-build/BUILDROOT"
+  export RPM_BUILD_ROOT
+  
+  PKG_CONFIG_PATH="${PKG_CONFIG_PATH}:/usr/lib64/pkgconfig:/usr/share/pkgconfig"
+  export PKG_CONFIG_PATH
+  CONFIG_SITE=${CONFIG_SITE:-NONE}
+  export CONFIG_SITE
+Executing(%prep): /bin/sh -e /var/tmp/rc6-e5-r6/rpmbuild/tmp/rpm-tmp.8ZgbfZ
++ umask 022
++ cd /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admirald-0.0.1rc6-build
++ cd /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admirald-0.0.1rc6-build
++ rm -rf admirald-6e4a725d30c0fff877fe2252e843fae687810ae6
++ /usr/bin/rpmuncompress -x /var/tmp/rc6-e5-r6/rpmbuild/SOURCES/6e4a725d30c0fff877fe2252e843fae687810ae6.tar.gz
++ STATUS=0
++ '[' 0 -ne 0 ']'
++ cd admirald-6e4a725d30c0fff877fe2252e843fae687810ae6
++ /usr/bin/chmod -Rf a+rX,u+w,g-w,o-w .
++ RPM_EC=0
+++ jobs -p
++ exit 0
+Executing(%build): /bin/sh -e /var/tmp/rc6-e5-r6/rpmbuild/tmp/rpm-tmp.Cu2hl4
++ umask 022
++ cd /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admirald-0.0.1rc6-build
++ CFLAGS='-O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Werror=format-security -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -mtls-dialect=gnu2 -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer  '
++ export CFLAGS
++ CXXFLAGS='-O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Werror=format-security -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -mtls-dialect=gnu2 -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer  '
++ export CXXFLAGS
++ FFLAGS='-O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -mtls-dialect=gnu2 -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer -I/usr/lib64/gfortran/modules  '
++ export FFLAGS
++ FCFLAGS='-O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -mtls-dialect=gnu2 -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer -I/usr/lib64/gfortran/modules  '
++ export FCFLAGS
++ VALAFLAGS=-g
++ export VALAFLAGS
++ RUSTFLAGS='-Copt-level=3 -Cdebuginfo=2 -Ccodegen-units=1 -Cstrip=none -Cforce-frame-pointers=yes -Clink-arg=-specs=/usr/lib/rpm/redhat/redhat-package-notes --cap-lints=warn'
++ export RUSTFLAGS
++ LDFLAGS='-Wl,-z,relro -Wl,--as-needed  -Wl,-z,pack-relative-relocs -Wl,-z,now -specs=/usr/lib/rpm/redhat/redhat-hardened-ld -specs=/usr/lib/rpm/redhat/redhat-hardened-ld-errors -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -Wl,--build-id=sha1 -specs=/usr/lib/rpm/redhat/redhat-package-notes  '
++ export LDFLAGS
++ LT_SYS_LIBRARY_PATH=/usr/lib64:
++ export LT_SYS_LIBRARY_PATH
++ CC=gcc
++ export CC
++ CXX=g++
++ export CXX
++ cd admirald-6e4a725d30c0fff877fe2252e843fae687810ae6
++ export GOWORK=off
++ GOWORK=off
++ export GOOS=linux
++ GOOS=linux
++ export GOARCH=amd64
++ GOARCH=amd64
++ export CGO_ENABLED=0
++ CGO_ENABLED=0
++ export PATH=/usr/lib/golang/bin:/usr/bin:/home/validator/.local/bin:/home/validator/bin:/usr/local/bin:/usr/bin
++ PATH=/usr/lib/golang/bin:/usr/bin:/home/validator/.local/bin:/home/validator/bin:/usr/local/bin:/usr/bin
++ export GOCACHE=/var/tmp/rc6-e5-r6/rpmbuild/tmp/go-cache
++ GOCACHE=/var/tmp/rc6-e5-r6/rpmbuild/tmp/go-cache
++ mkdir -p /var/tmp/rc6-e5-r6/rpmbuild/tmp/go-cache
++ go build -trimpath -buildmode=pie '-ldflags=-s -w -X main.Version=0.0.1rc6' -o admirald ./cmd/admirald/
+go: downloading github.com/jackc/pgx/v5 v5.9.2
+go: downloading gopkg.in/yaml.v2 v2.4.0
+go: downloading golang.org/x/crypto v0.54.0
+go: downloading golang.org/x/sys v0.47.0
+go: downloading github.com/jackc/pgpassfile v1.0.0
+go: downloading github.com/jackc/pgservicefile v0.0.0-20240606120523-5a60cdf6a761
+go: downloading golang.org/x/text v0.41.0
+go: downloading github.com/jackc/puddle/v2 v2.2.2
+go: downloading golang.org/x/sync v0.22.0
++ RPM_EC=0
+++ jobs -p
++ exit 0
+Executing(%install): /bin/sh -e /var/tmp/rc6-e5-r6/rpmbuild/tmp/rpm-tmp.p4UqSx
++ umask 022
++ cd /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admirald-0.0.1rc6-build
++ '[' /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admirald-0.0.1rc6-build/BUILDROOT '!=' / ']'
++ rm -rf /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admirald-0.0.1rc6-build/BUILDROOT
+++ dirname /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admirald-0.0.1rc6-build/BUILDROOT
++ mkdir -p /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admirald-0.0.1rc6-build
++ mkdir /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admirald-0.0.1rc6-build/BUILDROOT
++ CFLAGS='-O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Werror=format-security -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -mtls-dialect=gnu2 -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer  '
++ export CFLAGS
++ CXXFLAGS='-O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Werror=format-security -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -mtls-dialect=gnu2 -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer  '
++ export CXXFLAGS
++ FFLAGS='-O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -mtls-dialect=gnu2 -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer -I/usr/lib64/gfortran/modules  '
++ export FFLAGS
++ FCFLAGS='-O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -mtls-dialect=gnu2 -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer -I/usr/lib64/gfortran/modules  '
++ export FCFLAGS
++ VALAFLAGS=-g
++ export VALAFLAGS
++ RUSTFLAGS='-Copt-level=3 -Cdebuginfo=2 -Ccodegen-units=1 -Cstrip=none -Cforce-frame-pointers=yes -Clink-arg=-specs=/usr/lib/rpm/redhat/redhat-package-notes --cap-lints=warn'
++ export RUSTFLAGS
++ LDFLAGS='-Wl,-z,relro -Wl,--as-needed  -Wl,-z,pack-relative-relocs -Wl,-z,now -specs=/usr/lib/rpm/redhat/redhat-hardened-ld -specs=/usr/lib/rpm/redhat/redhat-hardened-ld-errors -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -Wl,--build-id=sha1 -specs=/usr/lib/rpm/redhat/redhat-package-notes  '
++ export LDFLAGS
++ LT_SYS_LIBRARY_PATH=/usr/lib64:
++ export LT_SYS_LIBRARY_PATH
++ CC=gcc
++ export CC
++ CXX=g++
++ export CXX
++ cd admirald-6e4a725d30c0fff877fe2252e843fae687810ae6
++ install -Dm0755 admirald /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admirald-0.0.1rc6-build/BUILDROOT/usr/bin/admirald
++ install -Dm0644 /var/tmp/rc6-e5-r6/rpmbuild/SOURCES/admirald.service /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admirald-0.0.1rc6-build/BUILDROOT/usr/lib/systemd/system/admirald.service
++ install -Dm0600 /var/tmp/rc6-e5-r6/rpmbuild/SOURCES/admirald.ini /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admirald-0.0.1rc6-build/BUILDROOT/etc/admirald.ini
++ /usr/lib/rpm/check-buildroot
++ /usr/lib/rpm/redhat/brp-ldconfig
++ COMPRESS='gzip -9 -n'
++ COMPRESS_EXT=.gz
++ /usr/lib/rpm/brp-compress
++ /usr/lib/rpm/brp-strip /usr/bin/strip
++ /usr/lib/rpm/brp-strip-comment-note /usr/bin/strip /usr/bin/objdump
++ /usr/lib/rpm/redhat/brp-strip-lto /usr/bin/strip
++ /usr/lib/rpm/check-rpaths
++ /usr/lib/rpm/redhat/brp-mangle-shebangs
++ /usr/lib/rpm/brp-remove-la-files
++ /usr/lib/rpm/redhat/brp-python-rpm-in-distinfo
++ env /usr/lib/rpm/redhat/brp-python-bytecompile '' 1 0 -j2
++ /usr/lib/rpm/redhat/brp-python-hardlink
++ /usr/bin/add-det --brp -j2 /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admirald-0.0.1rc6-build/BUILDROOT
+Scanned 7 directories and 3 files,
+    processed 0 inodes,
+    0 modified (0 replaced + 0 rewritten),
+    0 unsupported format, 0 errors
++ /usr/bin/linkdupes --brp /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admirald-0.0.1rc6-build/BUILDROOT/usr
+Scanned 5 directories and 2 files,
+    considered 2 files, read 0 files, linked 0 files, 0 errors
+    sum of sizes of linked files: 0 bytes
+Reading /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admirald-0.0.1rc6-build/SPECPARTS/rpm-debuginfo.specpart
+Executing(%check): /bin/sh -e /var/tmp/rc6-e5-r6/rpmbuild/tmp/rpm-tmp.FnhJ54
++ umask 022
++ cd /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admirald-0.0.1rc6-build
++ CFLAGS='-O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Werror=format-security -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -mtls-dialect=gnu2 -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer  '
++ export CFLAGS
++ CXXFLAGS='-O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Werror=format-security -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -mtls-dialect=gnu2 -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer  '
++ export CXXFLAGS
++ FFLAGS='-O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -mtls-dialect=gnu2 -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer -I/usr/lib64/gfortran/modules  '
++ export FFLAGS
++ FCFLAGS='-O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -mtls-dialect=gnu2 -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer -I/usr/lib64/gfortran/modules  '
++ export FCFLAGS
++ VALAFLAGS=-g
++ export VALAFLAGS
++ RUSTFLAGS='-Copt-level=3 -Cdebuginfo=2 -Ccodegen-units=1 -Cstrip=none -Cforce-frame-pointers=yes -Clink-arg=-specs=/usr/lib/rpm/redhat/redhat-package-notes --cap-lints=warn'
++ export RUSTFLAGS
++ LDFLAGS='-Wl,-z,relro -Wl,--as-needed  -Wl,-z,pack-relative-relocs -Wl,-z,now -specs=/usr/lib/rpm/redhat/redhat-hardened-ld -specs=/usr/lib/rpm/redhat/redhat-hardened-ld-errors -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -Wl,--build-id=sha1 -specs=/usr/lib/rpm/redhat/redhat-package-notes  '
++ export LDFLAGS
++ LT_SYS_LIBRARY_PATH=/usr/lib64:
++ export LT_SYS_LIBRARY_PATH
++ CC=gcc
++ export CC
++ CXX=g++
++ export CXX
++ cd admirald-6e4a725d30c0fff877fe2252e843fae687810ae6
++ export GOWORK=off
++ GOWORK=off
++ export PATH=/usr/lib/golang/bin:/usr/bin:/home/validator/.local/bin:/home/validator/bin:/usr/local/bin:/usr/bin
++ PATH=/usr/lib/golang/bin:/usr/bin:/home/validator/.local/bin:/home/validator/bin:/usr/local/bin:/usr/bin
++ export GOCACHE=/var/tmp/rc6-e5-r6/rpmbuild/tmp/go-cache
++ GOCACHE=/var/tmp/rc6-e5-r6/rpmbuild/tmp/go-cache
++ mkdir -p /var/tmp/rc6-e5-r6/rpmbuild/tmp/go-cache
++ go test ./...
+?   	github.com/admiral-project/admiral/admirald/cmd/admirald	[no test files]
+ok  	github.com/admiral-project/admiral/admirald/internal/api	0.050s
+ok  	github.com/admiral-project/admiral/admirald/internal/bootstrap	0.010s
+ok  	github.com/admiral-project/admiral/admirald/internal/config	0.016s
+ok  	github.com/admiral-project/admiral/admirald/internal/database	0.012s
+ok  	github.com/admiral-project/admiral/admirald/internal/logging	0.009s
+ok  	github.com/admiral-project/admiral/admirald/internal/networking	0.934s
+ok  	github.com/admiral-project/admiral/admirald/internal/queue	0.017s
+?   	github.com/admiral-project/admiral/admirald/internal/queuedb	[no test files]
+ok  	github.com/admiral-project/admiral/admirald/internal/secrets	0.006s
+ok  	github.com/admiral-project/admiral/admirald/internal/security	1.184s
+ok  	github.com/admiral-project/admiral/admirald/internal/version	0.004s
+ok  	github.com/admiral-project/admiral/admirald/pkg/admiral	0.025s
+ok  	github.com/admiral-project/admiral/admirald/pkg/admiral/storage	0.038s
+ok  	github.com/admiral-project/admiral/admirald/pkg/admiral/tlsconfig	0.060s
++ readelf -h ./admirald
++ grep -Eq 'Machine:[[:space:]]+Advanced Micro Devices X86-64'
++ RPM_EC=0
+++ jobs -p
++ exit 0
+Processing files: admirald-0.0.1rc6-6.fc46.x86_64
+Executing(%license): /bin/sh -e /var/tmp/rc6-e5-r6/rpmbuild/tmp/rpm-tmp.p0jVxF
++ umask 022
++ cd /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admirald-0.0.1rc6-build
++ cd admirald-6e4a725d30c0fff877fe2252e843fae687810ae6
++ LICENSEDIR=/var/tmp/rc6-e5-r6/rpmbuild/BUILD/admirald-0.0.1rc6-build/BUILDROOT/usr/share/licenses/admirald
++ export LC_ALL=C.UTF-8
++ LC_ALL=C.UTF-8
++ export LICENSEDIR
++ /usr/bin/mkdir -p /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admirald-0.0.1rc6-build/BUILDROOT/usr/share/licenses/admirald
++ cp -pr /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admirald-0.0.1rc6-build/admirald-6e4a725d30c0fff877fe2252e843fae687810ae6/LICENSE /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admirald-0.0.1rc6-build/BUILDROOT/usr/share/licenses/admirald
++ RPM_EC=0
+++ jobs -p
++ exit 0
+Provides: admirald = 5:0.0.1rc6-6.fc46 admirald(x86-64) = 5:0.0.1rc6-6.fc46 config(admirald) = 5:0.0.1rc6-6.fc46
+Requires(interp): /bin/sh /bin/sh /bin/sh
+Requires(rpmlib): rpmlib(CompressedFileNames) <= 3.0.4-1 rpmlib(FileDigests) <= 4.6.0-1 rpmlib(PayloadFilesHavePrefix) <= 4.0-1
+Requires(post): /bin/sh
+Requires(preun): /bin/sh
+Requires(postun): /bin/sh
+Checking for unpackaged file(s): /usr/lib/rpm/check-files /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admirald-0.0.1rc6-build/BUILDROOT
+Wrote: /var/tmp/rc6-e5-r6/rpmbuild/SRPMS/admirald-0.0.1rc6-6.fc46.src.rpm
+Wrote: /var/tmp/rc6-e5-r6/rpmbuild/RPMS/x86_64/admirald-0.0.1rc6-6.fc46.x86_64.rpm
+Executing(rmbuild): /bin/sh -e /var/tmp/rc6-e5-r6/rpmbuild/tmp/rpm-tmp.DUBqS2
++ umask 022
++ cd /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admirald-0.0.1rc6-build
++ test -d /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admirald-0.0.1rc6-build
++ /usr/bin/chmod -Rf a+rX,u+w,g-w,o-w /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admirald-0.0.1rc6-build
++ rm -rf /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admirald-0.0.1rc6-build
++ RPM_EC=0
+++ jobs -p
++ exit 0

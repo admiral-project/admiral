@@ -1,0 +1,232 @@
+Building target platforms: x86_64
+Building for target x86_64
+setting SOURCE_DATE_EPOCH=1792972800
+Executing(mkbuilddir): /bin/sh -e /var/tmp/rc6-e5-r6/rpmbuild/tmp/rpm-tmp.EixCxA
+Creating(rpmbuild.env): /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-harbor-0.0.1rc6-build/rpmbuild.env
+  RPM_SOURCE_DIR="/var/tmp/rc6-e5-r6/rpmbuild/SOURCES"
+  RPM_BUILD_DIR="/var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-harbor-0.0.1rc6-build"
+  RPM_OPT_FLAGS="-O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Wno-complain-wrong-lang -Werror=format-security -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -mtls-dialect=gnu2 -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer"
+  RPM_LD_FLAGS="-Wl,-z,relro -Wl,--as-needed  -Wl,-z,pack-relative-relocs -Wl,-z,now -specs=/usr/lib/rpm/redhat/redhat-hardened-ld -specs=/usr/lib/rpm/redhat/redhat-hardened-ld-errors -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -Wl,--build-id=sha1 -specs=/usr/lib/rpm/redhat/redhat-package-notes  "
+  RPM_ARCH="x86_64"
+  RPM_OS="linux"
+  RPM_BUILD_NCPUS="2"
+  RPM_SPECPARTS_DIR="/var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-harbor-0.0.1rc6-build/SPECPARTS"
+  export RPM_SOURCE_DIR RPM_BUILD_DIR RPM_OPT_FLAGS RPM_ARCH RPM_OS RPM_BUILD_NCPUS RPM_SPECPARTS_DIR RPM_LD_FLAGS
+  RPM_DOC_DIR="/usr/share/doc"
+  export RPM_DOC_DIR
+  RPM_PACKAGE_NAME="admiral-harbor"
+  RPM_PACKAGE_VERSION="0.0.1rc6"
+  RPM_PACKAGE_RELEASE="6.fc46"
+  export RPM_PACKAGE_NAME RPM_PACKAGE_VERSION RPM_PACKAGE_RELEASE
+  LANG=C.UTF-8
+  export LANG
+  unset CDPATH DISPLAY ||:
+  unset DEBUGINFOD_URLS ||:
+  unset RPM_CONFIG_DIR ||:
+  RPM_BUILD_ROOT="/var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-harbor-0.0.1rc6-build/BUILDROOT"
+  export RPM_BUILD_ROOT
+  
+  PKG_CONFIG_PATH="${PKG_CONFIG_PATH}:/usr/lib64/pkgconfig:/usr/share/pkgconfig"
+  export PKG_CONFIG_PATH
+  CONFIG_SITE=${CONFIG_SITE:-NONE}
+  export CONFIG_SITE
+Executing(%prep): /bin/sh -e /var/tmp/rc6-e5-r6/rpmbuild/tmp/rpm-tmp.WlDBdQ
++ umask 022
++ cd /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-harbor-0.0.1rc6-build
++ cd /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-harbor-0.0.1rc6-build
++ rm -rf admiral-harbor-dd4818b6e2bc53eea4495fc5e374a4893cfcb107
++ /usr/bin/rpmuncompress -x /var/tmp/rc6-e5-r6/rpmbuild/SOURCES/dd4818b6e2bc53eea4495fc5e374a4893cfcb107.tar.gz
++ STATUS=0
++ '[' 0 -ne 0 ']'
++ cd admiral-harbor-dd4818b6e2bc53eea4495fc5e374a4893cfcb107
++ /usr/bin/chmod -Rf a+rX,u+w,g-w,o-w .
++ RPM_EC=0
+++ jobs -p
++ exit 0
+Executing(%build): /bin/sh -e /var/tmp/rc6-e5-r6/rpmbuild/tmp/rpm-tmp.YNUW6s
++ umask 022
++ cd /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-harbor-0.0.1rc6-build
++ CFLAGS='-O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Werror=format-security -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -mtls-dialect=gnu2 -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer  '
++ export CFLAGS
++ CXXFLAGS='-O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Werror=format-security -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -mtls-dialect=gnu2 -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer  '
++ export CXXFLAGS
++ FFLAGS='-O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -mtls-dialect=gnu2 -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer -I/usr/lib64/gfortran/modules  '
++ export FFLAGS
++ FCFLAGS='-O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -mtls-dialect=gnu2 -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer -I/usr/lib64/gfortran/modules  '
++ export FCFLAGS
++ VALAFLAGS=-g
++ export VALAFLAGS
++ RUSTFLAGS='-Copt-level=3 -Cdebuginfo=2 -Ccodegen-units=1 -Cstrip=none -Cforce-frame-pointers=yes -Clink-arg=-specs=/usr/lib/rpm/redhat/redhat-package-notes --cap-lints=warn'
++ export RUSTFLAGS
++ LDFLAGS='-Wl,-z,relro -Wl,--as-needed  -Wl,-z,pack-relative-relocs -Wl,-z,now -specs=/usr/lib/rpm/redhat/redhat-hardened-ld -specs=/usr/lib/rpm/redhat/redhat-hardened-ld-errors -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -Wl,--build-id=sha1 -specs=/usr/lib/rpm/redhat/redhat-package-notes  '
++ export LDFLAGS
++ LT_SYS_LIBRARY_PATH=/usr/lib64:
++ export LT_SYS_LIBRARY_PATH
++ CC=gcc
++ export CC
++ CXX=g++
++ export CXX
++ cd admiral-harbor-dd4818b6e2bc53eea4495fc5e374a4893cfcb107
++ RPM_EC=0
+++ jobs -p
++ exit 0
+Executing(%install): /bin/sh -e /var/tmp/rc6-e5-r6/rpmbuild/tmp/rpm-tmp.MxjFdH
++ umask 022
++ cd /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-harbor-0.0.1rc6-build
++ '[' /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-harbor-0.0.1rc6-build/BUILDROOT '!=' / ']'
++ rm -rf /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-harbor-0.0.1rc6-build/BUILDROOT
+++ dirname /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-harbor-0.0.1rc6-build/BUILDROOT
++ mkdir -p /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-harbor-0.0.1rc6-build
++ mkdir /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-harbor-0.0.1rc6-build/BUILDROOT
++ CFLAGS='-O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Werror=format-security -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -mtls-dialect=gnu2 -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer  '
++ export CFLAGS
++ CXXFLAGS='-O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Werror=format-security -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -mtls-dialect=gnu2 -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer  '
++ export CXXFLAGS
++ FFLAGS='-O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -mtls-dialect=gnu2 -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer -I/usr/lib64/gfortran/modules  '
++ export FFLAGS
++ FCFLAGS='-O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -mtls-dialect=gnu2 -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer -I/usr/lib64/gfortran/modules  '
++ export FCFLAGS
++ VALAFLAGS=-g
++ export VALAFLAGS
++ RUSTFLAGS='-Copt-level=3 -Cdebuginfo=2 -Ccodegen-units=1 -Cstrip=none -Cforce-frame-pointers=yes -Clink-arg=-specs=/usr/lib/rpm/redhat/redhat-package-notes --cap-lints=warn'
++ export RUSTFLAGS
++ LDFLAGS='-Wl,-z,relro -Wl,--as-needed  -Wl,-z,pack-relative-relocs -Wl,-z,now -specs=/usr/lib/rpm/redhat/redhat-hardened-ld -specs=/usr/lib/rpm/redhat/redhat-hardened-ld-errors -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -Wl,--build-id=sha1 -specs=/usr/lib/rpm/redhat/redhat-package-notes  '
++ export LDFLAGS
++ LT_SYS_LIBRARY_PATH=/usr/lib64:
++ export LT_SYS_LIBRARY_PATH
++ CC=gcc
++ export CC
++ CXX=g++
++ export CXX
++ cd admiral-harbor-dd4818b6e2bc53eea4495fc5e374a4893cfcb107
++ mkdir -p /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-harbor-0.0.1rc6-build/BUILDROOT/usr/lib/admiral/harbor
++ touch harbor.files
++ '[' -d app ']'
++ cp -r app run.py worker.py cli.py migrate.py alembic.ini migrations /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-harbor-0.0.1rc6-build/BUILDROOT/usr/lib/admiral/harbor/
++ find /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-harbor-0.0.1rc6-build/BUILDROOT/usr/lib/admiral/harbor -type f -o -type l
++ sed 's|/var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-harbor-0.0.1rc6-build/BUILDROOT||'
++ sort
++ install -Dm0755 /var/tmp/rc6-e5-r6/rpmbuild/SOURCES/harborctl /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-harbor-0.0.1rc6-build/BUILDROOT/usr/bin/harborctl
++ install -Dm0755 /var/tmp/rc6-e5-r6/rpmbuild/SOURCES/harbor-gunicorn /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-harbor-0.0.1rc6-build/BUILDROOT/usr/bin/harbor-gunicorn
++ install -Dm0755 /var/tmp/rc6-e5-r6/rpmbuild/SOURCES/harbor-migrate /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-harbor-0.0.1rc6-build/BUILDROOT/usr/bin/harbor-migrate
++ install -Dm0644 docs/harborctl.8 /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-harbor-0.0.1rc6-build/BUILDROOT/usr/share/man/man8/harborctl.8
++ '[' -f LICENSE ']'
++ install -Dm0644 LICENSE /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-harbor-0.0.1rc6-build/BUILDROOT/usr/share/licenses/admiral-harbor/LICENSE
++ install -Dm0644 /var/tmp/rc6-e5-r6/rpmbuild/SOURCES/admiral-harbor.service /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-harbor-0.0.1rc6-build/BUILDROOT/usr/lib/systemd/system/admiral-harbor.service
++ install -Dm0644 /var/tmp/rc6-e5-r6/rpmbuild/SOURCES/admiral-harbor-worker.service /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-harbor-0.0.1rc6-build/BUILDROOT/usr/lib/systemd/system/admiral-harbor-worker.service
++ install -Dm0644 /var/tmp/rc6-e5-r6/rpmbuild/SOURCES/admiral-harbor-worker.timer /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-harbor-0.0.1rc6-build/BUILDROOT/usr/lib/systemd/system/admiral-harbor-worker.timer
++ install -Dm0644 /var/tmp/rc6-e5-r6/rpmbuild/SOURCES/admiral-harbor-catalog-sync.service /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-harbor-0.0.1rc6-build/BUILDROOT/usr/lib/systemd/system/admiral-harbor-catalog-sync.service
++ install -Dm0644 /var/tmp/rc6-e5-r6/rpmbuild/SOURCES/admiral-harbor-catalog-sync.timer /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-harbor-0.0.1rc6-build/BUILDROOT/usr/lib/systemd/system/admiral-harbor-catalog-sync.timer
++ install -Dm0600 /var/tmp/rc6-e5-r6/rpmbuild/SOURCES/harbor.env /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-harbor-0.0.1rc6-build/BUILDROOT/etc/admiral/harbor.env
++ /usr/lib/rpm/check-buildroot
++ /usr/lib/rpm/redhat/brp-ldconfig
++ COMPRESS='gzip -9 -n'
++ COMPRESS_EXT=.gz
++ /usr/lib/rpm/brp-compress
++ /usr/lib/rpm/brp-strip /usr/bin/strip
++ /usr/lib/rpm/brp-strip-comment-note /usr/bin/strip /usr/bin/objdump
++ /usr/lib/rpm/redhat/brp-strip-lto /usr/bin/strip
++ /usr/lib/rpm/check-rpaths
++ /usr/lib/rpm/redhat/brp-mangle-shebangs
+mangling shebang in /usr/bin/harbor-gunicorn from /bin/bash to #!/usr/bin/bash
+mangling shebang in /usr/bin/harbor-migrate from /usr/bin/env bash to #!/usr/bin/bash
++ /usr/lib/rpm/brp-remove-la-files
++ /usr/lib/rpm/redhat/brp-python-rpm-in-distinfo
++ env /usr/lib/rpm/redhat/brp-python-bytecompile '' 1 0 -j2
++ /usr/lib/rpm/redhat/brp-python-hardlink
++ /usr/bin/add-det --brp -j2 /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-harbor-0.0.1rc6-build/BUILDROOT
+Scanned 24 directories and 129 files,
+    processed 68 inodes,
+    0 modified (0 replaced + 0 rewritten),
+    0 unsupported format, 0 errors
++ /usr/bin/linkdupes --brp /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-harbor-0.0.1rc6-build/BUILDROOT/usr
+Scanned 21 directories and 128 files,
+    considered 127 files, read 2 files, linked 0 files, 0 errors
+    sum of sizes of linked files: 0 bytes
+Executing(%check): /bin/sh -e /var/tmp/rc6-e5-r6/rpmbuild/tmp/rpm-tmp.MWiWIv
++ umask 022
++ cd /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-harbor-0.0.1rc6-build
++ CFLAGS='-O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Werror=format-security -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -mtls-dialect=gnu2 -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer  '
++ export CFLAGS
++ CXXFLAGS='-O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Werror=format-security -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -mtls-dialect=gnu2 -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer  '
++ export CXXFLAGS
++ FFLAGS='-O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -mtls-dialect=gnu2 -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer -I/usr/lib64/gfortran/modules  '
++ export FFLAGS
++ FCFLAGS='-O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -mtls-dialect=gnu2 -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer -I/usr/lib64/gfortran/modules  '
++ export FCFLAGS
++ VALAFLAGS=-g
++ export VALAFLAGS
++ RUSTFLAGS='-Copt-level=3 -Cdebuginfo=2 -Ccodegen-units=1 -Cstrip=none -Cforce-frame-pointers=yes -Clink-arg=-specs=/usr/lib/rpm/redhat/redhat-package-notes --cap-lints=warn'
++ export RUSTFLAGS
++ LDFLAGS='-Wl,-z,relro -Wl,--as-needed  -Wl,-z,pack-relative-relocs -Wl,-z,now -specs=/usr/lib/rpm/redhat/redhat-hardened-ld -specs=/usr/lib/rpm/redhat/redhat-hardened-ld-errors -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -Wl,--build-id=sha1 -specs=/usr/lib/rpm/redhat/redhat-package-notes  '
++ export LDFLAGS
++ LT_SYS_LIBRARY_PATH=/usr/lib64:
++ export LT_SYS_LIBRARY_PATH
++ CC=gcc
++ export CC
++ CXX=g++
++ export CXX
++ cd admiral-harbor-dd4818b6e2bc53eea4495fc5e374a4893cfcb107
++ /usr/bin/python3 -m pytest tests/ -x --tb=short
+============================= test session starts ==============================
+platform linux -- Python 3.15.1, pytest-9.1.1, pluggy-1.7.0
+rootdir: /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-harbor-0.0.1rc6-build/admiral-harbor-dd4818b6e2bc53eea4495fc5e374a4893cfcb107
+configfile: pyproject.toml
+collected 352 items
+
+tests/test_admin.py ........................                             [  6%]
+tests/test_admin_security.py .                                           [  7%]
+tests/test_admiral_client.py ................                            [ 11%]
+tests/test_auth.py ...........................                           [ 19%]
+tests/test_backup_links.py ..                                            [ 19%]
+tests/test_branding.py .................                                 [ 24%]
+tests/test_catalog.py ..                                                 [ 25%]
+tests/test_catalog_service.py .................                          [ 30%]
+tests/test_cli_ping.py .....                                             [ 31%]
+tests/test_cli_user.py .......                                           [ 33%]
+tests/test_client_routes.py ........................................     [ 44%]
+tests/test_context_processor.py ....                                     [ 46%]
+tests/test_csrf.py ...........                                           [ 49%]
+tests/test_factory.py ...                                                [ 50%]
+tests/test_fiscal.py ........                                            [ 52%]
+tests/test_identity.py .....................                             [ 58%]
+tests/test_markdown.py .....                                             [ 59%]
+tests/test_migrate.py .                                                  [ 59%]
+tests/test_paypal.py .........................                           [ 67%]
+tests/test_paypal_config.py .......                                      [ 69%]
+tests/test_presentation.py .                                             [ 69%]
+tests/test_rate_limit.py ....                                            [ 70%]
+tests/test_routes.py ...............................................     [ 83%]
+tests/test_secrets_manager.py .....                                      [ 85%]
+tests/test_security_utils.py ......                                      [ 86%]
+tests/test_settings.py .......                                           [ 88%]
+tests/test_setup_failed.py .....                                         [ 90%]
+tests/test_theming.py .....................                              [ 96%]
+tests/test_validation.py ......                                          [ 98%]
+tests/test_worker.py .......                                             [100%]
+
+======================= 352 passed in 339.29s (0:05:39) ========================
++ RPM_EC=0
+++ jobs -p
++ exit 0
+Processing files: admiral-harbor-0.0.1rc6-6.fc46.noarch
+Provides: admiral-harbor = 5:0.0.1rc6-6.fc46 config(admiral-harbor) = 5:0.0.1rc6-6.fc46
+Requires(interp): /bin/sh /bin/sh /bin/sh
+Requires(rpmlib): rpmlib(CompressedFileNames) <= 3.0.4-1 rpmlib(FileDigests) <= 4.6.0-1 rpmlib(PayloadFilesHavePrefix) <= 4.0-1
+Requires(post): /bin/sh
+Requires(preun): /bin/sh
+Requires(postun): /bin/sh
+Requires: /usr/bin/bash /usr/bin/python3
+Recommends: cockpit-bridge
+Checking for unpackaged file(s): /usr/lib/rpm/check-files /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-harbor-0.0.1rc6-build/BUILDROOT
+Wrote: /var/tmp/rc6-e5-r6/rpmbuild/SRPMS/admiral-harbor-0.0.1rc6-6.fc46.src.rpm
+Wrote: /var/tmp/rc6-e5-r6/rpmbuild/RPMS/noarch/admiral-harbor-0.0.1rc6-6.fc46.noarch.rpm
+Executing(rmbuild): /bin/sh -e /var/tmp/rc6-e5-r6/rpmbuild/tmp/rpm-tmp.4CqaPB
++ umask 022
++ cd /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-harbor-0.0.1rc6-build
++ test -d /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-harbor-0.0.1rc6-build
++ /usr/bin/chmod -Rf a+rX,u+w,g-w,o-w /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-harbor-0.0.1rc6-build
++ rm -rf /var/tmp/rc6-e5-r6/rpmbuild/BUILD/admiral-harbor-0.0.1rc6-build
++ RPM_EC=0
+++ jobs -p
++ exit 0
