@@ -1,12 +1,12 @@
 # SPDX-FileCopyrightText: William Moreno Reyes CP | MBA
 # SPDX-License-Identifier: Apache-2.0
 
-%global commit 18f9f0c616940cb0bb12f9a9676849c7698d31c0
+%global commit bfa00c07f462bafc32627922d884248f9523c603
 
 Name:    admiral-common
 Version: 0.0.1rc6
 Epoch:          5
-Release:        5%{?dist}
+Release:        6%{?dist}
 Summary: Common files and utilities for Admiral PaaS
 
 License: Apache-2.0
@@ -280,6 +280,9 @@ if [ "$1" -eq 0 ]; then
 fi
 
 %changelog
+* Mon Oct 26 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 5:0.0.1rc6-6
+- Rebuild coordinated RC6 candidate after spoke WireGuard PSK preservation fix
+
 * Mon Oct 26 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 5:0.0.1rc6-5
 - Rebuild coordinated Admiral candidate with Fedora dev-mode Caddy SELinux fix
 
