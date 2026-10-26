@@ -1,0 +1,4 @@
+containers=none
+pods=none
+volumes=none
+files=none

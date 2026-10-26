@@ -1,0 +1,8 @@
+test_id=RC6-MN-NODE-REMOVE-HISTORY-01
+candidate=0.0.1rc6-2.el10
+epoch=5
+node_id=rc6e5cs-worker
+started_utc=2026-10-26T01:30:50Z
+instance_id=inst_6ad7dec52803c87f
+endpoint=10.99.0.2:40004
+http_before_remove=200

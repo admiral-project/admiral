@@ -1,0 +1,2 @@
+5:admiral-common-0.0.1rc6-2.el10.noarch
+5:admiral-fleet-0.0.1rc6-2.el10.x86_64

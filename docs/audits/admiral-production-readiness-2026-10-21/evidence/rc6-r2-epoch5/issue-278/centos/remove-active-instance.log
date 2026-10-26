@@ -1,0 +1,16 @@
+Are you sure you want to remove node "rc6e5cs-worker"? (y/N): Tip: use --force to remove the node and all associated resources.
+Error: remove node "rc6e5cs-worker": node has active instances (2 active instances); use --force to override
+Usage:
+  admiralctl nodes remove <node_id> [flags]
+
+Flags:
+      --force   Skip confirmation prompt and remove even with active instances
+  -h, --help    help for remove
+
+Global Flags:
+      --ca-cert string    CA certificate file for admirald HTTPS validation
+      --operator string   Operator name for audit logs
+      --server string     Control plane server endpoint URL
+
+Error: remove node "rc6e5cs-worker": node has active instances (2 active instances); use --force to override
+command_exit=1
