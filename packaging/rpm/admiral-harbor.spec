@@ -4,7 +4,7 @@
 Name:    admiral-harbor
 Version: 0.0.1rc6
 Epoch:          5
-Release:        9%{?dist}
+Release:        10%{?dist}
 Summary: Admiral Customer Portal - Web UI for end users
 
 License: Apache-2.0
@@ -127,6 +127,9 @@ restorecon -R %{_localstatedir}/lib/admiral/harbor 2>/dev/null || :
 %{python3} -m pytest tests/ -x --tb=short
 
 %changelog
+* Mon Oct 26 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 5:0.0.1rc6-10
+- Rebuild coordinated RC6 Release 10 after TLS renewal hook fix.
+
 * Mon Oct 26 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 5:0.0.1rc6-9
 - Rebuild coordinated RC6 Release 9 after HTTPS certificate validation correction.
 

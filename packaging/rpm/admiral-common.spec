@@ -1,12 +1,12 @@
 # SPDX-FileCopyrightText: William Moreno Reyes CP | MBA
 # SPDX-License-Identifier: Apache-2.0
 
-%global commit 0d9347fc6163c3a68f3db0930e08e00a00b8f0e1
+%global commit 5a9c5f03541a595563c9806199451f24ebd1175e
 
 Name:    admiral-common
 Version: 0.0.1rc6
 Epoch:          5
-Release:        9%{?dist}
+Release:        10%{?dist}
 Summary: Common files and utilities for Admiral PaaS
 
 License: Apache-2.0
@@ -280,6 +280,9 @@ if [ "$1" -eq 0 ]; then
 fi
 
 %changelog
+* Mon Oct 26 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 5:0.0.1rc6-10
+- Fix successful exit status after first Let's Encrypt certificate deployment.
+
 * Mon Oct 26 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 5:0.0.1rc6-9
 - Rebuild coordinated RC6 Release 9 after HTTPS certificate validation correction.
 
