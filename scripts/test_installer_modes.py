@@ -857,6 +857,22 @@ done
         self.assertNotIn("admin unix//run/caddy/admin.sock", common_tasks)
         self.assertNotIn("setfacl -m u:admiral", common_tasks)
 
+    def test_caddy_can_traverse_tls_configuration_on_admin_profiles(self) -> None:
+        common_tasks = COMMON_TASKS.read_text(encoding="utf-8")
+        acl_task = common_tasks.split(
+            "- name: Allow Caddy to traverse Admiral TLS configuration", 1
+        )[1].split("- name:", 1)[0]
+
+        self.assertIn("ansible.posix.acl:", acl_task)
+        self.assertIn("entity: caddy", acl_task)
+        self.assertIn("permissions: x", acl_task)
+        self.assertIn("/etc/admiral", acl_task)
+        self.assertIn("/etc/admiral/tls", acl_task)
+        self.assertIn(
+            "admiral_install_mode in ['single-node', 'admin-node', 'admin-portal-node']",
+            acl_task,
+        )
+
     def test_fedora_dev_mode_allows_caddy_loopback_admin_port_under_selinux(self) -> None:
         common_tasks = COMMON_TASKS.read_text(encoding="utf-8")
         caddy_context_task = common_tasks.split(

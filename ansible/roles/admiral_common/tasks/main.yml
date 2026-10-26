@@ -353,6 +353,18 @@
       0750 before configuration can continue.
   loop: "{{ admiral_common_config_directories.results }}"
 
+- name: Allow Caddy to traverse Admiral TLS configuration
+  ansible.posix.acl:
+    path: "{{ item }}"
+    entity: caddy
+    etype: user
+    permissions: x
+    state: present
+  loop:
+    - /etc/admiral
+    - /etc/admiral/tls
+  when: admiral_install_mode in ['single-node', 'admin-node', 'admin-portal-node']
+
 - name: Copy admin bootstrap materials to remote spokes
   copy:
     src: "{{ item.src }}"
