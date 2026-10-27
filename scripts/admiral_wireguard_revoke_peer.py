@@ -31,7 +31,7 @@ LOCK = Path("/run/lock/admiral-wireguard-peer-add.lock")
 MAX_REQUEST_BYTES = 512
 COMMAND_TIMEOUT_SECONDS = 2
 INVENTORY_TIMEOUT_SECONDS = 3
-ANSIBLE_TIMEOUT_SECONDS = 12
+ANSIBLE_TIMEOUT_SECONDS = 45
 KNOWN_HOSTS = Path("/var/lib/admiral/know_host.yaml")
 SSH_DIRECTORY = Path("/var/lib/admiral/ssh-delivery")
 INSTALL_STATE = Path("/etc/admiral/install.env")
@@ -504,11 +504,14 @@ def _run_peer_playbook(inventory: Path, extra_vars: Path) -> None:
     with tempfile.TemporaryDirectory(prefix="admiral-peer-reconcile-") as temp:
         local_temp = Path(temp) / "local"
         galaxy_cache = Path(temp) / "galaxy"
+        ansible_home = Path(temp) / "home"
         local_temp.mkdir(mode=0o700)
         galaxy_cache.mkdir(mode=0o700)
+        ansible_home.mkdir(mode=0o700)
         environment = os.environ.copy()
         environment.update(
             {
+                "HOME": str(ansible_home),
                 "ANSIBLE_LOCAL_TEMP": str(local_temp),
                 "ANSIBLE_REMOTE_TEMP": "/tmp",
                 "ANSIBLE_GALAXY_CACHE_DIR": str(galaxy_cache),

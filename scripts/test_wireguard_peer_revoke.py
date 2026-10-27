@@ -344,10 +344,16 @@ class WireGuardPeerRevokeTests(unittest.TestCase):
         failed.returncode = 2
         with mock.patch.object(HELPER, "PEER_PLAYBOOK", playbook), mock.patch.object(
             HELPER.subprocess, "Popen", return_value=failed
-        ):
+        ) as popen:
             with self.assertRaisesRegex(HELPER.RevocationError, "node remains registered") as caught:
                 HELPER._run_peer_playbook(inventory, vars_file)
         self.assertNotIn("secret output", str(caught.exception))
+        environment = popen.call_args.kwargs["env"]
+        self.assertEqual(pathlib.Path(environment["HOME"]).name, "home")
+        self.assertEqual(
+            pathlib.Path(environment["HOME"]).parent,
+            pathlib.Path(environment["ANSIBLE_LOCAL_TEMP"]).parent,
+        )
 
     def test_peer_playbook_timeout_stops_its_process_group(self) -> None:
         playbook = self.root / "wireguard-peers.yml"
@@ -370,6 +376,10 @@ class WireGuardPeerRevokeTests(unittest.TestCase):
                 HELPER._run_peer_playbook(inventory, vars_file)
 
         killpg.assert_called_once_with(12345, HELPER.signal.SIGTERM)
+        self.assertEqual(
+            process.communicate.call_args_list[0].kwargs["timeout"],
+            HELPER.ANSIBLE_TIMEOUT_SECONDS,
+        )
 
 
 if __name__ == "__main__":
