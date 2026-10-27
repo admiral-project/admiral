@@ -1,0 +1,51 @@
+RC6 Epoch 5 Release 17 source selection, checked 2026-10-27
+
+Root product payload:
+  admiral-common: ba59c45d647bd354c878d7e61497896746a88c2b
+  source: allow the exact registering spoke into pre-heartbeat peer inventory
+  local regression suite: 189 tests passed
+  root GitHub CI: pending publication of the R17 branch commit
+
+Component submodule comparisons after fetching origin/main:
+
+  admirald
+    selected: 313a96c9c2234711685fce2b878705733f766b5b
+    origin/main: 6e4a725d30c0fff877fe2252e843fae687810ae6
+    comparison: selected pin is 3 commits ahead; origin/main is not ahead
+    exception: retain release-validation fixes required by #228 cleanup,
+      #291 peer-reconciliation window, and Portal inventory health
+      (bfe5440, a5cc680, 313a96c)
+    selected CI: https://github.com/admiral-project/admirald/actions/runs/40472619846 — success
+
+  admiral-fleet
+    selected: b082934f908a4a33acf0fdd70c06974f0a29bb21
+    origin/main: b082934f908a4a33acf0fdd70c06974f0a29bb21
+    comparison: selected pin equals origin/main
+    selected CI: https://github.com/admiral-project/admiral-fleet/actions/runs/40443913057 — success
+
+  admiralctl
+    selected: 90c30edb2b9f02b962874272dc6487bead990277
+    origin/main: fa2a65e866310bd82bea78859804b6c3aea7989a
+    comparison: selected pin is 1 commit ahead; origin/main is not ahead
+    exception: retain the node-removal peer-reconciliation timeout fix
+      required by #291 (90c30ed)
+    selected CI: https://github.com/admiral-project/admiralctl/actions/runs/40460333768 — success
+
+  admiral-flagship
+    selected: b7325bbc71fc474a521496e593b2967e4d555ac1
+    origin/main: b7325bbc71fc474a521496e593b2967e4d555ac1
+    comparison: selected pin equals origin/main
+    selected CI: https://github.com/admiral-project/admiral-flagship/actions/runs/39795263415 — success
+
+  admiral-harbor
+    selected: dd4818b6e2bc53eea4495fc5e374a4893cfcb107
+    origin/main: dd4818b6e2bc53eea4495fc5e374a4893cfcb107
+    comparison: selected pin equals origin/main
+    selected CI: https://github.com/admiral-project/admiral-harbor/actions/runs/40171847383 — success
+
+Release metadata:
+  all six Admiral RPM Release fields: 17
+  RPM reference validation: passed with python3 scripts/validate-release-refs.py
+  root scripts suite: 189 passed with PYTHONPATH=. pytest -q scripts
+  audit Release default checks: 10 passed with pytest -q scripts/test_audit_release_defaults.py
+  EL10/Fedora native builds and NEVRA/SHA-256 manifests: pending

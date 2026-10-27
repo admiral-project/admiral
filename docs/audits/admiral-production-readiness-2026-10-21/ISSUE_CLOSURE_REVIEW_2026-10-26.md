@@ -5,14 +5,21 @@ historical review.
 
 ## Release state
 
-- Last packaged candidate: RC6 Epoch 5 Release 15; six RPMs built natively for
-  EL10 and Fedora Rawhide (`.el10` and `.fc46` respectively), signed, with
-  green component CI and green root CI at `e6b7baa`. The exact pins and Release
-  15 specs used to build it are recorded in root commit `cdeb30d`.
-- R15 re-onboarding failed for #291. A product fix is now in the working tree
-  to reconcile hub/spoke peers before checking Fleet health. R15 is invalid for
-  #291 acceptance; the change is unbuilt and needs a new six-RPM candidate,
-  green CI, and fresh release validation.
+- Last packaged candidate: RC6 Epoch 5 Release 16; six RPMs were built
+  natively for EL10 and Fedora Rawhide (`.el10` and `.fc46` respectively),
+  signed, and installed on the existing Rocky Multi-Node guests. R16 is now
+  invalidated for #291 after the second supported remove-and-rejoin sequence
+  timed out before peer reconciliation. Its records remain under
+  [R16 evidence](evidence/rc6-e5-r16/CANDIDATE.md).
+- R16 did pass remove/revocation/denial and a first rejoin. The repeated
+  rejoin exposed a second ordering defect: the registering node was omitted
+  from the peer inventory until it became `active`, while it could not become
+  active before the WireGuard peer and heartbeat were restored.
+- Root product fix `ba59c45d647bd354c878d7e61497896746a88c2b` admits only the
+  exact currently registering node to the pre-heartbeat peer inventory. The
+  root regression suite passed 189 tests locally. All six Release 17 specs now
+  reference this source; `scripts/validate-release-refs.py` passes. Root CI,
+  candidate builds, and issue-specific runtime validation are pending.
 - Full runtime release matrix: **0/6 cells complete**. Rocky Multi-Node has
   partial R15 evidence; the full cell checklist and the other five cells remain
   pending.
@@ -30,7 +37,7 @@ historical review.
 | #228 | No R15 fault-injection result yet. | Inject Podman delete failures on R15 in Single-Node and Multi-Node; show failure with retry state/resources preserved, restore Podman byte-for-byte, verify retry cleanup, and run uninjected controls. |
 | #255 | No R15 real Multi-Node migration result yet. | Complete a real restore/cutover, preserve logical instance ID, and retain a high-frequency operation-state timeline showing no backward transition to `queued`. |
 | #271 | Existing issue-specific redirect evidence is on older candidates and Single-Node cells. | Re-run with exact R15 in the remaining release-gate contexts, including CentOS Stream and Multi-Node, and retain zero redirect-target requests. |
-| #291 | R15 removal deleted the Worker peer and Portal TCP/5001 rule; an unregistered Worker probe was denied. Supported Worker re-onboarding then failed its 120-second Fleet heartbeat gate. Secret-safe diagnostics found no PSK on the Admin peer while the Worker retained its old PSK, so WireGuard did not handshake. See the [failure analysis](evidence/rc6-e5-r15/issue-291-peer-revoke-20261027T102542Z/rejoin-failure-analysis.md). | Validate the product fix on a new six-RPM candidate: re-onboard the removed Worker, require a fresh WireGuard handshake and healthy Fleet heartbeat, then repeat removal, revocation, denial, and idempotence checks. |
+| #291 | R15 re-onboarding failed before a fresh peer handshake. R16 fixed that first ordering defect and passed one rejoin, remove/revocation/denial, then failed the second supported rejoin because a `registered` node was excluded from the pre-heartbeat peer inventory. Details: [R15 failure analysis](evidence/rc6-e5-r15/issue-291-peer-revoke-20261027T102542Z/rejoin-failure-analysis.md) and [R16 rejoin log](evidence/rc6-e5-r16/runtime/issue-291/rejoin-worker-r16.log). | Validate R17 on the exact RPMs: restore a healthy Worker, remove it without `--force`, prove Admin/Portal peer revocation and denial, then rejoin through the supported installer and verify handshake plus healthy heartbeat. Repeat the removal/rejoin sequence as required by the issue. |
 | #294 | No R15 Multi-Node control-plane restart result yet. | Restart the Admin control plane with stale persisted Worker metrics, show unavailable state before fresh metrics, then recovery after a valid heartbeat. |
 
 ## Closed since the previous snapshot
