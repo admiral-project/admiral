@@ -1,4 +1,4 @@
-# Current triage snapshot — 2026-10-27 13:56 UTC
+# Current triage snapshot — 2026-10-27 13:59 UTC
 
 This snapshot supersedes the 2026-10-26 open-issue inventory later in this
 historical review.
@@ -11,8 +11,8 @@ historical review.
   [R17 evidence](evidence/rc6-e5-r17/CANDIDATE.md). Root CI run 40497925910 is
   green on the exact R17 root SHA. Exact-candidate issue acceptance passed for
   #182 and #291 on the existing Rocky Admin + independent Portal + Worker
-  topology. The [combined runtime report](evidence/rc6-e5-r17/ISSUE-182-291-REPORT.md)
-  records the two-cycle Worker rejoin test and the Harbor uploaded restore.
+  topology. The [R17 open-issue report](evidence/rc6-e5-r17/ISSUE-228-271-294-REPORT.md)
+  records exact-candidate acceptance for #228 and #294 as well.
 - R16 is invalidated for #291 after the second supported remove-and-rejoin
   sequence timed out before peer reconciliation. Its records remain under
   [R16 evidence](evidence/rc6-e5-r16/CANDIDATE.md).
@@ -28,17 +28,17 @@ historical review.
 - Full runtime release matrix: **0/6 cells complete**. Rocky Multi-Node has
   partial R15 evidence; the full cell checklist and the other five cells remain
   pending.
-- GitHub root issues: **5 open**: #106, #228, #255, #271, #294.
-  **285 are closed**. #182 and #291 were closed after exact R17 acceptance;
-  #289 was closed after its R15 acceptance.
-- R17 exact-candidate issue closures in this update: **2** (#182, #291). Gold
-  remains ineligible while any issue is open or any matrix cell is incomplete.
+- GitHub root issues: **3 open**: #106, #255, #271. **287 are closed**.
+  #228 and #294 were closed after exact R17 acceptance; #182 and #291 also
+  closed after exact R17 acceptance, and #289 after its R15 acceptance.
+- R17 exact-candidate issue closures recorded here: **4** (#182, #228, #291,
+  #294). Gold remains ineligible while any issue is open or any matrix cell is
+  incomplete.
 - Exact R17 issue probes pass for #228 on Rocky Single-Node and Multi-Node
   (injected Podman cleanup failures, retry convergence, plus clean controls),
   #271 on Rocky Single-Node and Multi-Node, and #294 on Rocky Single-Node and
-  Multi-Node. Hashed raw evidence and a combined report are prepared; #228 and
-  #294 are ready to close after the report is published. These probes do not
-  credit a full release-matrix cell.
+  Multi-Node. The hashed raw evidence and combined report are published. These
+  probes do not credit a full release-matrix cell.
 - Host resources at 2026-10-27 13:56 UTC: 2.2 GiB available RAM and 45 GiB
   free disk. The three original guests and one temporary Rocky Single-Node guest
   remain running; the temporary guest has 793 MiB available RAM and 6.3 GiB
@@ -49,10 +49,8 @@ historical review.
 | Issue | Current evidence | Remaining acceptance |
 |---|---|---|
 | #106 | No verified PayPal sandbox transaction, webhook, or lifecycle evidence; GitHub's latest review keeps this as an external gate. | On a clean candidate guest, complete sandbox checkout, verify signed/fresh/idempotent webhook, provision, lifecycle changes, cancel/refund, and publish the playbook/evidence. |
-| #228 | Exact R17 Rocky Single-Node and Multi-Node post-fix injections returned failed deprovision with resources and retry metadata retained; restoring Podman and retrying converged to an empty inventory. Both clean controls passed. | Publish the [R17 runtime report](evidence/rc6-e5-r17/ISSUE-228-271-294-REPORT.md) and raw evidence links in the issue, then close. |
-| #255 | The conditional queue-state fix and deterministic migration regression are reviewed; no R17 live Multi-Node migration timeline is recorded. | Complete a real restore/cutover, preserve logical instance ID, and capture operation states showing no backward transition to `queued`. |
+| #255 | The conditional queue-state fix and deterministic migration regression are reviewed; no R17 live Multi-Node migration timeline is recorded. | Complete a real restore/cutover on two Workers, preserve the logical instance ID, and capture operation states showing no backward transition to `queued`. |
 | #271 | Exact R17 Rocky Single-Node and Multi-Node redirect probes passed for loopback and Worker-address targets; the target received zero requests over repeated periodic checks. | Complete the exact R17 CentOS Stream Multi-Node probe, then publish the evidence and close. |
-| #294 | Exact R17 Rocky Single-Node and Multi-Node control-plane restart probes passed: stale persisted Worker state was unavailable before a fresh heartbeat, then recovered. | Publish the [R17 runtime report](evidence/rc6-e5-r17/ISSUE-228-271-294-REPORT.md) and raw evidence links in the issue, then close. |
 
 ## Closed since the previous snapshot
 
@@ -60,9 +58,11 @@ historical review.
 |---|---|
 | #182 | R17 Rocky Multi-Node Harbor customer flow passed backup, owner download, upload, paused restore, SQL marker verification, resume to running/healthy/available, and both Worker-IP and metadata-origin rejection controls. The restore operation succeeded and the operation count remained unchanged across negatives. See the [R17 runtime report](evidence/rc6-e5-r17/ISSUE-182-291-REPORT.md), [raw logs](evidence/rc6-e5-r17/runtime/issue-182-r17-20261027/), and [GitHub closure](https://github.com/admiral-project/admiral/issues/182). Harbor's local request row still awaited scheduled reconciliation at capture time; the authoritative Admiral operation and workload state passed. This issue-specific pass does not count as a matrix cell. |
 | #291 | Two R17 no-force Worker remove/rejoin cycles passed. Packaged `admiral-install` automatically restored exact Worker↔Portal peers and Portal firewall authorization; removal revoked them and denied Worker access. Heartbeat, handshakes, permanent SSH, and strict-CA Worker-to-Portal HTTPS passed. See the [R17 runtime report](evidence/rc6-e5-r17/ISSUE-182-291-REPORT.md), [raw cycle logs](evidence/rc6-e5-r17/runtime/issue-291/remove-rejoin-r17-20261027/), and [GitHub closure](https://github.com/admiral-project/admiral/issues/291). This issue-specific pass does not count as a matrix cell. |
+| #228 | Rocky Single-Node and Multi-Node R17 post-fix fault injections returned failed deprovision with retained resources/retry state; restored Podman retries converged to empty inventories. Clean controls passed on both topologies. See the [R17 report](evidence/rc6-e5-r17/ISSUE-228-271-294-REPORT.md), [raw Single-Node evidence](evidence/rc6-e5-r17/runtime/issue-228-r17-rocky-sn-20261027/), [raw Multi-Node evidence](evidence/rc6-e5-r17/runtime/issue-228-r17-rocky-mn-20261027T145000Z/), and [GitHub closure](https://github.com/admiral-project/admiral/issues/228). |
+| #294 | Rocky Single-Node and Multi-Node exact R17 startup probes both reconciled stale persisted state before fresh Fleet metrics and recovered after Fleet restarted. See the [R17 report](evidence/rc6-e5-r17/ISSUE-228-271-294-REPORT.md), [raw Single-Node evidence](evidence/rc6-e5-r17/runtime/issue-294-r17-rocky-single-20261027/), [raw Multi-Node evidence](evidence/rc6-e5-r17/runtime/issue-294-r17-multinode-20261027/), and [GitHub closure](https://github.com/admiral-project/admiral/issues/294). |
 | #289 | Four independent Harbor customer flows passed on Rocky Multi-Node: two through Admin Caddy and two directly over Portal WireGuard. Each covered pending signup/login rejection, approval, catalog publication, deployment, healthy/available state, and deprovision. Strict HTTPS probes returned HTTP 200; cleanup left no app routes or rootless Podman resources. The [R15 report](evidence/rc6-e5-r15/ISSUE-289-REPORT.md), hashed raw evidence, and [GitHub closure](https://github.com/admiral-project/admiral/issues/289) are published. This issue-specific pass does not credit a matrix cell. |
 
-Five issues remain open at the time of this snapshot. Do not declare Gold while
+Three issues remain open at the time of this snapshot. Do not declare Gold while
 any issue remains open or any of the six exact-candidate cells is incomplete.
 The #291 installer integration and peer reconciliation fix are included in R17;
 no product changes occurred during these issue-specific validation runs.
