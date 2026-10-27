@@ -1,9 +1,9 @@
 # Open issue triage — 2026-10-27
 
 This snapshot reflects the live root issue list checked on 2026-10-27. GitHub
-reports **5 open issues**: #106, #255, #271, #304, and #305. Issues #306 and
-#307 were closed after their documentation and scoped security review work
-was completed.
+reports **6 open issues**: #106, #255, #271, #304, #305, and #307. Issue #306
+is closed. #307 was reopened because the expected security checklist remains
+incomplete.
 Release R17 remains at **0/6** required x86_64 runtime cells and is **not Gold**.
 
 The exact historical product payload is R17
@@ -106,23 +106,22 @@ confirms the selected component references match the checked-out SHAs.
 
 ## #307 — security verification scope
 
-**Closed after the scoped security regression review completed; no confirmed regression was found.**
-The scope follows the clarification in #307: compare recent product changes
-with previously implemented and validated controls, reuse applicable audit
-evidence, and run focused regressions. This did not require repeating the
-entire security audit or release matrix. The review covered the #255 migration
-backup/callback changes, #304 IPv6/WireGuard/firewall changes, and the CLI's
-local app-definition validation change. Focused API/database and CLI tests,
-IPv6 tests, rendered firewall checks, and static review found no confirmed new
-security regression. The
-[`security regression report`](../issue-307-20261027/SECURITY-REGRESSION-REPORT.md)
-contains the exact checks, evidence, and limits. Historical evidence is reused
-only for controls not changed by the reviewed source, with its limitations
-preserved. `UserNS=auto` research is complementary and its adoption was not a
-closure requirement. Public IPv6 end-to-end acceptance remains tracked by
-#304, and real migration backup/restore/cutover by #255; neither was treated as
-passed by the security review. Package-level validation and the six-cell
-release matrix remain separate release gates.
+**Open — expected A–L security review incomplete.** The issue's checklist is
+the expected verification scope: architecture boundaries; two real tenants on
+one Worker; SELinux/storage; Podman/Quadlet; systemd user manager; Fleet
+privileged operations; effective Ansible baseline; network exposure;
+secrets/backups; tenant authorization; and a proportional live Multi-Node
+validation. Reuse applicable historic evidence and avoid duplicate tests, but
+do not mark untested controls PASS. `UserNS=auto` adoption remains optional.
+
+Focused checks of #255 migration, #304 IPv6/WireGuard/firewall, CLI app
+validation, and selected ownership controls found no confirmed regression in
+those reviewed paths. They do not meet #307's complete expected scope. Current
+candidate package/runtime evidence, two-customer isolation negatives, and
+effective host security controls remain outstanding. See the
+[`partial security review`](../issue-307-20261027/SECURITY-REGRESSION-REPORT.md)
+for an A–L coverage table and exact evidence limits. The GitHub issue was
+reopened so its state reflects that remaining work.
 
 ## Release and resource gates
 
