@@ -1,0 +1,12 @@
+{
+  "action": "deprovision_app",
+  "admin_user": "system",
+  "created_at": "2026-10-27T13:47:30.494624Z",
+  "error_message": "deprovision instance \"inst_8b01b676dbc36607\" cleanup failed: remove pod for \"inst_8b01b676dbc36607\": rootless Podman helper \"admiral-fleet-lifecycle\": podman [pod rm --force --ignore admiral-inst_8b01b676dbc36607]: exit status 125: Running as unit: run-p[REDACTED]injected audit Podman deletion failure for inst_8b01b676dbc36607\nFinished with result: exit-code\nMain processes terminated with: code=exited, status=125/n/a\nService runtime: 44ms\nCPU time consumed: 24ms\nMemory peak: 1.2M (swap: 0B)\n\nremove container \"admiral-inst_8b01b676dbc36607-app\": rootless Podman helper \"admiral-fleet-lifecycle\": podman [rm --force --ignore admiral-inst_8b01b676dbc36607-app]: exit status 125: Running as unit: run-p[REDACTED] invocation ID: 909b8d1077ea42c79c0c9797397f0712\ninjected audit Podman deletion failure for inst_8b01b676dbc36607\nFinished with result: exit-code\nMain processes terminated with: code=exited, status=125/n/a\nService runtime: 38ms\nCPU time consumed: 21ms\nMemory peak: 1.2M (swap: 0B)\n\nremove container \"admiral-inst_8b01b676dbc36607-db\": rootless Podman helper \"admiral-fleet-lifecycle\": podman [rm --force --ignore admiral-inst_8b01b676dbc36607-db]: exit status 125: Running as unit: run-p[REDACTED]injected audit Podman deletion failure for inst_8b01b676dbc36607\nFinished with result: exit-code\nMain processes terminated with: code=exited, status=125/n/a\nService runtime: 38ms\nCPU time consumed: 20ms\nMemory peak: 1.1M (swap: 0B)\n\nremove volume \"admiral-inst_8b01b676dbc36607-db\": rootless Podman helper \"admiral-fleet-lifecycle\": podman [volume rm --force admiral-inst_8b01b676dbc36607-db]: exit status 125: Running as unit: run-p[REDACTED] invocation ID: 4c7aa3d6fbc44539890b48e9ec2981ed\ninjected audit Podman deletion failure for inst_8b01b676dbc36607\nFinished with result: exit-code\nMain processes terminated with: code=exited, status=125/n/a\nService runtime: 55ms\nCPU time consumed: 21ms\nMemory peak: 1.2M (swap: 0B)\n",
+  "id": "op_3c13d218cdf04846",
+  "instance_id": "inst_8b01b676dbc36607",
+  "node_id": "rc6e5r17-rocky-single",
+  "status": "failed",
+  "task_id": "task_7acab468eb9145a4",
+  "updated_at": "2026-10-27T13:47:36.398711Z"
+}

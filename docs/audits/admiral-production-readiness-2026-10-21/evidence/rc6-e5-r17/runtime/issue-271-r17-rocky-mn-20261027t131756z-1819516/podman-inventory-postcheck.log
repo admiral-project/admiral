@@ -1,0 +1,16 @@
+rc6e5r15-rocky-worker
+admiral-common-0.0.1rc6-17.el10.noarch
+admiral-fleet-0.0.1rc6-17.el10.x86_64
+active
+CONTAINER ID  IMAGE       COMMAND     CREATED     STATUS      PORTS       NAMES
+POD ID      NAME        STATUS      CREATED     INFRA ID    # OF CONTAINERS
+DRIVER      VOLUME NAME
+REPOSITORY                  TAG         IMAGE ID      CREATED        SIZE
+docker.io/library/postgres  16          066167ff39c2  6 days ago     459 MB
+docker.io/traefik/whoami    v1.10       9943fa5dfa16  21 months ago  7 MB
+State Recv-Q Send-Q Local Address:Port Peer Address:Port
+               total        used        free      shared  buff/cache   available
+Mem:           954Mi       459Mi       212Mi       1.5Mi       436Mi       494Mi
+Swap:             0B          0B          0B
+Filesystem      Size  Used Avail Use% Mounted on
+/dev/vda4       8.4G  2.2G  6.3G  26% /

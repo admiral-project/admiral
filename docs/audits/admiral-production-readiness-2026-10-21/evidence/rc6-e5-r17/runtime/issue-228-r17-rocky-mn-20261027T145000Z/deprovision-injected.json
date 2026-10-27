@@ -1,0 +1,12 @@
+{
+  "action": "deprovision_app",
+  "admin_user": "system",
+  "created_at": "2026-10-27T13:28:17.992011Z",
+  "error_message": "deprovision instance \"inst_62c55f08e8f91c0c\" cleanup failed: remove pod for \"inst_62c55f08e8f91c0c\": rootless Podman helper \"admiral-fleet-lifecycle\": podman [pod rm --force --ignore admiral-inst_62c55f08e8f91c0c]: exit status 125: Running as unit: run-p[REDACTED]injected audit Podman deletion failure for inst_62c55f08e8f91c0c\nFinished with result: exit-code\nMain processes terminated with: code=exited, status=125/n/a\nService runtime: 38ms\nCPU time consumed: 18ms\nMemory peak: 1.1M (swap: 0B)\n\nremove container \"admiral-inst_62c55f08e8f91c0c-db\": rootless Podman helper \"admiral-fleet-lifecycle\": podman [rm --force --ignore admiral-inst_62c55f08e8f91c0c-db]: exit status 125: Running as unit: run-p[REDACTED]injected audit Podman deletion failure for inst_62c55f08e8f91c0c\nFinished with result: exit-code\nMain processes terminated with: code=exited, status=125/n/a\nService runtime: 30ms\nCPU time consumed: 19ms\nMemory peak: 1.2M (swap: 0B)\n\nremove volume \"admiral-inst_62c55f08e8f91c0c-db\": rootless Podman helper \"admiral-fleet-lifecycle\": podman [volume rm --force admiral-inst_62c55f08e8f91c0c-db]: exit status 125: Running as unit: run-p[REDACTED]injected audit Podman deletion failure for inst_62c55f08e8f91c0c\nFinished with result: exit-code\nMain processes terminated with: code=exited, status=125/n/a\nService runtime: 28ms\nCPU time consumed: 19ms\nMemory peak: 1.1M (swap: 0B)\n\nremove container \"admiral-inst_62c55f08e8f91c0c-app\": rootless Podman helper \"admiral-fleet-lifecycle\": podman [rm --force --ignore admiral-inst_62c55f08e8f91c0c-app]: exit status 125: Running as unit: run-p[REDACTED] invocation ID: 2fc06e307be2468bb919006bdaf7eea7\ninjected audit Podman deletion failure for inst_62c55f08e8f91c0c\nFinished with result: exit-code\nMain processes terminated with: code=exited, status=125/n/a\nService runtime: 30ms\nCPU time consumed: 19ms\nMemory peak: 1.2M (swap: 0B)\n",
+  "id": "op_284363742d82b0a6",
+  "instance_id": "inst_62c55f08e8f91c0c",
+  "node_id": "rc6e5r15-rocky-worker",
+  "status": "failed",
+  "task_id": "task_32f518f9ad8c4ef1",
+  "updated_at": "2026-10-27T13:28:21.363399Z"
+}

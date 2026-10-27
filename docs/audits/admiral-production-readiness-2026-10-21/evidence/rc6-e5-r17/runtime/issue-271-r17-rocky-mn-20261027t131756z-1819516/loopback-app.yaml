@@ -1,0 +1,26 @@
+name: r17-issue-271-rocky-mn-20261027t131756z-1819516
+display_name: R17 issue 271 redirect probe
+description: Disposable Multi-Node health redirect validation.
+services:
+  web:
+    image: docker.io/library/admiral-r17-redirect:rocky-mn-20261027t131756z-1819516
+    port: 8080
+    public: false
+    env:
+      REDIRECT_TARGET: "http://127.0.0.1:18081/leak"
+    healthcheck:
+      type: http
+      port: 8080
+      path: /
+      expected_status: 302
+      timeout_seconds: 2
+    healthcheck_wait_timeout: 30
+    backup:
+      type: none
+tiers:
+  small:
+    cpu: 1
+    memory: 128M
+    storage: 256M
+    price_monthly: 0
+    free: true

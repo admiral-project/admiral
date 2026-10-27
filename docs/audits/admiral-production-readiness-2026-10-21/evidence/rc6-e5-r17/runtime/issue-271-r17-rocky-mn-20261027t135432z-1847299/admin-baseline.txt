@@ -1,0 +1,65 @@
+rc6e5r17-rocky-single
+admiral-common-0.0.1rc6-17.el10.noarch
+admiralctl-0.0.1rc6-17.el10.x86_64
+admirald-0.0.1rc6-17.el10.x86_64
+active
+[
+  {
+    "available_for_provisioning": true,
+    "committed_disk_bytes": 0,
+    "committed_ram_bytes": 0,
+    "disk_commit_limit_bytes": 0,
+    "disk_total_bytes": 0,
+    "disk_used_bytes": 0,
+    "fleet_version": "",
+    "health_status": "healthy",
+    "hostname": "rc6e5r17-rocky-single",
+    "id": "rc6e5r17-rocky-single-portal",
+    "ip": "127.0.0.1",
+    "last_heartbeat": "2026-10-27T13:51:39.286258Z",
+    "last_metrics_at": "2026-10-27T13:51:39.286258Z",
+    "manual_disabled": false,
+    "node_role": "portal",
+    "os": "Rocky 10.2",
+    "podman_version": "4.9.0",
+    "pods_active": 0,
+    "pods_failed": 0,
+    "pods_paused": 0,
+    "public_ip": "10.77.0.140",
+    "ram_commit_limit_bytes": 0,
+    "ram_total_bytes": 0,
+    "ram_used_bytes": 0,
+    "status": "active",
+    "storage_state": "",
+    "wireguard_ip": "10.99.0.1"
+  },
+  {
+    "available_for_provisioning": true,
+    "committed_disk_bytes": 0,
+    "committed_ram_bytes": 0,
+    "disk_commit_limit_bytes": 6002120021,
+    "disk_total_bytes": 9003180032,
+    "disk_used_bytes": 2312941568,
+    "fleet_version": "0.0.1rc6",
+    "health_status": "healthy",
+    "hostname": "rc6e5r17-rocky-single",
+    "id": "rc6e5r17-rocky-single",
+    "ip": "192.168.122.175",
+    "last_heartbeat": "2026-10-27T13:54:26.706427Z",
+    "last_metrics_at": "2026-10-27T13:54:26.706427Z",
+    "manual_disabled": false,
+    "node_role": "worker",
+    "os": "Rocky 10.2",
+    "podman_version": "5.8.2",
+    "pods_active": 0,
+    "pods_failed": 0,
+    "pods_paused": 0,
+    "public_ip": "10.77.0.140",
+    "ram_commit_limit_bytes": 1222125158,
+    "ram_total_bytes": 1527656448,
+    "ram_used_bytes": 704372736,
+    "status": "active",
+    "storage_state": "",
+    "wireguard_ip": "10.99.0.1"
+  }
+]

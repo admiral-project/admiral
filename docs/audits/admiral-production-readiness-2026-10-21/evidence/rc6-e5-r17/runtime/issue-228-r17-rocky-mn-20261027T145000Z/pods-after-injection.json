@@ -1,0 +1,23 @@
+[
+  {
+    "Cgroup": "user.slice",
+    "Containers": [
+      {
+        "Id": "6ed6296d741a59b0a6617ba796a7d4390ab3068e3d0d08ebe994cb093e5de600",
+        "Names": "admiral-inst_62c55f08e8f91c0c-infra",
+        "Status": "exited",
+        "RestartCount": 0
+      }
+    ],
+    "Created": "2026-10-27T13:28:11.190784008Z",
+    "Id": "7ad3991e15a72f06de8c420996a015296bd4c10ede706f636ab88a8f3d26bcc3",
+    "InfraId": "6ed6296d741a59b0a6617ba796a7d4390ab3068e3d0d08ebe994cb093e5de600",
+    "Name": "admiral-inst_62c55f08e8f91c0c",
+    "Namespace": "",
+    "Networks": [],
+    "Status": "Exited",
+    "Labels": {
+      "PODMAN_SYSTEMD_UNIT": "admiral-inst_62c55f08e8f91c0c-pod.service"
+    }
+  }
+]

@@ -1,15 +1,20 @@
-# Current triage snapshot — 2026-10-27
+# Current triage snapshot — 2026-10-27 13:56 UTC
 
 This snapshot supersedes the 2026-10-26 open-issue inventory later in this
 historical review.
 
 ## Release state
 
-- Last packaged candidate: RC6 Epoch 5 Release 16; six RPMs were built
+- Current packaged candidate: RC6 Epoch 5 Release 17; all six RPMs were built
   natively for EL10 and Fedora Rawhide (`.el10` and `.fc46` respectively),
-  signed, and installed on the existing Rocky Multi-Node guests. R16 is now
-  invalidated for #291 after the second supported remove-and-rejoin sequence
-  timed out before peer reconciliation. Its records remain under
+  signed, and recorded with NEVRA/SHA-256 in the
+  [R17 evidence](evidence/rc6-e5-r17/CANDIDATE.md). Root CI run 40497925910 is
+  green on the exact R17 root SHA. Exact-candidate issue acceptance passed for
+  #182 and #291 on the existing Rocky Admin + independent Portal + Worker
+  topology. The [combined runtime report](evidence/rc6-e5-r17/ISSUE-182-291-REPORT.md)
+  records the two-cycle Worker rejoin test and the Harbor uploaded restore.
+- R16 is invalidated for #291 after the second supported remove-and-rejoin
+  sequence timed out before peer reconciliation. Its records remain under
   [R16 evidence](evidence/rc6-e5-r16/CANDIDATE.md).
 - R16 did pass remove/revocation/denial and a first rejoin. The repeated
   rejoin exposed a second ordering defect: the registering node was omitted
@@ -18,38 +23,49 @@ historical review.
 - Root product fix `ba59c45d647bd354c878d7e61497896746a88c2b` admits only the
   exact currently registering node to the pre-heartbeat peer inventory. The
   root regression suite passed 189 tests locally. All six Release 17 specs now
-  reference this source; `scripts/validate-release-refs.py` passes. Root CI,
-  candidate builds, and issue-specific runtime validation are pending.
+  reference this source; `scripts/validate-release-refs.py` passes. R17 root CI,
+  both distro builds, and the #182/#291 exact-package runtime checks are green.
 - Full runtime release matrix: **0/6 cells complete**. Rocky Multi-Node has
   partial R15 evidence; the full cell checklist and the other five cells remain
   pending.
-- GitHub root issues: **7 open**: #106, #182, #228, #255, #271, #291, #294.
-  **283 are closed** in total; #289 was closed after its R15 acceptance passed.
-- Host resources at the latest check: 2.5 GiB available RAM and 49 GiB disk
-  free. Validation remains serial to protect the host and guests.
+- GitHub root issues: **5 open**: #106, #228, #255, #271, #294.
+  **285 are closed**. #182 and #291 were closed after exact R17 acceptance;
+  #289 was closed after its R15 acceptance.
+- R17 exact-candidate issue closures in this update: **2** (#182, #291). Gold
+  remains ineligible while any issue is open or any matrix cell is incomplete.
+- Exact R17 issue probes pass for #228 on Rocky Single-Node and Multi-Node
+  (injected Podman cleanup failures, retry convergence, plus clean controls),
+  #271 on Rocky Single-Node and Multi-Node, and #294 on Rocky Single-Node and
+  Multi-Node. Hashed raw evidence and a combined report are prepared; #228 and
+  #294 are ready to close after the report is published. These probes do not
+  credit a full release-matrix cell.
+- Host resources at 2026-10-27 13:56 UTC: 2.2 GiB available RAM and 45 GiB
+  free disk. The three original guests and one temporary Rocky Single-Node guest
+  remain running; the temporary guest has 793 MiB available RAM and 6.3 GiB
+  free disk. Validation remains serial and resource-capped.
 
 ## Open-issue triage
 
-| Issue | Current R15 evidence | Remaining acceptance |
+| Issue | Current evidence | Remaining acceptance |
 |---|---|---|
-| #106 | No verified PayPal transaction or webhook evidence. | PayPal sandbox transaction, verified webhook, and full billing lifecycle. This external gate remains open. |
-| #182 | Rocky Multi-Node R15: authenticated customer upload restore completed on the Worker; SQL marker and resumed workload verified; unregistered Worker and metadata origins rejected without creating restore operations. The synthetic instance was deprovisioned successfully. | The R15 restore probe passed, but #182 remains open pending linked #291 onboarding/revocation acceptance on the fixed candidate. This targeted result is not a matrix-cell pass. |
-| #228 | No R15 fault-injection result yet. | Inject Podman delete failures on R15 in Single-Node and Multi-Node; show failure with retry state/resources preserved, restore Podman byte-for-byte, verify retry cleanup, and run uninjected controls. |
-| #255 | No R15 real Multi-Node migration result yet. | Complete a real restore/cutover, preserve logical instance ID, and retain a high-frequency operation-state timeline showing no backward transition to `queued`. |
-| #271 | Existing issue-specific redirect evidence is on older candidates and Single-Node cells. | Re-run with exact R15 in the remaining release-gate contexts, including CentOS Stream and Multi-Node, and retain zero redirect-target requests. |
-| #291 | R15 re-onboarding failed before a fresh peer handshake. R16 fixed that first ordering defect and passed one rejoin, remove/revocation/denial, then failed the second supported rejoin because a `registered` node was excluded from the pre-heartbeat peer inventory. Details: [R15 failure analysis](evidence/rc6-e5-r15/issue-291-peer-revoke-20261027T102542Z/rejoin-failure-analysis.md) and [R16 rejoin log](evidence/rc6-e5-r16/runtime/issue-291/rejoin-worker-r16.log). | Validate R17 on the exact RPMs: restore a healthy Worker, remove it without `--force`, prove Admin/Portal peer revocation and denial, then rejoin through the supported installer and verify handshake plus healthy heartbeat. Repeat the removal/rejoin sequence as required by the issue. |
-| #294 | No R15 Multi-Node control-plane restart result yet. | Restart the Admin control plane with stale persisted Worker metrics, show unavailable state before fresh metrics, then recovery after a valid heartbeat. |
+| #106 | No verified PayPal sandbox transaction, webhook, or lifecycle evidence; GitHub's latest review keeps this as an external gate. | On a clean candidate guest, complete sandbox checkout, verify signed/fresh/idempotent webhook, provision, lifecycle changes, cancel/refund, and publish the playbook/evidence. |
+| #228 | Exact R17 Rocky Single-Node and Multi-Node post-fix injections returned failed deprovision with resources and retry metadata retained; restoring Podman and retrying converged to an empty inventory. Both clean controls passed. | Publish the [R17 runtime report](evidence/rc6-e5-r17/ISSUE-228-271-294-REPORT.md) and raw evidence links in the issue, then close. |
+| #255 | The conditional queue-state fix and deterministic migration regression are reviewed; no R17 live Multi-Node migration timeline is recorded. | Complete a real restore/cutover, preserve logical instance ID, and capture operation states showing no backward transition to `queued`. |
+| #271 | Exact R17 Rocky Single-Node and Multi-Node redirect probes passed for loopback and Worker-address targets; the target received zero requests over repeated periodic checks. | Complete the exact R17 CentOS Stream Multi-Node probe, then publish the evidence and close. |
+| #294 | Exact R17 Rocky Single-Node and Multi-Node control-plane restart probes passed: stale persisted Worker state was unavailable before a fresh heartbeat, then recovered. | Publish the [R17 runtime report](evidence/rc6-e5-r17/ISSUE-228-271-294-REPORT.md) and raw evidence links in the issue, then close. |
 
 ## Closed since the previous snapshot
 
-| Issue | R15 acceptance |
+| Issue | Exact-candidate or prior acceptance |
 |---|---|
+| #182 | R17 Rocky Multi-Node Harbor customer flow passed backup, owner download, upload, paused restore, SQL marker verification, resume to running/healthy/available, and both Worker-IP and metadata-origin rejection controls. The restore operation succeeded and the operation count remained unchanged across negatives. See the [R17 runtime report](evidence/rc6-e5-r17/ISSUE-182-291-REPORT.md), [raw logs](evidence/rc6-e5-r17/runtime/issue-182-r17-20261027/), and [GitHub closure](https://github.com/admiral-project/admiral/issues/182). Harbor's local request row still awaited scheduled reconciliation at capture time; the authoritative Admiral operation and workload state passed. This issue-specific pass does not count as a matrix cell. |
+| #291 | Two R17 no-force Worker remove/rejoin cycles passed. Packaged `admiral-install` automatically restored exact Worker↔Portal peers and Portal firewall authorization; removal revoked them and denied Worker access. Heartbeat, handshakes, permanent SSH, and strict-CA Worker-to-Portal HTTPS passed. See the [R17 runtime report](evidence/rc6-e5-r17/ISSUE-182-291-REPORT.md), [raw cycle logs](evidence/rc6-e5-r17/runtime/issue-291/remove-rejoin-r17-20261027/), and [GitHub closure](https://github.com/admiral-project/admiral/issues/291). This issue-specific pass does not count as a matrix cell. |
 | #289 | Four independent Harbor customer flows passed on Rocky Multi-Node: two through Admin Caddy and two directly over Portal WireGuard. Each covered pending signup/login rejection, approval, catalog publication, deployment, healthy/available state, and deprovision. Strict HTTPS probes returned HTTP 200; cleanup left no app routes or rootless Podman resources. The [R15 report](evidence/rc6-e5-r15/ISSUE-289-REPORT.md), hashed raw evidence, and [GitHub closure](https://github.com/admiral-project/admiral/issues/289) are published. This issue-specific pass does not credit a matrix cell. |
 
-Seven issues remain open at the time of this snapshot. Do not declare Gold
-while any issue remains open or any of the six exact-candidate cells is
-incomplete. The installer and Ansible changes for #291 are product changes and
-invalidate R15; a new candidate must pass the complete matrix before Gold.
+Five issues remain open at the time of this snapshot. Do not declare Gold while
+any issue remains open or any of the six exact-candidate cells is incomplete.
+The #291 installer integration and peer reconciliation fix are included in R17;
+no product changes occurred during these issue-specific validation runs.
 
 # Open issue closure review — 2026-10-26
 

@@ -1,0 +1,20 @@
+Error: operation op_3c13d218cdf04846 finished with status failed
+Usage:
+  admiralctl instances deprovision <instance_id> [flags]
+
+Aliases:
+  deprovision, destroy
+
+Flags:
+      --force                   Skip confirmation prompt
+  -h, --help                    help for deprovision
+      --output string           Output format: table or json (default "table")
+      --wait                    Wait until the operation reaches a terminal state
+      --wait-timeout duration   Maximum time to wait for an operation (default 30m0s)
+
+Global Flags:
+      --ca-cert string    CA certificate file for admirald HTTPS validation
+      --operator string   Operator name for audit logs
+      --server string     Control plane server endpoint URL
+
+Error: operation op_3c13d218cdf04846 finished with status failed

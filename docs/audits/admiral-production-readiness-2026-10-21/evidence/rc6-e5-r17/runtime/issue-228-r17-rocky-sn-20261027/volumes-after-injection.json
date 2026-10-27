@@ -1,0 +1,18 @@
+[
+  {
+    "Name": "admiral-inst_8b01b676dbc36607-db",
+    "Driver": "local",
+    "Mountpoint": "/var/lib/admiral-apps/.local/share/containers/storage/volumes/admiral-inst_8b01b676dbc36607-db/_data",
+    "CreatedAt": "2026-10-27T13:46:39.477971117Z",
+    "Labels": {
+      
+    },
+    "Scope": "local",
+    "Options": {
+      
+    },
+    "MountCount": 0,
+    "NeedsCopyUp": true,
+    "LockNumber": 0
+  }
+]

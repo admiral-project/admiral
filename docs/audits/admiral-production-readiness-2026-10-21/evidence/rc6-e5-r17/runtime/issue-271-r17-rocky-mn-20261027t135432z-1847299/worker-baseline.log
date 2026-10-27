@@ -1,0 +1,9 @@
+rc6e5r17-rocky-single
+admiral-common-0.0.1rc6-17.el10.noarch
+admiral-fleet-0.0.1rc6-17.el10.x86_64
+active
+               total        used        free      shared  buff/cache   available
+Mem:            1456         663         274          19         684         793
+Swap:              0           0           0
+Filesystem      Size  Used Avail Use% Mounted on
+/dev/vda4       8.4G  2.2G  6.3G  26% /

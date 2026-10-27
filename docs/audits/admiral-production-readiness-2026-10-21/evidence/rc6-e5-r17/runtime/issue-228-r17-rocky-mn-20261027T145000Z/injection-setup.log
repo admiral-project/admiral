@@ -1,0 +1,5 @@
+Injected failures only for Podman deletion commands naming inst_62c55f08e8f91c0c.
+Restore manually with scripts/restore-podman-after-injection.sh inst_62c55f08e8f91c0c.
+A five-minute systemd timer is armed as a fallback. Preserve /var/lib/admiral/audit-podman-fail-inst_62c55f08e8f91c0c.log before cleanup.
+e84e97e99038d6a40acdd02b6ca77faa57f20525aff82a8566172bdc2d2ebcfb  /usr/bin/podman.admiral-audit-original
+8efb473c97fddb954551d11d891cd566ac1932764a3800073ff0ead4f5523ce5  /usr/bin/podman

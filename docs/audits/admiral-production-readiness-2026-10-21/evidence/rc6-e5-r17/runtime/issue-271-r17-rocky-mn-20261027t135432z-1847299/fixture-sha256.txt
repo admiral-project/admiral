@@ -1,0 +1,3 @@
+19868c525d0994486857106ced01e07517d57260869b253e65e8a700f29ec54e  /root/admiral/docs/audits/admiral-production-readiness-2026-10-21/fixtures/redirect-health-server.go
+cf697ee020c5d7f752a8648d426a64a03bae44be1985014fe6b89e2d41d85aca  /tmp/tmp.SpWyCXMbJF/redirect-health-server
+466d9a76fbdba61f210e86f08fca19f710a39a549219711f7a3fb16bb2599fdb  /tmp/tmp.SpWyCXMbJF/rootfs.tar

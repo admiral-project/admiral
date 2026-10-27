@@ -1,0 +1,44 @@
+name: e2e-whoami
+display_name: E2E Whoami
+description: Minimal app definition for Admiral end-to-end validation.
+
+services:
+  app:
+    image: docker.io/traefik/whoami:v1.10
+    port: 80
+    public: true
+    backup:
+      type: none
+
+  db:
+    image: docker.io/library/postgres:16
+    volume: db_data
+    backup:
+      type: database
+      engine: postgresql
+      database_env: POSTGRES_DB
+      username_env: POSTGRES_USER
+      password_env: POSTGRES_PASSWORD
+    env:
+      POSTGRES_DB: whoami
+    secrets:
+      POSTGRES_USER:
+        generate: username
+        expose: true
+      POSTGRES_PASSWORD:
+        generate: password
+        expose: true
+    healthcheck:
+      type: command
+      command:
+        - sh
+        - -c
+        - pg_isready -h 127.0.0.1 -U "$POSTGRES_USER" -d "$POSTGRES_DB"
+    healthcheck_wait_timeout: 120
+
+tiers:
+  small:
+    cpu: 1
+    memory: 512M
+    storage: 1G
+    price_monthly: 5

@@ -1,0 +1,5 @@
+               total        used        free      shared  buff/cache   available
+Mem:      1000742912   482287616   203792384     1536000   476196864   518455296
+Swap:              0           0           0
+Filesystem      1B-blocks       Used  Available Use% Mounted on
+/dev/vda4      9003180032 2258751488 6744428544  26% /

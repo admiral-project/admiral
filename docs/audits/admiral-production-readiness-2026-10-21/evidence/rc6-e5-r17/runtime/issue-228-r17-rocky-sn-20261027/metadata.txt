@@ -1,0 +1,9 @@
+issue=228
+candidate=RC6-E5-R17
+topology=Single-Node
+os=Rocky Linux 10.2 x86_64
+node_id=rc6e5r17-rocky-single
+start_utc=2026-10-27T13:46:32Z
+instance_id=inst_8b01b676dbc36607
+injected_deprovision_exit=1
+end_utc=2026-10-27T13:47:50Z

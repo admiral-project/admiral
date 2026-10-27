@@ -1,0 +1,45 @@
+[
+  {
+    "AutoRemove": false,
+    "Command": null,
+    "CreatedAt": "12 seconds ago",
+    "CIDFile": "",
+    "Exited": true,
+    "ExitedAt": 1793107698,
+    "ExitCode": 0,
+    "ExposedPorts": null,
+    "Id": "6ed6296d741a59b0a6617ba796a7d4390ab3068e3d0d08ebe994cb093e5de600",
+    "Image": "",
+    "ImageID": "",
+    "IsInfra": true,
+    "Labels": {
+      "PODMAN_SYSTEMD_UNIT": "admiral-inst_62c55f08e8f91c0c-pod.service"
+    },
+    "Mounts": [],
+    "Names": [
+      "admiral-inst_62c55f08e8f91c0c-infra"
+    ],
+    "Namespaces": {
+      
+    },
+    "Networks": [],
+    "Pid": 0,
+    "Pod": "7ad3991e15a72f06de8c420996a015296bd4c10ede706f636ab88a8f3d26bcc3",
+    "PodName": "",
+    "Ports": [
+      {
+        "host_ip": "10.99.0.3",
+        "container_port": 80,
+        "host_port": 40009,
+        "range": 1,
+        "protocol": "tcp"
+      }
+    ],
+    "Restarts": 0,
+    "Size": null,
+    "StartedAt": 1793107691,
+    "State": "exited",
+    "Status": "Exited (0) 5 seconds ago",
+    "Created": 1793107691
+  }
+]

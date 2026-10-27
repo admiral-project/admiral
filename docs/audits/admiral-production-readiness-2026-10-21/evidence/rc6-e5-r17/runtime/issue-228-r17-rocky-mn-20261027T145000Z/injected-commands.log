@@ -1,0 +1,9 @@
+2026-10-27T13:28:18Z injected Podman deletion failure:2026-10-27T13:28:18Z injected Podman deletion failure: rm -v -f -i admiral-inst_62c55f08e8f91c0c-app
+ rm -v -f -i admiral-inst_62c55f08e8f91c0c-db
+2026-10-27T13:28:18Z injected Podman deletion failure: rm -v -f -i admiral-inst_62c55f08e8f91c0c-app
+2026-10-27T13:28:18Z injected Podman deletion failure: rm -v -f -i admiral-inst_62c55f08e8f91c0c-db
+2026-10-27T13:28:19Z injected Podman deletion failure: pod rm --ignore --force admiral-inst_62c55f08e8f91c0c
+2026-10-27T13:28:20Z injected Podman deletion failure: pod rm --force --ignore admiral-inst_62c55f08e8f91c0c
+2026-10-27T13:28:20Z injected Podman deletion failure: rm --force --ignore admiral-inst_62c55f08e8f91c0c-db
+2026-10-27T13:28:20Z injected Podman deletion failure: volume rm --force admiral-inst_62c55f08e8f91c0c-db
+2026-10-27T13:28:20Z injected Podman deletion failure: rm --force --ignore admiral-inst_62c55f08e8f91c0c-app

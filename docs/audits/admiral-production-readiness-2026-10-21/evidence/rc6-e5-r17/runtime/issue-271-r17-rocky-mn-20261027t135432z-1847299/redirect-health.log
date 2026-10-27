@@ -1,0 +1,16 @@
+variant=loopback instance=inst_71a27365b1b48f3c redirect=http://127.0.0.1:18081/leak
+variant=loopback at=2026-10-27T13:54:54Z health=healthy availability=available checked_at=2026-10-27T13:54:51.633699Z target_hits=0
+variant=loopback at=2026-10-27T13:54:55Z health=healthy availability=available checked_at=2026-10-27T13:54:51.633699Z target_hits=0
+variant=loopback at=2026-10-27T13:54:57Z health=healthy availability=available checked_at=2026-10-27T13:54:56.46046Z target_hits=0
+variant=loopback at=2026-10-27T13:54:59Z health=healthy availability=available checked_at=2026-10-27T13:54:56.46046Z target_hits=0
+variant=loopback at=2026-10-27T13:55:01Z health=healthy availability=available checked_at=2026-10-27T13:54:56.46046Z target_hits=0
+variant=loopback at=2026-10-27T13:55:03Z health=healthy availability=available checked_at=2026-10-27T13:55:01.989894Z target_hits=0
+variant=loopback target_requests=0 periodic_reports=2 result=PASS
+variant=worker-address instance=inst_8555b0a32927cdfe redirect=http://10.77.0.140:18081/leak
+variant=worker-address at=2026-10-27T13:55:19Z health=healthy availability=available checked_at=2026-10-27T13:55:16.897855Z target_hits=0
+variant=worker-address at=2026-10-27T13:55:21Z health=healthy availability=available checked_at=2026-10-27T13:55:16.897855Z target_hits=0
+variant=worker-address at=2026-10-27T13:55:23Z health=healthy availability=available checked_at=2026-10-27T13:55:21.637596Z target_hits=0
+variant=worker-address at=2026-10-27T13:55:25Z health=healthy availability=available checked_at=2026-10-27T13:55:21.637596Z target_hits=0
+variant=worker-address at=2026-10-27T13:55:27Z health=healthy availability=available checked_at=2026-10-27T13:55:21.637596Z target_hits=0
+variant=worker-address at=2026-10-27T13:55:28Z health=healthy availability=available checked_at=2026-10-27T13:55:26.66934Z target_hits=0
+variant=worker-address target_requests=0 periodic_reports=2 result=PASS

@@ -1,0 +1,17 @@
+admiral-common-0.0.1rc6-17.el10.noarch
+admirald-0.0.1rc6-17.el10.x86_64
+admiral-fleet-0.0.1rc6-17.el10.x86_64
+admiralctl-0.0.1rc6-17.el10.x86_64
+admiral-flagship-0.0.1rc6-17.el10.noarch
+admiral-harbor-0.0.1rc6-17.el10.noarch
+               total        used        free      shared  buff/cache   available
+Mem:      1527656448   709414912   222679040    19832832   768880640   818241536
+Swap:              0           0           0
+Filesystem      1B-blocks       Used  Available Use% Mounted on
+/dev/vda4      9003180032 2312249344 6690930688  26% /
+active
+active
+active
+active
+active
+● kdump.service loaded failed failed Crash recovery kernel arming
