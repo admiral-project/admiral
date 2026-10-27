@@ -1,8 +1,9 @@
 # Open issue triage — 2026-10-27
 
 This snapshot reflects the live root issue list checked on 2026-10-27. GitHub
-reports **6 open issues**: #106, #255, #271, #304, #305, and #306. Issue #307
-was closed after its scoped review was completed.
+reports **5 open issues**: #106, #255, #271, #304, and #305. Issues #306 and
+#307 were closed after their documentation and scoped security review work
+was completed.
 Release R17 remains at **0/6** required x86_64 runtime cells and is **not Gold**.
 
 The exact historical product payload is R17
@@ -85,19 +86,23 @@ reboot recovery, and the application/Portal lifecycle through Admin.
 `examples/apps` to run on one node with 7 GiB RAM and to complete setup, pause,
 restart, backup, and restore, while checking the app-definition documentation.
 The most demanding ERPNext example is called out as needing at least 4 GiB for
-one app. The host has 7.5 GiB total RAM, 5.6 GiB currently available, and 50
+one app. The host has 7.5 GiB total RAM, 5.4 GiB currently available, and 49
 GiB free disk after obsolete validation VMs were removed. A 7 GiB guest plus
 the host and its services would still overcommit available RAM. No example
 lifecycle E2E has been run; do not count static review as that acceptance.
 
 ## #306 — documentation for the coordinated release
 
-**Open; documentation review is in progress.** The issue requires docs to
-match current and validated capabilities before the first coordinated public
-release. The system administrator guide now explains the IPv6-only public
-Worker/Portal path and private WireGuard IPv4 use. A repository-wide review of
-component and operator documentation against validated behavior remains before
-closure.
+**Closed after the coordinated release documentation was updated and CI passed.**
+The release branch now documents the active Fedora Rawhide/Rocky 10/CentOS
+Stream 10 matrix, Fedora-native RPM requirement, AlmaLinux and AL2023 support
+boundaries, current installer requirements, IPv6-only public Worker/Portal
+configuration with its pending E2E boundary, and the difference between local
+app-definition validation and runtime lifecycle acceptance. It also marks the
+RC2 issue page historical and corrects component role/runtime details. Root
+CI passes on `dfb239f`; the documentation commits in Fleet PR #90, Harbor PR
+#54, and Flagship PR #28 also pass their repository CI. `validate-release-refs.py`
+confirms the selected component references match the checked-out SHAs.
 
 ## #307 — security verification scope
 
@@ -125,7 +130,7 @@ release matrix remain separate release gates.
   x86_64, each Single-Node and Multi-Node: **0/6**.
 - Gold: **not eligible** because issues remain open and the matrix is
   incomplete.
-- Latest host observation: 5.5 GiB available RAM and 50 GiB free disk, with no
+- Latest host observation: 5.4 GiB available RAM and 49 GiB free disk, with no
   validation VMs running. The three updated x86_64 OS seed images remain.
   Keep future builds serial and resource-capped; a 7 GiB guest still needs a
   larger host.
