@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 %global debug_package %{nil}
-%global commit 90c30edb2b9f02b962874272dc6487bead990277
+%global commit 840ed152833b9f49b591519cbcdc0bbe17cf4f3d
 
 %ifarch x86_64
 %global admiral_goarch amd64
