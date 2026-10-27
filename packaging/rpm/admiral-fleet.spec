@@ -16,7 +16,7 @@
 Name:    admiral-fleet
 Version: 0.0.1rc6
 Epoch:          5
-Release:        10%{?dist}
+Release:        11%{?dist}
 Summary: Admiral Fleet Worker Agent
 
 License: Apache-2.0
@@ -25,7 +25,7 @@ URL:     https://github.com/admiral-project/admiral-fleet
 Source0: https://github.com/admiral-project/admiral-fleet/archive/%{commit}.tar.gz
 Source1: admiral-fleet.service
 Source2: fleet.env
-Source3: https://github.com/admiral-project/admirald/archive/6e4a725d30c0fff877fe2252e843fae687810ae6.tar.gz
+Source3: https://github.com/admiral-project/admirald/archive/bfe544040d33f22486c098e533ddc5987428731b.tar.gz
 
 BuildRequires: golang >= 1.26.10
 BuildRequires: binutils
@@ -113,6 +113,9 @@ loginctl enable-linger admiral-apps 2>/dev/null || :
 %systemd_postun_with_restart admiral-fleet.service
 
 %changelog
+* Tue Oct 27 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 5:0.0.1rc6-11
+- Rebuild all six RPMs for the backup deletion fix after instance deprovision.
+
 * Mon Oct 26 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 5:0.0.1rc6-10
 - Rebuild coordinated RC6 Release 10 after TLS renewal hook fix.
 

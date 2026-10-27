@@ -16,7 +16,7 @@
 Name:    admiralctl
 Version: 0.0.1rc6
 Epoch:          5
-Release:        10%{?dist}
+Release:        11%{?dist}
 Summary: Admiral Command-Line Interface
 
 License: Apache-2.0
@@ -24,7 +24,7 @@ ExclusiveArch: x86_64 aarch64
 URL:     https://github.com/admiral-project/admiralctl
 Source0: https://github.com/admiral-project/admiralctl/archive/%{commit}.tar.gz
 Source1: admiralctl.yaml
-Source2: https://github.com/admiral-project/admirald/archive/6e4a725d30c0fff877fe2252e843fae687810ae6.tar.gz
+Source2: https://github.com/admiral-project/admirald/archive/bfe544040d33f22486c098e533ddc5987428731b.tar.gz
 
 BuildRequires: golang >= 1.26.10
 BuildRequires: binutils
@@ -88,6 +88,9 @@ test "$(./admiralctl version 2>&1)" = "admiralctl %{version}"
 restorecon -F %{_bindir}/admiralctl 2>/dev/null || :
 
 %changelog
+* Tue Oct 27 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 5:0.0.1rc6-11
+- Rebuild all six RPMs for the backup deletion fix after instance deprovision.
+
 * Mon Oct 26 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 5:0.0.1rc6-10
 - Rebuild coordinated RC6 Release 10 after TLS renewal hook fix.
 

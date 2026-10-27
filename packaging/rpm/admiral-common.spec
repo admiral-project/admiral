@@ -6,7 +6,7 @@
 Name:    admiral-common
 Version: 0.0.1rc6
 Epoch:          5
-Release:        10%{?dist}
+Release:        11%{?dist}
 Summary: Common files and utilities for Admiral PaaS
 
 License: Apache-2.0
@@ -280,6 +280,9 @@ if [ "$1" -eq 0 ]; then
 fi
 
 %changelog
+* Tue Oct 27 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 5:0.0.1rc6-11
+- Rebuild all six RPMs for the backup deletion fix after instance deprovision.
+
 * Mon Oct 26 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 5:0.0.1rc6-10
 - Fix successful exit status after first Let's Encrypt certificate deployment.
 

@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 %global debug_package %{nil}
-%global commit 6e4a725d30c0fff877fe2252e843fae687810ae6
+%global commit bfe544040d33f22486c098e533ddc5987428731b
 
 %ifarch x86_64
 %global admiral_goarch amd64
@@ -16,7 +16,7 @@
 Name:    admirald
 Version: 0.0.1rc6
 Epoch:          5
-Release:        10%{?dist}
+Release:        11%{?dist}
 Summary: Admiral Control Plane - Core API and orchestration service
 
 License: Apache-2.0
@@ -91,6 +91,9 @@ restorecon -F %{_bindir}/admirald 2>/dev/null || :
 %systemd_postun_with_restart admirald.service
 
 %changelog
+* Tue Oct 27 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 5:0.0.1rc6-11
+- Allow queued backup deletion after an instance is deprovisioned.
+
 * Mon Oct 26 2026 William Moreno Reyes <williamjmorenor@gmail.com> - 5:0.0.1rc6-10
 - Rebuild coordinated RC6 Release 10 after TLS renewal hook fix.
 
