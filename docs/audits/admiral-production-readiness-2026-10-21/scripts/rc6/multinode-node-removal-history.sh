@@ -5,7 +5,7 @@ set -euo pipefail
 [[ $# -eq 9 ]] || { echo "usage: $0 SSH_KEY HUB_KNOWN WORKER_KNOWN HUB_IP WORKER_IP NODE_ID DIST_TAG EPOCH OUTPUT_DIR" >&2; exit 2; }
 ssh_key=$1 hub_known=$2 worker_known=$3 hub_ip=$4 worker_ip=$5 node_id=$6 dist_tag=$7 epoch=$8 output_dir=$9
 [[ $node_id =~ ^[A-Za-z0-9][A-Za-z0-9_.-]{0,62}$ && $dist_tag =~ ^(el10|fc46)$ && $epoch =~ ^[0-9]{1,4}$ && $output_dir == /* ]] || { echo 'expected a disposable worker ID, el10/fc46 dist tag, RPM Epoch, and absolute output directory' >&2; exit 2; }
-release=${RC6_PACKAGE_RELEASE:-14}
+release=${RC6_PACKAGE_RELEASE:-16}
 [[ $release =~ ^[0-9]+$ ]] || { echo 'RC6_PACKAGE_RELEASE must be a numeric RPM Release' >&2; exit 2; }
 candidate="0.0.1rc6-$release.$dist_tag"
 for p in "$ssh_key" "$hub_known" "$worker_known"; do [[ -r $p ]] || { echo "unreadable input: $p" >&2; exit 1; }; done
