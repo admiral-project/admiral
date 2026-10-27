@@ -1,0 +1,6 @@
+6bae92f6bf387780e54f88a9ce942ee3b7d74b55e90d7293becffa69c6b3387e  ./admiral-common-0.0.1rc6-18.fc46.noarch.rpm
+b3208e6f0924f9a7f15f4384aa34c489964cd14d66c046e99279c6fd78cb13d2  ./admiral-flagship-0.0.1rc6-18.fc46.noarch.rpm
+f40d7b55370ceaa49b0c157efe41a1baf5afc0217c173854d8dc2fd0bbf3ebbd  ./admiral-fleet-0.0.1rc6-18.fc46.x86_64.rpm
+c7f46fa0bd226acd3367815b98d29f256eb76eda4b2d281b3d62e7b03dea4671  ./admiral-harbor-0.0.1rc6-18.fc46.noarch.rpm
+bd05886eb084d230fbb5ae50d53d50d07162b8f3dc1abd36331bdbace3b37dda  ./admiralctl-0.0.1rc6-18.fc46.x86_64.rpm
+0b61bb7aa881ce2863908e365439af6b4daa5484bd93963356f5f76d45a39fa5  ./admirald-0.0.1rc6-18.fc46.x86_64.rpm

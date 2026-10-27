@@ -1,0 +1,3 @@
+The Fedora build log was captured from the native Fedora Rawhide build. Repository-only cleanup removed whitespace characters from six otherwise empty lines so git diff --check can validate the evidence commit. No non-empty log lines were changed.
+Original captured SHA-256: 89eeb325baffb4b35f9d593adcab80440ad433edef0c7861b184a2373293f067
+Repository log SHA-256: b8a6d689858eb48ffe0d6aa04dbd5b23c54ddfa76e8582df05e105401f58e3b3

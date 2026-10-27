@@ -1,0 +1,15 @@
+platform=Fedora Linux 46 Rawhide build container
+image=localhost/admiral-r67-fedora-buildenv:rawhide
+image_id=3fbc282eb01de8881d6ed5fa06627d2d3ac844a158f7b7f7ff2d8a4b6713281a
+build_arch=x86_64
+rpm_dist=.fc46
+go_version=go1.27.3-X:nodwarf5 linux/amd64
+rpm_version=6.1.0
+go_parallelism=1
+rpmbuild_parallelism=1
+container_cpu_limit=2
+container_memory_and_swap_limit=1500m
+root_source_commit=793a512
+started_utc=2026-10-27T16:15:51Z
+build_exit=0
+build_end_utc=2026-10-27T16:26:55Z

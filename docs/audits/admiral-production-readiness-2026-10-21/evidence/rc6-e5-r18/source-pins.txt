@@ -20,6 +20,9 @@ and must never be produced by relabeling EL10 RPMs.
 | admiral-flagship | `9d26a3b0e1e8827b066566fb2ecb98f5cd580a74` | `b7325bbc71fc474a521496e593b2967e4d555ac1` | One documentation-only commit required by #306 clarifies the runtime CDN dependency. Component CI run `40534546152` passed. |
 | admiral-harbor | `48280fdd5ee2779e68edc7873e605c0d80dc60e7` | `dd4818b6e2bc53eea4495fc5e374a4893cfcb107` | One documentation-only commit required by #306 clarifies beta status and component responsibility. Component CI run `40534540993` passed. |
 
-The root composition at `412df6388309d244812e2341849785cf07b9b282` passed CI
-run `40535165729`. Release 18 RPMs have not yet been built; no NEVRA, SHA-256,
-signature, or runtime cell is claimed by this source-selection record.
+The Release 18 RPM build used root checkout `793a512` (source/package
+selection is recorded above) and component pins exactly as listed. Root CI run
+`40537161595` passed on that checkout. CI for all five component source SHAs
+listed above is green. The build logs and build-environment records accompany
+this selection record; the candidate manifest records exact NEVRA and
+SHA-256 values after signing.
