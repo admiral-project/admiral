@@ -3,7 +3,7 @@
 # Run the supported worker or dedicated portal bootstrap from an admin node.
 set -euo pipefail
 [[ $# -eq 10 || $# -eq 11 ]] || {
-  echo "usage: $0 ADMIN_SSH_KEY HUB_KNOWN_HOSTS SPOKE_KNOWN_HOSTS HUB_UNDERLAY_IP HUB_WIREGUARD_IP SPOKE_UNDERLAY_IP NODE_ID SPOKE_WIREGUARD_IP HOST_FINGERPRINT OUTPUT_LOG [worker|portal]" >&2
+  echo "usage: $0 ADMIN_SSH_KEY HUB_KNOWN_HOSTS SPOKE_KNOWN_HOSTS HUB_UNDERLAY_IP HUB_WIREGUARD_IP SPOKE_ENDPOINT_IP NODE_ID SPOKE_WIREGUARD_IP HOST_FINGERPRINT OUTPUT_LOG [worker|portal]" >&2
   exit 2
 }
 admin_key=$1 hub_known_hosts=$2 worker_known_hosts=$3 hub_underlay_ip=$4 hub_wg_ip=$5 worker_ip=$6
@@ -11,7 +11,20 @@ node_id=$7 wg_ip=$8 fingerprint=$9 output=${10}
 role=${11:-worker}
 [[ $role == worker || $role == portal ]] || { echo "unsupported spoke role: $role" >&2; exit 2; }
 [[ $node_id =~ ^[A-Za-z0-9][A-Za-z0-9_.-]{0,62}$ ]] || { echo "invalid node id" >&2; exit 2; }
-[[ $hub_underlay_ip =~ ^([0-9]{1,3}\.){3}[0-9]{1,3}$ && $hub_wg_ip =~ ^([0-9]{1,3}\.){3}[0-9]{1,3}$ && $worker_ip =~ ^([0-9]{1,3}\.){3}[0-9]{1,3}$ ]] || { echo "invalid IPv4 address" >&2; exit 2; }
+is_ip_address() {
+  python3 - "$1" <<'PY' >/dev/null 2>&1
+import ipaddress,sys
+try:
+    ipaddress.ip_address(sys.argv[1])
+except ValueError:
+    raise SystemExit(1)
+PY
+}
+is_ip_address "$hub_underlay_ip" && is_ip_address "$worker_ip" || {
+  echo "hub and spoke endpoints must be IPv4 or IPv6 literals" >&2
+  exit 2
+}
+[[ $hub_wg_ip =~ ^([0-9]{1,3}\.){3}[0-9]{1,3}$ ]] || { echo "invalid IPv4 WireGuard hub address" >&2; exit 2; }
 [[ $wg_ip =~ ^([0-9]{1,3}\.){3}[0-9]{1,3}$ ]] || { echo "invalid worker WireGuard address" >&2; exit 2; }
 [[ $fingerprint =~ ^SHA256:[A-Za-z0-9+/]+$ ]] || { echo "invalid SSH fingerprint" >&2; exit 2; }
 [[ -r $admin_key && -r $hub_known_hosts && -r $worker_known_hosts ]] || {
@@ -37,7 +50,7 @@ hub_bootstrap_key=""
 worker_bootstrap_installed=0
 rc=1
 candidate_version=${ADMIRAL_RC_VERSION:-0.0.1rc6}
-candidate_release=${ADMIRAL_RC_RELEASE:-18}
+candidate_release=${ADMIRAL_RC_RELEASE:-19}
 candidate_epoch=${ADMIRAL_RC_EPOCH:-5}
 candidate_dist_tag=${ADMIRAL_RC_DIST_TAG:-el10}
 [[ $candidate_version =~ ^0\.0\.1rc[0-9]+$ ]] || { echo 'invalid Admiral RPM version' >&2; exit 2; }
@@ -46,6 +59,15 @@ candidate_dist_tag=${ADMIRAL_RC_DIST_TAG:-el10}
   exit 2
 }
 [[ $candidate_dist_tag == el10 || $candidate_dist_tag == fc46 ]] || { echo 'invalid Admiral RPM dist tag' >&2; exit 2; }
+
+scp_destination() {
+  local ip=$1
+  if [[ $ip == *:* ]]; then
+    printf 'validator@[%s]' "$ip"
+  else
+    printf 'validator@%s' "$ip"
+  fi
+}
 
 ssh_to() {
   local ip=$1 known_hosts=$2
@@ -80,9 +102,10 @@ if [[ -n ${ADMIRAL_LOCAL_REPO_CONFIG:-} ]]; then
     echo 'spoke returned an unexpected candidate repository staging path' >&2
     exit 1
   }
+  spoke_scp_destination=$(scp_destination "$worker_ip")
   scp -i "$admin_key" -o IdentitiesOnly=yes -o BatchMode=yes \
     -o StrictHostKeyChecking=yes -o "UserKnownHostsFile=$worker_known_hosts" \
-    "$ADMIRAL_LOCAL_REPO_CONFIG" "validator@$worker_ip:$remote_repo_tmp"
+    "$ADMIRAL_LOCAL_REPO_CONFIG" "$spoke_scp_destination:$remote_repo_tmp"
   ssh_to "$worker_ip" "$worker_known_hosts" \
     sudo install -o root -g root -m 0644 "$remote_repo_tmp" /etc/yum.repos.d/admiral-local.repo
   ssh_to "$worker_ip" "$worker_known_hosts" rm -f -- "$remote_repo_tmp"

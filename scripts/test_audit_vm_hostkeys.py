@@ -248,7 +248,7 @@ def test_worker_bootstrap_uses_both_pinned_hosts_and_a_temporary_revoked_key():
     script = WORKER_INSTALL_SCRIPT.read_text(encoding="utf-8")
 
     assert "[[ $# -eq 10 || $# -eq 11 ]]" in script
-    assert "HUB_UNDERLAY_IP HUB_WIREGUARD_IP SPOKE_UNDERLAY_IP" in script
+    assert "HUB_UNDERLAY_IP HUB_WIREGUARD_IP SPOKE_ENDPOINT_IP" in script
     assert "[worker|portal]" in script
     assert "role=${11:-worker}" in script
     assert "--admin-endpoint '$hub_underlay_ip'" in script
@@ -322,7 +322,7 @@ def test_worker_bootstrap_rejects_old_argument_shape_without_mutation():
     )
 
     assert result.returncode == 2
-    assert "HUB_UNDERLAY_IP HUB_WIREGUARD_IP SPOKE_UNDERLAY_IP" in result.stderr
+    assert "HUB_UNDERLAY_IP HUB_WIREGUARD_IP SPOKE_ENDPOINT_IP" in result.stderr
 
 
 def test_worker_bootstrap_never_overwrites_existing_evidence(tmp_path):
