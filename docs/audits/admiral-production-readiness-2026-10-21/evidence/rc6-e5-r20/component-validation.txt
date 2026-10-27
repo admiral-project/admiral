@@ -1,0 +1,28 @@
+RC6 Epoch 5 Release 20 admirald code validation
+Date: 2026-10-27
+Component source: admirald 4472cd8defc2de9c649ddbc1108a0aa64c0f1859
+
+Targeted regressions: PASS (68.122 s)
+Command:
+  go test -p 1 ./internal/api -run 'TestRunMigrationCutoverPreservesLogicalInstanceID|TestRunMigrationRollsBackBeforeCutover|TestHandleTaskClaimAllowsStorageTestWithoutInstance|TestHandleFleetCallbackMigrationStartAndResumeRecordTargetPorts' -count=1 -timeout=300s
+
+Complete component test suite: PASS
+Command:
+  go test -p 1 ./... -count=1 -timeout=300s
+Result: internal/api 160.764 s; all other tested packages passed.
+
+Static/build checks: PASS
+  gofmt check over tracked Go sources
+  go vet -p 1 ./...
+  go build -p 1 ./...
+  go mod tidy completed without changing module files
+
+Database safety: tests used unique temporary databases in the existing
+`admiral-audit-pg-test` PostgreSQL container. The test databases were dropped
+after each run; no active lab database was truncated. The container reported
+an 805 MiB memory limit. No VMs were started. At completion the host had about
+2.2 GiB available RAM and 56 GiB free disk.
+
+These are component-level results. They do not count as any of the six
+installed-RPM runtime matrix cells. GitHub CI for the new admirald SHA and the
+R20 RPM builds remain pending.

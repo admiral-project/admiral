@@ -1,0 +1,26 @@
+RC6 Epoch 5 Release 20 source selection
+Compared each component checkout with freshly fetched origin/main on 2026-10-27.
+
+Architecture: x86_64
+Release gate OSes: Rocky Linux 10, CentOS Stream 10, Fedora Rawhide
+Topologies: Single-Node and Multi-Node
+AlmaLinux: OUT_OF_SCOPE_EXTERNAL_TOOLING (#276)
+
+Release 20 is the first candidate containing the R19 migration runtime fixes
+and the R20 resume-after-restore fix. All six RPM specs increment to Release
+20. Fedora must be built from the same selected source SHAs in Fedora Rawhide
+and carry the native .fc46 tag; EL10 RPMs are not valid Fedora artifacts.
+
+| Source | Selected SHA | Latest origin/main | Selection evidence |
+|---|---|---|---|
+| admiral-common/root payload | `dfb239f1a44ac6b221c7a0d181bada655b048871` | N/A; root release payload | `scripts/validate-release-refs.py` checks the installer, Ansible, configuration, services, and CLI support payload against this pin. |
+| admirald | `4472cd8defc2de9c649ddbc1108a0aa64c0f1859` | `6e4a725d30c0fff877fe2252e843fae687810ae6` | Preserve the R19 validation branch because its migration maintenance, backup-before-dispatch, health-gated cutover, safe rollback, and capacity fixes are required by #255. R20 adds the tested `resume_app` activation after restore and permits the instance-free storage-test task claim. The current `origin/main` is an ancestor of the selected validation branch. |
+| admiral-fleet | `11f788c7efbfd9ea77e2e461a0e53874393c946a` | `b082934f908a4a33acf0fdd70c06974f0a29bb21` | Keep the validated pin; its two additional README commits document the rootless workload user and RPM registry allowlist for the coordinated release. The #271 redirect health-check fix is already in the fetched main ancestor. |
+| admiralctl | `d0e98414115c9628e59b33678cfcbd9bc0e342d5` | `fa2a65e866310bd82bea78859804b6c3aea7989a` | Preserve the three-commit validation pin: it includes node-removal peer-reconciliation and app-definition validation fixes plus migration-maintenance documentation. |
+| admiral-flagship | `9d26a3b0e1e8827b066566fb2ecb98f5cd580a74` | `b7325bbc71fc474a521496e593b2967e4d555ac1` | Keep the validated #306 documentation update for runtime CDN assets in the coordinated release. |
+| admiral-harbor | `48280fdd5ee2779e68edc7873e605c0d80dc60e7` | `dd4818b6e2bc53eea4495fc5e374a4893cfcb107` | Keep the validated #306 documentation update clarifying beta status and admin responsibilities in the coordinated release. |
+
+The source pins in the root Makefile and RPM specs were aligned and
+`python3 scripts/validate-release-refs.py` passed before build preparation.
+RPM build manifests, NEVRA values, signatures, and SHA-256 digests are added
+after both native builds complete.
