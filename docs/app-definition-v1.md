@@ -1,6 +1,11 @@
 # Admiral App Definition v1
 
-Este documento describe el formato YAML actualmente validado por `admirald` y reutilizado por `admiralctl apps validate`.
+Este documento describe el formato YAML actualmente validado por `admirald` y reutilizado por `admiralctl apps validate`. El comando `admiralctl apps validate` comprueba la definición localmente, sin servidor ni credenciales; esa comprobación de esquema no demuestra el aprovisionamiento ni el ciclo de vida de una app.
+
+La validación de runtime de los ejemplos en un nodo de 7 GiB —setup,
+pausa, reinicio, backup y restore— sigue pendiente en
+[issue #305](https://github.com/admiral-project/admiral/issues/305). No
+interpretes la validación local de YAML como evidencia de ese flujo E2E.
 
 ## Estructura base
 

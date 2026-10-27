@@ -4,6 +4,14 @@ Status: Implemented for functional beta validation
 Scope: `admirald`, `admiral-fleet`, `admiralctl`, `admiral-flagship`, `admiral-harbor`  
 Contract version: `networking_v1`
 
+**Validation boundary:** The Admin dual-stack path and IPv6-only public
+transport for dedicated Worker and Portal nodes have implementation and
+focused configuration checks. Public IPv6 connectivity, inbound exposure,
+reboot recovery, and the application/Portal lifecycle have not passed E2E
+validation; track that acceptance in [issue #304](https://github.com/admiral-project/admiral/issues/304).
+Within WireGuard, nodes continue to use their private IPv4 addresses. Do not
+read this document as evidence that the public-IPv6 E2E path is validated.
+
 ---
 
 ## 1. Architecture overview
