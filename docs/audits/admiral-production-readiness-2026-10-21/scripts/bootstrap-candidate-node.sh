@@ -7,7 +7,7 @@ distro=$1 ssh_key=$2 known_hosts=$3 target=$4
 release=${ADMIRAL_RC_RELEASE:-18}
 epoch=${ADMIRAL_RC_EPOCH:-5}
 version=${ADMIRAL_RC_VERSION:-0.0.1rc6}
-candidate_id=${ADMIRAL_RC_DIR:-${version#0.0.1}-r${release}}
+candidate_id=${ADMIRAL_RC_DIR:-${version#0.0.1}-e${epoch}-r${release}}
 [[ $release =~ ^[0-9]+$ ]] || { echo "invalid Admiral RPM Release: $release" >&2; exit 2; }
 [[ $epoch =~ ^[0-9]{1,4}$ ]] || { echo "invalid Admiral RPM Epoch: $epoch" >&2; exit 2; }
 [[ $version =~ ^0\.0\.1rc[0-9]+$ ]] || { echo "invalid Admiral version: $version" >&2; exit 2; }

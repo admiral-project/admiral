@@ -115,6 +115,18 @@ def test_rc6_single_node_runner_defaults_to_the_candidate_evr():
     assert f"RC6_PACKAGE_RELEASE:-{expected_release}" in runner
 
 
+def test_candidate_local_repository_path_includes_epoch_and_release():
+    helpers = (
+        ROOT / "docs/audits/admiral-production-readiness-2026-10-21/scripts/install-single-node-audit.sh",
+        ROOT / "docs/audits/admiral-production-readiness-2026-10-21/scripts/bootstrap-candidate-node.sh",
+        ROOT / "docs/audits/admiral-production-readiness-2026-10-21/scripts/install-admin-audit.sh",
+        ROOT / "docs/audits/admiral-production-readiness-2026-10-21/scripts/install-admin-portal-audit.sh",
+    )
+    for helper in helpers:
+        text = helper.read_text(encoding="utf-8")
+        assert "candidate_id=${ADMIRAL_RC_DIR:-${version#0.0.1}-e${epoch}-r${release}}" in text
+
+
 def test_candidate_install_helpers_do_not_bypass_dnf_vendor_resolution():
     for helper in AUDIT_HELPERS:
         text = helper.read_text()
@@ -205,7 +217,7 @@ def test_rc6_single_lane_uses_the_selected_epoch_and_release():
     assert f"expected_epoch=${{RC6_EXPECTED_EPOCH:-{expected_epoch.group(1)}}}" in lane
     assert "ADMIRAL_RC_RELEASE=$package_release" in lane
     assert 'expected_epoch:0.0.1rc6-$expected_release.$expected_dist' in lane
-    assert "evidence/rc6-r${package_release}" in lane
+    assert "evidence/rc6-e${expected_epoch}-r${package_release}" in lane
 
 
 def test_rc6_host_reboot_defaults_to_the_candidate_release():
