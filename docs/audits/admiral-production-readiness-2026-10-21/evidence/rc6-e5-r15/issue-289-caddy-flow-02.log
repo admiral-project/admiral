@@ -1,0 +1,7 @@
+routed_portal_test_email=rc6-e5-caddy-20261027t100803z-9fbea3@example.test
+independent_portal_signup=pending
+independent_portal_pending_login=rejected
+independent_portal_customer_approved=id:4
+independent_portal_catalog=published
+independent_portal_free_deploy=PASS instance_id=inst_77876895a8b415fc
+independent_portal_customer_flow=PASS

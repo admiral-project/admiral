@@ -1,0 +1,4 @@
+/etc/caddy/rc6-e5-r15-validation/fullchain.pem: OK
+/etc/caddy/rc6-e5-r15-validation/fullchain.pem: OK
+curl: (35) TLS connect error: error:0A000438:SSL routines::tlsv1 alert internal error
+Warning: option --restore=file is unsafe without option -P (--physical) as it traverses symbolic links in pathnames

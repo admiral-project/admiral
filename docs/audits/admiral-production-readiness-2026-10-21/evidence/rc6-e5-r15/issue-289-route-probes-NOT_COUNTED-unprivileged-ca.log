@@ -1,0 +1,4 @@
+routed_http=000 tls_verify=1
+curl: (77) error setting certificate file: /etc/admiral/tls/ca.pem
+curl: (77) error sewireguard_http=000 tls_verify=1
+tting certificate file: /etc/admiral/tls/ca.pem

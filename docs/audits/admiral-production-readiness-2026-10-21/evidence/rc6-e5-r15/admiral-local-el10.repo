@@ -1,0 +1,9 @@
+[admiral-local]
+name=Admiral 0.0.1rc6 Release 15 signed local validation (EL10)
+baseurl=http://192.168.122.1/rc6-e5-r15/el10/$basearch
+enabled=1
+gpgcheck=1
+repo_gpgcheck=1
+gpgkey=http://192.168.122.1/rc6-e5-r15/RPM-GPG-KEY-admiral-r15
+priority=1
+skip_if_unavailable=0

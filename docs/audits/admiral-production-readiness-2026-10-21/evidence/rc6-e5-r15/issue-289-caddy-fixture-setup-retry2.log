@@ -1,0 +1,10 @@
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+AssertionError
+/etc/caddy/rc6-e5-r15-validation/fullchain.pem: OK
+/etc/caddy/rc6-e5-r15-validation/fullchain.pem: OK
+candidate_admiral_common=5:0.0.1rc6-15.el10.noarch
+portal_upstream=https://10.99.0.2:5001
+portal_route_local_strict_tls=200 0
+portal_certificate_sha256=C9:38:54:5D:6D:3E:92:F6:D4:8C:49:71:A4:9E:EF:06:C8:F9:90:F0:D6:63:CA:65:75:FE:6A:BD:4C:05:5F:E4
+caddy_fixture=ACTIVE

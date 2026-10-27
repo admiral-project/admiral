@@ -1,0 +1,12 @@
+routes_before_fixture:
+HOSTNAME   KIND   INSTANCE   SERVICE   TARGET   STATUS
+---        ---    ---        ---       ---      ---
+admin_caddy_listener:
+LISTEN 0      4096               *:443             *:*    users:(("caddy",pid=2497,fd=8))                                                            
+networking_base_domain=(unset)
+networking_portal_host=(unset)
+networking_portal_target=https://127.0.0.1:5001
+networking_apps_domain=(unset)
+networking_apps_redirect=(unset)
+classification=ENVIRONMENT_SETUP_NOT_CONFIGURED
+result=not_counted

@@ -1,0 +1,2 @@
+routed_http=200 tls_verify=0
+wireguard_http=200 tls_verify=0

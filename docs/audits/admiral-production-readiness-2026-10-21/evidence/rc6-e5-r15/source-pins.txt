@@ -1,0 +1,20 @@
+candidate=0.0.1rc6-15
+checked_utc=2026-10-27
+root_candidate_head=working-tree (root RPM payload unchanged: 3b2441164741b70e3deb1e22dcd81a1a60ea5eea)
+admiral_common_payload=3b2441164741b70e3deb1e22dcd81a1a60ea5eea
+admirald=313a96c9c2234711685fce2b878705733f766b5b
+admiral-fleet=b082934f908a4a33acf0fdd70c06974f0a29bb21
+admiralctl=90c30edb2b9f02b962874272dc6487bead990277
+admiral-flagship=b7325bbc71fc474a521496e593b2967e4d555ac1
+admiral-harbor=dd4818b6e2bc53eea4495fc5e374a4893cfcb107
+
+submodule_comparison=Fetched origin/main for all five component submodules immediately before the R15 build.
+admirald_origin_main=6e4a725d30c0fff877fe2252e843fae687810ae6
+admirald_pin_exception=Selected 313a96c is 3 commits ahead of origin/main. It retains the release-validation fixes for #228 and #291 and adds the #291 Portal-health inventory synchronization required after the R14 preflight failure. Selected-pin CI passed in admirald run 40472619846.
+admiralctl_origin_main=fa2a65e866310bd82bea78859804b6c3aea7989a
+admiralctl_pin_exception=Selected 90c30ed is 1 commit ahead of origin/main and retains the node-removal peer-reconciliation timeout required for #291. Selected-pin CI passed in run 40460333768.
+admiral-fleet_origin_main=b082934f908a4a33acf0fdd70c06974f0a29bb21
+admiral-flagship_origin_main=b7325bbc71fc474a521496e593b2967e4d555ac1
+admiral-harbor_origin_main=dd4818b6e2bc53eea4495fc5e374a4893cfcb107
+
+reference_check=python3 scripts/validate-release-refs.py passed after selecting the R15 pins and before the native builds.
