@@ -357,3 +357,4 @@
           {{ admiral_fleet_service_state.stdout | default('unavailable') }}.
           Recent Fleet journal:
           {{ admiral_fleet_journal.stdout | default('unavailable') }}
+  when: not (admiral_defer_fleet_heartbeat | default(false) | bool)

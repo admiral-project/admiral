@@ -5,19 +5,20 @@ historical review.
 
 ## Release state
 
-- Candidate: RC6 Epoch 5 Release 15; six RPMs built natively for EL10 and Fedora
-  Rawhide (`.el10` and `.fc46` respectively), signed, with green component CI
-  and green root CI at `e6b7baa`. The exact pins and Release 15 specs used to
-  build the candidate are recorded in root commit `cdeb30d`.
+- Last packaged candidate: RC6 Epoch 5 Release 15; six RPMs built natively for
+  EL10 and Fedora Rawhide (`.el10` and `.fc46` respectively), signed, with
+  green component CI and green root CI at `e6b7baa`. The exact pins and Release
+  15 specs used to build it are recorded in root commit `cdeb30d`.
+- R15 re-onboarding failed for #291. A product fix is now in the working tree
+  to reconcile hub/spoke peers before checking Fleet health. R15 is invalid for
+  #291 acceptance; the change is unbuilt and needs a new six-RPM candidate,
+  green CI, and fresh release validation.
 - Full runtime release matrix: **0/6 cells complete**. Rocky Multi-Node has
   partial R15 evidence; the full cell checklist and the other five cells remain
   pending.
 - GitHub root issues: **7 open**: #106, #182, #228, #255, #271, #291, #294.
   **283 are closed** in total; #289 was closed after its R15 acceptance passed.
-- No product change has been made since R15, so its candidate identity remains
-  current. Harness and evidence work does not invalidate it.
 - Host resources at the latest check: 2.5 GiB available RAM and 49 GiB disk
-  free. Rocky Admin guest had about 249 MiB available RAM and 6.7 GiB disk
   free. Validation remains serial to protect the host and guests.
 
 ## Open-issue triage
@@ -25,11 +26,11 @@ historical review.
 | Issue | Current R15 evidence | Remaining acceptance |
 |---|---|---|
 | #106 | No verified PayPal transaction or webhook evidence. | PayPal sandbox transaction, verified webhook, and full billing lifecycle. This external gate remains open. |
-| #182 | Rocky Multi-Node R15: authenticated customer upload restore completed on the Worker; SQL marker and resumed workload verified; unregistered Worker and metadata origins rejected without creating restore operations. The packaged installer established Worker-to-Portal networking without manual playbook execution. The synthetic instance was deprovisioned successfully. | Complete the linked #291 peer-removal/revocation acceptance and attach the final R15 report. This targeted result is not a matrix-cell pass. |
+| #182 | Rocky Multi-Node R15: authenticated customer upload restore completed on the Worker; SQL marker and resumed workload verified; unregistered Worker and metadata origins rejected without creating restore operations. The synthetic instance was deprovisioned successfully. | The R15 restore probe passed, but #182 remains open pending linked #291 onboarding/revocation acceptance on the fixed candidate. This targeted result is not a matrix-cell pass. |
 | #228 | No R15 fault-injection result yet. | Inject Podman delete failures on R15 in Single-Node and Multi-Node; show failure with retry state/resources preserved, restore Podman byte-for-byte, verify retry cleanup, and run uninjected controls. |
 | #255 | No R15 real Multi-Node migration result yet. | Complete a real restore/cutover, preserve logical instance ID, and retain a high-frequency operation-state timeline showing no backward transition to `queued`. |
 | #271 | Existing issue-specific redirect evidence is on older candidates and Single-Node cells. | Re-run with exact R15 in the remaining release-gate contexts, including CentOS Stream and Multi-Node, and retain zero redirect-target requests. |
-| #291 | Rocky Multi-Node R15 installer automatically established the dedicated Worker-to-Portal peer; strict HTTPS and the linked #182 restore passed without manually running the peer playbook. | On R15, verify peer/firewall revocation when removing the Worker and ensure an unregistered source remains denied; retain complete evidence. |
+| #291 | R15 removal deleted the Worker peer and Portal TCP/5001 rule; an unregistered Worker probe was denied. Supported Worker re-onboarding then failed its 120-second Fleet heartbeat gate. Secret-safe diagnostics found no PSK on the Admin peer while the Worker retained its old PSK, so WireGuard did not handshake. See the [failure analysis](evidence/rc6-e5-r15/issue-291-peer-revoke-20261027T102542Z/rejoin-failure-analysis.md). | Validate the product fix on a new six-RPM candidate: re-onboard the removed Worker, require a fresh WireGuard handshake and healthy Fleet heartbeat, then repeat removal, revocation, denial, and idempotence checks. |
 | #294 | No R15 Multi-Node control-plane restart result yet. | Restart the Admin control plane with stale persisted Worker metrics, show unavailable state before fresh metrics, then recovery after a valid heartbeat. |
 
 ## Closed since the previous snapshot
@@ -40,8 +41,8 @@ historical review.
 
 Seven issues remain open at the time of this snapshot. Do not declare Gold
 while any issue remains open or any of the six exact-candidate cells is
-incomplete. The only release-invalidating changes are product changes; the
-Release 15 helper-default alignment and validation evidence are harness work.
+incomplete. The installer and Ansible changes for #291 are product changes and
+invalidate R15; a new candidate must pass the complete matrix before Gold.
 
 # Open issue closure review — 2026-10-26
 

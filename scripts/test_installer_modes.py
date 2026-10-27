@@ -961,7 +961,7 @@ done
         self.assertIn('"$INSTALL_ADMIN_WIREGUARD_IP/32"', installer)
         self.assertIn("wireguard_hub_ip_for_subnet", installer)
 
-    def test_worker_hub_peer_is_installed_before_fleet_heartbeat_gate(self) -> None:
+    def test_worker_peer_reconciliation_precedes_heartbeat_gate(self) -> None:
         fleet = FLEET_TASKS.read_text(encoding="utf-8")
         common_spec = COMMON_SPEC.read_text(encoding="utf-8")
 
@@ -980,8 +980,27 @@ done
         self.assertIn("/usr/libexec/admiral-wireguard-peer-add", fleet[add_peer:start_fleet])
         self.assertIn("delegate_to: localhost", fleet[add_peer:start_fleet])
         self.assertIn("ADMIRAL_INTERNAL_TOKEN", fleet[add_peer:start_fleet])
+        self.assertIn(
+            "when: not (admiral_defer_fleet_heartbeat | default(false) | bool)",
+            fleet[heartbeat_gate:],
+        )
 
         installer = INSTALLER.read_text(encoding="utf-8")
+        peer_reconciliation = installer.index(
+            'info "Reconciling registered spoke WireGuard peers before checking connectivity..."'
+        )
+        peer_reconciliation_start = installer.index(
+            "# Reconcile hub-to-spoke keys before the first handshake and Fleet heartbeat."
+        )
+        spoke_handshake = installer.index('info "Exchanging WireGuard peers between hub and spoke..."')
+        heartbeat_confirmation = installer.index(
+            'info "Waiting for the registered Fleet worker to report a healthy heartbeat after WireGuard reconciliation..."'
+        )
+        self.assertIn('d["admiral_defer_fleet_heartbeat"] = True', installer)
+        self.assertIn("--allow-unpaired", installer[peer_reconciliation_start:spoke_handshake])
+        self.assertLess(peer_reconciliation, spoke_handshake)
+        self.assertLess(spoke_handshake, heartbeat_confirmation)
+        self.assertIn('node.get("health_status") == "healthy"', installer[heartbeat_confirmation:])
         peer_registration = installer[installer.index("/usr/libexec/admiral-wireguard-peer-add") :]
         self.assertIn('"$SPOKE_NODE_ID" "$SPOKE_WG_IP" "$SPOKE_KEY"', peer_registration)
         self.assertNotIn('wg set wg-admiral peer "$SPOKE_KEY"', peer_registration)

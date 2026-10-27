@@ -743,7 +743,8 @@ if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]]; t
             info "An independent Worker and Portal are registered; installer will reconcile direct WireGuard and Harbor access."
             ;;
         not-required)
-            info "No independent opposite spoke is registered yet; direct Worker-to-Portal reconciliation will run when both spoke roles exist."
+            PEER_SYNC_REQUIRED="true"
+            info "No independent opposite spoke is registered yet; installer will still reconcile hub-to-spoke WireGuard peers."
             ;;
         *)
             die "WireGuard peer preflight returned an unexpected result: $PEER_PREFLIGHT_OUTPUT"
@@ -1089,6 +1090,8 @@ if mode in ("worker-node", "portal-node"):
     d["admiral_admin_wireguard_ip"] = os.environ["INSTALL_ADMIN_WIREGUARD_IP"]
     d["admiral_wireguard_hub_endpoint"] = os.environ["INSTALL_ADMIN_ENDPOINT"]
     d["admiral_bootstrap_from_controller"] = True
+if mode == "worker-node":
+    d["admiral_defer_fleet_heartbeat"] = True
 
 if mode in ("admin-node", "admin-portal-node", "single-node"):
     d["admiral_wireguard_ip"] = os.environ["INSTALL_ADMIN_WIREGUARD_IP"]
@@ -1209,6 +1212,89 @@ if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]]; t
     INSTALL_TARGET_SSH_USER="$REMOTE_SSH_USER"
 fi
 
+# Reconcile hub-to-spoke keys before the first handshake and Fleet heartbeat.
+# When an independent Worker and Portal exist, this also configures their
+# direct peer and firewall state. The inventory builder requires
+# fingerprint-pinned host keys and per-node delivery identities; there is no
+# insecure SSH fallback.
+if [[ "$PEER_SYNC_REQUIRED" == "true" ]]; then
+    SPOKE_NODE_ID="${INSTALL_NODE_ID:-$(ssh_no_stdin "${SSH_OPTIONS[@]}" "${INSTALL_TARGET_SSH_USER}@${INSTALL_PUBLIC_IP}" "sudo sh -c \"grep -hE '^(ADMIRAL_FLEET_NODE_ID|HARBOR_NODE_ID)=' /etc/admiral/*.env 2>/dev/null | tail -n1 | cut -d= -f2-\"" 2>/dev/null || true)}"
+    [[ -n "$SPOKE_NODE_ID" ]] || die "Could not resolve the installed spoke node ID before WireGuard peer reconciliation."
+    ANSIBLE_DIR="/usr/share/admiral/ansible"
+    [[ -f "$ANSIBLE_DIR/wireguard-peers.yml" ]] ||
+        die "The admiral-common package is missing wireguard-peers.yml. Update the complete Admiral package set."
+    python3 - <<'PY'
+import os
+fd = os.open(
+    "/run/lock/admiral-wireguard-peer-add.lock",
+    os.O_CREAT | os.O_RDWR | getattr(os, "O_NOFOLLOW", 0),
+    0o600,
+)
+os.close(fd)
+PY
+    exec {PEER_LOCK_FD}>>/run/lock/admiral-wireguard-peer-add.lock
+    flock -x "$PEER_LOCK_FD" || die "Could not lock WireGuard peer reconciliation."
+    PEER_INVENTORY_FILE="$(mktemp "$INSTALLER_TEMP_BASE/peer-inventory.XXXXXX.json")"
+    PEER_INVENTORY_ERROR="$(mktemp "$INSTALLER_TEMP_BASE/peer-inventory-error.XXXXXX")"
+    PEER_EXTRA_VARS_FILE="$(mktemp "$INSTALLER_TEMP_BASE/peer-extra-vars.XXXXXX.json")"
+    INSTALL_STATE_WIREGUARD_SUBNET="$INSTALL_WIREGUARD_SUBNET" \
+    INSTALL_STATE_WIREGUARD_HUB_IP="$INSTALL_ADMIN_WIREGUARD_IP" \
+    python3 - "$PEER_EXTRA_VARS_FILE" <<'PY'
+import json, os, sys
+with open(sys.argv[1], "w", encoding="utf-8") as stream:
+    json.dump(
+        {
+            "admiral_wireguard_subnet": os.environ["INSTALL_STATE_WIREGUARD_SUBNET"],
+            "admiral_wireguard_hub_ip": os.environ["INSTALL_STATE_WIREGUARD_HUB_IP"],
+        },
+        stream,
+    )
+    stream.write("\n")
+PY
+    chmod 0600 "$PEER_INVENTORY_FILE" "$PEER_INVENTORY_ERROR" "$PEER_EXTRA_VARS_FILE"
+
+    peer_inventory_ready=false
+    for attempt in $(seq 1 30); do
+        if admiral-wireguard-peer-inventory \
+            --known-hosts /var/lib/admiral/know_host.yaml \
+            --ssh-directory /var/lib/admiral/ssh-delivery \
+            inventory \
+            --admin-endpoint "$INSTALL_ADMIN_ENDPOINT" \
+            --current-node-id "$SPOKE_NODE_ID" \
+            --allow-unpaired \
+            >"$PEER_INVENTORY_FILE" 2>"$PEER_INVENTORY_ERROR"; then
+            peer_inventory_ready=true
+            break
+        fi
+        if grep -Fq "is not active in know_host.yaml yet" "$PEER_INVENTORY_ERROR"; then
+            info "Waiting for the new spoke to appear in Admirald's peer inventory (attempt ${attempt}/30)."
+            sleep 2
+            continue
+        fi
+        cat "$PEER_INVENTORY_ERROR" >&2
+        die "Could not build a secure Worker-to-Portal Ansible inventory."
+    done
+    [[ "$peer_inventory_ready" == true ]] || {
+        cat "$PEER_INVENTORY_ERROR" >&2
+        die "The new spoke was not added to Admirald's peer inventory in time."
+    }
+
+    info "Reconciling registered spoke WireGuard peers before checking connectivity..."
+    ANSIBLE_LOCAL_TEMP="$INSTALLER_TEMP_BASE/ansible-peer-local" \
+    ANSIBLE_REMOTE_TEMP="/tmp" \
+    ANSIBLE_GALAXY_CACHE_DIR="$INSTALLER_TEMP_BASE/ansible-galaxy-cache" \
+    ANSIBLE_HOST_KEY_CHECKING=True \
+        ansible-playbook \
+            "$ANSIBLE_DIR/wireguard-peers.yml" \
+            -i "$PEER_INVENTORY_FILE" \
+            --extra-vars "@$PEER_EXTRA_VARS_FILE" \
+            || die "Worker-to-Portal WireGuard reconciliation failed; rerun admiral-install after correcting the reported preflight or SSH error."
+    flock -u "$PEER_LOCK_FD" || die "Could not release the WireGuard peer reconciliation lock."
+    exec {PEER_LOCK_FD}>&-
+    PEER_LOCK_FD=""
+fi
+
+
 # --- 10. persist local installer state for future spoke bootstraps ---
 if [[ "$INSTALL_MODE" == "single-node" || "$INSTALL_MODE" == "admin-node" || "$INSTALL_MODE" == "admin-portal-node" ]]; then
     [[ -d /etc/admiral ]] || die "The admiral-common RPM did not create /etc/admiral; reinstall the Admiral packages before continuing."
@@ -1300,6 +1386,40 @@ for node in data if isinstance(data, list) else data.get('nodes', []):
     done
     if [[ "$handshake_ok" != true ]]; then
         die "WireGuard handshake with ${SPOKE_WG_IP} failed; check DNS/public UDP 51820, firewall, keys, and routes."
+    fi
+
+    if [[ "$INSTALL_MODE" == "worker-node" ]]; then
+        info "Waiting for the registered Fleet worker to report a healthy heartbeat after WireGuard reconciliation..."
+        worker_healthy=false
+        for attempt in $(seq 1 24); do
+            if node_status="$(admiralctl nodes show "$SPOKE_NODE_ID" 2>/dev/null)" &&
+                printf '%s\n' "$node_status" | python3 -c '
+import json, sys
+try:
+    node = json.load(sys.stdin)
+except (json.JSONDecodeError, ValueError):
+    raise SystemExit(1)
+healthy = (
+    node.get("last_heartbeat") is not None
+    and node.get("last_metrics_at") is not None
+    and bool(node.get("fleet_version"))
+    and node.get("health_status") == "healthy"
+)
+raise SystemExit(0 if healthy else 1)
+' >/dev/null 2>&1; then
+                worker_healthy=true
+                break
+            fi
+            if [[ "$attempt" -lt 24 ]]; then
+                sleep 5
+            fi
+        done
+        if [[ "$worker_healthy" != true ]]; then
+            WORKER_SERVICE_STATE="$(ssh_no_stdin "${SSH_OPTIONS[@]}" "${INSTALL_TARGET_SSH_USER}@${INSTALL_PUBLIC_IP}" \
+                "sudo -n systemctl show admiral-fleet.service -p ActiveState -p SubState -p ExecMainStatus" 2>/dev/null || true)"
+            die "Fleet worker '$SPOKE_NODE_ID' did not report a healthy heartbeat within 120 seconds after WireGuard reconciliation. Service state: ${WORKER_SERVICE_STATE:-unavailable}"
+        fi
+        info "Fleet worker '$SPOKE_NODE_ID' reported a healthy heartbeat and metrics."
     fi
 fi
 
@@ -1661,84 +1781,6 @@ if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]] &&
     [[ "$per_node_ssh_ready" == true ]] ||
         die "Per-node SSH identity stopped working after bootstrap revocation."
     info "Bootstrap SSH credential revoked; per-node admiral-ssh identity is now authoritative."
-fi
-
-# When an independent Worker and Portal exist, reconcile their direct
-# WireGuard peer and firewall state as part of normal spoke onboarding. The
-# inventory builder requires previously fingerprint-pinned host keys and
-# per-node delivery identities; there is deliberately no insecure SSH fallback.
-if [[ "$PEER_SYNC_REQUIRED" == "true" ]]; then
-    ANSIBLE_DIR="/usr/share/admiral/ansible"
-    [[ -f "$ANSIBLE_DIR/wireguard-peers.yml" ]] ||
-        die "The admiral-common package is missing wireguard-peers.yml. Update the complete Admiral package set."
-    python3 - <<'PY'
-import os
-fd = os.open(
-    "/run/lock/admiral-wireguard-peer-add.lock",
-    os.O_CREAT | os.O_RDWR | getattr(os, "O_NOFOLLOW", 0),
-    0o600,
-)
-os.close(fd)
-PY
-    exec {PEER_LOCK_FD}>>/run/lock/admiral-wireguard-peer-add.lock
-    flock -x "$PEER_LOCK_FD" || die "Could not lock WireGuard peer reconciliation."
-    PEER_INVENTORY_FILE="$(mktemp "$INSTALLER_TEMP_BASE/peer-inventory.XXXXXX.json")"
-    PEER_INVENTORY_ERROR="$(mktemp "$INSTALLER_TEMP_BASE/peer-inventory-error.XXXXXX")"
-    PEER_EXTRA_VARS_FILE="$(mktemp "$INSTALLER_TEMP_BASE/peer-extra-vars.XXXXXX.json")"
-    INSTALL_STATE_WIREGUARD_SUBNET="$INSTALL_WIREGUARD_SUBNET" \
-    INSTALL_STATE_WIREGUARD_HUB_IP="$INSTALL_ADMIN_WIREGUARD_IP" \
-    python3 - "$PEER_EXTRA_VARS_FILE" <<'PY'
-import json, os, sys
-with open(sys.argv[1], "w", encoding="utf-8") as stream:
-    json.dump(
-        {
-            "admiral_wireguard_subnet": os.environ["INSTALL_STATE_WIREGUARD_SUBNET"],
-            "admiral_wireguard_hub_ip": os.environ["INSTALL_STATE_WIREGUARD_HUB_IP"],
-        },
-        stream,
-    )
-    stream.write("\n")
-PY
-    chmod 0600 "$PEER_INVENTORY_FILE" "$PEER_INVENTORY_ERROR" "$PEER_EXTRA_VARS_FILE"
-
-    peer_inventory_ready=false
-    for attempt in $(seq 1 30); do
-        if admiral-wireguard-peer-inventory \
-            --known-hosts /var/lib/admiral/know_host.yaml \
-            --ssh-directory /var/lib/admiral/ssh-delivery \
-            inventory \
-            --admin-endpoint "$INSTALL_ADMIN_ENDPOINT" \
-            --current-node-id "$SPOKE_NODE_ID" \
-            >"$PEER_INVENTORY_FILE" 2>"$PEER_INVENTORY_ERROR"; then
-            peer_inventory_ready=true
-            break
-        fi
-        if grep -Fq "is not active in know_host.yaml yet" "$PEER_INVENTORY_ERROR"; then
-            info "Waiting for the new spoke to appear in Admirald's peer inventory (attempt ${attempt}/30)."
-            sleep 2
-            continue
-        fi
-        cat "$PEER_INVENTORY_ERROR" >&2
-        die "Could not build a secure Worker-to-Portal Ansible inventory."
-    done
-    [[ "$peer_inventory_ready" == true ]] || {
-        cat "$PEER_INVENTORY_ERROR" >&2
-        die "The new spoke was not added to Admirald's peer inventory in time."
-    }
-
-    info "Reconciling registered Worker and independent Portal WireGuard peers..."
-    ANSIBLE_LOCAL_TEMP="$INSTALLER_TEMP_BASE/ansible-peer-local" \
-    ANSIBLE_REMOTE_TEMP="/tmp" \
-    ANSIBLE_GALAXY_CACHE_DIR="$INSTALLER_TEMP_BASE/ansible-galaxy-cache" \
-    ANSIBLE_HOST_KEY_CHECKING=True \
-        ansible-playbook \
-            "$ANSIBLE_DIR/wireguard-peers.yml" \
-            -i "$PEER_INVENTORY_FILE" \
-            --extra-vars "@$PEER_EXTRA_VARS_FILE" \
-            || die "Worker-to-Portal WireGuard reconciliation failed; rerun admiral-install after correcting the reported preflight or SSH error."
-    flock -u "$PEER_LOCK_FD" || die "Could not release the WireGuard peer reconciliation lock."
-    exec {PEER_LOCK_FD}>&-
-    PEER_LOCK_FD=""
 fi
 
 # --- 12. final message ---

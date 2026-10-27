@@ -228,16 +228,19 @@ removing a peer fragment and onboarding that node again generates a new one.
 The PSK is an additional defense-in-depth secret, not a replacement for the
 WireGuard key pair or the firewall policy.
 
-When both an active Worker and an independent Portal are registered,
-`admiral-install --worker-node` or `admiral-install --portal-node` automatically
-runs the packaged peer-exchange playbook. The installer builds its Ansible
-inventory from Admirald's active node inventory and uses the per-node SSH
-delivery keys plus host-key pins verified during onboarding. Keep those files
-in the root-only `/var/lib/admiral/ssh-delivery` directory while automatic
-reconciliation is required. The installer fails with an actionable error if a
-registered spoke lacks its key or verified host-key pin; host-key checking is
-never disabled. An operator may run `wireguard-peers.yml` manually for repair,
-but routine two-role onboarding does not require that manual step.
+Every `admiral-install --worker-node` or `admiral-install --portal-node` run
+automatically reconciles hub-to-spoke WireGuard peers after registration and
+before the first handshake check. This generates or preserves the hub↔spoke
+PSK and updates both ends before a Worker must report a healthy Fleet
+heartbeat. When an independent Worker and Portal are both registered, the same
+playbook also reconciles their direct peer and firewall state. The installer
+builds its Ansible inventory from Admirald's active node inventory and uses the
+per-node SSH delivery keys plus host-key pins verified during onboarding.
+Keep those files in the root-only `/var/lib/admiral/ssh-delivery` directory
+while automatic reconciliation is required. The installer fails with an
+actionable error if a registered spoke lacks its key or verified host-key pin;
+host-key checking is never disabled. An operator may run `wireguard-peers.yml`
+manually for repair, but routine onboarding does not require that manual step.
 
 A Portal hosted on the Admin machine uses the Admin's own WireGuard endpoint;
 it is not treated as an independent spoke and does not need a second SSH

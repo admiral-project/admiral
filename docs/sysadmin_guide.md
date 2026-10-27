@@ -245,12 +245,15 @@ revocation as idempotent. Supply the currently verified SSH host fingerprint on
 every run. If the host key changed, stop and verify the new key through the
 provider console before retrying.
 
-When the installed topology has at least one active Worker and one active
-independent Portal, completing either spoke installation automatically runs
-`wireguard-peers.yml` with strict SSH host-key checking. The installer uses the
-fingerprints supplied during each node's onboarding and the per-node delivery
-keys retained on the Admin host. Missing keys or pins stop reconciliation with
-an actionable error; SSH host-key checking is never disabled.
+Every Worker or Portal installation automatically runs `wireguard-peers.yml`
+after registration and before its first WireGuard handshake check. This
+generates or preserves the hub↔spoke PSK and updates both peers before a Worker
+must report a healthy heartbeat. When an independent Worker and Portal are
+both registered, the same playbook also reconciles their direct peer and
+firewall state. The installer uses the fingerprints supplied during each
+node's onboarding and the per-node delivery keys retained on the Admin host.
+Missing keys or pins stop reconciliation with an actionable error; SSH
+host-key checking is never disabled.
 
 A Portal co-located with the Admin uses the Admin's WireGuard endpoint and is
 not included as an independent spoke in direct peer reconciliation. It does

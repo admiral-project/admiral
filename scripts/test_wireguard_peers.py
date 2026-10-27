@@ -120,6 +120,7 @@ class WireGuardPeerExchangeTests(unittest.TestCase):
         self.assertIn("flock -x \"$PEER_LOCK_FD\"", installer)
         self.assertIn("/run/lock/admiral-wireguard-peer-add.lock", installer)
         self.assertIn('PEER_SYNC_REQUIRED="true"', installer)
+        self.assertIn('not-required)\n            PEER_SYNC_REQUIRED="true"', installer)
         self.assertIn('"$ANSIBLE_DIR/wireguard-peers.yml"', installer)
 
     def test_peer_loader_replays_fragments_in_order_without_leaking_wg_output(self) -> None:
