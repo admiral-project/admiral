@@ -6,14 +6,14 @@ historical review.
 ## Release state
 
 - Candidate: RC6 Epoch 5 Release 15; six RPMs built natively for EL10 and Fedora
-  Rawhide (`.el10` and `.fc46` respectively), signed, with green component and
-  root CI for the pinned commits. The exact pins and Release 15 specs used to
-  build the candidate are now recorded in root commit `cdeb30d`.
+  Rawhide (`.el10` and `.fc46` respectively), signed, with green component CI
+  and green root CI at `e6b7baa`. The exact pins and Release 15 specs used to
+  build the candidate are recorded in root commit `cdeb30d`.
 - Full runtime release matrix: **0/6 cells complete**. Rocky Multi-Node has
   partial R15 evidence; the full cell checklist and the other five cells remain
   pending.
-- GitHub root issues: **8 open, 0 closed**: #106, #182, #228, #255, #271, #289,
-  #291, #294.
+- GitHub root issues: **7 open**: #106, #182, #228, #255, #271, #291, #294.
+  **283 are closed** in total; #289 was closed after its R15 acceptance passed.
 - No product change has been made since R15, so its candidate identity remains
   current. Harness and evidence work does not invalidate it.
 - Host resources at the latest check: 2.5 GiB available RAM and 49 GiB disk
@@ -29,15 +29,19 @@ historical review.
 | #228 | No R15 fault-injection result yet. | Inject Podman delete failures on R15 in Single-Node and Multi-Node; show failure with retry state/resources preserved, restore Podman byte-for-byte, verify retry cleanup, and run uninjected controls. |
 | #255 | No R15 real Multi-Node migration result yet. | Complete a real restore/cutover, preserve logical instance ID, and retain a high-frequency operation-state timeline showing no backward transition to `queued`. |
 | #271 | Existing issue-specific redirect evidence is on older candidates and Single-Node cells. | Re-run with exact R15 in the remaining release-gate contexts, including CentOS Stream and Multi-Node, and retain zero redirect-target requests. |
-| #289 | **R15 issue-specific acceptance passed** on Rocky Multi-Node: two customer flows through Caddy and two directly over WireGuard. Each completed signup, pending-login rejection, approval, catalog publication, and deployment; all four instances reached `running/healthy/available`, strict Caddy requests returned HTTP 200 / verify 0, and all four deprovision operations succeeded. Final route and rootless Podman inventories are empty. See [`ISSUE-289-REPORT.md`](evidence/rc6-e5-r15/ISSUE-289-REPORT.md) and its hashed raw logs. | No issue-specific acceptance remains. This pass does not credit a full release-matrix cell. The GitHub issue is still open pending publication of the evidence and closure update. |
 | #291 | Rocky Multi-Node R15 installer automatically established the dedicated Worker-to-Portal peer; strict HTTPS and the linked #182 restore passed without manually running the peer playbook. | On R15, verify peer/firewall revocation when removing the Worker and ensure an unregistered source remains denied; retain complete evidence. |
 | #294 | No R15 Multi-Node control-plane restart result yet. | Restart the Admin control plane with stale persisted Worker metrics, show unavailable state before fresh metrics, then recovery after a valid heartbeat. |
 
-All eight issues remain open at the time of this snapshot. Do not declare Gold
+## Closed since the previous snapshot
+
+| Issue | R15 acceptance |
+|---|---|
+| #289 | Four independent Harbor customer flows passed on Rocky Multi-Node: two through Admin Caddy and two directly over Portal WireGuard. Each covered pending signup/login rejection, approval, catalog publication, deployment, healthy/available state, and deprovision. Strict HTTPS probes returned HTTP 200; cleanup left no app routes or rootless Podman resources. The [R15 report](evidence/rc6-e5-r15/ISSUE-289-REPORT.md), hashed raw evidence, and [GitHub closure](https://github.com/admiral-project/admiral/issues/289) are published. This issue-specific pass does not credit a matrix cell. |
+
+Seven issues remain open at the time of this snapshot. Do not declare Gold
 while any issue remains open or any of the six exact-candidate cells is
 incomplete. The only release-invalidating changes are product changes; the
-Caddy fixture, strict-CA trust anchor, and cleanup changes are validation
-harness work.
+Release 15 helper-default alignment and validation evidence are harness work.
 
 # Open issue closure review — 2026-10-26
 
