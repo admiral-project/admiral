@@ -1,0 +1,6 @@
+9a0eb9c16d8425a2307f383b21a0171174ed61cefc996c5a3322fdc0ea93d430  ./admiral-common-0.0.1rc6-19.el10.noarch.rpm
+a0b000359a5ce0bd31885cc758dac5b4990d7d5f0b83013ce7dabdd976ed6bdd  ./admiral-flagship-0.0.1rc6-19.el10.noarch.rpm
+1a1c920b0d04610d18ee3d265026311df93728318504702d8ba96679dd920777  ./admiral-fleet-0.0.1rc6-19.el10.x86_64.rpm
+12da00f292918e0839f834fcbb04f32d3b1957cca126086c6993bc47dadda856  ./admiral-harbor-0.0.1rc6-19.el10.noarch.rpm
+ba608668a34d4a3b8c5894e3feda2c941b3c51671c1df791e48cd0714b7bf5db  ./admiralctl-0.0.1rc6-19.el10.x86_64.rpm
+88a2d9d1bb74bf5e77331a860cc0ffb42868614df1749a19faf23a26b1d8fadb  ./admirald-0.0.1rc6-19.el10.x86_64.rpm

@@ -1,0 +1,25 @@
+RC6 Epoch 5 Release 19 source selection
+Fetched and compared every component submodule with origin/main before both
+native RPM builds on 2026-10-27.
+
+Architecture: x86_64
+Release gate OSes: Rocky Linux 10, CentOS Stream 10, Fedora Rawhide
+Topologies: Single-Node and Multi-Node
+AlmaLinux: OUT_OF_SCOPE_EXTERNAL_TOOLING (#276)
+
+The same exact source SHAs are used for EL10 and Fedora. Fedora packages were
+compiled in Fedora Rawhide and carry `.fc46`; they were not relabeled from EL10.
+All six Admiral RPM specs use Release 19.
+
+| Source | Selected SHA | Latest `origin/main` | Selection evidence |
+|---|---|---|---|
+| admiral-common/root payload | `dfb239f1a44ac6b221c7a0d181bada655b048871` | N/A; root release payload | `scripts/validate-release-refs.py` confirms the packaged installer, Ansible, configuration, services, and CLI support payload match this pin. |
+| admirald | `f8a880ddb6db76353c6b940b0c78c74e77add769` | `6e4a725d30c0fff877fe2252e843fae687810ae6` | Five commits ahead. Preserve this validation pin for migration maintenance, safe rollback, health-gated cutover, capacity accounting, and the #255 regression. PR #63 CI run `40584743667` passed. |
+| admiral-fleet | `11f788c7efbfd9ea77e2e461a0e53874393c946a` | `b082934f908a4a33acf0fdd70c06974f0a29bb21` | Two commits ahead for the active #306 runtime/default documentation; retained R18 candidate pin. CI run `40534518833` passed. |
+| admiralctl | `d0e98414115c9628e59b33678cfcbd9bc0e342d5` | `fa2a65e866310bd82bea78859804b6c3aea7989a` | Three commits ahead, preserving node-removal/app-definition validation and documenting migration maintenance. PR #29 CI run `40584258663` passed. |
+| admiral-flagship | `9d26a3b0e1e8827b066566fb2ecb98f5cd580a74` | `b7325bbc71fc474a521496e593b2967e4d555ac1` | One commit ahead for #306 runtime CDN documentation; retained R18 candidate pin. CI run `40534546152` passed. |
+| admiral-harbor | `48280fdd5ee2779e68edc7873e605c0d80dc60e7` | `dd4818b6e2bc53eea4495fc5e374a4893cfcb107` | One commit ahead for beta status and responsibility documentation; retained R18 candidate pin. CI run `40534540993` passed. |
+
+The root repository still needs its CI run for the R19 spec and pin update.
+This file records the selected source SHAs; the signed RPM manifests record
+the resulting NEVRA and SHA-256 for both native distro builds.

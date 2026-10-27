@@ -1,0 +1,15 @@
+platform=Rocky Linux 10.2 (Red Quartz), native host build
+build_arch=x86_64
+rpm_dist=.el10
+rpm_version=rpm-build-4.19.1.1-23.el10.x86_64
+go_version=go1.26.10 linux/amd64
+go_parallelism=2
+rpmbuild_parallelism=1
+build_memory_limit=2500M
+build_cpu_limit=200%
+root_source_commit=b6484918f138cd03abc9ca49477e500050ee5452 (working release checkout)
+admiral_common_source_pin=dfb239f1a44ac6b221c7a0d181bada655b048871
+build_exit=0
+packaged_go_tests=PASS
+flagship_pytest=266 passed
+harbor_pytest=352 passed
