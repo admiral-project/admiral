@@ -6,7 +6,7 @@ set -euo pipefail
 key=$1 known_hosts=$2 guest_ip=$3 run_id=$4
 [[ $run_id =~ ^[A-Za-z0-9][A-Za-z0-9_.-]{0,30}$ ]] || { echo 'invalid run id' >&2; exit 2; }
 repo_root=$(git rev-parse --show-toplevel)
-release=${ADMIRAL_RC_RELEASE:-13}
+release=${ADMIRAL_RC_RELEASE:-14}
 epoch=${ADMIRAL_RC_EPOCH:-5}
 evidence=${RC6_ISSUE_213_OUTPUT_DIR:-$repo_root/docs/audits/admiral-production-readiness-2026-10-21/evidence/rc6-r4-rocky-single/issue-213}
 mkdir -p "$evidence"
