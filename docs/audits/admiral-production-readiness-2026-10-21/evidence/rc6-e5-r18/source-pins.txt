@@ -1,0 +1,25 @@
+RC6 Epoch 5 Release 18 source selection
+Compared with origin/main on 2026-10-27 before the RPM build.
+
+Architecture: x86_64
+Release gate OSes: Rocky Linux 10, CentOS Stream 10, Fedora Rawhide
+Topologies: Single-Node and Multi-Node
+AlmaLinux: OUT_OF_SCOPE_EXTERNAL_TOOLING (#276)
+
+All six Admiral RPM specs use Release 18. The selected source commits are
+recorded below; the same commits must be used for the native EL10 and Fedora
+builds. Fedora RPMs must be compiled inside a Fedora Rawhide build environment
+and must never be produced by relabeling EL10 RPMs.
+
+| Source | Selected SHA | Latest origin/main | Selection evidence |
+|---|---|---|---|
+| admiral-common/root payload | `dfb239f1a44ac6b221c7a0d181bada655b048871` | N/A; root release branch payload | Contains the current installed installer man page and support payload; `validate-release-refs.py` verifies the package payload pin. |
+| admirald | `e0d3326406f315912e856ec7954757bb859cfe05` | `6e4a725d30c0fff877fe2252e843fae687810ae6` | Preserve the four-commit validation pin because it includes migration backup-record handling for #255 and the peer reconciliation fixes required by the candidate. Component CI run `40532059993` passed. |
+| admiral-fleet | `11f788c7efbfd9ea77e2e461a0e53874393c946a` | `b082934f908a4a33acf0fdd70c06974f0a29bb21` | Two commits ahead only for documentation required by #306 (rootless user and RPM registry allowlist defaults); no runtime product code differs from main. Component CI run `40534518833` passed. |
+| admiralctl | `840ed152833b9f49b591519cbcdc0bbe17cf4f3d` | `fa2a65e866310bd82bea78859804b6c3aea7989a` | Preserve the two-commit validation pin for node-removal reconciliation and credential-free local app-definition validation required by #305. Component CI run `40532865079` passed. |
+| admiral-flagship | `9d26a3b0e1e8827b066566fb2ecb98f5cd580a74` | `b7325bbc71fc474a521496e593b2967e4d555ac1` | One documentation-only commit required by #306 clarifies the runtime CDN dependency. Component CI run `40534546152` passed. |
+| admiral-harbor | `48280fdd5ee2779e68edc7873e605c0d80dc60e7` | `dd4818b6e2bc53eea4495fc5e374a4893cfcb107` | One documentation-only commit required by #306 clarifies beta status and component responsibility. Component CI run `40534540993` passed. |
+
+The root composition at `412df6388309d244812e2341849785cf07b9b282` passed CI
+run `40535165729`. Release 18 RPMs have not yet been built; no NEVRA, SHA-256,
+signature, or runtime cell is claimed by this source-selection record.

@@ -45,6 +45,10 @@ RC6_SINGLE_LANE = (
     ROOT
     / "docs/audits/admiral-production-readiness-2026-10-21/scripts/rc6/run-single-lane.sh"
 )
+RC6_HOST_REBOOT = (
+    ROOT
+    / "docs/audits/admiral-production-readiness-2026-10-21/scripts/rc6/host-reboot.sh"
+)
 
 
 def test_audit_helpers_default_to_the_coordinated_rpm_release():
@@ -201,3 +205,12 @@ def test_rc6_single_lane_uses_the_selected_epoch_and_release():
     assert f"expected_epoch=${{RC6_EXPECTED_EPOCH:-{expected_epoch.group(1)}}}" in lane
     assert "ADMIRAL_RC_RELEASE=$package_release" in lane
     assert 'expected_epoch:0.0.1rc6-$expected_release.$expected_dist' in lane
+    assert "evidence/rc6-r${package_release}" in lane
+
+
+def test_rc6_host_reboot_defaults_to_the_candidate_release():
+    script = RC6_HOST_REBOOT.read_text(encoding="utf-8")
+    spec = (ROOT / "packaging/rpm/admiral-common.spec").read_text(encoding="utf-8")
+    expected_release = re.search(r"^Release:\s*(\d+)%\{\?dist\}", spec, re.MULTILINE)
+    assert expected_release
+    assert f"release=${{ADMIRAL_RC_RELEASE:-{expected_release.group(1)}}}" in script
