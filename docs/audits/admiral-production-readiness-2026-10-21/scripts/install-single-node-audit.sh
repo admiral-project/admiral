@@ -64,9 +64,9 @@ ssh_args=(-i "$ssh_key" -o BatchMode=yes -o StrictHostKeyChecking=yes -o UserKno
       "$remote_repo_tmp" /etc/yum.repos.d/admiral-local.repo
     ssh "${ssh_args[@]}" "$target" rm -f -- "$remote_repo_tmp"
   fi
-  ssh "${ssh_args[@]}" "$target" sudo bash -s -- "$distro" "$version" "$release" "$rpm_suffix" "$epoch" <<'REMOTE'
+  ssh "${ssh_args[@]}" "$target" sudo bash -s -- "$distro" "$version" "$release" "$rpm_suffix" "$epoch" "$repo_source" <<'REMOTE'
 set -euo pipefail
-distribution=$1 expected_version=$2 expected_release=$3 rpm_suffix=$4 expected_epoch=$5
+distribution=$1 expected_version=$2 expected_release=$3 rpm_suffix=$4 expected_epoch=$5 repo_source=$6
 if [[ $distribution == fedora ]]; then
   dnf install -y dnf5-plugins
 else
@@ -76,7 +76,9 @@ if [[ $distribution == el10 ]]; then
   dnf install -y epel-release
   dnf config-manager --set-enabled crb
 fi
-dnf copr enable -y admiral-project/admiral
+if [[ $repo_source == copr ]]; then
+  dnf copr enable -y admiral-project/admiral
+fi
 packages=()
 for package in admiral-common admirald admiralctl admiral-fleet admiral-harbor admiral-flagship; do
   packages+=("${package}-${expected_version}-${expected_release}.${rpm_suffix}")

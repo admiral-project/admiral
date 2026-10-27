@@ -10,6 +10,11 @@ usage() {
 
 [[ $# -eq 5 || $# -eq 7 ]] || usage
 os=$1 name=$2 nat_ip=$3 nat_mac=$4
+memory_mib=${ADMIRAL_AUDIT_MEMORY_MIB:-2048}
+[[ $memory_mib =~ ^[0-9]+$ ]] && (( memory_mib >= 1024 && memory_mib <= 8192 )) || {
+  echo "ADMIRAL_AUDIT_MEMORY_MIB must be an integer from 1024 to 8192" >&2
+  exit 2
+}
 if [[ $# -eq 5 ]]; then
   private_ip= private_mac= pubkey_file=$5
 else
@@ -66,13 +71,13 @@ networks=(--network "network=default,mac=$nat_mac,model=virtio")
 if [[ -n $private_ip ]]; then
   networks+=(--network "network=admiral-validation,mac=$private_mac,model=virtio")
 fi
-virt-install --name "$name" --memory 2048 --vcpus 2 --osinfo "$osinfo" --import \
+virt-install --name "$name" --memory "$memory_mib" --vcpus 2 --osinfo "$osinfo" --import \
   --disk "path=$overlay,format=qcow2,bus=virtio" \
   --disk "path=$iso,device=cdrom" "${networks[@]}" \
   --graphics none --noautoconsole
 python3 "$(dirname "$0")/verify-audit-vm-lease.py" \
   --network default --mac "$nat_mac" --requested-ip "$nat_ip" --timeout 90
-printf 'Created %s from %s at NAT %s%s.\n' \
-  "$name" "$(basename "$base")" "$nat_ip" "${private_ip:+ and private underlay $private_ip}"
+printf 'Created %s from %s at NAT %s%s with %s MiB RAM.\n' \
+  "$name" "$(basename "$base")" "$nat_ip" "${private_ip:+ and private underlay $private_ip}" "$memory_mib"
 printf 'known_hosts_file=%s/known_hosts\n' "$seed_dir"
 ssh-keygen -lf "$seed_dir/ssh_host_ed25519_key.pub" -E sha256
