@@ -313,13 +313,52 @@ class WireGuardPeerInventoryTests(unittest.TestCase):
             }
         )
 
-        with self.assertRaisesRegex(INVENTORY.InventoryError, "not active in know_host.yaml yet"):
+        with self.assertRaisesRegex(INVENTORY.InventoryError, "not registered in know_host.yaml yet"):
             INVENTORY.build_inventory(
                 nodes,
                 admin_endpoint="192.0.2.1",
                 current_node_id="portal-1",
                 ssh_directory=self.ssh_directory,
             )
+
+    def test_build_includes_only_the_registered_current_spoke_before_heartbeat(self) -> None:
+        self.write_nodes(
+            {
+                "worker-1": {
+                    "node_id": "worker-1",
+                    "node_role": "worker",
+                    "public_ip": "192.0.2.10",
+                    "status": "registered",
+                },
+                "worker-2": {
+                    "node_id": "worker-2",
+                    "node_role": "worker",
+                    "public_ip": "192.0.2.11",
+                    "status": "registered",
+                },
+                "portal-1": {
+                    "node_id": "portal-1",
+                    "node_role": "portal",
+                    "public_ip": "192.0.2.20",
+                    "status": "active",
+                },
+            }
+        )
+        nodes = INVENTORY._load_nodes(self.known_hosts, registered_node_id="worker-1")
+        self.credentials("worker-1", "192.0.2.10")
+        self.credentials("portal-1", "192.0.2.20")
+
+        inventory = INVENTORY.build_inventory(
+            nodes,
+            admin_endpoint="192.0.2.1",
+            current_node_id="worker-1",
+            ssh_directory=self.ssh_directory,
+            allow_unpaired=True,
+        )
+
+        groups = inventory["all"]["children"]
+        self.assertEqual(set(groups["workers"]["hosts"]), {"worker-1"})
+        self.assertEqual(set(groups["portal"]["hosts"]), {"portal-1"})
 
     def test_removal_inventory_excludes_node_and_allows_empty_worker_group(self) -> None:
         nodes = self.write_nodes(

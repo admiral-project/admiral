@@ -1266,7 +1266,7 @@ PY
             peer_inventory_ready=true
             break
         fi
-        if grep -Fq "is not active in know_host.yaml yet" "$PEER_INVENTORY_ERROR"; then
+        if grep -Fq "is not registered in know_host.yaml yet" "$PEER_INVENTORY_ERROR"; then
             info "Waiting for the new spoke to appear in Admirald's peer inventory (attempt ${attempt}/30)."
             sleep 2
             continue

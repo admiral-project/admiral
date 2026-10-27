@@ -45,7 +45,11 @@ def _same_endpoint(first: str, second: str) -> bool:
         return first.rstrip(".").casefold() == second.rstrip(".").casefold()
 
 
-def _load_nodes(path: pathlib.Path) -> list[dict[str, str]]:
+def _load_nodes(
+    path: pathlib.Path,
+    *,
+    registered_node_id: str | None = None,
+) -> list[dict[str, str]]:
     try:
         with path.open(encoding="utf-8") as stream:
             document = yaml.safe_load(stream)
@@ -56,19 +60,28 @@ def _load_nodes(path: pathlib.Path) -> list[dict[str, str]]:
 
     nodes: list[dict[str, str]] = []
     for inventory_key, entry in document["nodes"].items():
-        if not isinstance(entry, dict) or entry.get("status") != "active":
+        if not isinstance(entry, dict):
+            continue
+        node_id = entry.get("node_id")
+        status = entry.get("status")
+        is_registered_current_node = (
+            status == "registered"
+            and registered_node_id is not None
+            and inventory_key == registered_node_id
+            and node_id == registered_node_id
+        )
+        if status != "active" and not is_registered_current_node:
             continue
         role = entry.get("node_role")
         if not isinstance(role, str) or role not in {"worker", "portal"}:
             raise InventoryError(
-                f"active node {inventory_key!r} has unsupported node_role {role!r}"
+                f"registered or active node {inventory_key!r} has unsupported node_role {role!r}"
             )
-        node_id = entry.get("node_id")
         if not isinstance(node_id, str) or not NODE_ID_RE.fullmatch(node_id):
-            raise InventoryError(f"active node {inventory_key!r} has invalid node_id")
+            raise InventoryError(f"registered or active node {inventory_key!r} has invalid node_id")
         if inventory_key != node_id:
             raise InventoryError(
-                f"active node key {inventory_key!r} does not match node_id {node_id!r}"
+                f"registered or active node key {inventory_key!r} does not match node_id {node_id!r}"
             )
         nodes.append(
             {
@@ -174,8 +187,8 @@ def build_inventory(
             raise InventoryError("current node ID is invalid")
         if not any(node["node_id"] == current_node_id for node in nodes):
             raise InventoryError(
-                f"node {current_node_id!r} is not active in know_host.yaml yet; "
-                "wait for registration and heartbeat before peer reconciliation"
+                f"node {current_node_id!r} is not registered in know_host.yaml yet; "
+                "wait for registration before peer reconciliation"
             )
     roles: dict[str, dict[str, dict[str, Any]]] = {"admin": {}, "workers": {}, "portal": {}}
     roles["admin"]["admin"] = {
@@ -230,8 +243,8 @@ def main() -> int:
 
     args = parser.parse_args()
     try:
-        nodes = _load_nodes(args.known_hosts)
         if args.command == "preflight":
+            nodes = _load_nodes(args.known_hosts)
             needed = preflight(
                 nodes,
                 role=args.role,
@@ -241,6 +254,10 @@ def main() -> int:
             )
             print("required" if needed else "not-required")
             return 0
+        nodes = _load_nodes(
+            args.known_hosts,
+            registered_node_id=args.current_node_id,
+        )
         inventory = build_inventory(
             nodes,
             admin_endpoint=args.admin_endpoint,
