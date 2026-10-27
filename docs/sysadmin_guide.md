@@ -162,6 +162,15 @@ If `portal.node_id` and `portal.wireguard_ip` are already assigned under
 `--wireguard-ip` may be omitted. The installer resolves and validates those
 two values on the admin node.
 
+For an IPv6-only public Portal, pass its global IPv6 address to `--public-ip`
+and keep `--wireguard-ip` in the private IPv4 overlay. A separate IPv4 address
+on the Portal host is not required. The public address is used for SSH
+provisioning and WireGuard transport; Portal-to-Admin API traffic uses the
+private WireGuard address. The firewall keeps Harbor and other internal
+services closed to public IPv6 traffic. The required public-IPv6 E2E checks in
+[#304](https://github.com/admiral-project/admiral/issues/304) have not passed
+yet, so this topology is not counted as a validated release capability.
+
 ### 4. Add a Worker
 
 Run the following command on the admin node for each new worker:
@@ -178,6 +187,15 @@ sudo admiral-install --worker-node \
 
 As with a portal, the worker node ID and WireGuard address may be omitted when
 the correct `next.worker` assignment exists in `know_host.yaml`.
+
+For a Worker with only public IPv6, pass its global IPv6 address to
+`--public-ip`, retain the assigned private IPv4 `--wireguard-ip`, and use an
+Admin endpoint reachable over IPv6. A separate IPv4 address on the Worker host
+is not required. Fleet-to-Admin API traffic continues over the private
+WireGuard IPv4 address. The public firewall exposes only SSH and WireGuard on
+Worker and Portal nodes. The required public-IPv6 E2E checks in
+[#304](https://github.com/admiral-project/admiral/issues/304) have not passed
+yet, so this topology is not counted as a validated release capability.
 
 The installer performs the complete remote flow: verifies the SSH host key,
 uses the bootstrap key only for the Ansible connection, creates the fixed
@@ -409,9 +427,9 @@ remote provisioning:
 
 | Flag | Description |
 |------|-------------|
-| `--public-ip <ip>` | Public IP of the target node (required) |
+| `--public-ip <ip>` | Public IPv4, IPv6, or DNS name of the target node (required) |
 | `--wireguard-ip <ip>` | WireGuard VPN IP for the target node |
-| `--admin-endpoint <ip>` | Admin node IP for API access from spoke |
+| `--admin-endpoint <ip>` | Public Admin endpoint used for WireGuard transport and peer synchronization |
 | `--ssh-user <user>` | SSH user for remote connection (default: root) |
 | `--ssh-key <path>` | SSH private key for remote authentication |
 | `--ssh-public-key <path>` | Public key authorized for the generated administrator |
@@ -567,11 +585,14 @@ The default egress policy remains destination-agnostic and port-based. Sites
 that can maintain stable address ranges may optionally pass
 `admiral_egress_ipv4_destinations` and/or `admiral_egress_ipv6_destinations`
 as CIDR lists; external TCP egress is then limited to those destinations.
-DNS and NTP remain explicit port-based exceptions unless the site also places
-its resolvers behind a separately managed destination policy.
-Set `admiral_egress_ipv6_enabled=true` when IPv6 is part of the deployment
-contract; the policy then permits the ICMPv6 neighbour-discovery and echo
-messages required for normal operation.
+The IPv4 and IPv6 destination lists apply independently. With IPv6 enabled and
+no IPv6 destination list, outbound IPv6 follows the role-specific port policy;
+an IPv6 destination list narrows that egress to its CIDRs. DNS, NTP, and
+WireGuard remain explicit port-based exceptions. A literal IPv6 public
+endpoint enables IPv6 firewall support during install; for a DNS endpoint or a
+dual-stack Admin installed with an IPv4 endpoint, set
+`ADMIRAL_EGRESS_IPV6_ENABLED=true`. Enabling IPv6 also permits the ICMPv6
+neighbour-discovery and echo messages required for normal operation.
 
 ### Minimal off-cluster log shipping
 
@@ -647,11 +668,13 @@ registros antes de declarar la instalación terminada.
 
 For normal modes (`--single-node`, `--admin-node`, `--admin-portal-node`, `--worker-node`, `--portal-node`), the installer applies a secure-by-default baseline including firewall policy, SELinux settings, login hardening, auditd, and fail2ban. Blocking security checks cause installation to fail; they are not advisory warnings.
 
-The mandatory Tier 1 platform family is Enterprise Linux 10: RHEL 10,
-CentOS Stream 10, Rocky Linux 10, and AlmaLinux 10. Fedora 44 and Fedora
-Rawhide are Tier 2. The secure production installer modes and security
-controls apply to both tiers. Fedora is upstream for compatibility work that
-can expose issues relevant to a future EL11.
+The active x86_64 release gate requires Rocky Linux 10 and CentOS Stream 10
+(Tier 1), plus Fedora Rawhide (Tier 2), in Single-Node and Multi-Node modes.
+AlmaLinux 10 remains Tier 2 but is outside the active matrix while the COPR
+build-environment limitation in [#276](https://github.com/admiral-project/admiral/issues/276)
+stands. RHEL 10 and Fedora stable releases are outside this active matrix;
+their secure installer modes do not count as release-gate evidence. Fedora
+Rawhide is the upstream compatibility signal for a future EL11.
 
 Installation applies available vendor security errata and enables automatic
 security updates: `dnf-automatic.timer` on EL10 and `dnf5-automatic.timer` on
@@ -665,15 +688,17 @@ documentation-range ban to prove that an effective kernel rule is installed.
 
 ### Configuring secure spoke egress
 
-Worker and dedicated portal nodes use a default-deny outbound nftables policy.
-TCP 587 is explicitly allowed for SMTP submission so Harbor and Flagship can
-send quota, account, and operational notifications.
-It permits only loopback, established traffic, the Admiral VPN, SSH, DNS
-(UDP/TCP 53), NTP (UDP 123), HTTPS (TCP 443), and WireGuard (UDP 51820). All
-other outbound traffic is rejected for both IPv4 and IPv6. DNS and HTTPS are
-intentionally allowed by port rather than by fixed IP: Docker Hub and PayPal
-use rotating CDN addresses, and resolver addresses may be supplied dynamically
-by DHCP.
+All roles use a default-deny outbound nftables policy for IPv4 and IPv6.
+Common allowances include loopback, established traffic, the private IPv4
+Admiral VPN, DNS (UDP/TCP 53), NTP (UDP 123), and selected ICMPv6 neighbor
+discovery when IPv6 is enabled. Admin and Single-Node additionally allow TCP
+22, 80, 443, 587, and 9000. Worker and Portal allow TCP 22, 80, 443, 587,
+and 9000 plus WireGuard UDP 51820. IPv6 TCP egress is enabled only when IPv6
+is configured; per-family destination CIDR lists can narrow the corresponding
+TCP rules. DNS, NTP, and WireGuard remain port-based exceptions. DNS and HTTPS
+are intentionally allowed by port rather than by fixed IP: OCI registries and
+PayPal use rotating CDN addresses, and resolver addresses may be supplied
+dynamically by DHCP.
 
 This is a node-level baseline, not an application egress allowlist. The
 installer verifies that `chronyd` has actually synchronized the host clock;
@@ -1075,9 +1100,14 @@ admiralctl routes list
 admiralctl operations list
 ```
 
-## Current Beta 18 Validation Status
+## Historical Beta 18 validation evidence — 2026-07-29
 
-The July 29, 2026 validation confirmed the following runtime path:
+The following records validation of the exact Beta 18 payload only. It is not
+the current release status and does not count toward the active six-cell
+matrix. The current release gate is defined in
+[`docs/release_validation.md`](release_validation.md).
+
+The July 29, 2026 validation recorded the following runtime path:
 
 ```text
 admirald ⇄ authenticated API over WireGuard ⇄ admiral-fleet
@@ -1112,9 +1142,9 @@ therefore redirect to port 80. Treat `setup_completed` and the Fleet operation
 result as the provisioning gate, and configure a real external hostname/URL
 before using the example as an HTTP routing test.
 
-Still required before calling the beta18 validation complete: backup/restore
-against private S3 with TLS and a second private topology. WireGuard
-re-convergence is now validated.
+At that time, backup/restore against private S3 with TLS and a second private
+topology were still required for that Beta 18 validation. That historical
+requirement and its WireGuard result do not describe the current candidate.
 
 ## Local KVM Validation Host
 
@@ -1124,12 +1154,16 @@ first-boot behavior. See
 [`local_kvm_cloud_setup.md`](local_kvm_cloud_setup.md) for the complete lab
 topology and golden WordPress test.
 
-On a disposable validation host with only about 4 GiB of RAM, a 4 GiB swap file
-can prevent QEMU, package updates, or image pulls from triggering the OOM
-killer. This is a laboratory safeguard, not a replacement for enough production
-RAM and not a performance recommendation.
+Do not start a validation VM if its allocation would leave less than 2.5 GiB
+of host `MemAvailable`, or if it would reduce free root-disk space below
+20 GiB. A swap file is only a safeguard for short spikes; it does not make
+oversubscribing a small host acceptable or safe. Use a larger host when the
+required guest allocation cannot preserve these margins.
 
-Create it once using an explicit path:
+This validation host already has a 4 GiB swap file. Do not create another
+swap file here. On a different host, create the example below only if no
+appropriate swap is already configured and at least 20 GiB of disk will remain
+free afterward. Do not duplicate the `/etc/fstab` entry.
 
 ```bash
 sudo install -d -m 0700 /var/swap

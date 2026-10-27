@@ -1,5 +1,11 @@
 # Issues accionables
 
+> **Snapshot histórico (2026-09-21), no es el estado actual.** El texto de RC2
+> y los estados de issues que siguen abajo están archivados y no deben usarse
+> para tomar decisiones sobre el release coordinado actual. Consulta el
+> [tracker vivo de GitHub](https://github.com/admiral-project/admiral/issues)
+> y el [triage del release vigente](audits/admiral-production-readiness-2026-10-21/evidence/rc6-e5-r17/ISSUE-TRIAGE.md).
+
 Estado al 2026-09-21. Fuente: `gh issue list -R admiral-project/admiral --state open`.
 Solo se listan issues que requieren acción (lab o implementación). #102 es el
 tracker maestro y no requiere acción directa.

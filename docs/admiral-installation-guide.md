@@ -1,6 +1,9 @@
 # Admiral Installation Guide
 
-Guía oficial para instalar Admiral en Enterprise Linux 10, Fedora 44 y Fedora Rawhide.
+Guía oficial para instalar Admiral en sistemas Fedora y Enterprise Linux.
+La matriz de release activa x86_64 cubre Rocky Linux 10 y CentOS Stream 10
+(Tier 1), y Fedora Rawhide (Tier 2). AlmaLinux 10 y Fedora estable quedan
+fuera de la matriz activa.
 
 ## Alcance
 
@@ -19,8 +22,13 @@ Si necesita worker y portal, despliegue nodos separados.
 
 ## Plataforma soportada
 
-- Enterprise Linux 10
-- Fedora 44 y Fedora Rawhide (Tier 2)
+- Rocky Linux 10 y CentOS Stream 10 x86_64: Tier 1 del gate activo
+- Fedora Rawhide x86_64: Tier 2 incluido en el gate activo
+- AlmaLinux 10: Tier 2, fuera del gate activo mientras el chroot COPR
+  `alma+epel-10-x86_64_v2` no compile los RPM Go ([#276](https://github.com/admiral-project/admiral/issues/276))
+- Fedora estable queda fuera de la matriz activa
+- Otros sistemas compatibles pueden usar los modos seguros, pero no cuentan
+  como evidencia de la matriz activa
 - `admiral-install`
 - `admiral-https-setup`
 - RPMs del repositorio Admiral
@@ -67,15 +75,21 @@ cambian permisos de directorios.
 
 La postura por defecto es:
 
-- RHEL 10, CentOS Stream 10, Rocky Linux 10 y AlmaLinux 10 son Tier 1
-- Fedora 44 y Fedora Rawhide son Tier 2 y admiten los modos seguros de
-  instalación; `--dev-node` conserva su perfil de desarrollo y no sustituye
-  la validación de producción
+- El gate activo x86_64 requiere Rocky Linux 10, CentOS Stream 10 y Fedora
+  Rawhide, cada uno en Single-Node y Multi-Node
+- AlmaLinux 10 es Tier 2 y queda fuera de la matriz activa por la limitación
+  COPR indicada arriba; no debe reportarse como validado
+- `--dev-node` conserva su perfil de desarrollo y no sustituye la validación
+  de producción
 - `22/tcp` siempre público para administración por SSH
 - `80/tcp` y `443/tcp` públicos solo en `--single-node` y `--admin-node`, servidos por Caddy
 - `51820/udp` público en perfiles multi-node para WireGuard; el single-node
   seguro no ejecuta WireGuard
 - ningún puerto interno de `admirald`, `admiral-fleet`, `admiral-flagship`, `admiral-harbor`, PostgreSQL o la Admin API de Caddy debe exponerse directamente
+- Worker y Portal pueden configurarse con IPv6 público y conservar sus
+  direcciones WireGuard IPv4 privadas; el E2E IPv6 público requerido por
+  [#304](https://github.com/admiral-project/admiral/issues/304) sigue pendiente
+  y todavía no cuenta como capacidad validada del release
 - los errata de seguridad disponibles se aplican durante el playbook; quedan
   habilitados `dnf-automatic.timer` en EL10 y `dnf5-automatic.timer` en Fedora
 - en los modos seguros de Fedora, LLMNR se desactiva mediante un drop-in de

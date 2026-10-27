@@ -17,27 +17,43 @@ contenedor de sistema no reproduce de forma suficientemente fiel:
 
 ## Recursos
 
-Para la matriz Rocky Linux 10, AlmaLinux 10, CentOS Stream 10 y Fedora Rawhide:
+La matriz de release activa cubre Rocky Linux 10, CentOS Stream 10 y Fedora
+Rawhide en x86_64. AlmaLinux 10 es Tier 2 fuera de la matriz mientras siga
+vigente la limitación de construcción COPR de [#276](https://github.com/admiral-project/admiral/issues/276).
+Fedora debe usar su propia semilla y RPMs nativos Fedora construidos desde los
+mismos commits de fuente; nunca se deben instalar RPMs EL10 en Fedora.
+
+Dimensiona las VMs a partir de la capacidad disponible, no sólo de la RAM
+total del host. Conserva al menos 2.5 GiB de `MemAvailable` para el host y sus
+servicios durante toda la prueba; no inicies una VM si su RAM asignada dejaría
+menos margen. Mantén al menos 20 GiB libres en el disco raíz después de
+reservar los overlays y artefactos. Ejecuta un solo cluster a la vez y vuelve
+a comprobar RAM, swap, RSS de QEMU y espacio en disco durante la prueba.
+Un cluster de tres VMs de 2 GiB requiere al menos 8.5 GiB de RAM disponible
+antes de arrancar; el host de validación de 7.5 GiB no puede alojarlo con ese
+margen. No intentes en este host el guest de 7 GiB requerido por #305.
 
 | Recurso | Host de prueba | VM |
 |---|---:|---:|
 | vCPU | 2 o más | 2 |
-| RAM | 8 GiB | 2 GiB por VM |
-| Swap del host | 4 GiB | no requerido |
-| Disco libre | 50 GiB o más | overlay de 24 GiB por VM |
+| RAM | Según el presupuesto anterior | Sólo la cantidad que conserve el margen del host |
+| Swap del host | 4 GiB recomendado | no requerido |
+| Disco libre | Al menos 20 GiB después de reservar artefactos | overlay QCOW2 descartable |
 
-El swap evita que una descarga, actualización de seguridad o construcción de
-imágenes mate el host por OOM. No convierte un host pequeño en una plataforma
-adecuada para pruebas de rendimiento. Durante la validación debe vigilarse
-`MemAvailable`, el uso de swap y el RSS de QEMU.
+El swap es una reserva ante picos breves; no justifica sobreasignar RAM a los
+guests. Antes y durante la prueba, vigila `MemAvailable`, el uso de swap, el
+RSS de QEMU y el espacio en disco. Si el host no conserva el margen definido,
+no arranques otro guest; si el workload no cabe con ese margen, usa un host con
+más recursos.
 
-La matriz actual tiene ocho celdas: los cuatro sistemas en Single-Node y
+La matriz activa tiene seis celdas: tres sistemas en Single-Node y
 Multi-Node. Cada Multi-Node usa tres VMs independientes del mismo sistema:
 `--admin-node` (Admirald, Flagship, PostgreSQL y Caddy), `--worker-node` (Fleet
 y Podman) y `--portal-node` (Harbor). Harbor no se instala en el admin ni en el
-worker para obtener crédito en esta matriz. Con tres VMs de 2 GiB y 4 GiB de
-swap se ejecuta un clúster a la vez; vigila `MemAvailable`, swap y RSS de QEMU.
-Single-Node usa una VM de 2 GiB.
+worker para obtener crédito en esta matriz. Fedora Rawhide usa seis RPMs
+nativos Fedora del mismo conjunto de commits. Ajusta la RAM de los guests al
+workload y a la capacidad real del host; una prueba con menos recursos sólo
+cuenta si satisface el requisito del escenario y mantiene el margen indicado.
 
 ## Imagen y aislamiento
 
@@ -80,7 +96,8 @@ admin hacia spokes remotos.
 1. Verificar checksum de la imagen oficial.
 2. Crear un overlay vacío y una semilla NoCloud con un usuario sudo y una clave
    pública temporal.
-3. Arrancar la VM con KVM, 2 vCPU, 2 GiB de RAM y SSH reenviado a loopback.
+3. Arrancar la VM con KVM, 2 vCPU y la cantidad de RAM aprobada por el
+   presupuesto del host; reenviar SSH sólo a loopback.
 4. Esperar a que `cloud-init status --wait` termine.
 5. Confirmar Rocky Linux 10, SELinux `Enforcing`, disco expandido y ausencia de
    paquetes o estado Admiral.
@@ -102,7 +119,10 @@ Instalar primero el RPM local sin EPEL no reproduce el orden soportado:
 `admiral-common` depende de `ansible-collection-ansible-posix`, que EL10 obtiene
 de EPEL. El orden real del instalador es EPEL, dependencias/RPM y Ansible.
 
-## Resultado de referencia
+## Resultado histórico de referencia — 2026-07-27
+
+Este resultado corresponde sólo al paquete exacto indicado abajo y no valida
+el candidato actual ni ninguna celda de la matriz activa.
 
 El 27 de julio de 2026 se completó la secuencia anterior sobre una VM Rocky
 Linux 10.2 recién creada, con SELinux `Enforcing`, usando

@@ -1,5 +1,11 @@
 # Amazon Linux 2023
 
+**Tier 3, best effort only.** Amazon Linux 2023 is not a supported Admiral
+installation target because its standard repositories do not provide Podman.
+This page only describes an optional repository setup for experimentation; it
+is not an installation or validation procedure, and its ARM64 results do not
+count as x86_64 release evidence.
+
 Enable SPAL repo for Amazon Linux 2023:
 
 [ec2-user ~]$ rpm -qi system-release

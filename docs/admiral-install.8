@@ -252,13 +252,15 @@ Skip TLS verification (Fedora dev mode only).
 .SH NOTES
 The installer requires:
 .P
-  \[bu] Enterprise Linux 10 (CentOS Stream 10, Rocky Linux 10, AlmaLinux 10).
+  \[bu] Fedora Rawhide, Rocky Linux 10, or CentOS Stream 10 on x86_64 for the active release gate.
 .P
-  \[bu] EPEL and CRB repositories enabled.
+  \[bu] EPEL and CRB repositories enabled on Enterprise Linux 10; Fedora uses its native repositories.
 .P
   \[bu] KVM CPU support for rootless Podman (virtualization is acceptable).
 .P
   \[bu] At least 2 GiB RAM and 20 GiB free disk for single-node.
+.P
+AlmaLinux 10 is Tier 2 and outside the active release matrix because the project COPR Go RPM build environment is unavailable.
 .SH SEE ALSO
 .BR admiral-install (1),
 .BR admiralctl (1),

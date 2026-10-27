@@ -1,12 +1,16 @@
 # RPM Packaging Guide for Admiral Python Dependencies
 
-This document records the patterns and platform-specific workarounds
-required to build Python library RPMs for Admiral across three target
-distributions simultaneously:
+This document records platform-specific build notes for Python dependency
+RPMs. The active x86_64 Admiral release targets are Fedora Rawhide, Rocky
+Linux 10, and CentOS Stream 10; each binary RPM must be built with its native
+distribution toolchain from the same selected source pins. Never install an
+EL10 RPM on Fedora or use one distribution's build as validation evidence for
+another.
 
-- Amazon Linux 2023 (Python 3.9, setuptools 59.6.0)
-- CentOS Stream 10 / RHEL 10 (Python 3.12, setuptools 69.0.3)
-- Fedora Rawhide (current development)
+Amazon Linux 2023 sections below are legacy, Tier 3 best-effort packaging
+notes only. Admiral is not installable there because the required Podman
+runtime is unavailable. Amazon Linux builds and ARM64 results do not satisfy
+the x86_64 release gate.
 
 ## Build System
 
