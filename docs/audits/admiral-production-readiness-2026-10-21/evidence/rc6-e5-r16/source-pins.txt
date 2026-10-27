@@ -1,0 +1,47 @@
+RC6 Epoch 5 Release 16 source selection, checked 2026-10-27
+
+Root product payload:
+  admiral-common: de88e350a90d81d329fa7fe7aea32bf9e790d203
+  source: installer peer reconciliation before handshake and Worker heartbeat
+  root CI: pending push and run
+
+Component submodule comparisons after fetching origin/main:
+
+  admirald
+    selected: 313a96c9c2234711685fce2b878705733f766b5b
+    origin/main: 6e4a725d30c0fff877fe2252e843fae687810ae6
+    comparison: selected pin is 3 commits ahead; origin/main is not ahead
+    exception: keep release-validation pin for #228 backup cleanup and #291
+      peer-reconciliation window and Portal inventory health fixes (bfe5440,
+      a5cc680, 313a96c)
+    selected CI: https://github.com/admiral-project/admirald/actions/runs/40472619846 — success
+
+  admiral-fleet
+    selected: b082934f908a4a33acf0fdd70c06974f0a29bb21
+    origin/main: b082934f908a4a33acf0fdd70c06974f0a29bb21
+    comparison: selected pin equals origin/main
+    selected CI: https://github.com/admiral-project/admiral-fleet/actions/runs/40443913057 — success
+
+  admiralctl
+    selected: 90c30edb2b9f02b962874272dc6487bead990277
+    origin/main: fa2a65e866310bd82bea78859804b6c3aea7989a
+    comparison: selected pin is 1 commit ahead; origin/main is not ahead
+    exception: keep the release-validation node-removal peer-reconciliation
+      timeout fix required by #291 (90c30ed)
+    selected CI: https://github.com/admiral-project/admiralctl/actions/runs/40460333768 — success
+
+  admiral-flagship
+    selected: b7325bbc71fc474a521496e593b2967e4d555ac1
+    origin/main: b7325bbc71fc474a521496e593b2967e4d555ac1
+    comparison: selected pin equals origin/main
+    selected CI: https://github.com/admiral-project/admiral-flagship/actions/runs/39795263415 — success
+
+  admiral-harbor
+    selected: dd4818b6e2bc53eea4495fc5e374a4893cfcb107
+    origin/main: dd4818b6e2bc53eea4495fc5e374a4893cfcb107
+    comparison: selected pin equals origin/main
+    selected CI: https://github.com/admiral-project/admiral-harbor/actions/runs/40171847383 — success
+
+Release metadata:
+  all six Admiral RPM Release fields: 16
+  RPM reference validation: passed with python3 scripts/validate-release-refs.py
