@@ -512,7 +512,7 @@ if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]]; t
     [[ -n "$INSTALL_TARGET_SSH_KEY" ]] || die "Spoke installs require an SSH key. Use --ssh-key or install a default root key."
 fi
 
-validate_ipv4_or_hostname() {
+validate_ip_or_hostname() {
     local value="$1"
     [[ -n "$value" && "$value" != *[$'\n\r']* && "$value" != *[[:space:]]* ]] || return 1
     python3 - "$value" <<'PY'
@@ -527,9 +527,9 @@ except ValueError:
 PY
 }
 
-validate_ipv4_or_hostname "$INSTALL_PUBLIC_IP" || die "Invalid public IP or hostname: $INSTALL_PUBLIC_IP"
+validate_ip_or_hostname "$INSTALL_PUBLIC_IP" || die "Invalid public IP or hostname: $INSTALL_PUBLIC_IP"
 if [[ -n "$INSTALL_ADMIN_ENDPOINT" ]]; then
-    validate_ipv4_or_hostname "$INSTALL_ADMIN_ENDPOINT" || die "Invalid admin endpoint: $INSTALL_ADMIN_ENDPOINT"
+    validate_ip_or_hostname "$INSTALL_ADMIN_ENDPOINT" || die "Invalid admin endpoint: $INSTALL_ADMIN_ENDPOINT"
 fi
 if [[ -n "$INSTALL_WIREGUARD_IP" ]]; then
     if ! python3 - "$INSTALL_WIREGUARD_IP" "$INSTALL_WIREGUARD_SUBNET" "$INSTALL_ADMIN_WIREGUARD_IP" <<'PY'
@@ -995,8 +995,12 @@ if os.environ.get("INSTALL_NODE_ID"):
 if os.environ.get("INSTALL_PUBLIC_IP"):
     d["fleet_public_ip"] = os.environ["INSTALL_PUBLIC_IP"]
     try:
-        ipaddress.ip_address(os.environ["INSTALL_PUBLIC_IP"])
+        public_address = ipaddress.ip_address(os.environ["INSTALL_PUBLIC_IP"])
         d["fleet_public_ip_is_ip"] = True
+        if public_address.version == 6:
+            # A literal IPv6 management endpoint requires IPv6 neighbor
+            # discovery and the role-specific IPv6 egress policy.
+            d["admiral_egress_ipv6_enabled"] = True
     except ValueError:
         d["fleet_public_ip_is_ip"] = False
 

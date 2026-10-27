@@ -26,10 +26,12 @@ table inet admiral_egress {
 {% if (admiral_egress_ipv4_destinations | default([]) | length) > 0 %}
         ip daddr { {{ admiral_egress_ipv4_destinations | join(', ') }} } tcp dport { 22, 80, 443, 587, 9000, 53 } accept
 {% else %}
-        tcp dport { 22, 80, 443, 587, 9000, 53 } accept
+        meta nfproto ipv4 tcp dport { 22, 80, 443, 587, 9000, 53 } accept
 {% endif %}
 {% if (admiral_egress_ipv6_destinations | default([]) | length) > 0 %}
         ip6 daddr { {{ admiral_egress_ipv6_destinations | join(', ') }} } tcp dport { 22, 80, 443, 587, 9000, 53 } accept
+{% elif admiral_egress_ipv6_enabled | default(false) | bool %}
+        meta nfproto ipv6 tcp dport { 22, 80, 443, 587, 9000, 53 } accept
 {% endif %}
         udp dport 53 accept
 {% else %}
@@ -48,10 +50,12 @@ table inet admiral_egress {
 {% if (admiral_egress_ipv4_destinations | default([]) | length) > 0 %}
         ip daddr { {{ admiral_egress_ipv4_destinations | join(', ') }} } tcp dport { 80, 443, 587, 9000 } accept
 {% else %}
-        tcp dport { 80, 443, 587, 9000 } accept
+        meta nfproto ipv4 tcp dport { 80, 443, 587, 9000 } accept
 {% endif %}
 {% if (admiral_egress_ipv6_destinations | default([]) | length) > 0 %}
         ip6 daddr { {{ admiral_egress_ipv6_destinations | join(', ') }} } tcp dport { 80, 443, 587, 9000 } accept
+{% elif admiral_egress_ipv6_enabled | default(false) | bool %}
+        meta nfproto ipv6 tcp dport { 80, 443, 587, 9000 } accept
 {% endif %}
         udp dport 51820 accept
 {% endif %}

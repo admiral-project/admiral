@@ -234,7 +234,7 @@
     /usr/bin/admiralctl nodes register
     --id "{{ ansible_facts['hostname'] if admiral_install_mode == 'single-node' else (fleet_node_id_effective | default(fleet_node_id | default(ansible_facts['hostname']))) }}"
     --hostname "{{ ansible_facts['fqdn'] }}"
-    --ip "{{ ansible_facts['default_ipv4']['address'] }}"
+    --ip "{{ ansible_facts.get('default_ipv4', {}).get('address') or admiral_wireguard_ip | default('') }}"
     --role "{{ fleet_node_role | default('worker') }}"
     --wireguard-ip "{{ admiral_wireguard_ip | default('') }}"
     --public-ip "{{ fleet_public_ip | default('') }}"

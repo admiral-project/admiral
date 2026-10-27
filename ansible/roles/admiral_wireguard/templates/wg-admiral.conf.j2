@@ -1,3 +1,14 @@
+{% macro wg_endpoint(host, port) -%}
+{%- set endpoint_host = host | string | trim -%}
+{%- if endpoint_host.startswith('[') and endpoint_host.endswith(']') -%}
+{{ endpoint_host }}:{{ port }}
+{%- elif ':' in endpoint_host -%}
+[{{ endpoint_host }}]:{{ port }}
+{%- else -%}
+{{ endpoint_host }}:{{ port }}
+{%- endif -%}
+{%- endmacro %}
+
 [Interface]
 Address = {{ admiral_wireguard_ip }}/{{ admiral_wireguard_subnet.split('/')[-1] }}
 PrivateKey = {{ admiral_wg_private_key.stdout }}
@@ -44,7 +55,7 @@ PresharedKey = {{ peer.preshared_key | trim }}
 {% elif admiral_wireguard_role == 'spoke' %}
 [Peer]
 PublicKey = {{ admiral_wireguard_hub_public_key }}
-Endpoint = {{ admiral_wireguard_hub_endpoint }}:{{ admiral_wireguard_port }}
+Endpoint = {{ wg_endpoint(admiral_wireguard_hub_endpoint, admiral_wireguard_port) }}
 AllowedIPs = {{ admiral_wireguard_hub_ip }}/32
 {% if admiral_wireguard_preshared_key | default('') | trim %}
 PresharedKey = {{ admiral_wireguard_preshared_key | trim }}
@@ -54,7 +65,7 @@ PersistentKeepalive = 25
 
 [Peer]
 PublicKey = {{ peer.public_key }}
-Endpoint = {{ peer.endpoint }}:{{ admiral_wireguard_port | default('51820') }}
+Endpoint = {{ wg_endpoint(peer.endpoint, admiral_wireguard_port | default('51820')) }}
 AllowedIPs = {{ peer.wireguard_ip }}/32
 PersistentKeepalive = 25
 {% endfor %}

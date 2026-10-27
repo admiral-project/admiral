@@ -284,7 +284,7 @@
     /usr/bin/admiralctl nodes register
     --id "{{ harbor_node_id_effective }}"
     --hostname "{{ ansible_facts['fqdn'] }}"
-    --ip "{{ ansible_facts['default_ipv4']['address'] }}"
+    --ip "{{ ansible_facts.get('default_ipv4', {}).get('address') or admiral_wireguard_ip | default('') }}"
     --wireguard-ip "{{ admiral_wireguard_ip | default('') }}"
     --public-ip "{{ fleet_public_ip | default('') }}"
     --role portal

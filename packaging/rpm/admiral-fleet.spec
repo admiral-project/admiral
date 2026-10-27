@@ -25,7 +25,7 @@ URL:     https://github.com/admiral-project/admiral-fleet
 Source0: https://github.com/admiral-project/admiral-fleet/archive/%{commit}.tar.gz
 Source1: admiral-fleet.service
 Source2: fleet.env
-Source3: https://github.com/admiral-project/admirald/archive/313a96c9c2234711685fce2b878705733f766b5b.tar.gz
+Source3: https://github.com/admiral-project/admirald/archive/e0d3326406f315912e856ec7954757bb859cfe05.tar.gz
 
 BuildRequires: golang >= 1.26.10
 BuildRequires: binutils
