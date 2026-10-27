@@ -9,7 +9,7 @@ set -euo pipefail
 }
 ssh_key=$1 known_hosts=$2 target=$3 underlay_ip=$4 node_id=$5 output=$6
 distro=${7:-el10}
-release=${ADMIRAL_RC_RELEASE:-12}
+release=${ADMIRAL_RC_RELEASE:-13}
 epoch=${ADMIRAL_RC_EPOCH:-5}
 version=${ADMIRAL_RC_VERSION:-0.0.1rc6}
 candidate_id=${ADMIRAL_RC_DIR:-${version#0.0.1}-r${release}}
