@@ -239,6 +239,11 @@ registered spoke lacks its key or verified host-key pin; host-key checking is
 never disabled. An operator may run `wireguard-peers.yml` manually for repair,
 but routine two-role onboarding does not require that manual step.
 
+A Portal hosted on the Admin machine uses the Admin's own WireGuard endpoint;
+it is not treated as an independent spoke and does not need a second SSH
+delivery identity. Direct Worker-to-Portal peer exchange applies only to
+independent Worker and Portal machines.
+
 Removing an idle Worker or Portal with `admiralctl nodes remove <node-id>`
 reconciles the remaining spokes before deleting the node record. The operation
 removes the departing Worker's direct peer and TCP/5001 allow rule from the

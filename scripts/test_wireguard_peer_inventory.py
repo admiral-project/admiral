@@ -56,7 +56,11 @@ class WireGuardPeerInventoryTests(unittest.TestCase):
         )
 
         required = INVENTORY.preflight(
-            nodes, role="worker", current_node_id="worker-1", ssh_directory=self.ssh_directory
+            nodes,
+            role="worker",
+            current_node_id="worker-1",
+            admin_endpoint="192.0.2.1",
+            ssh_directory=self.ssh_directory,
         )
 
         self.assertFalse(required)
@@ -82,8 +86,75 @@ class WireGuardPeerInventoryTests(unittest.TestCase):
 
         with self.assertRaisesRegex(INVENTORY.InventoryError, "portal-1.*rerun spoke onboarding"):
             INVENTORY.preflight(
-                nodes, role="worker", current_node_id="worker-1", ssh_directory=self.ssh_directory
+                nodes,
+                role="worker",
+                current_node_id="worker-1",
+                admin_endpoint="192.0.2.1",
+                ssh_directory=self.ssh_directory,
             )
+
+    def test_preflight_ignores_admin_colocated_portal_without_spoke_credentials(self) -> None:
+        nodes = self.write_nodes(
+            {
+                "worker-1": {
+                    "node_id": "worker-1",
+                    "node_role": "worker",
+                    "public_ip": "192.0.2.10",
+                    "status": "active",
+                },
+                "admin-portal": {
+                    "node_id": "admin-portal",
+                    "node_role": "portal",
+                    "public_ip": "192.0.2.1",
+                    "status": "active",
+                },
+            }
+        )
+
+        required = INVENTORY.preflight(
+            nodes,
+            role="worker",
+            current_node_id="worker-1",
+            admin_endpoint="192.0.2.1",
+            ssh_directory=self.ssh_directory,
+        )
+
+        self.assertFalse(required)
+
+    def test_preflight_requires_independent_portal_but_skips_admin_colocated_portal(self) -> None:
+        nodes = self.write_nodes(
+            {
+                "worker-1": {
+                    "node_id": "worker-1",
+                    "node_role": "worker",
+                    "public_ip": "192.0.2.10",
+                    "status": "active",
+                },
+                "admin-portal": {
+                    "node_id": "admin-portal",
+                    "node_role": "portal",
+                    "public_ip": "192.0.2.1",
+                    "status": "active",
+                },
+                "portal-1": {
+                    "node_id": "portal-1",
+                    "node_role": "portal",
+                    "public_ip": "192.0.2.20",
+                    "status": "active",
+                },
+            }
+        )
+        self.credentials("portal-1", "192.0.2.20")
+
+        required = INVENTORY.preflight(
+            nodes,
+            role="worker",
+            current_node_id="worker-1",
+            admin_endpoint="192.0.2.1",
+            ssh_directory=self.ssh_directory,
+        )
+
+        self.assertTrue(required)
 
     def test_build_inventory_uses_node_specific_keys_and_pinned_strict_ssh(self) -> None:
         nodes = self.write_nodes(
@@ -122,6 +193,43 @@ class WireGuardPeerInventoryTests(unittest.TestCase):
         self.assertIn("StrictHostKeyChecking=yes", worker["ansible_ssh_common_args"])
         self.assertIn(str(self.ssh_directory / "worker-1.known_hosts"), worker["ansible_ssh_common_args"])
         self.assertNotIn("StrictHostKeyChecking=no", worker["ansible_ssh_common_args"])
+
+    def test_build_inventory_skips_admin_colocated_portal(self) -> None:
+        nodes = self.write_nodes(
+            {
+                "worker-1": {
+                    "node_id": "worker-1",
+                    "node_role": "worker",
+                    "public_ip": "192.0.2.10",
+                    "status": "active",
+                },
+                "admin-portal": {
+                    "node_id": "admin-portal",
+                    "node_role": "portal",
+                    "public_ip": "192.0.2.1",
+                    "status": "active",
+                },
+                "portal-1": {
+                    "node_id": "portal-1",
+                    "node_role": "portal",
+                    "public_ip": "192.0.2.20",
+                    "status": "active",
+                },
+            }
+        )
+        self.credentials("worker-1", "192.0.2.10")
+        self.credentials("portal-1", "192.0.2.20")
+
+        inventory = INVENTORY.build_inventory(
+            nodes,
+            admin_endpoint="192.0.2.1",
+            current_node_id="worker-1",
+            ssh_directory=self.ssh_directory,
+        )
+
+        hosts = inventory["all"]["children"]
+        self.assertEqual(set(hosts["workers"]["hosts"]), {"worker-1"})
+        self.assertEqual(set(hosts["portal"]["hosts"]), {"portal-1"})
 
     def test_build_rejects_a_host_pin_for_a_different_address(self) -> None:
         nodes = self.write_nodes(

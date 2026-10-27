@@ -37,6 +37,14 @@ def _valid_host(value: Any) -> str:
     return value
 
 
+def _same_endpoint(first: str, second: str) -> bool:
+    """Return whether two configured endpoints identify the same literal host."""
+    try:
+        return ipaddress.ip_address(first) == ipaddress.ip_address(second)
+    except ValueError:
+        return first.rstrip(".").casefold() == second.rstrip(".").casefold()
+
+
 def _load_nodes(path: pathlib.Path) -> list[dict[str, str]]:
     try:
         with path.open(encoding="utf-8") as stream:
@@ -106,16 +114,30 @@ def _node_credentials(node: dict[str, str], ssh_directory: pathlib.Path) -> tupl
 
 
 def preflight(
-    nodes: list[dict[str, str]], *, role: str, current_node_id: str, ssh_directory: pathlib.Path
+    nodes: list[dict[str, str]],
+    *,
+    role: str,
+    current_node_id: str,
+    admin_endpoint: str,
+    ssh_directory: pathlib.Path,
 ) -> bool:
     if not NODE_ID_RE.fullmatch(current_node_id):
         raise InventoryError("current node ID is invalid")
+    _valid_host(admin_endpoint)
+    # A Portal hosted on the Admin machine uses the Admin's WireGuard address
+    # and route. It is not an independent spoke and must not trigger a direct
+    # Worker-to-Portal peer exchange or require a second SSH delivery identity.
+    spokes = [node for node in nodes if not _same_endpoint(node["public_ip"], admin_endpoint)]
     opposite_role = "portal" if role == "worker" else "worker"
-    peers = [node for node in nodes if node["role"] == opposite_role and node["node_id"] != current_node_id]
+    peers = [
+        node
+        for node in spokes
+        if node["role"] == opposite_role and node["node_id"] != current_node_id
+    ]
     if not peers:
         return False
     # The playbook reconverges every active spoke, not only the opposite role.
-    for node in nodes:
+    for node in spokes:
         if node["node_id"] != current_node_id:
             _node_credentials(node, ssh_directory)
     return True
@@ -133,14 +155,6 @@ def build_inventory(
     _valid_host(admin_endpoint)
     if (current_node_id is None) == (exclude_node_id is None):
         raise InventoryError("specify exactly one of current-node-id or exclude-node-id")
-    if current_node_id is not None:
-        if not NODE_ID_RE.fullmatch(current_node_id):
-            raise InventoryError("current node ID is invalid")
-        if not any(node["node_id"] == current_node_id for node in nodes):
-            raise InventoryError(
-                f"node {current_node_id!r} is not active in know_host.yaml yet; "
-                "wait for registration and heartbeat before peer reconciliation"
-            )
     if exclude_node_id is not None:
         if not NODE_ID_RE.fullmatch(exclude_node_id):
             raise InventoryError("excluded node ID is invalid")
@@ -149,7 +163,20 @@ def build_inventory(
             raise InventoryError(f"node {exclude_node_id!r} is not active in know_host.yaml")
         if excluded[0]["role"] not in {"worker", "portal"}:
             raise InventoryError("only a Worker or Portal can be excluded for peer removal")
+        if _same_endpoint(excluded[0]["public_ip"], admin_endpoint):
+            raise InventoryError("the Admin-co-located Portal is not an independent spoke")
         nodes = [node for node in nodes if node["node_id"] != exclude_node_id]
+    # A Portal hosted on the Admin machine uses the Admin's own WireGuard
+    # endpoint and is deliberately omitted from direct spoke reconciliation.
+    nodes = [node for node in nodes if not _same_endpoint(node["public_ip"], admin_endpoint)]
+    if current_node_id is not None:
+        if not NODE_ID_RE.fullmatch(current_node_id):
+            raise InventoryError("current node ID is invalid")
+        if not any(node["node_id"] == current_node_id for node in nodes):
+            raise InventoryError(
+                f"node {current_node_id!r} is not active in know_host.yaml yet; "
+                "wait for registration and heartbeat before peer reconciliation"
+            )
     roles: dict[str, dict[str, dict[str, Any]]] = {"admin": {}, "workers": {}, "portal": {}}
     roles["admin"]["admin"] = {
         "ansible_connection": "local",
@@ -193,6 +220,7 @@ def main() -> int:
     check_parser = subparsers.add_parser("preflight", help="check if direct peer sync is needed and safe")
     check_parser.add_argument("--role", choices=("worker", "portal"), required=True)
     check_parser.add_argument("--current-node-id", required=True)
+    check_parser.add_argument("--admin-endpoint", required=True)
 
     inventory_parser = subparsers.add_parser("inventory", help="write strict Ansible JSON inventory")
     inventory_parser.add_argument("--admin-endpoint", required=True)
@@ -208,6 +236,7 @@ def main() -> int:
                 nodes,
                 role=args.role,
                 current_node_id=args.current_node_id,
+                admin_endpoint=args.admin_endpoint,
                 ssh_directory=args.ssh_directory,
             )
             print("required" if needed else "not-required")

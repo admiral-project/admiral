@@ -252,6 +252,10 @@ fingerprints supplied during each node's onboarding and the per-node delivery
 keys retained on the Admin host. Missing keys or pins stop reconciliation with
 an actionable error; SSH host-key checking is never disabled.
 
+A Portal co-located with the Admin uses the Admin's WireGuard endpoint and is
+not included as an independent spoke in direct peer reconciliation. It does
+not require a second SSH delivery identity.
+
 Removing an idle Worker or Portal with `admiralctl nodes remove <node-id>`
 also reconciles the remaining registered spokes before Admiral deletes the
 node record. Removing a Worker removes its direct peer and TCP/5001 firewall

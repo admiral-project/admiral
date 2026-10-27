@@ -734,6 +734,7 @@ if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]]; t
         --known-hosts /var/lib/admiral/know_host.yaml \
         --ssh-directory "$SSH_DELIVERY_DIR" \
         preflight --role "$([[ "$INSTALL_MODE" == "portal-node" ]] && printf portal || printf worker)" \
+        --admin-endpoint "$INSTALL_ADMIN_ENDPOINT" \
         --current-node-id "$DELIVERY_ID")" ||
         die "WireGuard Worker-to-Portal peer preflight failed: $PEER_PREFLIGHT_OUTPUT"
     case "$PEER_PREFLIGHT_OUTPUT" in
@@ -742,7 +743,7 @@ if [[ "$INSTALL_MODE" == "worker-node" || "$INSTALL_MODE" == "portal-node" ]]; t
             info "An independent Worker and Portal are registered; installer will reconcile direct WireGuard and Harbor access."
             ;;
         not-required)
-            info "No opposite spoke role is registered yet; direct Worker-to-Portal reconciliation will run when both roles exist."
+            info "No independent opposite spoke is registered yet; direct Worker-to-Portal reconciliation will run when both spoke roles exist."
             ;;
         *)
             die "WireGuard peer preflight returned an unexpected result: $PEER_PREFLIGHT_OUTPUT"
