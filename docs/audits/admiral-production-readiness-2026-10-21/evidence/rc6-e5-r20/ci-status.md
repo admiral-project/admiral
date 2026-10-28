@@ -4,7 +4,7 @@ Status captured 2026-10-28 UTC for the selected package source SHAs and current 
 
 | Repository | Candidate SHA | CI result | Run |
 |---|---|---|---|
-| `admiral` root validation branch | `e668cd2b474a1a313512b4c9607cb0d4c234a4a6` | PASS | [40609236603](https://github.com/admiral-project/admiral/actions/runs/40609236603) |
+| `admiral` root validation branch | `e668cd2b191374c62f69a1b47b4258674a4b8331` | PASS | [40609236603](https://github.com/admiral-project/admiral/actions/runs/40609236603) |
 | `admirald` | `4472cd8defc2de9c649ddbc1108a0aa64c0f1859` | PASS | [40607276943](https://github.com/admiral-project/admirald/actions/runs/40607276943), draft PR [#64](https://github.com/admiral-project/admirald/pull/64) |
 | `admiral-fleet` | `11f788c7efbfd9ea77e2e461a0e53874393c946a` | PASS | [40534518833](https://github.com/admiral-project/admiral-fleet/actions/runs/40534518833) |
 | `admiralctl` | `d0e98414115c9628e59b33678cfcbd9bc0e342d5` | PASS | [40584258663](https://github.com/admiral-project/admiralctl/actions/runs/40584258663) |
