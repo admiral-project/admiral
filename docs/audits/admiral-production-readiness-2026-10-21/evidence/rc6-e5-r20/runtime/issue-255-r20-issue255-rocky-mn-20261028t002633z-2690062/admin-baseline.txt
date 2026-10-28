@@ -1,0 +1,4 @@
+admiral-common-0.0.1rc6-20.el10.noarch
+admirald-0.0.1rc6-20.el10.x86_64
+admiralctl-0.0.1rc6-20.el10.x86_64
+[{"available_for_provisioning": false, "health_status": "unhealthy", "id": "rc6e5r18-ipv6-portal", "status": "active", "wireguard_ip": "10.99.0.3"}, {"available_for_provisioning": true, "health_status": "healthy", "id": "rc6e5r18-ipv6-worker", "status": "active", "wireguard_ip": "10.99.0.2"}, {"available_for_provisioning": true, "health_status": "healthy", "id": "rc6e5r18-r255-worker2", "status": "active", "wireguard_ip": "10.99.0.4"}]

@@ -1,0 +1,14 @@
+[
+  {
+    "backup_type": "database",
+    "checksum_sha256": "4dd8e41c6aabd4654ce958060f0f63fd565f4db670a8b126183d00048d3b4fd5",
+    "completed_at": "2026-10-28T00:27:04Z",
+    "created_at": "2026-10-28T00:27:01Z",
+    "id": "bk_cff8fdd07096c6ea",
+    "instance_id": "inst_64fdb1a0175e15cf",
+    "size_bytes": 695,
+    "status": "succeeded",
+    "storage_backend": "s3",
+    "storage_key": "issue-255-r19/rc6e5r18-ipv6-worker/inst_64fdb1a0175e15cf/database-database-op_70a998df2bc1dc96"
+  }
+]

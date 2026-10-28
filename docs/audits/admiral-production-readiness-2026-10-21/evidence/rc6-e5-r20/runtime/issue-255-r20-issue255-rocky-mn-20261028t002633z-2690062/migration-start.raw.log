@@ -1,0 +1,6 @@
+Are you sure you want to migrate instance "inst_64fdb1a0175e15cf" to node "rc6e5r18-r255-worker2"? (y/N): {
+  "operation_id": "op_03dbe012bf1d82c4",
+  "instance_id": "inst_64fdb1a0175e15cf",
+  "logical_instance_id": "inst_64fdb1a0175e15cf",
+  "status": "running"
+}

@@ -1,0 +1,1 @@
+[{"app_definition_name": "r20-issue255-rocky-mn-20261028t002633z-2690062", "effective_availability": "available", "health_status": "healthy", "id": "inst_64fdb1a0175e15cf", "last_health_checked_at": "2026-10-28T00:27:42.822286Z", "logical_instance_id": "inst_64fdb1a0175e15cf", "node_id": "rc6e5r18-r255-worker2", "technical_status": "running"}]

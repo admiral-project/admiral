@@ -1,0 +1,112 @@
+[
+  {
+    "action": "test_backup_storage",
+    "error_message": null,
+    "id": "op_dd3dbf19b2cccd7d",
+    "instance_id": "",
+    "migration_step": null,
+    "node_id": "rc6e5r18-ipv6-worker",
+    "status": "queued",
+    "updated_at": "2026-10-27T22:53:46.934615Z"
+  },
+  {
+    "action": "start_app",
+    "error_message": null,
+    "id": "op_d4baee700fdfe91d",
+    "instance_id": "inst_9a7a819dcf3c4689",
+    "migration_step": null,
+    "node_id": "rc6e5r18-ipv6-worker",
+    "status": "queued",
+    "updated_at": "2026-10-27T19:57:25.287442Z"
+  },
+  {
+    "action": "deprovision_app",
+    "error_message": null,
+    "id": "op_9bd8ff920fb39fdb",
+    "instance_id": "inst_9a7a819dcf3c4689",
+    "migration_step": null,
+    "node_id": "rc6e5r18-r255-worker2",
+    "status": "succeeded",
+    "updated_at": "2026-10-27T19:57:23.776378Z"
+  },
+  {
+    "action": "restore_backup",
+    "error_message": "local backup artifact \"/var/lib/admiral/backups/inst_9a7a819dcf3c4689/postgresql-database-op_bd385950aa0e2122.tar.gz\" not accessible: stat /var/lib/admiral/backups/inst_9a7a819dcf3c4689/postgresql-database-op_bd385950aa0e2122.tar.gz: no such file or directory",
+    "id": "op_cffc1b6a3d2f5c8d",
+    "instance_id": "inst_9a7a819dcf3c4689",
+    "migration_step": null,
+    "node_id": "rc6e5r18-r255-worker2",
+    "status": "failed",
+    "updated_at": "2026-10-27T19:55:40.177648Z"
+  },
+  {
+    "action": "restore_backup",
+    "error_message": null,
+    "id": "op_471296c94dda64e9",
+    "instance_id": "inst_9a7a819dcf3c4689",
+    "migration_step": null,
+    "node_id": "rc6e5r18-r255-worker2",
+    "status": "succeeded",
+    "updated_at": "2026-10-27T19:55:36.872048Z"
+  },
+  {
+    "action": "provision_app",
+    "error_message": null,
+    "id": "op_e9719ba0154a08ee",
+    "instance_id": "inst_9a7a819dcf3c4689",
+    "migration_step": null,
+    "node_id": "rc6e5r18-r255-worker2",
+    "status": "succeeded",
+    "updated_at": "2026-10-27T19:55:32.326025Z"
+  },
+  {
+    "action": "stop_app",
+    "error_message": null,
+    "id": "op_da49ac19d6d3afb6",
+    "instance_id": "inst_9a7a819dcf3c4689",
+    "migration_step": null,
+    "node_id": "rc6e5r18-ipv6-worker",
+    "status": "succeeded",
+    "updated_at": "2026-10-27T19:55:20.874688Z"
+  },
+  {
+    "action": "backup_volumes",
+    "error_message": null,
+    "id": "op_05bd88b16abc2b9d",
+    "instance_id": "inst_9a7a819dcf3c4689",
+    "migration_step": null,
+    "node_id": "rc6e5r18-ipv6-worker",
+    "status": "succeeded",
+    "updated_at": "2026-10-27T19:55:14.323675Z"
+  },
+  {
+    "action": "backup_database",
+    "error_message": null,
+    "id": "op_bd385950aa0e2122",
+    "instance_id": "inst_9a7a819dcf3c4689",
+    "migration_step": null,
+    "node_id": "rc6e5r18-ipv6-worker",
+    "status": "succeeded",
+    "updated_at": "2026-10-27T19:55:11.44351Z"
+  },
+  {
+    "action": "migrate",
+    "error_message": null,
+    "id": "op_9917ffdf8f798f67",
+    "instance_id": "inst_9a7a819dcf3c4689",
+    "migration_step": "rollback_source_restart",
+    "node_id": "rc6e5r18-ipv6-worker",
+    "status": "running",
+    "updated_at": "2026-10-27T19:57:25.262011Z"
+  },
+  {
+    "action": "provision_app",
+    "error_message": null,
+    "id": "op_3fc73a2fb18f3eee",
+    "instance_id": "inst_9a7a819dcf3c4689",
+    "migration_step": null,
+    "node_id": "rc6e5r18-ipv6-worker",
+    "status": "succeeded",
+    "updated_at": "2026-10-27T19:54:58.757619Z"
+  }
+]

@@ -1,0 +1,19 @@
+{
+  "first_sample": "2026-10-28T00:26:59.564003+00:00",
+  "last_sample": "2026-10-28T00:27:31.971467+00:00",
+  "minimum_guest_mem_available_kib": {
+    "admin": 293032,
+    "source": 355828,
+    "target": 470996
+  },
+  "minimum_guest_root_disk_available_bytes": {
+    "admin": 7167803392,
+    "source": 6613901312,
+    "target": 6737571840
+  },
+  "minimum_host_disk_available_bytes": 58476232704,
+  "minimum_host_mem_available_kib": 2650812,
+  "result": "PASS",
+  "samples": 3,
+  "warnings": []
+}

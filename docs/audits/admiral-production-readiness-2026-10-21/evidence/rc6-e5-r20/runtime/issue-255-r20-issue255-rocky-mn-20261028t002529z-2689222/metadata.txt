@@ -1,0 +1,14 @@
+issue=255
+candidate=RC6-E5-R20
+root_candidate=ba7c4396743e84baae0b4de9f89f91ff5503a33b
+os=Rocky Linux 10.2 x86_64
+topology=Multi-Node
+source_node=rc6e5r18-ipv6-worker
+target_node=rc6e5r18-r255-worker2
+run_tag=r20-issue255-rocky-mn-20261028t002529z-2689222
+start_utc=2026-10-28T00:25:29Z
+host_mem_available_kib=2806272
+host_disk_available_bytes=58507882496
+admin_mem_available_kib=304728
+source_mem_available_kib=417364
+target_mem_available_kib=532724

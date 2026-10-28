@@ -1,0 +1,12 @@
+{
+  "action": "provision_app",
+  "admin_user": "system",
+  "created_at": "2026-10-28T00:26:41.259505Z",
+  "error_message": null,
+  "id": "op_c35f7eb1004812a2",
+  "instance_id": "inst_64fdb1a0175e15cf",
+  "node_id": "rc6e5r18-ipv6-worker",
+  "status": "succeeded",
+  "task_id": "task_0aa7415c78ca54f8",
+  "updated_at": "2026-10-28T00:26:51.964436Z"
+}

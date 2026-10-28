@@ -1,0 +1,18 @@
+{
+  "code": "no_node_available_for_requested_tier",
+  "message": "No hay nodos disponibles con capacidad suficiente para este tier.",
+  "error": "No hay nodos disponibles con capacidad suficiente para este tier.",
+  "detail": "No hay nodos disponibles con capacidad suficiente para este tier. La politica de capacidad impide asignar mas workloads al nodo evaluado.",
+  "operation_id": "op_bb2712a4600983e9",
+  "task_id": "task_fb2cea3173fbb65b",
+  "requested_node_id": "rc6e5r18-ipv6-worker",
+  "node_evaluations": [
+    {
+      "node_id": "rc6e5r18-ipv6-worker",
+      "eligible": false,
+      "rejection_reasons": [
+        "insufficient_ram_commit_capacity"
+      ]
+    }
+  ]
+}
