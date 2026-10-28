@@ -8,7 +8,7 @@ case "$os" in rocky|alma|centos|fedora) ;; *) echo "unsupported OS: $os" >&2; ex
 [[ $guest_name =~ ^[A-Za-z0-9][A-Za-z0-9-]{0,62}$ ]] || { echo 'invalid guest name' >&2; exit 2; }
 expected_epoch=${RC6_EXPECTED_EPOCH:-5}
 [[ $expected_epoch =~ ^[0-9]{1,4}$ ]] || { echo 'RC6_EXPECTED_EPOCH must be an RPM Epoch integer' >&2; exit 2; }
-package_release=${RC6_PACKAGE_RELEASE:-19}
+package_release=${RC6_PACKAGE_RELEASE:-20}
 [[ $package_release =~ ^[0-9]+$ ]] || { echo 'RC6_PACKAGE_RELEASE must be an RPM Release integer' >&2; exit 2; }
 run_id=${RC6_RUN_ID:-$(date -u +%y%m%d%H%M%S)$(printf '%04d' "$((RANDOM % 10000))")}
 [[ $run_id =~ ^[A-Za-z0-9_.-]{1,16}$ ]] || { echo 'RC6_RUN_ID must contain 1-16 safe characters' >&2; exit 2; }
