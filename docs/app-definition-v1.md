@@ -2,10 +2,33 @@
 
 Este documento describe el formato YAML actualmente validado por `admirald` y reutilizado por `admiralctl apps validate`. El comando `admiralctl apps validate` comprueba la definición localmente, sin servidor ni credenciales; esa comprobación de esquema no demuestra el aprovisionamiento ni el ciclo de vida de una app.
 
-La validación de runtime de los ejemplos en un nodo de 7 GiB —setup,
-pausa, reinicio, backup y restore— sigue pendiente en
-[issue #305](https://github.com/admiral-project/admiral/issues/305). No
-interpretes la validación local de YAML como evidencia de ese flujo E2E.
+Las definiciones de `examples/apps` son workloads que deben ejecutarse en
+Admiral para demostrar que funcionan. La validación de esquema no demuestra
+provisionamiento, setup ni el ciclo de vida. La verificación de runtime de los
+ocho ejemplos —setup, pausa, reinicio, backup y restore— se sigue en
+[issue #305](https://github.com/admiral-project/admiral/issues/305) y en el
+reporte de validación del candidato actual. Este es el snapshot del 2026-10-28;
+el issue permanece abierto mientras haya ejemplos sin lifecycle completo.
+
+| Ejemplo | Resultado actual | Evidencia |
+|---------|------------------|-----------|
+| `e2e-whoami` | PASS: setup, pausa/reanudación, reinicio, backup DB y restore. | [Evidencia](audits/admiral-production-readiness-2026-10-21/evidence/rc6-e5-r20/runtime/issue-305-executed-20261028/e2e-whoami/) |
+| `uptime-kuma` | PASS: lifecycle y restore de volumen; `/dashboard` devuelve 200. | [Evidencia](audits/admiral-production-readiness-2026-10-21/evidence/rc6-e5-r20/runtime/issue-305-executed-20261028/uptime-kuma-20261028T033025Z-2834838/) |
+| `erpnext` | PASS: setup y lifecycle completos con tier `production-s` de 2 GiB en la VM single-node existente de 3 GiB. El setup tardó unos 7 minutos; no hubo OOM. El primer intento frío expiró esperando Redis mientras descargaba imágenes; el reintento con imágenes en caché pasó. | [Evidencia](audits/admiral-production-readiness-2026-10-21/evidence/rc6-e5-r20/runtime/issue-305-executed-20261028/erpnext-20261028T035540Z-2853441/) |
+| `vaultwarden` | PASS: setup, pausa, reinicio, backup/restore de volumen y limpieza. | [Evidencia](audits/admiral-production-readiness-2026-10-21/evidence/rc6-e5-r20/runtime/issue-305-executed-20261028/vaultwarden-20261028T042456Z-2875558/) |
+| `wordpress` | PASS: lifecycle completo; se verificaron marcadores separados de DB y volumen antes y después del restore con checksum. La URL canónica `http://localhost` devuelve 200 al enviar `Host: localhost`. | [Evidencia](audits/admiral-production-readiness-2026-10-21/evidence/rc6-e5-r20/runtime/issue-305-executed-20261028/wordpress-dual-backup-20261028T041817Z-2870322/) |
+| `listmonk` | R21 PASS: setup y conexión PostgreSQL, pausa, reanudación, reinicio, backup/restore con checksum y marcador DB, HTTP 200 y limpieza. La primera corrida detectó que Listmonk v6.1 requiere `LISTMONK_app__address` con host y puerto juntos; se corrigió el YAML sin cambiar los RPM. | [Evidencia R21](audits/admiral-production-readiness-2026-10-21/evidence/rc6-e5-r21/runtime/listmonk-r21-20261028T052811Z-3042215/) |
+| `now-lms` | FAIL en la imagen Quay v1.3.4 fijada por digest: la migración consulta `curso` antes de que exista y el backend no llega a readiness. La revisión del 2026-10-28 encontró solo tags Quay `v1.3.4` y `latest`; el upstream ya publicó NOW-LMS v2.0.4, pero no su imagen Quay. No se observó fallo de Admiral. | [Evidencia R20](audits/admiral-production-readiness-2026-10-21/evidence/rc6-e5-r20/runtime/issue-305-executed-20261028/now-lms-diagnostic-r20-20261028/) · [Snapshot Quay](audits/admiral-production-readiness-2026-10-21/evidence/rc6-e5-r21/runtime/now-lms-registry-snapshot-20261028/REGISTRY-SNAPSHOT.md) |
+| `cacao-accounting` | Intento FAIL: la referencia mutable fue rechazada por la política de imágenes; el intento con digest inmutable salió antes de readiness. El usuario confirmó que Cacao no es requisito mandatorio del release; no bloquea su aceptación. | [Evidencia](audits/admiral-production-readiness-2026-10-21/evidence/rc6-e5-r20/runtime/issue-305-executed-20261028/cacao-accounting-20261028T033654Z-2839639/) |
+
+ERPNext no requiere `production-m` de 4 GiB para este caso de verificación ni
+una VM de 7 GiB: el setup y lifecycle completos pasaron con `production-s` y
+3 GiB de RAM en el nodo de validación existente. El usuario confirmó que
+pasar Cacao Accounting no es un requisito obligatorio del release; su intento
+fallido queda documentado y no bloquea el candidato. #305 sigue abierto porque
+NOW-LMS no completa su lifecycle con la imagen Quay v1.3.4 fijada por digest.
+El release upstream v2.0.4 aún no tiene una imagen Quay publicada para repetir
+la prueba; el fallo observado apunta a la migración de la imagen, no a Admiral.
 
 ## Estructura base
 
@@ -499,6 +522,21 @@ Esto permite que WordPress reciba `WORDPRESS_DB_USER` con el mismo valor
 que `MARIADB_USER`, sin tener que declarar valores explicitos ni
 generar secretos independientes.
 
+Tambien se propagan los nombres anidados que Listmonk usa para representar
+`db.user` y `db.password`: `LISTMONK_db__user` y
+`LISTMONK_db__password`. Deben declararse en `services.<app>.secrets`; Admiral
+los inyecta como secretos de Podman con los mismos valores que
+`POSTGRES_USER` y `POSTGRES_PASSWORD` del servicio DB.
+
+Para Listmonk v6.1, `LISTMONK_app__address` debe contener la direccion completa,
+incluyendo puerto, por ejemplo `0.0.0.0:9000`; el servicio debe declarar
+`port: 9000` para que Admiral publique el puerto interno correspondiente.
+
+Si la definicion ejecuta un `setup_command` en otro servicio, ese servicio
+tambien debe declarar `LISTMONK_db__user` y `LISTMONK_db__password` para que
+la instalacion inicial use las mismas credenciales de PostgreSQL. El ejemplo
+de Listmonk declara ambos secretos tanto en `app` como en `setup`.
+
 Campos de cada secreto:
 
 | Campo | Tipo | Requerido | Descripcion |
@@ -529,6 +567,11 @@ servicio detectado como DB hacia secretos cliente que terminen en:
 - `_DB_PASSWORD`
 - `_DB_NAME`
 
+Tambien reconoce `*_DB__USER` y `*_DB__PASSWORD`, que corresponden a las
+variables anidadas oficiales de Listmonk (`LISTMONK_db__user` y
+`LISTMONK_db__password`). El fix se encuentra en la fuente de `admirald` incluida en R21; su validacion
+E2E pasó en la instancia Listmonk R21 documentada arriba.
+
 Eso permite plantillas tipo WordPress/MariaDB donde ambas partes deben
 compartir credenciales.
 
@@ -541,7 +584,7 @@ la sintaxis `${VAR}` en el campo `env`:
 ```yaml
 services:
   app:
-    image: quay.io/bmosoluciones/now_lms
+    image: quay.io/bmosoluciones/now_lms:v1.3.4@sha256:6c365c80654e8306276958da2e205bd7768d6e148591666d483bd8aa3c41318d
     env:
       DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@127.0.0.1:5432/nowlms
     secrets:
@@ -604,9 +647,15 @@ Reglas actuales durante provisionamiento:
 - si el contenedor no esta `running`, el servicio no esta listo
 - `type: command` ejecuta el comando dentro del servicio
 - `type: tcp` intenta conectar al puerto publicado del servicio
-- `type: http` hace un GET al puerto publicado y valida el status esperado
+- `type: http` hace un GET a la ruta configurada y compara exactamente el
+  codigo HTTP con `expected_status` (default: 200)
 - si no hay `healthcheck`, el readiness minimo es que el contenedor exista y
   este en estado `running`
+
+Configura una ruta que responda con el codigo esperado durante el setup. Una
+redireccion `302` no satisface `expected_status: 200`, aunque el destino sea
+una pagina valida. Por ejemplo, Uptime Kuma redirige `/` a `/dashboard`; su
+ejemplo usa `/dashboard` como healthcheck para obtener `200`.
 
 Reglas actuales para salud operativa simplificada:
 - si el pod/servicio esta `Running`, el estado es `healthy`
@@ -661,6 +710,13 @@ Campos de `tiers.<name>.backups`:
 | `backup_database` | bool | no | Activa backup de base de datos en este tier (default `false`) |
 | `backup_volumes` | bool | no | Activa backup de volumenes en este tier (default `false`) |
 | `restore_allowed` | bool | no | Permite restaurar desde backup en este tier (default `false`) |
+
+`enabled: true` habilita la politica programada, pero no habilita por si solo
+los backups manuales ni el restore. Para que un operador pueda ejecutar
+`admiralctl instances backup` y `admiralctl backups restore`, configura
+`manual_backups: true` y `restore_allowed: true`. Configura tambien
+`backup_database` o `backup_volumes` de acuerdo con los servicios que declaran
+`backup.type: database` o `backup.type: volume`.
 
 ```yaml
 tiers:
@@ -806,6 +862,8 @@ tiers:
       schedule: daily
       backup_database: true
       backup_volumes: true
+      manual_backups: true
+      restore_allowed: true
 ```
 
 Esto asegura que tanto la base de datos como `wp-content` (plugins, themes,
