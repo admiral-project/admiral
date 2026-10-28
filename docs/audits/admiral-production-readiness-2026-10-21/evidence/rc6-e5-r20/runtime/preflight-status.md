@@ -35,4 +35,4 @@ A second disposable fixture used a 128 MiB tier. On the existing Rocky 10.2 admi
 
 RAM and disk telemetry ran throughout the migration. Minimum observed host availability was 2,650,812 KiB RAM and 58,476,232,704 bytes disk; minimum guest RAM was 293,032 KiB on admin, 355,828 KiB on source, and 470,996 KiB on target. No resource threshold was crossed. No VM was created or started. The old R18 fixture remained running, healthy, and available on the source; its stale operation records were not modified.
 
-This issue-specific pass does not count as a complete R20 Multi-Node release-matrix cell. The matrix remains 0/6 pending all six full runtime cells.
+GitHub issue [#255 was closed](https://github.com/admiral-project/admiral/issues/255#issuecomment-6457374781) after this validation. This issue-specific pass does not count as a complete R20 Multi-Node release-matrix cell. The matrix remains 0/6 pending all six full runtime cells.

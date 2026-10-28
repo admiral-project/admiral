@@ -31,5 +31,6 @@ The per-distro `RPM-MANIFEST.tsv` records package name, epoch, version, release,
 ## Runtime and release status
 
 The candidate was installed as an update on the existing Rocky admin and two worker nodes. The live R20 #255 multi-node migration passed on those existing VMs; the detailed run and resource telemetry are in `runtime/issue-255-r20-issue255-rocky-mn-20261028t002633z-2690062/RESULT.md`. An initial 512 MiB fixture was safely rejected before instance creation because it exceeded the source node's remaining RAM commit capacity; the successful issue-specific fixture used 128 MiB. No new VM was created, and the old R18 source fixture remains healthy and available.
+GitHub issue [#255 was closed](https://github.com/admiral-project/admiral/issues/255#issuecomment-6457374781) after this end-to-end result. This issue closure does not satisfy the full R20 release matrix.
 
 This issue-specific migration result does not constitute a complete Single-Node or Multi-Node release-matrix cell. Because R20 changes product code, all six R19 runtime cells are invalid for R20. The R20 runtime matrix remains **0/6** pending full cells on Rocky Linux 10, CentOS Stream 10, and Fedora Rawhide. GitHub CI passed for the selected component and root candidate SHAs; run IDs are in `ci-status.md`. This candidate is not Gold.
