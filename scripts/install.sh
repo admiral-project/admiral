@@ -1681,16 +1681,16 @@ if [[ "$INSTALL_DEV_MODE" != "true" ]]; then
         ROOTLESS_STATE="$(run_target_cmd '
             uid=$(id -u admiral-apps) || exit 1
             /usr/bin/admiral-rootless-subids --user admiral-apps --validate-only || exit 1
-            test \"$(loginctl show-user admiral-apps -p Linger --value)\" = yes || exit 1
-            systemctl is-active --quiet \"user@${uid}.service\" || exit 1
+            test "$(loginctl show-user admiral-apps -p Linger --value)" = yes || exit 1
+            systemctl is-active --quiet "user@${uid}.service" || exit 1
             systemctl is-active --quiet systemd-machined.service || exit 1
-            test -S \"/run/user/${uid}/bus\" || exit 1
+            test -S "/run/user/${uid}/bus" || exit 1
             graph_root=$(cd / && runuser -u admiral-apps -- env \
                 HOME=/var/lib/admiral-apps \
-                XDG_RUNTIME_DIR=\"/run/user/${uid}\" \
-                DBUS_SESSION_BUS_ADDRESS=\"unix:path=/run/user/${uid}/bus\" \
-                podman info --format \"{{.Store.GraphRoot}}\") || exit 1
-            test \"$graph_root\" = /var/lib/admiral-apps/.local/share/containers/storage
+                XDG_RUNTIME_DIR="/run/user/${uid}" \
+                DBUS_SESSION_BUS_ADDRESS="unix:path=/run/user/${uid}/bus" \
+                podman info --format "{{.Store.GraphRoot}}") || exit 1
+            test "$graph_root" = /var/lib/admiral-apps/.local/share/containers/storage
         ' && printf '%s' secure || true)"
         if [[ "$ROOTLESS_STATE" != "secure" ]]; then
             SECURITY_WARNINGS+=("Rootless user IDs, user manager, D-Bus, or Podman storage are not securely initialized.")
