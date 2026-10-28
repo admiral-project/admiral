@@ -4,7 +4,7 @@
 set -euo pipefail
 [[ $# -eq 4 ]] || { echo "usage: $0 {el10|fedora} SSH_KEY KNOWN_HOSTS USER@GUEST" >&2; exit 2; }
 distro=$1 ssh_key=$2 known_hosts=$3 target=$4
-release=${ADMIRAL_RC_RELEASE:-20}
+release=${ADMIRAL_RC_RELEASE:-21}
 epoch=${ADMIRAL_RC_EPOCH:-5}
 version=${ADMIRAL_RC_VERSION:-0.0.1rc6}
 candidate_id=${ADMIRAL_RC_DIR:-${version#0.0.1}-e${epoch}-r${release}}
