@@ -1,0 +1,19 @@
+---
+# Capacity defaults are configuration, not constants in Admiral binaries. The
+# env lookup runs on the Ansible controller, including worker-node installs.
+# Explicit Ansible vars override these controller environment values.
+admiral_userns_size_default: ""
+admiral_subid_count_default: max_available
+admiral_podman_num_locks_default: "65536"
+admiral_max_user_namespaces_default: "32768"
+admiral_kernel_pid_max_default: "4194304"
+admiral_user_tasks_max_default: "262144"
+admiral_user_nofile_hard_default: "1048576"
+
+admiral_userns_size: "{{ lookup('ansible.builtin.env', 'ADMIRAL_USERNS_SIZE') | default(admiral_userns_size_default, true) }}"
+admiral_subid_count: "{{ lookup('ansible.builtin.env', 'ADMIRAL_SUBID_COUNT') | default(admiral_subid_count_default, true) }}"
+admiral_podman_num_locks: "{{ lookup('ansible.builtin.env', 'ADMIRAL_PODMAN_NUM_LOCKS') | default(admiral_podman_num_locks_default, true) }}"
+admiral_max_user_namespaces: "{{ lookup('ansible.builtin.env', 'ADMIRAL_MAX_USER_NAMESPACES') | default(admiral_max_user_namespaces_default, true) }}"
+admiral_kernel_pid_max: "{{ lookup('ansible.builtin.env', 'ADMIRAL_KERNEL_PID_MAX') | default(admiral_kernel_pid_max_default, true) }}"
+admiral_user_tasks_max: "{{ lookup('ansible.builtin.env', 'ADMIRAL_USER_TASKS_MAX') | default(admiral_user_tasks_max_default, true) }}"
+admiral_user_nofile_hard: "{{ lookup('ansible.builtin.env', 'ADMIRAL_USER_NOFILE_HARD') | default(admiral_user_nofile_hard_default, true) }}"

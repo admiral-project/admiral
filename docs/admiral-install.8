@@ -249,6 +249,32 @@ Authentication token for admiralctl.
 .TP
 .B ADMIRAL_INSECURE_SKIP_VERIFY
 Skip TLS verification (Fedora dev mode only).
+.TP
+.B ADMIRAL_USERNS_SIZE
+Optional exact UID/GID map size passed as PODMAN_USERNS=auto:size=N for the
+admiral-apps Podman user. Unset to let Podman estimate the map.
+.TP
+.B ADMIRAL_SUBID_COUNT
+Subordinate ID count for admiral-apps. Defaults to max_available, which uses
+the largest common free interval allowed by /etc/login.defs. An explicit
+positive integer is also accepted.
+.TP
+.B ADMIRAL_PODMAN_NUM_LOCKS
+Podman lock count for the rootless user. Defaults to 65536.
+.TP
+.B ADMIRAL_MAX_USER_NAMESPACES
+Desired minimum value for user.max_user_namespaces. Defaults to 32768.
+.TP
+.B ADMIRAL_KERNEL_PID_MAX
+Desired minimum value for kernel.pid_max. Defaults to 4194304.
+.TP
+.B ADMIRAL_USER_TASKS_MAX
+Desired minimum TasksMax for the admiral-apps systemd slice and user manager.
+Defaults to 262144.
+.TP
+.B ADMIRAL_USER_NOFILE_HARD
+Desired minimum hard nofile limit for the admiral-apps user manager. Defaults
+to 1048576 and cannot exceed the host fs.nr_open limit.
 .SH NOTES
 The installer requires:
 .P

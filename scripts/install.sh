@@ -1680,7 +1680,7 @@ if [[ "$INSTALL_DEV_MODE" != "true" ]]; then
     if [[ "$INSTALL_MODE" == "single-node" || "$INSTALL_MODE" == "worker-node" ]]; then
         ROOTLESS_STATE="$(run_target_cmd '
             uid=$(id -u admiral-apps) || exit 1
-            /usr/bin/admiral-rootless-subids --user admiral-apps || exit 1
+            /usr/bin/admiral-rootless-subids --user admiral-apps --validate-only || exit 1
             test \"$(loginctl show-user admiral-apps -p Linger --value)\" = yes || exit 1
             systemctl is-active --quiet \"user@${uid}.service\" || exit 1
             systemctl is-active --quiet systemd-machined.service || exit 1

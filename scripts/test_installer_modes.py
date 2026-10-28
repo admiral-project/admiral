@@ -738,7 +738,27 @@ done
             for path in (ROOT / "packaging" / "rpm").glob("admiral*.spec")
         }
 
-        self.assertNotIn("state: directory", ansible_tasks)
+        task_blocks = re.findall(
+            r"(?ms)^- name:.*?(?=^- name:|\Z)", ansible_tasks
+        )
+        directory_tasks = [
+            block for block in task_blocks if "state: directory" in block
+        ]
+        self.assertEqual(len(directory_tasks), 4)
+        permitted_dynamic_directories = (
+            "/var/lib/admiral-apps/.config/containers/containers.conf.d",
+            "/var/lib/admiral-apps/.config/environment.d",
+            "/etc/systemd/system/user-{{ admiral_apps_uid.stdout }}.slice.d",
+            "/etc/systemd/system/user@{{ admiral_apps_uid.stdout }}.service.d",
+        )
+        actual_dynamic_directories = set()
+        for block in directory_tasks:
+            match = re.search(r"(?m)^\s+path: (.+)$", block)
+            if match:
+                actual_dynamic_directories.add(match.group(1).strip('"'))
+        self.assertEqual(
+            actual_dynamic_directories, set(permitted_dynamic_directories)
+        )
         for package_name in (
             "admirald.spec",
             "admiral-flagship.spec",
@@ -1192,6 +1212,41 @@ done
 
         self.assertIn("admiral_admin_token_value", registration)
         self.assertNotIn('ADMIRAL_INTERNAL_TOKEN: "{{ admiral_internal_token_value }}"', registration)
+
+    def test_rootless_capacity_values_are_configurable_by_controller_environment(self) -> None:
+        fleet = FLEET_TASKS.read_text(encoding="utf-8")
+        installer = INSTALLER.read_text(encoding="utf-8")
+        defaults = (
+            ROOT / "ansible" / "roles" / "admiral_fleet" / "defaults" / "main.yml"
+        ).read_text(encoding="utf-8")
+        helper = (ROOT / "scripts" / "admiral_rootless_subids.py").read_text(
+            encoding="utf-8"
+        )
+        documentation = (ROOT / "docs" / "uid_gid_management-md").read_text(
+            encoding="utf-8"
+        )
+
+        for variable in (
+            "ADMIRAL_USERNS_SIZE",
+            "ADMIRAL_SUBID_COUNT",
+            "ADMIRAL_PODMAN_NUM_LOCKS",
+            "ADMIRAL_MAX_USER_NAMESPACES",
+            "ADMIRAL_KERNEL_PID_MAX",
+            "ADMIRAL_USER_TASKS_MAX",
+            "ADMIRAL_USER_NOFILE_HARD",
+        ):
+            with self.subTest(variable=variable):
+                self.assertIn(variable, defaults)
+                self.assertIn(variable, documentation)
+        self.assertIn("lookup('ansible.builtin.env'", defaults)
+        self.assertIn("PODMAN_USERNS=", fleet)
+        self.assertIn("auto:size=", fleet)
+        self.assertIn("--count", fleet)
+        self.assertIn("admiral-rootless-subids --user admiral-apps --validate-only", installer)
+        self.assertIn('required=True', helper)
+        self.assertIn('value == "max_available"', helper)
+        self.assertNotIn("DEFAULT_COUNT", helper)
+        self.assertIn('"--validate-only"', helper)
 
 
 if __name__ == "__main__":

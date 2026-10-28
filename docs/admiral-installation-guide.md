@@ -219,9 +219,20 @@ si lo requiere.
 
 ### UIDs de contenedores rootless
 
-El usuario `admiral-apps` recibe el rango fijo `100000:131072` en
-`/etc/subuid` y `/etc/subgid`. En hosts con asignaciones previas en ese rango,
-verifique colisiones antes de instalar (`grep 100000 /etc/subuid /etc/subgid`).
+El instalador configura Podman rootless para `admiral-apps`, asigna el mayor
+rango contiguo común disponible dentro de los límites de `/etc/login.defs` y
+activa `UserNS=auto` sin tamaño fijo. Los límites de namespaces, procesos,
+tareas, locks y descriptores pueden cambiarse mediante variables de entorno en
+el host que invoca `admiral-install`; consulte
+[`docs/uid_gid_management-md`](uid_gid_management-md) para defaults, overrides
+y comprobaciones. Para pasar un override a través de `sudo`:
+
+```bash
+sudo env ADMIRAL_USERNS_SIZE=65536 admiral-install --single-node
+```
+
+Ese override fija un tamaño exacto y debe comprobarse con las imágenes que
+ejecutará el Pod.
 
 ### Superficie de red interna
 

@@ -1,0 +1,183 @@
+# Gestión de UID/GID y capacidad rootless
+
+Admiral ejecuta los workloads de Fleet con Podman rootless como el usuario del
+host `admiral-apps`. Esta guía explica cómo se dimensionan sus rangos
+subordinados y los límites del host, cómo configurar overrides sin recompilar
+binarios y cómo comprobar el resultado.
+
+## Política de user namespace
+
+Las instalaciones nuevas configuran Podman para usar `UserNS=auto` en el
+usuario `admiral-apps`. Si no se establece `ADMIRAL_USERNS_SIZE`, Admiral no
+fija `size`: Podman calcula la asignación automática según su algoritmo. Esto
+permite que Podman determine el mapa en vez de imponer un bloque fijo a todas
+las imágenes.
+
+Si un operador define `ADMIRAL_USERNS_SIZE=N`, Admiral configura
+`PODMAN_USERNS=auto:size=N`. **N es el tamaño exacto del mapa**, no un mínimo
+que Podman amplíe. Un valor insuficiente puede hacer que Podman no pueda crear
+el contenedor o preparar sus archivos. El override debe probarse con todas las
+imágenes y usuarios requeridos por el workload.
+
+Los servicios de una instancia Admiral comparten el user namespace del Pod.
+Los contenedores del Pod heredan el mapeo del contenedor infra. Por eso no se
+debe suponer que la estimación automática inspecciona todas las imágenes de
+aplicación del Pod. La compatibilidad se demuestra inspeccionando los mapas
+efectivos y arrancando los servicios reales, incluyendo los que usan UID/GID
+altos.
+
+Podman necesita un pool de `/etc/subuid` y `/etc/subgid` para asignar mapas
+rootless. `ADMIRAL_SUBID_COUNT=max_available` selecciona el mayor intervalo
+contiguo común disponible dentro de `SUB_UID_MIN/MAX` y `SUB_GID_MIN/MAX` de
+`/etc/login.defs`, respetando los rangos de todas las cuentas existentes. No
+se amplían automáticamente los límites de `login.defs`, ni se desplazan,
+reducen o solapan rangos preexistentes. En una repetición, las asignaciones
+existentes se conservan. Si no hay un intervalo suficiente o los archivos son
+inconsistentes, la instalación falla con un error explícito.
+
+La inicialización de esta configuración está destinada a instalaciones nuevas
+antes del primer uso de Podman. Si ya existe el almacén rootless y difiere la
+configuración de Admiral, el playbook aborta: no renumera IDs, no ejecuta
+`podman system renumber` y no transforma ownership de workloads existentes.
+
+## Defaults configurables
+
+Los defaults residen en `ansible/roles/admiral_fleet/defaults/main.yml`. No hay
+valores numéricos de capacidad en los binarios ni en el helper de subids. Para
+cambiar los valores se puede editar una variable de Ansible o exportar las
+variables siguientes en el host que invoca `admiral-install`.
+
+| Variable de entorno | Default | Uso |
+|---|---:|---|
+| `ADMIRAL_USERNS_SIZE` | Sin valor | Override exacto de `UserNS=auto:size=N`; vacío deja estimar a Podman. |
+| `ADMIRAL_SUBID_COUNT` | `max_available` | Mayor pool contiguo común libre dentro de los límites del SO, o una cantidad explícita. |
+| `ADMIRAL_PODMAN_NUM_LOCKS` | `65536` | Locks de Podman disponibles para contenedores, pods y volúmenes. |
+| `ADMIRAL_MAX_USER_NAMESPACES` | `32768` | Mínimo deseado para `user.max_user_namespaces`. |
+| `ADMIRAL_KERNEL_PID_MAX` | `4194304` | Mínimo deseado para `kernel.pid_max`. |
+| `ADMIRAL_USER_TASKS_MAX` | `262144` | Mínimo deseado de tareas para el slice y manager de `admiral-apps`. |
+| `ADMIRAL_USER_NOFILE_HARD` | `1048576` | Mínimo deseado para el límite de descriptores del user manager. |
+
+El orden de precedencia es:
+
+1. Variable explícita de Ansible, si se invoca el playbook directamente.
+2. Variable de entorno del controlador Ansible, es decir, del host que invoca
+   `admiral-install`.
+3. Default documentado del rol.
+
+Los valores vacíos usan el default. Los límites numéricos deben ser enteros
+positivos; `ADMIRAL_SUBID_COUNT` también acepta `max_available`. Los valores
+inválidos se rechazan antes de cambiar la configuración de capacidad. La
+salida de Ansible informa el valor efectivo y su procedencia.
+
+Para pasar un override explícitamente a través de `sudo`:
+
+```bash
+sudo env \
+  ADMIRAL_USERNS_SIZE=65536 \
+  ADMIRAL_SUBID_COUNT=max_available \
+  ADMIRAL_PODMAN_NUM_LOCKS=65536 \
+  ADMIRAL_MAX_USER_NAMESPACES=32768 \
+  ADMIRAL_KERNEL_PID_MAX=4194304 \
+  ADMIRAL_USER_TASKS_MAX=262144 \
+  ADMIRAL_USER_NOFILE_HARD=1048576 \
+  admiral-install --single-node
+```
+
+El mismo entorno se lee desde el controlador cuando Ansible configura un
+`--worker-node` remoto. No se requiere instalar estas variables en el nodo
+destino. Cambiar una variable no exige recompilar los binarios Go; forma parte
+de la configuración Ansible distribuida por `admiral-common`.
+
+## Qué configura Ansible
+
+Para el usuario rootless, Ansible gestiona drop-ins bajo
+`/var/lib/admiral-apps/.config/containers/containers.conf.d/` y
+`/var/lib/admiral-apps/.config/environment.d/`:
+
+- `containers.conf` establece el default `userns = "auto"` y el número de
+  locks de Podman.
+- `PODMAN_USERNS` establece el modo para la creación de Pods por Quadlet; con
+  override queda como `auto:size=N`.
+- systemd recibe límites en `user-<UID>.slice` y `user@<UID>.service`. El UID se
+  resuelve en cada instalación; no se asume un UID fijo.
+- `/etc/sysctl.d/90-admiral-container-capacity.conf` mantiene los valores
+  configurados para namespaces y PID.
+
+Al calcular límites, Admiral conserva el valor efectivo existente si ya es
+superior al default u override. El nofile solicitado no puede superar
+`fs.nr_open`; si lo excede, Ansible falla y pide ajustar explícitamente el
+límite del kernel o reducir `ADMIRAL_USER_NOFILE_HARD`. Admiral no cambia
+automáticamente `conntrack`, `vm.max_map_count` ni `fs.file-max`.
+
+Podman documenta que `auto` estima el tamaño del mapa cuando `size` no está
+especificado y que la asignación usa rangos subordinados. También documenta
+`[Pod] UserNS=` de Quadlet. El tamaño estimado y el ownership de volúmenes se
+deben validar en cada versión nativa de Podman soportada:
+
+- [Podman `podman pod create --userns`](https://docs.podman.io/en/stable/markdown/podman-pod-create.1.html#--userns-mode)
+- [Quadlet `[Pod] UserNS=`](https://docs.podman.io/en/latest/markdown/podman-pod.unit.5.html#usernsmode)
+- [Archivos de configuración `containers.conf`](https://github.com/containers/common/blob/main/docs/containers.conf.5.md)
+- [Implementación de Podman: los contenedores de un Pod heredan el mapeo infra](https://github.com/containers/podman/blob/main/libpod/container_internal.go#L2849-L2890)
+
+## Verificación en el host
+
+Comprobar la identidad y los pools subordinados:
+
+```bash
+id admiral-apps
+getent subuid admiral-apps
+getent subgid admiral-apps
+admiral-rootless-subids --user admiral-apps --validate-only
+grep -E '^(SUB_UID|SUB_GID)_(MIN|MAX)' /etc/login.defs
+```
+
+Comprobar los límites activos:
+
+```bash
+sysctl user.max_user_namespaces kernel.pid_max fs.nr_open
+uid=$(id -u admiral-apps)
+systemctl show "user-${uid}.slice" -p TasksMax
+systemctl show "user@${uid}.service" -p TasksMax -p LimitNOFILE -p LimitNOFILESoft
+```
+
+Comprobar que el user manager recibió el modo y Podman usa el almacenamiento
+esperado:
+
+```bash
+runuser -u admiral-apps -- env \
+  HOME=/var/lib/admiral-apps \
+  XDG_RUNTIME_DIR="/run/user/$(id -u admiral-apps)" \
+  DBUS_SESSION_BUS_ADDRESS="unix:path=/run/user/$(id -u admiral-apps)/bus" \
+  systemctl --user show-environment | grep '^PODMAN_USERNS='
+
+runuser -u admiral-apps -- env HOME=/var/lib/admiral-apps podman info --debug
+```
+
+Durante una prueba de workload, inspeccionar desde cada contenedor del Pod los
+mapas efectivos:
+
+```bash
+podman exec <contenedor> cat /proc/self/uid_map /proc/self/gid_map
+```
+
+Un mapa distinto o un `chown` fallido en un volumen es un fallo de
+compatibilidad que se debe registrar; no se corrige ocultándolo con
+`ignore_chown_errors`.
+
+## Alcance de capacidad
+
+Los defaults son una configuración de referencia para preparar el host a una
+densa población de workloads. La referencia de planificación es 2.000 Pods
+con cinco servicios por Pod (10.000 contenedores de aplicación). Esto no afirma
+que se hayan ejecutado 10.000 contenedores ni que el hardware pueda
+sostenerlos: el consumo real de CPU, RAM, disco, I/O, procesos, conexiones y
+locks depende de las imágenes y el workload. La escala debe medirse en hardware
+representativo; no se ejecuta una prueba de 10.000 contenedores en el
+laboratorio de release.
+
+La validación previa al release debe monitorear RAM, espacio e inodos; medir
+valores efectivos del kernel/systemd; y probar mapas, servicios con UID/GID
+altos, ownership de volúmenes, persistencia, lifecycle y backup/restore con las
+versiones nativas de Podman en Rocky Linux 10, CentOS Stream 10 y Fedora
+Rawhide. La adopción también requiere revisión independiente de la
+implementación y de la evidencia.

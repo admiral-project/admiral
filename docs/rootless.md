@@ -128,19 +128,23 @@ El RPM y el proceso de inicialización deben dejar disponibles:
 
 El instalador de Fleet asigna los rangos subordinados dentro de los intervalos
 definidos por `SUB_UID_MIN`/`SUB_UID_MAX` y `SUB_GID_MIN`/`SUB_GID_MAX` en
-`/etc/login.defs`. No presupone que `100000` esté disponible: conserva un rango
-existente que sea suficiente y no se solape, selecciona un intervalo libre para
-una instalación nueva y aborta ante rangos insuficientes o solapados.
+`/etc/login.defs`. Por defecto selecciona el mayor intervalo contiguo común
+libre para `admiral-apps`; conserva asignaciones previas y no las desplaza,
+reduce ni solapa. Para workloads nuevos, Podman usa `UserNS=auto` sin tamaño
+fijo; un operador puede fijar un tamaño exacto mediante `ADMIRAL_USERNS_SIZE`.
+Los defaults y overrides de capacidad están descritos en
+[`uid_gid_management-md`](uid_gid_management-md).
 
-Comprobaciones mínimas, sustituyendo el UID si no es 991:
+Comprobaciones mínimas con el UID asignado dinámicamente:
 
 ```bash
 id admiral-apps
 getent subuid admiral-apps
 getent subgid admiral-apps
 loginctl show-user admiral-apps -p Linger -p State -p RuntimePath
-systemctl is-active user@991.service systemd-machined.service admiral-fleet.service
-test -S /run/user/991/bus
+uid=$(id -u admiral-apps)
+systemctl is-active "user@${uid}.service" systemd-machined.service admiral-fleet.service
+test -S "/run/user/${uid}/bus"
 getenforce
 ```
 

@@ -3,6 +3,113 @@
 # A remote spoke host cannot run both fleet and harbor. --single-node is the
 # only supported mode that combines worker and portal roles on one machine.
 
+- name: Resolve rootless Podman capacity settings from Ansible or controller environment
+  set_fact:
+    admiral_userns_size_effective: >-
+      {{ (admiral_userns_size | string)
+         if admiral_userns_size is defined and admiral_userns_size is not none and (admiral_userns_size | string | length) > 0
+         else ((lookup('ansible.builtin.env', 'ADMIRAL_USERNS_SIZE') | string)
+               if (lookup('ansible.builtin.env', 'ADMIRAL_USERNS_SIZE') | string | length) > 0
+               else admiral_userns_size_default) }}
+    admiral_subid_count_effective: >-
+      {{ (admiral_subid_count | string)
+         if admiral_subid_count is defined and admiral_subid_count is not none and (admiral_subid_count | string | length) > 0
+         else ((lookup('ansible.builtin.env', 'ADMIRAL_SUBID_COUNT') | string)
+               if (lookup('ansible.builtin.env', 'ADMIRAL_SUBID_COUNT') | string | length) > 0
+               else admiral_subid_count_default) }}
+    admiral_podman_num_locks_effective: >-
+      {{ (admiral_podman_num_locks | string)
+         if admiral_podman_num_locks is defined and admiral_podman_num_locks is not none and (admiral_podman_num_locks | string | length) > 0
+         else ((lookup('ansible.builtin.env', 'ADMIRAL_PODMAN_NUM_LOCKS') | string)
+               if (lookup('ansible.builtin.env', 'ADMIRAL_PODMAN_NUM_LOCKS') | string | length) > 0
+               else admiral_podman_num_locks_default) }}
+    admiral_max_user_namespaces_effective: >-
+      {{ (admiral_max_user_namespaces | string)
+         if admiral_max_user_namespaces is defined and admiral_max_user_namespaces is not none and (admiral_max_user_namespaces | string | length) > 0
+         else ((lookup('ansible.builtin.env', 'ADMIRAL_MAX_USER_NAMESPACES') | string)
+               if (lookup('ansible.builtin.env', 'ADMIRAL_MAX_USER_NAMESPACES') | string | length) > 0
+               else admiral_max_user_namespaces_default) }}
+    admiral_kernel_pid_max_effective: >-
+      {{ (admiral_kernel_pid_max | string)
+         if admiral_kernel_pid_max is defined and admiral_kernel_pid_max is not none and (admiral_kernel_pid_max | string | length) > 0
+         else ((lookup('ansible.builtin.env', 'ADMIRAL_KERNEL_PID_MAX') | string)
+               if (lookup('ansible.builtin.env', 'ADMIRAL_KERNEL_PID_MAX') | string | length) > 0
+               else admiral_kernel_pid_max_default) }}
+    admiral_user_tasks_max_effective: >-
+      {{ (admiral_user_tasks_max | string)
+         if admiral_user_tasks_max is defined and admiral_user_tasks_max is not none and (admiral_user_tasks_max | string | length) > 0
+         else ((lookup('ansible.builtin.env', 'ADMIRAL_USER_TASKS_MAX') | string)
+               if (lookup('ansible.builtin.env', 'ADMIRAL_USER_TASKS_MAX') | string | length) > 0
+               else admiral_user_tasks_max_default) }}
+    admiral_user_nofile_hard_effective: >-
+      {{ (admiral_user_nofile_hard | string)
+         if admiral_user_nofile_hard is defined and admiral_user_nofile_hard is not none and (admiral_user_nofile_hard | string | length) > 0
+         else ((lookup('ansible.builtin.env', 'ADMIRAL_USER_NOFILE_HARD') | string)
+               if (lookup('ansible.builtin.env', 'ADMIRAL_USER_NOFILE_HARD') | string | length) > 0
+               else admiral_user_nofile_hard_default) }}
+    admiral_capacity_sources:
+      userns_size: >-
+        {{ 'ansible-variable' if (admiral_userns_size | string | length > 0) and (admiral_userns_size | string) != (lookup('ansible.builtin.env', 'ADMIRAL_USERNS_SIZE') | default(admiral_userns_size_default, true) | string)
+           else ('controller-environment' if (lookup('ansible.builtin.env', 'ADMIRAL_USERNS_SIZE') | string | length) > 0 else 'role-default') }}
+      subid_count: >-
+        {{ 'ansible-variable' if (admiral_subid_count | string | length > 0) and (admiral_subid_count | string) != (lookup('ansible.builtin.env', 'ADMIRAL_SUBID_COUNT') | default(admiral_subid_count_default, true) | string)
+           else ('controller-environment' if (lookup('ansible.builtin.env', 'ADMIRAL_SUBID_COUNT') | string | length) > 0 else 'role-default') }}
+      podman_num_locks: >-
+        {{ 'ansible-variable' if (admiral_podman_num_locks | string | length > 0) and (admiral_podman_num_locks | string) != (lookup('ansible.builtin.env', 'ADMIRAL_PODMAN_NUM_LOCKS') | default(admiral_podman_num_locks_default, true) | string)
+           else ('controller-environment' if (lookup('ansible.builtin.env', 'ADMIRAL_PODMAN_NUM_LOCKS') | string | length) > 0 else 'role-default') }}
+      max_user_namespaces: >-
+        {{ 'ansible-variable' if (admiral_max_user_namespaces | string | length > 0) and (admiral_max_user_namespaces | string) != (lookup('ansible.builtin.env', 'ADMIRAL_MAX_USER_NAMESPACES') | default(admiral_max_user_namespaces_default, true) | string)
+           else ('controller-environment' if (lookup('ansible.builtin.env', 'ADMIRAL_MAX_USER_NAMESPACES') | string | length) > 0 else 'role-default') }}
+      kernel_pid_max: >-
+        {{ 'ansible-variable' if (admiral_kernel_pid_max | string | length > 0) and (admiral_kernel_pid_max | string) != (lookup('ansible.builtin.env', 'ADMIRAL_KERNEL_PID_MAX') | default(admiral_kernel_pid_max_default, true) | string)
+           else ('controller-environment' if (lookup('ansible.builtin.env', 'ADMIRAL_KERNEL_PID_MAX') | string | length) > 0 else 'role-default') }}
+      user_tasks_max: >-
+        {{ 'ansible-variable' if (admiral_user_tasks_max | string | length > 0) and (admiral_user_tasks_max | string) != (lookup('ansible.builtin.env', 'ADMIRAL_USER_TASKS_MAX') | default(admiral_user_tasks_max_default, true) | string)
+           else ('controller-environment' if (lookup('ansible.builtin.env', 'ADMIRAL_USER_TASKS_MAX') | string | length) > 0 else 'role-default') }}
+      user_nofile_hard: >-
+        {{ 'ansible-variable' if (admiral_user_nofile_hard | string | length > 0) and (admiral_user_nofile_hard | string) != (lookup('ansible.builtin.env', 'ADMIRAL_USER_NOFILE_HARD') | default(admiral_user_nofile_hard_default, true) | string)
+           else ('controller-environment' if (lookup('ansible.builtin.env', 'ADMIRAL_USER_NOFILE_HARD') | string | length) > 0 else 'role-default') }}
+
+- name: Build Podman configuration using resolved capacity values
+  set_fact:
+    admiral_podman_userns_value: >-
+      {{ 'auto:size=' ~ admiral_userns_size_effective
+         if admiral_userns_size_effective | length > 0 else 'auto' }}
+    admiral_podman_config_content: |
+      [containers]
+      userns = "auto"
+
+      [engine]
+      num_locks = {{ admiral_podman_num_locks_effective }}
+    admiral_podman_environment_content: |
+      PODMAN_USERNS={{ 'auto:size=' ~ admiral_userns_size_effective if admiral_userns_size_effective | length > 0 else 'auto' }}
+
+- name: Validate rootless Podman capacity settings before changing the host
+  assert:
+    that:
+      - admiral_userns_size_effective == '' or (admiral_userns_size_effective is match('^[1-9][0-9]*$'))
+      - admiral_subid_count_effective == 'max_available' or (admiral_subid_count_effective is match('^[1-9][0-9]*$'))
+      - admiral_podman_num_locks_effective is match('^[1-9][0-9]*$')
+      - admiral_max_user_namespaces_effective is match('^[1-9][0-9]*$')
+      - admiral_kernel_pid_max_effective is match('^[1-9][0-9]*$')
+      - admiral_user_tasks_max_effective is match('^[1-9][0-9]*$')
+      - admiral_user_nofile_hard_effective is match('^[1-9][0-9]*$')
+    fail_msg: >-
+      Rootless Podman capacity settings are invalid. Use positive integers;
+      ADMIRAL_SUBID_COUNT also accepts max_available. No capacity configuration
+      has been applied.
+
+- name: Report effective rootless Podman capacity settings
+  debug:
+    msg:
+      userns: "{{ admiral_podman_userns_value }} ({{ admiral_capacity_sources.userns_size }})"
+      subid_count: "{{ admiral_subid_count_effective }} ({{ admiral_capacity_sources.subid_count }})"
+      podman_num_locks: "{{ admiral_podman_num_locks_effective }} ({{ admiral_capacity_sources.podman_num_locks }})"
+      max_user_namespaces: "{{ admiral_max_user_namespaces_effective }} ({{ admiral_capacity_sources.max_user_namespaces }})"
+      kernel_pid_max: "{{ admiral_kernel_pid_max_effective }} ({{ admiral_capacity_sources.kernel_pid_max }})"
+      user_tasks_max: "{{ admiral_user_tasks_max_effective }} ({{ admiral_capacity_sources.user_tasks_max }})"
+      user_nofile_hard: "{{ admiral_user_nofile_hard_effective }} ({{ admiral_capacity_sources.user_nofile_hard }})"
+
 - name: Install admiral-fleet
   dnf:
     name: admiral-fleet
@@ -28,19 +135,6 @@
     - ansible_facts.get('selinux', {}).get('status', 'disabled') == 'enabled'
     - "'--> on' not in admiral_container_manage_cgroup.stdout"
 
-- name: Allocate non-overlapping subordinate IDs for rootless workloads
-  command:
-    argv:
-      - /usr/bin/admiral-rootless-subids
-      - --user
-      - admiral-apps
-  changed_when: false
-
-- name: Enable linger for admiral-apps (rootless workload persistence)
-  command: loginctl enable-linger admiral-apps
-  args:
-    creates: /var/lib/systemd/linger/admiral-apps
-
 - name: Resolve rootless workload UID
   command:
     argv:
@@ -49,6 +143,235 @@
       - admiral-apps
   register: admiral_apps_uid
   changed_when: false
+
+- name: Inspect existing rootless Podman database before applying namespace defaults
+  stat:
+    path: /var/lib/admiral-apps/.local/share/containers/storage/libpod/bolt_state.db
+  register: admiral_rootless_podman_database
+
+- name: Inspect Admiral Podman configuration drop-in
+  stat:
+    path: /var/lib/admiral-apps/.config/containers/containers.conf.d/90-admiral.conf
+  register: admiral_rootless_podman_config
+
+- name: Inspect Admiral Podman environment configuration
+  stat:
+    path: /var/lib/admiral-apps/.config/environment.d/90-admiral-podman.conf
+  register: admiral_rootless_podman_environment
+
+- name: Read existing Admiral Podman configuration drop-in
+  slurp:
+    src: /var/lib/admiral-apps/.config/containers/containers.conf.d/90-admiral.conf
+  register: admiral_rootless_podman_config_contents
+  when:
+    - admiral_rootless_podman_database.stat.exists
+    - admiral_rootless_podman_config.stat.exists
+
+- name: Read existing Admiral Podman environment configuration
+  slurp:
+    src: /var/lib/admiral-apps/.config/environment.d/90-admiral-podman.conf
+  register: admiral_rootless_podman_environment_contents
+  when:
+    - admiral_rootless_podman_database.stat.exists
+    - admiral_rootless_podman_environment.stat.exists
+
+- name: Refuse to change Podman namespace or lock settings on an existing store
+  assert:
+    that:
+      - >-
+        not admiral_rootless_podman_database.stat.exists or
+        (admiral_rootless_podman_config.stat.exists and
+         admiral_rootless_podman_config_contents.content | b64decode == admiral_podman_config_content)
+      - >-
+        not admiral_rootless_podman_database.stat.exists or
+        (admiral_rootless_podman_environment.stat.exists and
+         admiral_rootless_podman_environment_contents.content | b64decode == admiral_podman_environment_content)
+    fail_msg: >-
+      Admiral Podman storage already exists with different or missing UID/GID
+      namespace or lock configuration. Reassigning mappings or changing num_locks
+      could break existing containers and volumes; migration is not automatic.
+
+- name: Read current user namespace kernel limit
+  command: sysctl -n user.max_user_namespaces
+  register: admiral_current_user_max_namespaces
+  changed_when: false
+
+- name: Read current kernel PID limit
+  command: sysctl -n kernel.pid_max
+  register: admiral_current_kernel_pid_max
+  changed_when: false
+
+- name: Read current fs.nr_open ceiling
+  command: sysctl -n fs.nr_open
+  register: admiral_current_fs_nr_open
+  changed_when: false
+
+- name: Read current systemd user slice task limit
+  command:
+    argv:
+      - systemctl
+      - show
+      - "user-{{ admiral_apps_uid.stdout }}.slice"
+      - --property=TasksMax
+      - --value
+  register: admiral_current_user_slice_tasks_max
+  changed_when: false
+
+- name: Read current systemd user manager task limit
+  command:
+    argv:
+      - systemctl
+      - show
+      - "user@{{ admiral_apps_uid.stdout }}.service"
+      - --property=TasksMax
+      - --value
+  register: admiral_current_user_manager_tasks_max
+  changed_when: false
+
+- name: Read current systemd user manager nofile limits
+  command:
+    argv:
+      - systemctl
+      - show
+      - "user@{{ admiral_apps_uid.stdout }}.service"
+      - "--property={{ item }}"
+      - --value
+  loop:
+    - LimitNOFILESoft
+    - LimitNOFILE
+  register: admiral_current_user_manager_nofile
+  changed_when: false
+
+- name: Calculate effective host limits without lowering existing settings
+  set_fact:
+    admiral_max_user_namespaces_effective_host: "{{ [admiral_current_user_max_namespaces.stdout | int, admiral_max_user_namespaces_effective | int] | max }}"
+    admiral_kernel_pid_max_effective_host: "{{ [admiral_current_kernel_pid_max.stdout | int, admiral_kernel_pid_max_effective | int] | max }}"
+    admiral_user_slice_tasks_max_effective_host: >-
+      {{ 'infinity' if admiral_current_user_slice_tasks_max.stdout | lower == 'infinity'
+         else ([admiral_current_user_slice_tasks_max.stdout | int, admiral_user_tasks_max_effective | int] | max) }}
+    admiral_user_manager_tasks_max_effective_host: >-
+      {{ 'infinity' if admiral_current_user_manager_tasks_max.stdout | lower == 'infinity'
+         else ([admiral_current_user_manager_tasks_max.stdout | int, admiral_user_tasks_max_effective | int] | max) }}
+    admiral_user_nofile_soft_effective_host: >-
+      {{ 'infinity' if admiral_current_user_manager_nofile.results[0].stdout | lower == 'infinity'
+         else ([admiral_current_user_manager_nofile.results[0].stdout | int, admiral_user_nofile_hard_effective | int] | max) }}
+    admiral_user_nofile_hard_effective_host: >-
+      {{ 'infinity' if admiral_current_user_manager_nofile.results[1].stdout | lower == 'infinity'
+         else ([admiral_current_user_manager_nofile.results[1].stdout | int, admiral_user_nofile_hard_effective | int] | max) }}
+
+- name: Ensure requested nofile ceiling is supported by the kernel
+  assert:
+    that:
+      - admiral_user_nofile_hard_effective_host == 'infinity' or (admiral_user_nofile_hard_effective_host | int <= admiral_current_fs_nr_open.stdout | int)
+    fail_msg: >-
+      The effective Admiral nofile hard limit exceeds fs.nr_open on this host.
+      Raise fs.nr_open explicitly or reduce ADMIRAL_USER_NOFILE_HARD.
+
+- name: Persist effective kernel capacity defaults
+  ansible.builtin.sysctl:
+    name: "{{ item.name }}"
+    value: "{{ item.value }}"
+    sysctl_file: /etc/sysctl.d/90-admiral-container-capacity.conf
+    sysctl_set: true
+    reload: true
+  loop:
+    - name: user.max_user_namespaces
+      value: "{{ admiral_max_user_namespaces_effective_host }}"
+    - name: kernel.pid_max
+      value: "{{ admiral_kernel_pid_max_effective_host }}"
+
+- name: Create admiral-apps Podman configuration directory
+  file:
+    path: /var/lib/admiral-apps/.config/containers/containers.conf.d
+    state: directory
+    owner: admiral-apps
+    group: admiral-apps
+    mode: "0700"
+
+- name: Configure Podman automatic user namespace and lock capacity
+  copy:
+    dest: /var/lib/admiral-apps/.config/containers/containers.conf.d/90-admiral.conf
+    content: "{{ admiral_podman_config_content }}"
+    owner: admiral-apps
+    group: admiral-apps
+    mode: "0644"
+
+- name: Create admiral-apps systemd environment configuration directory
+  file:
+    path: /var/lib/admiral-apps/.config/environment.d
+    state: directory
+    owner: admiral-apps
+    group: admiral-apps
+    mode: "0700"
+
+- name: Set Podman user namespace default for admiral-apps user services
+  copy:
+    dest: /var/lib/admiral-apps/.config/environment.d/90-admiral-podman.conf
+    content: "{{ admiral_podman_environment_content }}"
+    owner: admiral-apps
+    group: admiral-apps
+    mode: "0644"
+
+- name: Create systemd user slice capacity drop-in directory
+  file:
+    path: "/etc/systemd/system/user-{{ admiral_apps_uid.stdout }}.slice.d"
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Configure aggregate Admiral user task limit
+  copy:
+    dest: "/etc/systemd/system/user-{{ admiral_apps_uid.stdout }}.slice.d/90-admiral-capacity.conf"
+    content: |
+      [Slice]
+      TasksMax={{ admiral_user_slice_tasks_max_effective_host }}
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Create systemd user manager capacity drop-in directory
+  file:
+    path: "/etc/systemd/system/user@{{ admiral_apps_uid.stdout }}.service.d"
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Configure Admiral user manager task and file descriptor limits
+  copy:
+    dest: "/etc/systemd/system/user@{{ admiral_apps_uid.stdout }}.service.d/90-admiral-capacity.conf"
+    content: |
+      [Service]
+      TasksMax={{ admiral_user_manager_tasks_max_effective_host }}
+      LimitNOFILE={{ admiral_user_nofile_soft_effective_host }}:{{ admiral_user_nofile_hard_effective_host }}
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Reload systemd after applying Admiral capacity configuration
+  systemd:
+    daemon_reload: true
+
+- name: Allocate non-overlapping subordinate IDs for rootless workloads
+  command:
+    argv:
+      - /usr/bin/admiral-rootless-subids
+      - --user
+      - admiral-apps
+      - --count
+      - "{{ admiral_subid_count_effective }}"
+  register: admiral_rootless_subid_result
+  changed_when: "'allocated subordinate ID ranges' in admiral_rootless_subid_result.stdout"
+
+- name: Report effective subordinate ID pool
+  debug:
+    msg: "{{ admiral_rootless_subid_result.stdout_lines }}"
+
+- name: Enable linger for admiral-apps (rootless workload persistence)
+  command: loginctl enable-linger admiral-apps
+  args:
+    creates: /var/lib/systemd/linger/admiral-apps
 
 - name: Enable and start systemd-machined
   systemd:
@@ -65,6 +388,40 @@
     path: "/run/user/{{ admiral_apps_uid.stdout }}/bus"
     state: present
     timeout: 30
+
+- name: Read current admiral-apps user manager environment
+  command:
+    argv:
+      - runuser
+      - -u
+      - admiral-apps
+      - --
+      - env
+      - HOME=/var/lib/admiral-apps
+      - "XDG_RUNTIME_DIR=/run/user/{{ admiral_apps_uid.stdout }}"
+      - "DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/{{ admiral_apps_uid.stdout }}/bus"
+      - systemctl
+      - --user
+      - show-environment
+  register: admiral_user_manager_environment
+  changed_when: false
+
+- name: Apply Podman user namespace default to the running user manager
+  command:
+    argv:
+      - runuser
+      - -u
+      - admiral-apps
+      - --
+      - env
+      - HOME=/var/lib/admiral-apps
+      - "XDG_RUNTIME_DIR=/run/user/{{ admiral_apps_uid.stdout }}"
+      - "DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/{{ admiral_apps_uid.stdout }}/bus"
+      - systemctl
+      - --user
+      - set-environment
+      - "PODMAN_USERNS={{ admiral_podman_userns_value }}"
+  when: "('PODMAN_USERNS=' ~ admiral_podman_userns_value) not in admiral_user_manager_environment.stdout_lines"
 
 - name: Verify rootless Podman storage ownership
   command:
