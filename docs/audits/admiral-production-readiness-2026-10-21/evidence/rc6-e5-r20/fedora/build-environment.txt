@@ -1,0 +1,41 @@
+platform=Fedora Linux 46 Rawhide container from registry.fedoraproject.org/fedora:rawhide
+image_id=428f565534c378b103a8ec89b338164726967d88fa562966ed69cf5b3af100aa
+image_digest=sha256:3375b5f7d84cb52f52575148f13425899f40ee6a80112e3df8fef3bd208f58f5
+build_arch=x86_64
+rpm_dist=.fc46
+root_commit=ba7c4396743e84baae0b4de9f89f91ff5503a33b
+admirald_source=4472cd8defc2de9c649ddbc1108a0aa64c0f1859
+container_cpu_limit=1
+container_memory_and_swap_limit=1500m
+helper_packages=Fedora-native .fc46 RPMs from validated rc5-r73 helper set
+NAME="Fedora Linux"
+VERSION="46 (Container Image Prerelease)"
+RELEASE_TYPE=development
+ID=fedora
+VERSION_ID=46
+VERSION_CODENAME=""
+PRETTY_NAME="Fedora Linux 46 (Container Image Prerelease)"
+ANSI_COLOR="0;38;2;60;110;180"
+LOGO=fedora-logo-icon
+CPE_NAME="cpe:/o:fedoraproject:fedora:46"
+DEFAULT_HOSTNAME="fedora"
+HOME_URL="https://fedoraproject.org/"
+DOCUMENTATION_URL="https://docs.fedoraproject.org/en-US/fedora/rawhide/"
+SUPPORT_URL="https://ask.fedoraproject.org/"
+BUG_REPORT_URL="https://bugzilla.redhat.com/"
+REDHAT_BUGZILLA_PRODUCT="Fedora"
+REDHAT_BUGZILLA_PRODUCT_VERSION=rawhide
+REDHAT_SUPPORT_PRODUCT="Fedora"
+REDHAT_SUPPORT_PRODUCT_VERSION=rawhide
+SUPPORT_END=2028-05-24
+VARIANT="Container Image"
+VARIANT_ID=container
+build_arch=x86_64
+rpm_dist=.fc46
+go_version=go version go1.27.3-X:nodwarf5 linux/amd64
+python_version=Python 3.15.1
+rpm-build-6.1.0-1.fc46.x86_64
+golang-1.27.3-1.fc46.x86_64
+systemd-rpm-macros-262.1-1.fc46.noarch
+python3-pytest-9.1.1-1.fc45.noarch
+fedora_helper_rpms=verified .fc46 set from rc5-r73

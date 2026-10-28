@@ -1,0 +1,9 @@
+VERSION_ID="10.2"
+PRETTY_NAME="Rocky Linux 10.2 (Red Quartz)"
+build_arch=x86_64
+rpm_dist=.el10
+go_version=go version go1.26.10 (Red Hat 1.26.10-1.el10_2) linux/amd64
+root_commit=ba7c4396743e84baae0b4de9f89f91ff5503a33b
+admirald_source=4472cd8defc2de9c649ddbc1108a0aa64c0f1859
+memory_cap=1600M
+cpu_cap=100 percent

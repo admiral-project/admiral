@@ -1,0 +1,6 @@
+Raw console-log SHA-256 values (original logs retained outside the Git checkout):
+55247776eb246e3369d0c125ceba02fe05f09f6fbf0dae56fb050562dbfd1e23  /var/lib/libvirt/images/admiral-validation/build/rc6-e5-r20/el10/build.log
+9f14916f47d48e748901ea0f9ac3b102ba528900e2f7acf19897bea48ddc607b  /var/lib/libvirt/images/admiral-validation/build/rc6-e5-r20/fedora/build.log
+2772ea03ea450e798d96f132d53c6b5d24f7d2dea206d9d80f1a0a7b0b642877  /var/lib/libvirt/images/admiral-validation/build/rc6-e5-r20/runtime/admin-r20-update.log
+588f90c4a290aa8ac329105666a56a8315d80f8611029cee152392ebdd08e5d8  /var/lib/libvirt/images/admiral-validation/build/rc6-e5-r20/runtime/source-worker-r20-update.log
+4c59f11d6812a1aeb106272d6cff92ae608f3f1583f92bb1a8a4f9bce9368075  /var/lib/libvirt/images/admiral-validation/build/rc6-e5-r20/runtime/target-worker-r20-update.log

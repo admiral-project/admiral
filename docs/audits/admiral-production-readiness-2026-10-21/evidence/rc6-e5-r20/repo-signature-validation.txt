@@ -1,0 +1,77 @@
+RC6 E5 R20 local repository verification
+Public key fingerprint: 8D2E8FC99FB218979157C5DBFCC63E30ED44F66E
+
+el10: admiral-common-0.0.1rc6-20.el10.noarch.rpm: /var/lib/libvirt/images/admiral-validation/repo/rc6-e5-r20/el10/x86_64/admiral-common-0.0.1rc6-20.el10.noarch.rpm:
+    Header V4 RSA/SHA256 Signature, key ID ed44f66e: OK
+    Header SHA256 digest: OK
+    Header SHA1 digest: OK
+    Payload SHA256 digest: OK
+    MD5 digest: OK
+el10: admiral-flagship-0.0.1rc6-20.el10.noarch.rpm: /var/lib/libvirt/images/admiral-validation/repo/rc6-e5-r20/el10/x86_64/admiral-flagship-0.0.1rc6-20.el10.noarch.rpm:
+    Header V4 RSA/SHA256 Signature, key ID ed44f66e: OK
+    Header SHA256 digest: OK
+    Header SHA1 digest: OK
+    Payload SHA256 digest: OK
+    MD5 digest: OK
+el10: admiral-fleet-0.0.1rc6-20.el10.x86_64.rpm: /var/lib/libvirt/images/admiral-validation/repo/rc6-e5-r20/el10/x86_64/admiral-fleet-0.0.1rc6-20.el10.x86_64.rpm:
+    Header V4 RSA/SHA256 Signature, key ID ed44f66e: OK
+    Header SHA256 digest: OK
+    Header SHA1 digest: OK
+    Payload SHA256 digest: OK
+    MD5 digest: OK
+el10: admiral-harbor-0.0.1rc6-20.el10.noarch.rpm: /var/lib/libvirt/images/admiral-validation/repo/rc6-e5-r20/el10/x86_64/admiral-harbor-0.0.1rc6-20.el10.noarch.rpm:
+    Header V4 RSA/SHA256 Signature, key ID ed44f66e: OK
+    Header SHA256 digest: OK
+    Header SHA1 digest: OK
+    Payload SHA256 digest: OK
+    MD5 digest: OK
+el10: admiralctl-0.0.1rc6-20.el10.x86_64.rpm: /var/lib/libvirt/images/admiral-validation/repo/rc6-e5-r20/el10/x86_64/admiralctl-0.0.1rc6-20.el10.x86_64.rpm:
+    Header V4 RSA/SHA256 Signature, key ID ed44f66e: OK
+    Header SHA256 digest: OK
+    Header SHA1 digest: OK
+    Payload SHA256 digest: OK
+    MD5 digest: OK
+el10: admirald-0.0.1rc6-20.el10.x86_64.rpm: /var/lib/libvirt/images/admiral-validation/repo/rc6-e5-r20/el10/x86_64/admirald-0.0.1rc6-20.el10.x86_64.rpm:
+    Header V4 RSA/SHA256 Signature, key ID ed44f66e: OK
+    Header SHA256 digest: OK
+    Header SHA1 digest: OK
+    Payload SHA256 digest: OK
+    MD5 digest: OK
+fedora: admiral-common-0.0.1rc6-20.fc46.noarch.rpm: /var/lib/libvirt/images/admiral-validation/repo/rc6-e5-r20/fedora/x86_64/admiral-common-0.0.1rc6-20.fc46.noarch.rpm:
+    Header V4 RSA/SHA256 Signature, key ID ed44f66e: OK
+    Header SHA256 digest: OK
+    Header SHA1 digest: OK
+    Payload SHA256 digest: OK
+    MD5 digest: OK
+fedora: admiral-flagship-0.0.1rc6-20.fc46.noarch.rpm: /var/lib/libvirt/images/admiral-validation/repo/rc6-e5-r20/fedora/x86_64/admiral-flagship-0.0.1rc6-20.fc46.noarch.rpm:
+    Header V4 RSA/SHA256 Signature, key ID ed44f66e: OK
+    Header SHA256 digest: OK
+    Header SHA1 digest: OK
+    Payload SHA256 digest: OK
+    MD5 digest: OK
+fedora: admiral-fleet-0.0.1rc6-20.fc46.x86_64.rpm: /var/lib/libvirt/images/admiral-validation/repo/rc6-e5-r20/fedora/x86_64/admiral-fleet-0.0.1rc6-20.fc46.x86_64.rpm:
+    Header V4 RSA/SHA256 Signature, key ID ed44f66e: OK
+    Header SHA256 digest: OK
+    Header SHA1 digest: OK
+    Payload SHA256 digest: OK
+    MD5 digest: OK
+fedora: admiral-harbor-0.0.1rc6-20.fc46.noarch.rpm: /var/lib/libvirt/images/admiral-validation/repo/rc6-e5-r20/fedora/x86_64/admiral-harbor-0.0.1rc6-20.fc46.noarch.rpm:
+    Header V4 RSA/SHA256 Signature, key ID ed44f66e: OK
+    Header SHA256 digest: OK
+    Header SHA1 digest: OK
+    Payload SHA256 digest: OK
+    MD5 digest: OK
+fedora: admiralctl-0.0.1rc6-20.fc46.x86_64.rpm: /var/lib/libvirt/images/admiral-validation/repo/rc6-e5-r20/fedora/x86_64/admiralctl-0.0.1rc6-20.fc46.x86_64.rpm:
+    Header V4 RSA/SHA256 Signature, key ID ed44f66e: OK
+    Header SHA256 digest: OK
+    Header SHA1 digest: OK
+    Payload SHA256 digest: OK
+    MD5 digest: OK
+fedora: admirald-0.0.1rc6-20.fc46.x86_64.rpm: /var/lib/libvirt/images/admiral-validation/repo/rc6-e5-r20/fedora/x86_64/admirald-0.0.1rc6-20.fc46.x86_64.rpm:
+    Header V4 RSA/SHA256 Signature, key ID ed44f66e: OK
+    Header SHA256 digest: OK
+    Header SHA1 digest: OK
+    Payload SHA256 digest: OK
+    MD5 digest: OK
+el10: repomd.xml: gpg: Signature made Wed Oct 28 00:04:29 2026 UTC | gpg:                using RSA key 8D2E8FC99FB218979157C5DBFCC63E30ED44F66E | gpg: Good signature from "Admiral RC6 Release 5 Validation <admiral-validation@localhost>" [ultimate]
+fedora: repomd.xml: gpg: Signature made Wed Oct 28 00:04:32 2026 UTC | gpg:                using RSA key 8D2E8FC99FB218979157C5DBFCC63E30ED44F66E | gpg: Good signature from "Admiral RC6 Release 5 Validation <admiral-validation@localhost>" [ultimate]

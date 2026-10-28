@@ -1,0 +1,78 @@
+Admiral 0.0.1rc6 Release 20 signed local valida  71 kB/s | 659  B     00:00
+Admiral 0.0.1rc6 Release 20 signed local valida 342 kB/s | 1.3 kB     00:00
+Importing GPG key 0xED44F66E:
+ Userid     : "Admiral RC6 Release 5 Validation <admiral-validation@localhost>"
+ Fingerprint: 8D2E 8FC9 9FB2 1897 9157 C5DB FCC6 3E30 ED44 F66E
+ From       : http://192.168.122.1/rc6-e5-r20/RPM-GPG-KEY-admiral-r20
+Admiral 0.0.1rc6 Release 20 signed local valida 136 kB/s | 2.9 kB     00:00
+Dependencies resolved.
+================================================================================
+ Package              Arch       Version                Repository         Size
+================================================================================
+Upgrading:
+ admiral-common       noarch     5:0.0.1rc6-20.el10     admiral-local     131 k
+ admiral-flagship     noarch     5:0.0.1rc6-20.el10     admiral-local     1.5 M
+ admiral-harbor       noarch     5:0.0.1rc6-20.el10     admiral-local     1.1 M
+ admiralctl           x86_64     5:0.0.1rc6-20.el10     admiral-local     3.1 M
+ admirald             x86_64     5:0.0.1rc6-20.el10     admiral-local     4.0 M
+
+Transaction Summary
+================================================================================
+Upgrade  5 Packages
+
+Total download size: 9.9 M
+Downloading Packages:
+(1/5): admiral-common-0.0.1rc6-20.el10.noarch.r 4.7 MB/s | 131 kB     00:00
+(2/5): admiral-harbor-0.0.1rc6-20.el10.noarch.r  14 MB/s | 1.1 MB     00:00
+(3/5): admiral-flagship-0.0.1rc6-20.el10.noarch  10 MB/s | 1.5 MB     00:00
+(4/5): admiralctl-0.0.1rc6-20.el10.x86_64.rpm    16 MB/s | 3.1 MB     00:00
+(5/5): admirald-0.0.1rc6-20.el10.x86_64.rpm      22 MB/s | 4.0 MB     00:00
+--------------------------------------------------------------------------------
+Total                                            35 MB/s | 9.9 MB     00:00
+Running transaction check
+Transaction check succeeded.
+Running transaction test
+Transaction test succeeded.
+Running transaction
+  Preparing        :                                                        1/1
+  Running scriptlet: admiral-common-5:0.0.1rc6-20.el10.noarch              1/10
+  Upgrading        : admiral-common-5:0.0.1rc6-20.el10.noarch              1/10
+  Running scriptlet: admiral-common-5:0.0.1rc6-20.el10.noarch              1/10
+File context for /var/lib/admiral-apps/.local/share/containers/storage(/.*)? already defined, modifying instead
+
+  Upgrading        : admiral-flagship-5:0.0.1rc6-20.el10.noarch            2/10
+  Running scriptlet: admiral-flagship-5:0.0.1rc6-20.el10.noarch            2/10
+  Upgrading        : admiral-harbor-5:0.0.1rc6-20.el10.noarch              3/10
+  Running scriptlet: admiral-harbor-5:0.0.1rc6-20.el10.noarch              3/10
+  Upgrading        : admiralctl-5:0.0.1rc6-20.el10.x86_64                  4/10
+  Running scriptlet: admiralctl-5:0.0.1rc6-20.el10.x86_64                  4/10
+  Upgrading        : admirald-5:0.0.1rc6-20.el10.x86_64                    5/10
+  Running scriptlet: admirald-5:0.0.1rc6-20.el10.x86_64                    5/10
+  Running scriptlet: admirald-5:0.0.1rc6-19.el10.x86_64                    6/10
+  Cleanup          : admirald-5:0.0.1rc6-19.el10.x86_64                    6/10
+  Running scriptlet: admirald-5:0.0.1rc6-19.el10.x86_64                    6/10
+  Cleanup          : admiralctl-5:0.0.1rc6-19.el10.x86_64                  7/10
+  Running scriptlet: admiral-harbor-5:0.0.1rc6-19.el10.noarch              8/10
+  Cleanup          : admiral-harbor-5:0.0.1rc6-19.el10.noarch              8/10
+  Running scriptlet: admiral-harbor-5:0.0.1rc6-19.el10.noarch              8/10
+  Running scriptlet: admiral-flagship-5:0.0.1rc6-19.el10.noarch            9/10
+  Cleanup          : admiral-flagship-5:0.0.1rc6-19.el10.noarch            9/10
+  Running scriptlet: admiral-flagship-5:0.0.1rc6-19.el10.noarch            9/10
+  Running scriptlet: admiral-common-5:0.0.1rc6-19.el10.noarch             10/10
+  Cleanup          : admiral-common-5:0.0.1rc6-19.el10.noarch             10/10
+  Running scriptlet: admiral-common-5:0.0.1rc6-19.el10.noarch             10/10
+
+Upgraded:
+  admiral-common-5:0.0.1rc6-20.el10.noarch
+  admiral-flagship-5:0.0.1rc6-20.el10.noarch
+  admiral-harbor-5:0.0.1rc6-20.el10.noarch
+  admiralctl-5:0.0.1rc6-20.el10.x86_64
+  admirald-5:0.0.1rc6-20.el10.x86_64
+
+Complete!
+admiral-common-0.0.1rc6-20.el10.noarch
+admirald-0.0.1rc6-20.el10.x86_64
+admiralctl-0.0.1rc6-20.el10.x86_64
+admiral-flagship-0.0.1rc6-20.el10.noarch
+admiral-harbor-0.0.1rc6-20.el10.noarch
+active

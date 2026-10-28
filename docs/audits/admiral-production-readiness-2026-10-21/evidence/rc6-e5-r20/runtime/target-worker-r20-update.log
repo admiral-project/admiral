@@ -1,0 +1,56 @@
+Admiral 0.0.1rc6 Release 20 signed local valida  85 kB/s | 659  B     00:00
+Admiral 0.0.1rc6 Release 20 signed local valida 451 kB/s | 1.3 kB     00:00
+Importing GPG key 0xED44F66E:
+ Userid     : "Admiral RC6 Release 5 Validation <admiral-validation@localhost>"
+ Fingerprint: 8D2E 8FC9 9FB2 1897 9157 C5DB FCC6 3E30 ED44 F66E
+ From       : http://192.168.122.1/rc6-e5-r20/RPM-GPG-KEY-admiral-r20
+Admiral 0.0.1rc6 Release 20 signed local valida 207 kB/s | 2.9 kB     00:00
+Dependencies resolved.
+================================================================================
+ Package            Arch       Version                  Repository         Size
+================================================================================
+Upgrading:
+ admiral-common     noarch     5:0.0.1rc6-20.el10       admiral-local     131 k
+ admiral-fleet      x86_64     5:0.0.1rc6-20.el10       admiral-local     5.4 M
+
+Transaction Summary
+================================================================================
+Upgrade  2 Packages
+
+Total download size: 5.5 M
+Downloading Packages:
+(1/2): admiral-common-0.0.1rc6-20.el10.noarch.r 6.2 MB/s | 131 kB     00:00
+(2/2): admiral-fleet-0.0.1rc6-20.el10.x86_64.rp  42 MB/s | 5.4 MB     00:00
+--------------------------------------------------------------------------------
+Total                                            41 MB/s | 5.5 MB     00:00
+Running transaction check
+Transaction check succeeded.
+Running transaction test
+Transaction test succeeded.
+Running transaction
+  Preparing        :                                                        1/1
+  Running scriptlet: admiral-common-5:0.0.1rc6-20.el10.noarch               1/4
+  Upgrading        : admiral-common-5:0.0.1rc6-20.el10.noarch               1/4
+  Running scriptlet: admiral-common-5:0.0.1rc6-20.el10.noarch               1/4
+File context for /var/lib/admiral-apps/.local/share/containers/storage(/.*)? already defined, modifying instead
+
+  Upgrading        : admiral-fleet-5:0.0.1rc6-20.el10.x86_64                2/4
+  Running scriptlet: admiral-fleet-5:0.0.1rc6-20.el10.x86_64                2/4
+  Running scriptlet: admiral-fleet-5:0.0.1rc6-19.el10.x86_64                3/4
+  Cleanup          : admiral-fleet-5:0.0.1rc6-19.el10.x86_64                3/4
+  Running scriptlet: admiral-fleet-5:0.0.1rc6-19.el10.x86_64                3/4
+  Running scriptlet: admiral-common-5:0.0.1rc6-19.el10.noarch               4/4
+  Cleanup          : admiral-common-5:0.0.1rc6-19.el10.noarch               4/4
+  Running scriptlet: admiral-common-5:0.0.1rc6-19.el10.noarch               4/4
+
+Upgraded:
+  admiral-common-5:0.0.1rc6-20.el10.noarch
+  admiral-fleet-5:0.0.1rc6-20.el10.x86_64
+
+Complete!
+admiral-common-0.0.1rc6-20.el10.noarch
+admiral-fleet-0.0.1rc6-20.el10.x86_64
+active
+               total        used        free      shared  buff/cache   available
+Mem:             830         453         149           0         375         376
+Swap:              0           0           0
