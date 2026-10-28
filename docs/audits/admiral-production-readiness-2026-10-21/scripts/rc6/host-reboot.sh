@@ -8,7 +8,7 @@ set -euo pipefail
 }
 os=$1 guest_name=$2 target=$3 ssh_key=$4 known_hosts=$5 customer=$6
 case "$os" in fedora|rocky|alma|centos) ;; *) echo 'unsupported OS key' >&2; exit 2 ;; esac
-release=${ADMIRAL_RC_RELEASE:-21}
+release=${ADMIRAL_RC_RELEASE:-26}
 [[ $release =~ ^[0-9]+$ ]] || { echo 'invalid Admiral release label' >&2; exit 2; }
 marker="r${release}-reboot-persisted"
 [[ $guest_name =~ ^[A-Za-z0-9][A-Za-z0-9-]{0,62}$ ]] || { echo 'invalid guest name' >&2; exit 2; }
