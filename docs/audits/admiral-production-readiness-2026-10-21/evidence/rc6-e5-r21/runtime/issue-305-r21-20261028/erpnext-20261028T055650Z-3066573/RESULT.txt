@@ -1,0 +1,16 @@
+candidate=RC6 E5 R21
+app=erpnext
+image=docker.io/frappe/erpnext:v15.124.1@sha256:7229b744703f057bf9fc3af7c863f7cdb404ff42a546cfa5dd2ca198157654e4
+provision=FAIL
+operation_id=op_a6051730765dbdd3
+error=setup_command failed: wait for dependency service "redis-queue": context deadline exceeded
+resource_guard=STOP at guest_disk_available_kib=1495728 (below 1.5 GiB floor)
+oom_events=none found in the guest kernel journal from 05:55 to 06:08 UTC
+cleanup=PASS
+deprovision_operation_ids=op_5eb8ae6db8a50290,op_ad41fb50a6ce779b
+post_cleanup=zero workload containers and systemd user units; guest disk free 6.0 GiB; host disk free 32 GiB; host MemAvailable 3.5 GiB
+full_lifecycle=NOT_RUN
+classification=R21 ERPNext validation did not pass; the provisioning readiness timeout is recorded, but this run does not isolate whether the cause is the example, image startup, or product behavior.
+cached_image_after_cleanup=only docker.io/frappe/erpnext:v15.10.0 remained; v15.124.1 was absent
+followup=no further pull or retry: the next attempt would be cold and the host had 32 GiB free against the 30 GiB safety floor
+post_restore=existing VM gracefully rebooted at 1.5 GiB; R21 RPMs and core services active; guest disk free 11 GiB; no new VM created

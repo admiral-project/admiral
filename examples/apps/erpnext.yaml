@@ -35,7 +35,7 @@ shared_volumes:
 
 services:
   frontend:
-    image: docker.io/frappe/erpnext:v15.10.0
+    image: docker.io/frappe/erpnext:v15.124.1@sha256:7229b744703f057bf9fc3af7c863f7cdb404ff42a546cfa5dd2ca198157654e4
     port: 8080
     public: true
     command: nginx-entrypoint.sh
@@ -55,7 +55,7 @@ services:
       type: none
 
   backend:
-    image: docker.io/frappe/erpnext:v15.10.0
+    image: docker.io/frappe/erpnext:v15.124.1@sha256:7229b744703f057bf9fc3af7c863f7cdb404ff42a546cfa5dd2ca198157654e4
     depends_on:
       - db
       - redis-cache
@@ -83,7 +83,7 @@ services:
       type: volume
 
   setup:
-    image: docker.io/frappe/erpnext:v15.10.0
+    image: docker.io/frappe/erpnext:v15.124.1@sha256:7229b744703f057bf9fc3af7c863f7cdb404ff42a546cfa5dd2ca198157654e4
     command: sh -c "sleep infinity"
     setup_command: bench new-site "$FRAPPE_DEFAULT_SITE" --db-type mariadb --db-host "$DB_HOST" --db-port "$DB_PORT" --db-root-username root --db-root-password $MARIADB_ROOT_PASSWORD --admin-password $ERP_ADMIN_PASSWORD --install-app erpnext --set-default --no-mariadb-socket
     setup_timeout: 3600
@@ -121,7 +121,7 @@ services:
       type: none
 
   websocket:
-    image: docker.io/frappe/erpnext:v15.10.0
+    image: docker.io/frappe/erpnext:v15.124.1@sha256:7229b744703f057bf9fc3af7c863f7cdb404ff42a546cfa5dd2ca198157654e4
     command: node /home/frappe/frappe-bench/apps/frappe/socketio.js
     depends_on:
       - db
@@ -201,7 +201,7 @@ services:
       type: none
 
   scheduler:
-    image: docker.io/frappe/erpnext:v15.10.0
+    image: docker.io/frappe/erpnext:v15.124.1@sha256:7229b744703f057bf9fc3af7c863f7cdb404ff42a546cfa5dd2ca198157654e4
     command: bench schedule
     depends_on:
       - db
@@ -222,7 +222,7 @@ services:
       type: none
 
   worker-default:
-    image: docker.io/frappe/erpnext:v15.10.0
+    image: docker.io/frappe/erpnext:v15.124.1@sha256:7229b744703f057bf9fc3af7c863f7cdb404ff42a546cfa5dd2ca198157654e4
     command: bench worker --queue default
     depends_on:
       - db
@@ -269,6 +269,8 @@ tiers:
         days: 30
       backup_database: true
       backup_volumes: true
+      manual_backups: true
+      restore_allowed: true
 
   production-m:
     cpu: 2
@@ -283,6 +285,8 @@ tiers:
         days: 30
       backup_database: true
       backup_volumes: true
+      manual_backups: true
+      restore_allowed: true
 
   production-l:
     cpu: 4
@@ -297,3 +301,5 @@ tiers:
         days: 60
       backup_database: true
       backup_volumes: true
+      manual_backups: true
+      restore_allowed: true

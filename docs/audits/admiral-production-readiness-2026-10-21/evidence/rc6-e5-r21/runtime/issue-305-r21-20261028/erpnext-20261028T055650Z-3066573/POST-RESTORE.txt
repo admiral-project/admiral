@@ -1,0 +1,36 @@
+captured_at=2026-10-28T06:15:16Z
+
+host_resources
+               total        used        free      shared  buff/cache   available
+Mem:           7.5Gi       2.7Gi       3.4Gi       9.9Mi       1.7Gi       4.8Gi
+Swap:          4.0Gi       1.1Gi       2.9Gi
+Filesystem      Size  Used Avail Use% Mounted on
+/dev/vda1       159G  127G   32G  81% /
+
+vm_memory
+actual 1572864
+swap_in 0
+swap_out 0
+major_fault 112
+minor_fault 149508
+unused 1285824
+
+guest_and_workload_state
+               total        used        free      shared  buff/cache   available
+Mem:           1.4Gi       660Mi       584Mi        22Mi       371Mi       796Mi
+Swap:             0B          0B          0B
+Filesystem      Size  Used Avail Use% Mounted on
+/dev/vda3        20G  9.7G   11G  49% /
+active
+active
+active
+active
+admirald-0.0.1rc6-21.el10.x86_64
+admiral-fleet-0.0.1rc6-21.el10.x86_64
+admiralctl-0.0.1rc6-21.el10.x86_64
+admiral-flagship-0.0.1rc6-21.el10.noarch
+admiral-harbor-0.0.1rc6-21.el10.noarch
+setup_failed	stopped	runtime_observation_before_node_boot
+  UNIT LOAD ACTIVE SUB DESCRIPTION
+
+0 loaded units listed.

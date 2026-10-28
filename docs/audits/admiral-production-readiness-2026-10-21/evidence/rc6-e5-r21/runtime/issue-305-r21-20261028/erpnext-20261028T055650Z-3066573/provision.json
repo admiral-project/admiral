@@ -1,0 +1,36 @@
+{
+  "action": "provision_app",
+  "admin_user": "system",
+  "created_at": "2026-10-28T05:56:53.19148Z",
+  "error_message": "setup_command failed: wait for dependency service \"redis-queue\": context deadline exceeded",
+  "id": "op_a6051730765dbdd3",
+  "instance_id": "inst_9803f2d308646ed7",
+  "node_id": "rc6e5r18-ipv6-admin",
+  "status": "failed",
+  "task_id": "task_bfd10b8f5ecea8b5",
+  "updated_at": "2026-10-28T06:07:00.100983Z"
+}
+Error: operation op_a6051730765dbdd3 finished with status failed
+Usage:
+  admiralctl instances provision [flags]
+
+Flags:
+      --app string                   Name of application definition (required)
+      --customer string              Unique Customer ID (required)
+  -h, --help                         help for provision
+      --idempotency-key string       Stable key to safely retry this provision request (required)
+      --logical-instance-id string   Preserve logical instance identity for migration
+      --node string                  Explicit node ID to target
+      --output string                Output format: table or json (default "table")
+      --quiet                        Suppress credential output in all formats
+      --tier string                  Name of the service tier (required)
+      --wait                         Wait until the operation reaches a terminal state
+      --wait-timeout duration        Maximum time to wait for an operation (default 30m0s)
+
+Global Flags:
+      --ca-cert string    CA certificate file for admirald HTTPS validation
+      --operator string   Operator name for audit logs
+      --server string     Control plane server endpoint URL
+
+Error: operation op_a6051730765dbdd3 finished with status failed
+STOP: guest_disk_below_1_5_gib

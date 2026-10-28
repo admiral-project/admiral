@@ -8,27 +8,35 @@ provisionamiento, setup ni el ciclo de vida. La verificación de runtime de los
 ocho ejemplos —setup, pausa, reinicio, backup y restore— se sigue en
 [issue #305](https://github.com/admiral-project/admiral/issues/305) y en el
 reporte de validación del candidato actual. Este es el snapshot del 2026-10-28;
-el issue permanece abierto mientras haya ejemplos sin lifecycle completo.
+el issue permanece abierto mientras los ejemplos requeridos no tengan lifecycle
+completo. Cacao Accounting queda registrado por trazabilidad, pero el usuario
+confirmó que su PASS no es obligatorio para aceptar el release.
 
 | Ejemplo | Resultado actual | Evidencia |
 |---------|------------------|-----------|
-| `e2e-whoami` | PASS: setup, pausa/reanudación, reinicio, backup DB y restore. | [Evidencia](audits/admiral-production-readiness-2026-10-21/evidence/rc6-e5-r20/runtime/issue-305-executed-20261028/e2e-whoami/) |
-| `uptime-kuma` | PASS: lifecycle y restore de volumen; `/dashboard` devuelve 200. | [Evidencia](audits/admiral-production-readiness-2026-10-21/evidence/rc6-e5-r20/runtime/issue-305-executed-20261028/uptime-kuma-20261028T033025Z-2834838/) |
-| `erpnext` | PASS: setup y lifecycle completos con tier `production-s` de 2 GiB en la VM single-node existente de 3 GiB. El setup tardó unos 7 minutos; no hubo OOM. El primer intento frío expiró esperando Redis mientras descargaba imágenes; el reintento con imágenes en caché pasó. | [Evidencia](audits/admiral-production-readiness-2026-10-21/evidence/rc6-e5-r20/runtime/issue-305-executed-20261028/erpnext-20261028T035540Z-2853441/) |
-| `vaultwarden` | PASS: setup, pausa, reinicio, backup/restore de volumen y limpieza. | [Evidencia](audits/admiral-production-readiness-2026-10-21/evidence/rc6-e5-r20/runtime/issue-305-executed-20261028/vaultwarden-20261028T042456Z-2875558/) |
-| `wordpress` | PASS: lifecycle completo; se verificaron marcadores separados de DB y volumen antes y después del restore con checksum. La URL canónica `http://localhost` devuelve 200 al enviar `Host: localhost`. | [Evidencia](audits/admiral-production-readiness-2026-10-21/evidence/rc6-e5-r20/runtime/issue-305-executed-20261028/wordpress-dual-backup-20261028T041817Z-2870322/) |
+| `e2e-whoami` | R21 PASS: setup, pausa/reanudación, reinicio, backup DB y restore con checksum; HTTP y limpieza. | [Evidencia R21](audits/admiral-production-readiness-2026-10-21/evidence/rc6-e5-r21/runtime/issue-305-r21-20261028/e2e-whoami-20261028T054750Z-3059000/) |
+| `uptime-kuma` | R21 PASS: lifecycle y restore de volumen; `/dashboard` devuelve 200. | [Evidencia R21](audits/admiral-production-readiness-2026-10-21/evidence/rc6-e5-r21/runtime/issue-305-r21-20261028/uptime-kuma-20261028T054928Z-3060520/) |
+| `erpnext` | R21 FAIL: con la imagen `v15.124.1` fijada por digest, el provision falló esperando readiness de `redis-queue` (`context deadline exceeded`). El monitor detuvo la corrida al bajar el disco libre del guest a 1.5 GiB; no hubo OOM. No se completó lifecycle ni se atribuye aún la causa a Admiral. | [Evidencia R21](audits/admiral-production-readiness-2026-10-21/evidence/rc6-e5-r21/runtime/issue-305-r21-20261028/erpnext-20261028T055650Z-3066573/) · [PASS histórico R20](audits/admiral-production-readiness-2026-10-21/evidence/rc6-e5-r20/runtime/issue-305-executed-20261028/erpnext-20261028T035540Z-2853441/) |
+| `vaultwarden` | R21 PASS: setup, pausa, reinicio, backup/restore de volumen y limpieza. | [Evidencia R21](audits/admiral-production-readiness-2026-10-21/evidence/rc6-e5-r21/runtime/issue-305-r21-20261028/vaultwarden-20261028T055125Z-3062264/) |
+| `wordpress` | R21 PASS: lifecycle completo; se verificaron marcadores separados de DB y volumen antes y después del restore con checksum. | [Evidencia R21](audits/admiral-production-readiness-2026-10-21/evidence/rc6-e5-r21/runtime/issue-305-r21-20261028/wordpress-dual-backup-20261028T054255Z-3055154/) |
 | `listmonk` | R21 PASS: setup y conexión PostgreSQL, pausa, reanudación, reinicio, backup/restore con checksum y marcador DB, HTTP 200 y limpieza. La primera corrida detectó que Listmonk v6.1 requiere `LISTMONK_app__address` con host y puerto juntos; se corrigió el YAML sin cambiar los RPM. | [Evidencia R21](audits/admiral-production-readiness-2026-10-21/evidence/rc6-e5-r21/runtime/listmonk-r21-20261028T052811Z-3042215/) |
 | `now-lms` | FAIL en la imagen Quay v1.3.4 fijada por digest: la migración consulta `curso` antes de que exista y el backend no llega a readiness. La revisión del 2026-10-28 encontró solo tags Quay `v1.3.4` y `latest`; el upstream ya publicó NOW-LMS v2.0.4, pero no su imagen Quay. No se observó fallo de Admiral. | [Evidencia R20](audits/admiral-production-readiness-2026-10-21/evidence/rc6-e5-r20/runtime/issue-305-executed-20261028/now-lms-diagnostic-r20-20261028/) · [Snapshot Quay](audits/admiral-production-readiness-2026-10-21/evidence/rc6-e5-r21/runtime/now-lms-registry-snapshot-20261028/REGISTRY-SNAPSHOT.md) |
-| `cacao-accounting` | Intento FAIL: la referencia mutable fue rechazada por la política de imágenes; el intento con digest inmutable salió antes de readiness. El usuario confirmó que Cacao no es requisito mandatorio del release; no bloquea su aceptación. | [Evidencia](audits/admiral-production-readiness-2026-10-21/evidence/rc6-e5-r20/runtime/issue-305-executed-20261028/cacao-accounting-20261028T033654Z-2839639/) |
+| `cacao-accounting` | Sin revalidación R21. El usuario confirmó que Cacao no es requisito mandatorio del release y no bloquea su aceptación. | [Evidencia R20](audits/admiral-production-readiness-2026-10-21/evidence/rc6-e5-r20/runtime/issue-305-executed-20261028/cacao-accounting-20261028T033654Z-2839639/) |
 
-ERPNext no requiere `production-m` de 4 GiB para este caso de verificación ni
-una VM de 7 GiB: el setup y lifecycle completos pasaron con `production-s` y
-3 GiB de RAM en el nodo de validación existente. El usuario confirmó que
-pasar Cacao Accounting no es un requisito obligatorio del release; su intento
-fallido queda documentado y no bloquea el candidato. #305 sigue abierto porque
-NOW-LMS no completa su lifecycle con la imagen Quay v1.3.4 fijada por digest.
-El release upstream v2.0.4 aún no tiene una imagen Quay publicada para repetir
-la prueba; el fallo observado apunta a la migración de la imagen, no a Admiral.
+El PASS de ERPNext en R20 es evidencia histórica y no sustituye la validación
+del candidato R21, que incluye un cambio de producto. En R21, `v15.124.1` no
+superó el readiness de `redis-queue`; la instancia se desprovisionó y no quedaron
+contenedores ni unidades de usuario. El monitor detuvo el intento al alcanzar
+su límite de disco del guest. La causa del timeout no está aislada, por lo que
+este resultado no se atribuye a Admiral ni al ejemplo sin más diagnóstico.
+El guest conserva en caché la imagen previa `v15.10.0`, no la imagen nueva; no
+se inició otra descarga en frío con el host cerca del umbral de espacio libre.
+
+El usuario confirmó que pasar Cacao Accounting no es un requisito obligatorio
+del release y no bloquea su aceptación. #305 permanece abierto: NOW-LMS sigue
+sin una imagen Quay nueva para repetir su migración, y ERPNext no completó el
+lifecycle en R21. No se modificó código de producto ni se reconstruyeron RPMs;
+los cambios de la definición de ejemplo no invalidan el runtime gate.
 
 ## Estructura base
 
