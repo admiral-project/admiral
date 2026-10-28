@@ -1,0 +1,101 @@
+RPM package signature verification (temporary RPM database)
+
+[el10]
+./admiral-common-0.0.1rc6-21.el10.noarch.rpm: OK
+./admiral-flagship-0.0.1rc6-21.el10.noarch.rpm: OK
+./admiral-fleet-0.0.1rc6-21.el10.x86_64.rpm: OK
+./admiral-harbor-0.0.1rc6-21.el10.noarch.rpm: OK
+./admiralctl-0.0.1rc6-21.el10.x86_64.rpm: OK
+./admirald-0.0.1rc6-21.el10.x86_64.rpm: OK
+/var/lib/libvirt/images/admiral-validation/repo/rc6-e5-r21/el10/x86_64/admiral-common-0.0.1rc6-21.el10.noarch.rpm:
+    Header V4 RSA/SHA256 Signature, key ID ed44f66e: OK
+    Header SHA256 digest: OK
+    Header SHA1 digest: OK
+    Payload SHA256 digest: OK
+    MD5 digest: OK
+/var/lib/libvirt/images/admiral-validation/repo/rc6-e5-r21/el10/x86_64/admiral-flagship-0.0.1rc6-21.el10.noarch.rpm:
+    Header V4 RSA/SHA256 Signature, key ID ed44f66e: OK
+    Header SHA256 digest: OK
+    Header SHA1 digest: OK
+    Payload SHA256 digest: OK
+    MD5 digest: OK
+/var/lib/libvirt/images/admiral-validation/repo/rc6-e5-r21/el10/x86_64/admiral-fleet-0.0.1rc6-21.el10.x86_64.rpm:
+    Header V4 RSA/SHA256 Signature, key ID ed44f66e: OK
+    Header SHA256 digest: OK
+    Header SHA1 digest: OK
+    Payload SHA256 digest: OK
+    MD5 digest: OK
+/var/lib/libvirt/images/admiral-validation/repo/rc6-e5-r21/el10/x86_64/admiral-harbor-0.0.1rc6-21.el10.noarch.rpm:
+    Header V4 RSA/SHA256 Signature, key ID ed44f66e: OK
+    Header SHA256 digest: OK
+    Header SHA1 digest: OK
+    Payload SHA256 digest: OK
+    MD5 digest: OK
+/var/lib/libvirt/images/admiral-validation/repo/rc6-e5-r21/el10/x86_64/admiralctl-0.0.1rc6-21.el10.x86_64.rpm:
+    Header V4 RSA/SHA256 Signature, key ID ed44f66e: OK
+    Header SHA256 digest: OK
+    Header SHA1 digest: OK
+    Payload SHA256 digest: OK
+    MD5 digest: OK
+/var/lib/libvirt/images/admiral-validation/repo/rc6-e5-r21/el10/x86_64/admirald-0.0.1rc6-21.el10.x86_64.rpm:
+    Header V4 RSA/SHA256 Signature, key ID ed44f66e: OK
+    Header SHA256 digest: OK
+    Header SHA1 digest: OK
+    Payload SHA256 digest: OK
+    MD5 digest: OK
+gpg: Signature made Wed Oct 28 05:18:55 2026 UTC
+gpg:                using RSA key 8D2E8FC99FB218979157C5DBFCC63E30ED44F66E
+gpg: Good signature from "Admiral RC6 Release 5 Validation <admiral-validation@localhost>" [unknown]
+gpg: WARNING: This key is not certified with a trusted signature!
+gpg:          There is no indication that the signature belongs to the owner.
+Primary key fingerprint: 8D2E 8FC9 9FB2 1897 9157  C5DB FCC6 3E30 ED44 F66E
+
+[fedora]
+./admiral-common-0.0.1rc6-21.fc46.noarch.rpm: OK
+./admiral-flagship-0.0.1rc6-21.fc46.noarch.rpm: OK
+./admiral-fleet-0.0.1rc6-21.fc46.x86_64.rpm: OK
+./admiral-harbor-0.0.1rc6-21.fc46.noarch.rpm: OK
+./admiralctl-0.0.1rc6-21.fc46.x86_64.rpm: OK
+./admirald-0.0.1rc6-21.fc46.x86_64.rpm: OK
+/var/lib/libvirt/images/admiral-validation/repo/rc6-e5-r21/fedora/x86_64/admiral-common-0.0.1rc6-21.fc46.noarch.rpm:
+    Header V4 RSA/SHA256 Signature, key ID ed44f66e: OK
+    Header SHA256 digest: OK
+    Header SHA1 digest: OK
+    Payload SHA256 digest: OK
+    MD5 digest: OK
+/var/lib/libvirt/images/admiral-validation/repo/rc6-e5-r21/fedora/x86_64/admiral-flagship-0.0.1rc6-21.fc46.noarch.rpm:
+    Header V4 RSA/SHA256 Signature, key ID ed44f66e: OK
+    Header SHA256 digest: OK
+    Header SHA1 digest: OK
+    Payload SHA256 digest: OK
+    MD5 digest: OK
+/var/lib/libvirt/images/admiral-validation/repo/rc6-e5-r21/fedora/x86_64/admiral-fleet-0.0.1rc6-21.fc46.x86_64.rpm:
+    Header V4 RSA/SHA256 Signature, key ID ed44f66e: OK
+    Header SHA256 digest: OK
+    Header SHA1 digest: OK
+    Payload SHA256 digest: OK
+    MD5 digest: OK
+/var/lib/libvirt/images/admiral-validation/repo/rc6-e5-r21/fedora/x86_64/admiral-harbor-0.0.1rc6-21.fc46.noarch.rpm:
+    Header V4 RSA/SHA256 Signature, key ID ed44f66e: OK
+    Header SHA256 digest: OK
+    Header SHA1 digest: OK
+    Payload SHA256 digest: OK
+    MD5 digest: OK
+/var/lib/libvirt/images/admiral-validation/repo/rc6-e5-r21/fedora/x86_64/admiralctl-0.0.1rc6-21.fc46.x86_64.rpm:
+    Header V4 RSA/SHA256 Signature, key ID ed44f66e: OK
+    Header SHA256 digest: OK
+    Header SHA1 digest: OK
+    Payload SHA256 digest: OK
+    MD5 digest: OK
+/var/lib/libvirt/images/admiral-validation/repo/rc6-e5-r21/fedora/x86_64/admirald-0.0.1rc6-21.fc46.x86_64.rpm:
+    Header V4 RSA/SHA256 Signature, key ID ed44f66e: OK
+    Header SHA256 digest: OK
+    Header SHA1 digest: OK
+    Payload SHA256 digest: OK
+    MD5 digest: OK
+gpg: Signature made Wed Oct 28 05:18:57 2026 UTC
+gpg:                using RSA key 8D2E8FC99FB218979157C5DBFCC63E30ED44F66E
+gpg: Good signature from "Admiral RC6 Release 5 Validation <admiral-validation@localhost>" [unknown]
+gpg: WARNING: This key is not certified with a trusted signature!
+gpg:          There is no indication that the signature belongs to the owner.
+Primary key fingerprint: 8D2E 8FC9 9FB2 1897 9157  C5DB FCC6 3E30 ED44 F66E

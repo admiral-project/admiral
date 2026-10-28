@@ -1,0 +1,7 @@
+name	epoch	version	release	arch	sha256	file
+admiral-common	5	0.0.1rc6	21.fc46	noarch	bbf90020e1873f4dbfad0098747080c542ea0419eff46e048eb5f399bff58bcf	admiral-common-0.0.1rc6-21.fc46.noarch.rpm
+admiral-flagship	5	0.0.1rc6	21.fc46	noarch	8f5ab8a7cdc4ff59fb6f3930f428586e24e7f5b2832054379580ae8a386e6928	admiral-flagship-0.0.1rc6-21.fc46.noarch.rpm
+admiral-fleet	5	0.0.1rc6	21.fc46	x86_64	327c8fd4fb2c87ca8561f64626e350cbae835fe41e604080e5e593a1855b9b80	admiral-fleet-0.0.1rc6-21.fc46.x86_64.rpm
+admiral-harbor	5	0.0.1rc6	21.fc46	noarch	f592d015c2b0cfab5293a95acd081dbaa8c05582f7e5e859bdd59ab9ad5d4744	admiral-harbor-0.0.1rc6-21.fc46.noarch.rpm
+admiralctl	5	0.0.1rc6	21.fc46	x86_64	33f5159aad29ec14e1a953920b4dc8686ba9cc44345f6fe47ea9ef20e6189235	admiralctl-0.0.1rc6-21.fc46.x86_64.rpm
+admirald	5	0.0.1rc6	21.fc46	x86_64	a546ec933bc06fe02f043ed0911ca364144af46a6e1fff2b4f3f441cfa65ff53	admirald-0.0.1rc6-21.fc46.x86_64.rpm

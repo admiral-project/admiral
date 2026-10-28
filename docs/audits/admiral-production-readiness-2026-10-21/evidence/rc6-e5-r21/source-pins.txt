@@ -1,0 +1,29 @@
+RC6 E5 R21 exact source refs
+Fetched each component's origin/main on 2026-10-28 before building.
+The selected source refs below equal the checked-out HEADs and were validated by scripts/validate-release-refs.py.
+The latest origin/main SHAs were behind each selected R20 release-validation pin; no newer main commit needed adoption. R20's previously validated pins are retained, with admirald advanced only to the new Listmonk fix.
+
+root build config commit: fa4838bc4438e9757ffcbdf1a8a1173c3c666cf8
+root shared payload source (ADMIRAL_COMMON_COMMIT): dfb239f1a44ac6b221c7a0d181bada655b048871
+admirald selected: 04ec1dd7d5de87906e7560194e94fa4afe087354
+admirald origin/main: 6e4a725d30c0fff877fe2252e843fae687810ae6
+admirald selected commits ahead of origin/main (7):
+  04ec1dd fix(api): propagate nested database credentials [new required product fix]
+  4472cd8 fix(api): resume restored migrations and storage probes [R20 validation fix]
+  f8a880d fix(migration): preserve workloads during cutover [R20 validation fix]
+  e0d3326 fix(api): persist migration backups before dispatch [R20 validation fix]
+  313a96c fix(api): sync portal health into peer inventory [R20 validation fix]
+  a5cc680 fix(api): extend peer reconciliation request window [R20 validation fix]
+  bfe5440 fix(api): allow deleting backups after deprovision [R20 validation fix]
+admiral-fleet selected: 11f788c7efbfd9ea77e2e461a0e53874393c946a
+admiral-fleet origin/main: b082934f908a4a33acf0fdd70c06974f0a29bb21
+admiral-fleet selected commits ahead of origin/main (2): docs(fleet): document RPM registry allowlist; docs(fleet): document rootless workload user
+admiralctl selected: d0e98414115c9628e59b33678cfcbd9bc0e342d5
+admiralctl origin/main: fa2a65e866310bd82bea78859804b6c3aea7989a
+admiralctl selected commits ahead of origin/main (3): docs(cli): describe migration maintenance; fix(cli): validate app definitions without API credentials; fix(cli): allow node removal to finish peer reconciliation
+admiral-flagship selected: 9d26a3b0e1e8827b066566fb2ecb98f5cd580a74
+admiral-flagship origin/main: b7325bbc71fc474a521496e593b2967e4d555ac1
+admiral-flagship selected commits ahead of origin/main (1): docs(flagship): document runtime CDN assets
+admiral-harbor selected: 48280fdd5ee2779e68edc7873e605c0d80dc60e7
+admiral-harbor origin/main: dd4818b6e2bc53eea4495fc5e374a4893cfcb107
+admiral-harbor selected commits ahead of origin/main (1): docs(harbor): clarify beta and admin responsibilities
