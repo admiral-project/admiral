@@ -1,0 +1,46 @@
+id=rc6e5r18-ipv6-admin
+os=CentOS 10
+status=active
+health_status=healthy
+available_for_provisioning=True
+wireguard_ip=10.99.0.1
+fleet_version=0.0.1rc6
+Application definition "e2e-whoami" applied successfully!
+test=RC6-SINGLE-NODE-LIFECYCLE start_utc=2026-10-28T06:36:29Z node=rc6e5r18-ipv6-admin
+id=op_b434682ea747729c
+instance_id=inst_7718099b688ece18
+node_id=rc6e5r18-ipv6-admin
+status=succeeded
+created_at=2026-10-28T06:36:30.403062Z
+updated_at=2026-10-28T06:36:35.590151Z
+idempotency_replay_same_operation=True
+idempotency_replay_same_instance=True
+database_ready_attempt=1 utc=2026-10-28T06:36:39Z
+admiral-inst_7718099b688ece18-infra|Up 7 seconds|127.0.0.1:40040->80/tcp
+admiral-inst_7718099b688ece18-app|Up 6 seconds|127.0.0.1:40040->80/tcp
+admiral-inst_7718099b688ece18-db|Up 6 seconds|127.0.0.1:40040->80/tcp, 5432/tcp
+app_endpoint=127.0.0.1:40040
+CREATE TABLE
+INSERT 0 1
+              value               
+----------------------------------
+ rc6-single-inst_7718099b688ece18
+(1 row)
+
+local_workload_http_status=200 endpoint=127.0.0.1:40040
+id=inst_7718099b688ece18
+node_id=rc6e5r18-ipv6-admin
+technical_status=running
+health_status=healthy
+effective_availability=available
+availability_reason=None
+deprovision_operation=op_7d446957796e2a92 status=succeeded
+remaining_matching_containers=none
+remaining_matching_pods=none
+remaining_matching_volumes=none
+remaining_matching_units=none
+remaining_matching_files=none
+single_node_lifecycle=PASS node=rc6e5r18-ipv6-admin instance=inst_7718099b688ece18 end_utc=2026-10-28T06:36:49Z
+private-run-evidence=/var/tmp/rc6-single-lifecycle.gldqTSai
+lifecycle_exit=0
+end_utc=2026-10-28T06:36:50Z

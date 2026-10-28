@@ -1,0 +1,35 @@
+test=R21-centos-SN-REBOOT guest=rc6e5r18-ipv6-admin start_utc=2026-10-28T06:42:01Z
+idempotency_key=r21-centos-reboot-20261028T064200Z-3101095
+boot_id_before=05ddb2a1-c229-4c4f-9810-1ed7a0fae1a3
+pre_reboot_setup_started_utc=2026-10-28T06:42:02Z
+provision_status= succeeded instance_id= inst_ce3b06fb80dfbd6a operation_id= op_76b499087d0ce566
+provision_readiness_poll=1 utc=2026-10-28T06:42:15Z api=running healthy available db_state=running db_ready=1
+database_readiness_seconds_tested=1
+CREATE TABLE
+TRUNCATE TABLE
+INSERT 0 1
+reboot_requested_utc=2026-10-28T06:42:16Z instance_id=inst_ce3b06fb80dfbd6a operation_id=op_76b499087d0ce566
+reboot_request_issued_utc=2026-10-28T06:42:16Z
+Connection to 10.77.0.10 closed by remote host.
+reboot_ssh_exit=255 (disconnect after reboot request is expected)
+reboot_confirmed_attempt=37 boot_id_after=e6ceb535-2296-4f72-b2f2-f06ed7bba88b utc=2026-10-28T06:43:52Z
+post_reboot_start_utc=2026-10-28T06:43:53Z instance_id=inst_ce3b06fb80dfbd6a operation_id=op_76b499087d0ce566
+post_reboot_poll=1 utc=2026-10-28T06:43:55Z status=stopped stopped unavailable running_containers=3 db_ready=1
+post_reboot_poll=2 utc=2026-10-28T06:44:01Z status=running healthy unavailable running_containers=3 db_ready=1
+post_reboot_poll=3 utc=2026-10-28T06:44:07Z status=running healthy available running_containers=3 db_ready=1
+post_reboot_http=200 port=40043
+r21-reboot-persisted
+{
+  "action": "deprovision_app",
+  "admin_user": "system",
+  "created_at": "2026-10-28T06:44:08.485425Z",
+  "error_message": null,
+  "id": "op_516f52c24dac8281",
+  "instance_id": "inst_ce3b06fb80dfbd6a",
+  "node_id": "rc6e5r18-ipv6-admin",
+  "status": "succeeded",
+  "task_id": "task_7ca6170823193583",
+  "updated_at": "2026-10-28T06:44:14.743227Z"
+}
+host_reboot_recovery_and_sql_marker=PASS
+post_reboot_end_utc=2026-10-28T06:44:16Z

@@ -39,12 +39,12 @@ The R21 example runs recorded so far are: `e2e-whoami`, Uptime Kuma, Listmonk, V
 
 ## Release status
 
-Because the Listmonk credential fix changed installed Admiral product, R20 runtime cells do not count for R21. The required matrix is still `0/6` for this exact candidate:
+Because the Listmonk credential fix changed installed Admiral product, R20 runtime cells do not count for R21. On this exact candidate, the CentOS Stream 10 x86_64 Single-Node cell now passes; the other five cells remain pending:
 
 | Operating system | Single-Node | Multi-Node |
 |---|---|---|
 | Rocky Linux 10 x86_64 | PENDING | PENDING |
-| CentOS Stream 10 x86_64 | PENDING | PENDING |
+| CentOS Stream 10 x86_64 | [PASS](runtime/centos-single-r21-20261028T063103Z/REPORT.md) | PENDING |
 | Fedora Rawhide x86_64 | PENDING | PENDING |
 
-GitHub Actions passed for the exact five component source SHAs selected for R21 and the current root validation commit; see [`ci-status.md`](ci-status.md). #305 remains open. #106 (PayPal sandbox) is outside this release validation scope. **R21 is not Gold** because the required six-cell runtime matrix is still 0/6 and #305 is unresolved.
+GitHub Actions passed for the exact five component source SHAs selected for R21 and the current root report commit; see [`ci-status.md`](ci-status.md). #305 remains open. Cacao Accounting is not mandatory; ERPNext and NOW-LMS remain unresolved. #106 (PayPal sandbox) is outside this release validation scope. **R21 is not Gold** because the required six-cell runtime matrix is 1/6 and #305 is unresolved.

@@ -1,0 +1,24 @@
+test=RC6-centos-SN-CONTROL-PLANE-LIFECYCLE
+start_utc=2026-10-28T06:38:54Z
+instance_id=inst_fb5fefaf870c8f22
+initial_available_poll=1 http=200 endpoint=127.0.0.1:40041
+action=pause requested_utc=2026-10-28T06:39:06Z
+operation= op_e2a203a889cacb2a action_status= succeeded
+action=resume requested_utc=2026-10-28T06:39:10Z
+operation= op_905a5cdf820e93ac action_status= succeeded
+resume_poll=1 state=failed unhealthy unavailable
+resume_poll=2 state=failed unhealthy unavailable
+resume_available_poll=3 http=200 endpoint=127.0.0.1:40041
+action=stop requested_utc=2026-10-28T06:39:21Z
+operation= op_b9c847591c810dff action_status= succeeded
+action=start requested_utc=2026-10-28T06:39:27Z
+operation= op_6cc9aa58e055c204 action_status= succeeded
+start_poll=1 state=running stopped unavailable
+start_available_poll=2 http=200 endpoint=127.0.0.1:40041
+action=restart requested_utc=2026-10-28T06:39:35Z
+operation= None action_status= succeeded
+restart_poll=1 state=running stopped unavailable
+restart_available_poll=2 http=200 endpoint=127.0.0.1:40041
+instance_lifecycle=PASS
+end_utc=2026-10-28T06:39:45Z
+cleanup_rc=0

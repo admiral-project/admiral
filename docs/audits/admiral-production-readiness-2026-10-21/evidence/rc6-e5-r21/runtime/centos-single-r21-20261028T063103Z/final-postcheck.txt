@@ -1,0 +1,46 @@
+guest=rc6e5r18-ipv6-admin boot_id=e6ceb535-2296-4f72-b2f2-f06ed7bba88b
+ID="centos"
+VERSION_ID="10"
+arch=x86_64 selinux=Enforcing
+5:admiral-common-0.0.1rc6-21.el10.noarch
+5:admiral-flagship-0.0.1rc6-21.el10.noarch
+5:admiral-fleet-0.0.1rc6-21.el10.x86_64
+5:admiral-harbor-0.0.1rc6-21.el10.noarch
+5:admiralctl-0.0.1rc6-21.el10.x86_64
+5:admirald-0.0.1rc6-21.el10.x86_64
+firewalld=running public_zone=public (default)
+  target: default
+  ingress-priority: 0
+  egress-priority: 0
+  icmp-block-inversion: no
+  interfaces: 
+  sources: 
+  services: http https ssh
+  ports: 
+  protocols: 
+  forward: yes
+  masquerade: no
+  forward-ports: 
+  source-ports: 
+  icmp-blocks: 
+  rich rules: 
+service=admirald.service state=active
+service=admiral-fleet.service state=active
+service=admiral-harbor.service state=active
+service=admiral-flagship.service state=active
+service=caddy.service state=active
+service=postgresql.service state=active
+service=firewalld.service state=active
+failed_related=none
+worker_node={"available_for_provisioning": true, "committed_disk_bytes": 0, "committed_ram_bytes": 0, "disk_commit_limit_bytes": 14130596522, "disk_total_bytes": 21195894784, "disk_used_bytes": 10380484608, "fleet_version": "0.0.1rc6", "health_status": "healthy", "hostname": "rc6e5r18-ipv6-admin", "id": "rc6e5r18-ipv6-admin", "ip": "192.168.122.20", "last_heartbeat": "2026-10-28T06:44:31.256139Z", "last_metrics_at": "2026-10-28T06:44:31.256139Z", "manual_disabled": false, "node_role": "worker", "os": "CentOS 10", "podman_version": "6.1.0", "pods_active": 0, "pods_failed": 0, "pods_paused": 0, "public_ip": "10.77.0.10", "ram_commit_limit_bytes": 1222688768, "ram_total_bytes": 1528360960, "ram_used_bytes": 679776256, "status": "active", "storage_message": "node disk usage at 85.0%", "storage_state": "warning", "wireguard_ip": "10.99.0.1"}
+podman_rootless=true
+remaining_containers=none
+remaining_pods=none
+remaining_volumes=none
+backup_storage=0	/var/lib/admiral/backups
+resources:
+               total        used        free      shared  buff/cache   available
+Mem:           1.4Gi       673Mi       474Mi        24Mi       471Mi       783Mi
+Swap:             0B          0B          0B
+Filesystem      Size  Used Avail Use% Mounted on
+/dev/vda3        20G  9.7G   11G  49% /

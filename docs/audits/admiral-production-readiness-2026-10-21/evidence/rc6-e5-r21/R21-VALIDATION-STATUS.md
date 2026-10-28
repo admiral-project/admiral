@@ -22,7 +22,17 @@ All six workflows completed successfully on the listed exact SHAs:
 | `admiral-flagship` | `9d26a3b0e1e8827b066566fb2ecb98f5cd580a74` | PASS |
 | `admiral-harbor` | `48280fdd5ee2779e68edc7873e605c0d80dc60e7` | PASS |
 
-The root packaging commit `fa4838bc4438e9757ffcbdf1a8a1173c3c666cf8` had a harness/gitlink failure. The harness was corrected in `f1f5fda3915de88c5f6735c6141cbf67938564bb`; the root workflow is green on `bbf5ac6`. The correction did not alter installed product artifacts.
+The root packaging commit `fa4838bc4438e9757ffcbdf1a8a1173c3c666cf8` had a harness/gitlink failure. The harness was corrected in `f1f5fda3915de88c5f6735c6141cbf67938564bb`; the root workflow is green on `bbf5ac6` and the current report commit `726a8f411a4c81a1f0eedf40afad34e282b380b3`. The correction did not alter installed product artifacts.
+
+## Release matrix cells
+
+| Operating system | Single-Node | Multi-Node |
+|---|---|---|
+| Rocky Linux 10 x86_64 | PENDING | PENDING |
+| CentOS Stream 10 x86_64 | [PASS](runtime/centos-single-r21-20261028T063103Z/REPORT.md) | PENDING |
+| Fedora Rawhide x86_64 | PENDING | PENDING |
+
+The CentOS Single-Node result used the exact R21 RPMs and passed installation, workload lifecycle, idempotency, backup/restore, real reboot, persistence, and cleanup. Its resource monitoring stayed above the defined host and guest floors. The report records a node-storage warning mismatch for follow-up; the node remained healthy and available and direct filesystem measurement showed 49% use.
 
 ## Issue #305 example runs
 
@@ -45,6 +55,6 @@ The issue results and clarification were recorded in [#305 comments 6462156693](
 
 ## Release gate
 
-The required runtime matrix remains **0/6**: Rocky Linux 10, CentOS Stream 10, and Fedora Rawhide, each in Single-Node and Multi-Node. The targeted #305 example runs do not count as release matrix cells. Issue #305 remains open for ERPNext and NOW-LMS follow-up. PayPal issue #106 is outside this release-validation scope.
+The required runtime matrix is **1/6**: Rocky Linux 10, CentOS Stream 10, and Fedora Rawhide, each in Single-Node and Multi-Node. The targeted #305 example runs do not count as release matrix cells. Issue #305 remains open for ERPNext and NOW-LMS follow-up. Cacao Accounting passing is not mandatory. PayPal issue #106 is outside this release-validation scope.
 
-**R21 is not Gold.** No product change was made by this report update, so `CANDIDATE_INVALIDATED = NO`.
+**R21 is not Gold.** No installed product changed during these checks, so `CANDIDATE_INVALIDATED = NO`.

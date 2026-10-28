@@ -1,0 +1,4 @@
+Classification: HARNESS_DEFECT
+The first read-only postcheck used `firewall-cmd --get-target` against runtime state; firewalld permits that option only with `--permanent`. The command exited before changing the guest. This does not indicate a product defect and does not invalidate R21. Corrected the query to read the permanent public-zone target and repeated the affected postcheck.
+PRODUCT_CHANGED=NO
+CANDIDATE_INVALIDATED=NO
