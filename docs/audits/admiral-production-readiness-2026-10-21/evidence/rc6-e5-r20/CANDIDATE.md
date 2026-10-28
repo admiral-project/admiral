@@ -34,4 +34,4 @@ The candidate was installed as an update on the existing Rocky admin and two wor
 
 The R20 #255 run has not started. The existing lab still has a nonterminal R18 test migration (`op_9917ffdf8f798f67`) and queued follow-up tasks for the same disposable instance, and the source worker has not recovered the 350 MiB free-memory precondition used by the migration guard. Details are in `runtime/preflight-status.md`. No new VM was created and the stopped portal VM was not started.
 
-Because R20 changes product code, all six R19 runtime cells are invalid for R20. At this point the R20 runtime matrix is **0/6**. GitHub CI for the new component/root commits and actionable issue closure remain pending. This candidate is not Gold.
+Because R20 changes product code, all six R19 runtime cells are invalid for R20. At this point the R20 runtime matrix is **0/6**. GitHub CI passed for the exact selected component and root candidate SHAs; run IDs are recorded in `ci-status.md`. The #255 runtime gate and other actionable issue closure remain pending. This candidate is not Gold.
