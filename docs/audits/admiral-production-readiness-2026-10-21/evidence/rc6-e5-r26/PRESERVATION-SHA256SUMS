@@ -1,14 +1,15 @@
 af795e03fe39373db37676034d7ffe92db133da19f52e8590d7a1305bed17be4  docs/audits/admiral-production-readiness-2026-10-21/evidence/rc6-e5-r26/CANDIDATE.md
 acead7a44fc35d8030f9e671b8f716eec1e94639f802bb2962a5c432d7a5ccff  docs/audits/admiral-production-readiness-2026-10-21/evidence/rc6-e5-r26/PRESERVATION-INDEX.md
 cfa1d50583c9d2aa0c67f702020f57acb1b0f2fd64ae93ec745245720bf22c0c  docs/audits/admiral-production-readiness-2026-10-21/evidence/rc6-e5-r26/PRESERVATION-INVENTORY.tsv
+de24dd88e1fd0d3d77a0af753995c1ca663879c5e6c85f6dc98af4a586022d43  docs/audits/admiral-production-readiness-2026-10-21/evidence/rc6-e5-r26/PRESERVATION-VERIFICATION.md
 5128bb3e8fe1627e4c9774cc1058fbd8811a0d676a272519bb3670b5e4aaedf9  docs/audits/admiral-production-readiness-2026-10-21/evidence/rc6-e5-r26/R26-CI-STATUS.md
 16228feef12ba30decf58501d79d924ce6c6a8852a98387f31acfafc1722ab64  docs/audits/admiral-production-readiness-2026-10-21/evidence/rc6-e5-r26/RC6-R26-CLOSURE-20261029.md
 088fd521c6dad395ad78b8e09a807933a3cfd617b07e7f6bcbf5cda74b4811e8  docs/audits/admiral-production-readiness-2026-10-21/evidence/rc6-e5-r26/RC6-R26-FINAL-SECURITY-REVIEW-20261029.md
 2e23f779c6f7337bb47fcb2ac65c0da525a1c388de5cdb7cb33f1899a186521d  docs/audits/admiral-production-readiness-2026-10-21/evidence/rc6-e5-r26/RC6-R26-STATIC-CODE-ASSURANCE-ADDENDUM.md
-67966f34553ddb99640ddff08ce438c81ceb250aece651e43e60c37b46b97240  docs/audits/admiral-production-readiness-2026-10-21/evidence/rc6-e5-r26/el10/build-environment.txt
 56f08b47828c06100836f84dc9e857d7bbc18e151e1394e61cb9b501e628fd47  docs/audits/admiral-production-readiness-2026-10-21/evidence/rc6-e5-r26/el10-RPM-MANIFEST.tsv
 29ab3a6f2a6445875aa207c25126428f75953cb5de22bb0b1960acd1dcb1fa67  docs/audits/admiral-production-readiness-2026-10-21/evidence/rc6-e5-r26/el10-SHA256SUMS
 3a97a4a31b6eae9f99e6b004adaec3f32a40ff7a0e7184749017d0270a7c5d67  docs/audits/admiral-production-readiness-2026-10-21/evidence/rc6-e5-r26/el10-build-environment.txt
+67966f34553ddb99640ddff08ce438c81ceb250aece651e43e60c37b46b97240  docs/audits/admiral-production-readiness-2026-10-21/evidence/rc6-e5-r26/el10/build-environment.txt
 a501cba64c6d5490bef4743e48ce8afd77f0931c1424380a51026dcfa7c6c196  docs/audits/admiral-production-readiness-2026-10-21/evidence/rc6-e5-r26/fedora/RPM-MANIFEST.tsv
 c11eb5e9bd0a6287b7bc29d56603f527361fa7af7d01d6573a083d32f9dc7200  docs/audits/admiral-production-readiness-2026-10-21/evidence/rc6-e5-r26/fedora/SHA256SUMS
 05ed903f1fba9e2b6721ce6e3b08809cc8e59533e656040f9f269b4c8c535ebb  docs/audits/admiral-production-readiness-2026-10-21/evidence/rc6-e5-r26/fedora/build-environment.txt
