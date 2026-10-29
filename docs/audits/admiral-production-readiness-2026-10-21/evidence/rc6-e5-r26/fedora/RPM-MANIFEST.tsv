@@ -1,0 +1,7 @@
+file	nevra	sha256	size_bytes
+admiral-common-0.0.1rc6-26.fc46.noarch.rpm	5:admiral-common-0.0.1rc6-26.fc46.noarch	ef297f9c844e06ac38b1ca2211c4c17326290dcf1ecd86ca4564769f7e47f43b	138126
+admiral-flagship-0.0.1rc6-26.fc46.noarch.rpm	5:admiral-flagship-0.0.1rc6-26.fc46.noarch	13476eae41f403935fcb767abd0d24282a43d2022060865e43b89ab979aeb03d	1598017
+admiral-harbor-0.0.1rc6-26.fc46.noarch.rpm	5:admiral-harbor-0.0.1rc6-26.fc46.noarch	f7e7c4393a645aa1fc81443ad42e67d5e078584695d08ea38e04c27232c181f8	1179455
+admiral-fleet-0.0.1rc6-26.fc46.x86_64.rpm	5:admiral-fleet-0.0.1rc6-26.fc46.x86_64	c29e52bb928eeafe8204bd722e99336de4724e8127bb7853cb3adc8d691d91b5	6788632
+admiralctl-0.0.1rc6-26.fc46.x86_64.rpm	5:admiralctl-0.0.1rc6-26.fc46.x86_64	f0b9642411b50717a9a86867610b008e639d1eef8e627b41009f0eef5a6f2763	3484021
+admirald-0.0.1rc6-26.fc46.x86_64.rpm	5:admirald-0.0.1rc6-26.fc46.x86_64	703c71b29c2601c770662e16eb3e683554f350f10a2a78ec3f6fa476b8035eee	4401474

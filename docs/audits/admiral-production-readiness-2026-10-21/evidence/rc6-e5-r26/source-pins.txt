@@ -1,0 +1,10 @@
+RC6 E5 R26 selected source refs; each component origin/main was fetched before this RPM build on 2026-10-28 UTC.
+root packaging commit: 71a2cfc16eedd0f686a5e9d52c3f84414024d412
+root shared source / admiral-common: dbb76d4fa98ca0334e220821f1c8f425d16eb89d
+
+component	selected_sha	fetched_origin_main	selection
+admirald	8efa1dec8e9540210d9f86d016dce4677dcc6543	6e4a725d30c0fff877fe2252e843fae687810ae6	retain active release-validation branch (8 commits ahead): includes required R20-R25 fixes and R25 resize-tier policy preservation fix
+admiral-fleet	edc0a0d486eb102e9aaa4f250a08f777d7441f12	b082934f908a4a33acf0fdd70c06974f0a29bb21	retain active release-validation branch (3 commits ahead): includes configured container-user fix required by active candidate
+admiralctl	d0e98414115c9628e59b33678cfcbd9bc0e342d5	fa2a65e866310bd82bea78859804b6c3aea7989a	retain active release-validation branch (3 commits ahead): contains previously required migration/node-removal fixes
+admiral-flagship	b7325bbc71fc474a521496e593b2967e4d555ac1	b7325bbc71fc474a521496e593b2967e4d555ac1	equal to origin/main
+admiral-harbor	dd4818b6e2bc53eea4495fc5e374a4893cfcb107	dd4818b6e2bc53eea4495fc5e374a4893cfcb107	equal to origin/main

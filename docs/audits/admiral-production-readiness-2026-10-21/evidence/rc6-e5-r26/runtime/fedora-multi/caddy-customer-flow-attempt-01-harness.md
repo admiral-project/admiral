@@ -1,0 +1,3 @@
+# R26 Fedora Multi Harbor flow — attempt 01
+
+The attempt exited before the first portal request. The local launcher referenced the test CA file, which had not yet been copied from Admin. Python failed while loading the CA file; no HTTP request, customer registration, or workload deployment occurred. This is a harness setup omission, not a product failure. The resource guard recorded one sample and did not reach a threshold. Admin Caddy had already passed strict TLS verification (HTTP 200, verification result 0). The CA was copied from Admin and its SHA-256 fingerprint matched before attempt 02.

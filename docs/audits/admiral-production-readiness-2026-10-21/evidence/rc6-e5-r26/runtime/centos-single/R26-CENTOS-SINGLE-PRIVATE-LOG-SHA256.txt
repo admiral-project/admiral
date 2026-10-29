@@ -1,0 +1,4 @@
+These source logs remain mode-restricted on the validation host; they are not copied here because installer output can include generated credentials.
+802b9e4081da1281c0c291de1851e2b0df0886463e8f799356a90a67cd3d340d  /var/lib/libvirt/images/admiral-validation/evidence/rc6-e5-r26-centos-single/functional/centos-single/lane.log
+8e322f61d7f797d2e7a2c07d0ccdaa36b12cb7fc56347a7a11dac0b61bfef4d0  /var/lib/libvirt/images/admiral-validation/evidence/rc6-e5-r26/centos-single-install.log
+d49bd61a6ad2e9f600e4be93ff9dc3620603aa05c2116cfd1c11737cf24c8318  /var/lib/libvirt/images/admiral-validation/evidence/rc6-e5-r26/functional/centos-single/resources.jsonl

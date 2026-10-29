@@ -1,0 +1,5 @@
+These source logs remain mode-restricted on the validation host; they are not copied here because installer output can include generated credentials.
+42fb5169855afc09499cb57e19930e42ff610a5b438b1897ef75c7072e6c56d8  /var/lib/libvirt/images/admiral-validation/evidence/rc6-e5-r26-rocky-single/functional/rocky-single/lane.log
+0b49eceeed79b39af3c5644465c3764557f96982db073cda102f42d164ac8e45  /var/lib/libvirt/images/admiral-validation/evidence/rc6-e5-r26/rocky-single-install.log
+4f1a1ebd7f84fc4cccfe52d91b4726c3d9fa36f838b888e7a615ef6abbd8332e  /var/lib/libvirt/images/admiral-validation/evidence/rc6-e5-r26/functional/rocky-single/resources.jsonl
+9f32fcf80697f2334245b4e5211227db56126ac4f776f931f7909e849e63a829  /var/lib/libvirt/images/admiral-validation/evidence/rc6-e5-r26/functional/rocky-single/obsolete-overlays-removed.tsv

@@ -1,0 +1,8 @@
+Fresh origin/main fetch and comparison immediately before the native Fedora Rawhide build on 2026-10-28. All selected release-validation commits contain the fetched origin/main commit; none of the component origins advanced beyond the selected pins.
+
+component\tselected_sha\tfetched_origin_main\tselection
+admirald\t8efa1dec8e9540210d9f86d016dce4677dcc6543\t6e4a725d30c0fff877fe2252e843fae687810ae6\tretain active release-validation branch with the R25 resize-tier policy preservation fix
+admiral-fleet\tedc0a0d486eb102e9aaa4f250a08f777d7441f12\tb082934f908a4a33acf0fdd70c06974f0a29bb21\tretain active release-validation branch with the configured container-user fix
+admiralctl\td0e98414115c9628e59b33678cfcbd9bc0e342d5\tfa2a65e866310bd82bea78859804b6c3aea7989a\tretain active release-validation branch with required migration and node-removal fixes
+admiral-flagship\tb7325bbc71fc474a521496e593b2967e4d555ac1\tb7325bbc71fc474a521496e593b2967e4d555ac1\tequal to origin/main
+admiral-harbor\tdd4818b6e2bc53eea4495fc5e374a4893cfcb107\tdd4818b6e2bc53eea4495fc5e374a4893cfcb107\tequal to origin/main

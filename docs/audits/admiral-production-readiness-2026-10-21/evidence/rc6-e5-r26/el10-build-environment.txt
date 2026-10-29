@@ -1,0 +1,10 @@
+build_started_utc=2026-10-28T19:08:22Z
+build_host=Rocky Linux 10.2 x86_64
+rpm_dist=.el10
+root_release_commit=71a2cfc16eedd0f686a5e9d52c3f84414024d412
+product_fix_admirald=8efa1dec8e9540210d9f86d016dce4677dcc6543
+six_admiral_rpm_release=26
+build_method=native Rocky Linux 10.2 rpmbuild via make rpm-admiral; %check enabled
+build_result=success; admiral-fleet and admiralctl Go package checks passed; admiral-flagship pytest 266/266; admiral-harbor pytest 352/352; all six RPMs produced
+resource_control=GOMAXPROCS=2 GOGC=60; existing Admin VM only; Worker and Portal gracefully shut down; host thresholds 2 GiB available RAM and 30 GiB free disk
+build_finished_utc=2026-10-28T19:17:23Z

@@ -1,0 +1,14 @@
+build_started_utc=2026-10-28T19:18:39Z
+build_finished_utc=2026-10-28T19:35:36Z
+build_host=Rocky Linux 10.2 x86_64; build container Fedora Linux 46 (Rawhide)
+build_container_image_id=428f565534c378b103a8ec89b338164726967d88fa562966ed69cf5b3af100aa
+build_container_digest=registry.fedoraproject.org/fedora@sha256:02031526999d46c9f9c6490eeccf4cafd735438b9d0fb5e1d9fc941d7886e2ff
+rpm_dist=.fc46
+root_release_commit=71a2cfc16eedd0f686a5e9d52c3f84414024d412
+product_fix_admirald=8efa1dec8e9540210d9f86d016dce4677dcc6543
+six_admiral_rpm_release=26
+build_method=native Fedora Rawhide rpmbuild via make rpm-admiral; %check enabled; no EL10 RPMs installed in builder
+checks=admirald go test ./... pass; admiral-fleet go test ./... pass; admiralctl go test ./... pass; flagship pytest 266/266 pass; harbor pytest 352/352 pass
+helper_rpms=previously validated Fedora .fc46 dependency RPMs only; signatures verified inside Fedora builder with Admiral signing key
+resource_control=Podman builder capped at 1 CPU and 1500 MiB RAM; stopped automatically if host MemAvailable <2 GiB or disk <30 GiB; existing Admin VM only
+resource_observation=build completed with no monitor alerts; host retained more than 4 GiB RAM and 36 GiB disk free

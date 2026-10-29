@@ -1,0 +1,11 @@
+candidate=Epoch 5, Version 0.0.1rc6, Release 26, Rocky Linux 10.2, x86_64, .el10
+host=existing libvirt domain rc6e5r18-ipv6-worker; no domain created
+install=PASS; Ansible ok=262 changed=108 unreachable=0 failed=0 skipped=158
+workload_create_idempotency_deprovision=PASS
+resize_data_continuity=PASS
+backup_restore_checksum_negative_state=PASS
+instance_and_admirald_lifecycle=PASS
+host_reboot_persistence=PASS
+final_services_resources_rpms=PASS
+lane_failed_stages=0
+final_packages=5:admiral-common-0.0.1rc6-26.el10.noarch; 5:admirald-0.0.1rc6-26.el10.x86_64; 5:admiral-fleet-0.0.1rc6-26.el10.x86_64; 5:admiralctl-0.0.1rc6-26.el10.x86_64; 5:admiral-harbor-0.0.1rc6-26.el10.noarch; 5:admiral-flagship-0.0.1rc6-26.el10.noarch

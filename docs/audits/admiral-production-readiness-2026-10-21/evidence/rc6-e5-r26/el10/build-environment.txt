@@ -1,0 +1,8 @@
+built_at_start=2026-10-28T19:10:00Z
+build_host=Rocky Linux 10.2 x86_64
+rpm_dist=.el10
+root_release_commit=71a2cfc16eedd0f686a5e9d52c3f84414024d412
+product_fix_admirald=8efa1dec8e9540210d9f86d016dce4677dcc6543
+six_admiral_rpm_release=26
+build_method=native Rocky Linux 10.2 rpmbuild via make rpm-admiral; %check enabled
+resource_control=GOMAXPROCS=2 GOGC=60; existing Admin VM only; Worker and Portal gracefully shut down; host threshold 2 GiB RAM and 30 GiB free disk
