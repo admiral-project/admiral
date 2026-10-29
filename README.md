@@ -518,3 +518,6 @@ should keep tested backups and a rollback plan.
 # License
 
 Licensed under the Apache 2.0 License.
+
+
+<!-- Automated fix for issue #274: build(rpm): pin typing-extensions for SQLAlchemy build checks -->
